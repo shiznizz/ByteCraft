@@ -12,14 +12,14 @@ public class GameManager : MonoBehaviour
     public bool isPaused;
 
     public GameObject player;
-    public PlayerController playerScript;
+    public playerController playerScript;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         instance = this;
         player = GameObject.FindWithTag("Player");
-        playerScript = player.GetComponent<PlayerController>();
+        playerScript = player.GetComponent<playerController>();
     }
 
     // Update is called once per frame
