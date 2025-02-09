@@ -14,6 +14,8 @@ public class gameManager : MonoBehaviour
     public GameObject player;
     public PlayerController playerScript;
 
+    int goalCount;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -56,5 +58,17 @@ public class gameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         menuActive.SetActive(false);
         menuActive = null;
+    }
+
+    public void updateGameGoal(int amount)
+    {
+        goalCount += amount;
+
+        if (goalCount <= 0)
+        {
+            statePause();
+            menuActive = menuWin;
+            menuActive.SetActive(true);
+        }
     }
 }
