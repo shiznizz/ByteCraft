@@ -12,7 +12,7 @@ public class gameManager : MonoBehaviour
     public bool isPaused;
 
     public GameObject player;
-    public PlayerController playerScript;
+    public playerController playerScript;
 
     int goalCount;
 
@@ -21,7 +21,7 @@ public class gameManager : MonoBehaviour
     {
         instance = this;
         player = GameObject.FindWithTag("Player");
-        playerScript = player.GetComponent<PlayerController>();
+        playerScript = player.GetComponent<playerController>();
     }
 
     // Update is called once per frame
