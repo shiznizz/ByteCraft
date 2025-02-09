@@ -12669,22 +12669,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 403032976}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63c01a5342eb5d148a0e830e0ece78df, type: 3}
+  m_Script: {fileID: 11500000, guid: adb7d3a06dc56fe4a821613f25c92e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 403032982}
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 8
-  HP: 5
+  HP: 3
   speed: 5
-  sprintMod: 3
-  jumpSpeed: 12
+  speedModifer: 3
+  jumpSpeed: 8
   jumpMax: 2
-  gravity: 35
+  gravity: 32
+  jetpackFuelMax: 0
+  jetpackFuelUse: 0
+  jetpackFuelRegen: 0
+  jetpackFuelRegenDelay: 0
+  jetpackSpeed: 0
   shootDamage: 1
-  shootRate: 0.5
-  shootDist: 150
+  shootDistance: 150
+  shootRate: 1
 --- !u!4 &403032981
 Transform:
   m_ObjectHideFlags: 0
