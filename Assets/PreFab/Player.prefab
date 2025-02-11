@@ -46,27 +46,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 5682474206311374275}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63c01a5342eb5d148a0e830e0ece78df, type: 3}
+  m_Script: {fileID: 11500000, guid: adb7d3a06dc56fe4a821613f25c92e9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 7171065596406949458}
   ignoreLayer:
     serializedVersion: 2
-    m_Bits: 0
-  HP: 5
+    m_Bits: 8
+  HP: 100
   speed: 5
   speedModifer: 3
-  jumpSpeed: 12
-  jumpMax: 2
-  gravity: 20
-  jetpackFuelMax: 30
-  jetpackFuelUse: 5
-  jetpackFuelRegen: 3
-  jetpackFuelRegenDelay: 2.5
+  jumpSpeed: 16
+  jumpMax: 1
+  gravity: 24
+  momentumDrag: 100
+  jetpackFuelMax: 100
+  jetpackFuelUse: 2
+  jetpackFuelRegen: 5
+  jetpackFuelRegenDelay: 1
   jetpackSpeed: 5
   shootDamage: 1
-  shootDistance: 150
-  shootRate: 0.5
+  shootDistance: 111
+  shootRate: 1
+  grappleDistance: 111
+  grappleLaunchSpeed: 1
+  grappleLift: 30
+  grappleSpeedMultiplier: 2
+  grappleSpeedMin: 10
+  grappleSpeedMax: 20
 --- !u!143 &7171065596406949458
 CharacterController:
   m_ObjectHideFlags: 0
