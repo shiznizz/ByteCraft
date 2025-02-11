@@ -1,8 +1,10 @@
 using UnityEngine;
 
+
 public class gameManager : MonoBehaviour
 {
     public static gameManager instance;
+
 
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
@@ -14,7 +16,9 @@ public class gameManager : MonoBehaviour
     public GameObject player;
     public playerController playerScript;
 
+
     int goalCount;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -60,6 +64,7 @@ public class gameManager : MonoBehaviour
         menuActive = null;
     }
 
+
     public void updateGameGoal(int amount)
     {
         goalCount += amount;
@@ -71,4 +76,5 @@ public class gameManager : MonoBehaviour
             menuActive.SetActive(true);
         }
     }
+
 }
