@@ -15,16 +15,20 @@ public class playerController : MonoBehaviour
     [SerializeField] int jumpMax;
     [SerializeField] int gravity;
 
-    [SerializeField] int jetpackFuelMax;
-    [SerializeField] float jetpackFuelUse;
-    [SerializeField] float jetpackFuelRegen;
-    [SerializeField] float jetpackFuelRegenDelay;
-    [SerializeField] int jetpackSpeed;
 
     [SerializeField] int shootDamage;
     [SerializeField] int shootDistance;
     [SerializeField] float shootRate;
 
+    [SerializeField] bool hasJetpack;
+
+    [SerializeField] int jetpackFuelMax;
+    [SerializeField] float jetpackFuel;
+    [SerializeField] float jetpackFuelUse;
+    [SerializeField] float jetpackFuelRegen;
+    [SerializeField] float jetpackFuelRegenDelay;
+    [SerializeField] int jetpackSpeed;
+    
     int jumpCount;
 
     float shootTimer;
@@ -34,7 +38,6 @@ public class playerController : MonoBehaviour
 
     bool isSprinting;
 
-    float jetpackFuel;
     private float jetpackFuelRegenTimer;
 
     void Start()
@@ -96,7 +99,7 @@ public class playerController : MonoBehaviour
             jumpCount++;
             playerVelocity.y = jumpSpeed;
         }
-        else if (Input.GetButton("Jump") && !controller.isGrounded)
+        else if ((Input.GetButton("Jump") && !controller.isGrounded) && hasJetpack)
         {
             jetpack();
         }
