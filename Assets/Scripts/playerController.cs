@@ -37,6 +37,7 @@ public class playerController : MonoBehaviour
     [SerializeField] float grappleSpeedMultiplier;
     [SerializeField] float grappleSpeedMin;
     [SerializeField] float grappleSpeedMax;
+    [SerializeField] float grappleCooldown;
 
 
 
@@ -45,6 +46,7 @@ public class playerController : MonoBehaviour
 
     int jumpCount;
 
+    float grappleCooldownTimer;
     float shootTimer;
 
     private Vector3 moveDir;
@@ -130,6 +132,7 @@ public class playerController : MonoBehaviour
         }
 
         shootTimer += Time.deltaTime;
+        grappleCooldownTimer += Time.deltaTime;
 
         if (Input.GetButton("Fire1") && shootTimer >= shootRate)
         {
@@ -219,6 +222,8 @@ public class playerController : MonoBehaviour
     // handles where the grapple is hitting
     void shootGrapple()
     {
+        // resets cooldown
+        grappleCooldownTimer = 0;
         // chcks if the grapple hits a collider or not
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, grappleDistance))
         {
@@ -249,14 +254,6 @@ public class playerController : MonoBehaviour
             playerVelocity.y -= gravity * Time.deltaTime;
         }
 
-
-        // while in the grappleMoving state if you right click a surface thats able to be grapple will start grappling new location
-        if (testGrappleKeyPressed())
-        {
-            grappleState = State.grappleNormal;
-            playerVelocity.y -= gravity * Time.deltaTime;
-            shootGrapple();
-        }
         // if use the jump key it will stop grappling where you are
         else if (testJumpKeyPressed())
         {
@@ -281,7 +278,7 @@ public class playerController : MonoBehaviour
     // tests if the grapple key is pressed and returns a bool
     bool testGrappleKeyPressed()
     {
-        if (Input.GetButton("Fire2"))
+        if (Input.GetButton("Fire2") && grappleCooldownTimer >= grappleCooldown)
         {
             return true;
         }

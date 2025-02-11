@@ -59,7 +59,7 @@ MonoBehaviour:
   jumpSpeed: 16
   jumpMax: 1
   gravity: 24
-  momentumDrag: 100
+  momentumDrag: 50
   jetpackFuelMax: 100
   jetpackFuelUse: 2
   jetpackFuelRegen: 5
@@ -70,10 +70,11 @@ MonoBehaviour:
   shootRate: 1
   grappleDistance: 111
   grappleLaunchSpeed: 1
-  grappleLift: 30
+  grappleLift: 50
   grappleSpeedMultiplier: 2
   grappleSpeedMin: 10
   grappleSpeedMax: 20
+  grappleCooldown: 1
 --- !u!143 &7171065596406949458
 CharacterController:
   m_ObjectHideFlags: 0
