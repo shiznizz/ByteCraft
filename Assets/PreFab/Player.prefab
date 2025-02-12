@@ -58,14 +58,16 @@ MonoBehaviour:
   jumpSpeed: 12
   jumpMax: 2
   gravity: 35
-  jetpackFuelMax: 0
-  jetpackFuelUse: 0
-  jetpackFuelRegen: 0
-  jetpackFuelRegenDelay: 0
-  jetpackSpeed: 0
   shootDamage: 1
   shootDistance: 150
   shootRate: 0.5
+  hasJetpack: 1
+  jetpackFuelMax: 20
+  jetpackFuel: 0
+  jetpackFuelUse: 10
+  jetpackFuelRegen: 12
+  jetpackFuelRegenDelay: 1
+  jetpackSpeed: 6
 --- !u!143 &7171065596406949458
 CharacterController:
   m_ObjectHideFlags: 0

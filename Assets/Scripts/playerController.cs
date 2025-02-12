@@ -44,9 +44,9 @@ public class playerController : MonoBehaviour
     void Start()
     {
         HPOrig = HP;
+        jetpackFuel = jetpackFuelMax;
         updatePlayerUI();
 
-        jetpackFuel = jetpackFuelMax;
         jetpackFuelRegenTimer = 0f;
     }
 
@@ -98,12 +98,13 @@ public class playerController : MonoBehaviour
 
     void jump()
     {
+        bool fuckingjumpbuttonbullshit = !controller.isGrounded;
         if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
             playerVelocity.y = jumpSpeed;
         }
-        else if ((Input.GetButton("Jump") && !controller.isGrounded) && hasJetpack)
+        else if ((Input.GetButton("Jump") && fuckingjumpbuttonbullshit) && hasJetpack)
         {
             jetpack();
         }
@@ -118,6 +119,8 @@ public class playerController : MonoBehaviour
             playerVelocity.y = jetpackSpeed;
 
             jetpackFuelRegenTimer = jetpackFuelRegenDelay;
+
+            updatePlayerUI();
         }
     }
 
@@ -133,12 +136,14 @@ public class playerController : MonoBehaviour
             {
                 jetpackFuel += jetpackFuelRegen * Time.deltaTime;
                 jetpackFuel = Mathf.Clamp(jetpackFuel, 0, jetpackFuelMax); // Clamp fuel between 0 and max
+                updatePlayerUI();
             }
         }
         else
         {
             // Reset the regen timer if fuel is full
             jetpackFuelRegenTimer = 0f;
+            updatePlayerUI();
         }
     }
 
@@ -180,5 +185,6 @@ public class playerController : MonoBehaviour
     void updatePlayerUI()
     {
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
+        gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
     }
 }
