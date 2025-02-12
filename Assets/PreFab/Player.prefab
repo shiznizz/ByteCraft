@@ -51,21 +51,31 @@ MonoBehaviour:
   controller: {fileID: 7171065596406949458}
   ignoreLayer:
     serializedVersion: 2
-    m_Bits: 64
-  HP: 5
+
+    m_Bits: 8
+  HP: 100
   speed: 5
   speedModifer: 3
-  jumpSpeed: 12
-  jumpMax: 2
-  gravity: 35
-  jetpackFuelMax: 0
-  jetpackFuelUse: 0
-  jetpackFuelRegen: 0
-  jetpackFuelRegenDelay: 0
-  jetpackSpeed: 0
+  jumpSpeed: 16
+  jumpMax: 1
+  gravity: 24
+  momentumDrag: 50
+  jetpackFuelMax: 100
+  jetpackFuelUse: 2
+  jetpackFuelRegen: 5
+  jetpackFuelRegenDelay: 1
+  jetpackSpeed: 5
+
   shootDamage: 1
-  shootDistance: 150
-  shootRate: 0.5
+  shootDistance: 111
+  shootRate: 1
+  grappleDistance: 111
+  grappleLaunchSpeed: 1
+  grappleLift: 50
+  grappleSpeedMultiplier: 2
+  grappleSpeedMin: 10
+  grappleSpeedMax: 20
+  grappleCooldown: 1
 --- !u!143 &7171065596406949458
 CharacterController:
   m_ObjectHideFlags: 0
