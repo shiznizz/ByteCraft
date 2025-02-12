@@ -179,7 +179,7 @@ public class playerController : MonoBehaviour
             jumpCount++;
             playerVelocity.y = jumpSpeed;
         }
-        else if ((Input.GetButton("Jump") && fuckingjumpbuttonbullshit) && hasJetpack)
+        else if ((Input.GetButton("Jump") && !controller.isGrounded) && hasJetpack)
         {
             jetpack();
         }
