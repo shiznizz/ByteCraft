@@ -39,27 +39,16 @@ public class enemyAI : MonoBehaviour, IDamage
     // Update is called once per frame
     void Update()
     {
-        float agentSpeed = agent.velocity.normalized.magnitude;
-        float animCurSpeed = anim.GetFloat("Speed");
+        float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
+        float animatorCurSpeed = anim.GetFloat("Speed");
 
-        anim.SetFloat("Speed", Mathf.MoveTowards(animCurSpeed, agentSpeed, Time.deltaTime * animTransSpeed));
+        anim.SetFloat("Speed", Mathf.MoveTowards(animatorCurSpeed, agentSpeed, Time.deltaTime * animTransSpeed));    // added multiplication by animTransSpeed to give control from editor
 
         shootTimer += Time.deltaTime;
 
-        if(playerInRange && canSeePlayer())
+        if (playerInRange && canSeePlayer())
         {
 
-        }
-        agent.SetDestination(gameManager.instance.player.transform.position);
-
-        if (shootTimer >= shootRate)
-        {
-            shoot();
-        }
-
-        if (agent.remainingDistance <= agent.stoppingDistance)
-        {
-            faceTarget();
         }
     }
 
