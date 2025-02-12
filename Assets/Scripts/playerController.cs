@@ -47,6 +47,7 @@ public class playerController : MonoBehaviour
     private State grappleState;
 
     int jumpCount;
+    int HPOrig;
 
     float grappleCooldownTimer;
     float shootTimer;
@@ -78,6 +79,9 @@ public class playerController : MonoBehaviour
 
     void Start()
     {
+        HPOrig = HP;
+        updatePlayerUI();
+
         jetpackFuel = jetpackFuelMax;
         jetpackFuelRegenTimer = 0f;
     }
@@ -286,38 +290,26 @@ public class playerController : MonoBehaviour
     public void takeDamage(int damage)
     {
         HP -= damage;
+        StartCoroutine(flashDamageScreen());
+        updatePlayerUI();
+
         if (HP <= 0)
         {
-            // Destroy(gameObject);
-            //
+
+            gameManager. instance.youLose();
         }
     }
 
-    // tests if the grapple key is pressed and returns a bool
-    bool testGrappleKeyPressed()
+    IEnumerator flashDamageScreen()
     {
-        if (Input.GetButton("Fire2") && grappleCooldownTimer >= grappleCooldown)
-            return true;
-        
-        else
-            return false;
-        
+        gameManager.instance.playerDamageScreen.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        gameManager.instance.playerDamageScreen.SetActive(false);
     }
 
-    // tests if the jump key is pressed and returns a bool
-    bool testJumpKeyPressed()
+    void updatePlayerUI()
     {
-        if (Input.GetButton("Jump"))
-            return true;
-        else
-            return false;
-        
-    }
-
-    public void StopGrapple()
-    {
-        isGrappling = false;
-        grappleRope.enabled = false;
+        gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
     }
 
 }
