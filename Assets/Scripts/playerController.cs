@@ -32,14 +32,16 @@ public class playerController : MonoBehaviour
 
     [Header("Grapple Options")]
     [SerializeField] int grappleDistance;
-    [SerializeField] int grappleLaunchSpeed;
     [SerializeField] int grappleLift;
     [SerializeField] float grappleSpeedMultiplier;
     [SerializeField] float grappleSpeedMin;
     [SerializeField] float grappleSpeedMax;
     [SerializeField] float grappleCooldown;
 
-
+    [Header("Grapple Gun")]
+   
+    [SerializeField] Transform grappleShootPos;
+    [SerializeField] LineRenderer grappleRope;
 
     // holds state of the grapple 
     private State grappleState;
@@ -55,6 +57,7 @@ public class playerController : MonoBehaviour
     private Vector3 grapplePostion;
 
     bool isSprinting;
+    bool isGrappling;
 
     float jetpackFuel;
     private float jetpackFuelRegenTimer;
@@ -99,6 +102,11 @@ public class playerController : MonoBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        if (isGrappling)
+            grappleRope.SetPosition(0, grappleShootPos.position);
+    }
 
     void movement()
     {
@@ -106,6 +114,8 @@ public class playerController : MonoBehaviour
         {
             jumpCount = 0;
             playerVelocity = Vector3.zero;
+            playerMomentum = Vector3.zero;
+            
         }
 
         moveDir = (Input.GetAxis("Horizontal") * transform.right) +
@@ -121,7 +131,7 @@ public class playerController : MonoBehaviour
         controller.Move(playerVelocity * Time.deltaTime);
         // make player fall
         playerVelocity.y -= gravity * Time.deltaTime;
-        // dampen momentum
+        //dampen momentum
         if (playerMomentum.magnitude >= 0f)
         {
             playerMomentum -= playerMomentum * momentumDrag * Time.deltaTime;
@@ -225,26 +235,32 @@ public class playerController : MonoBehaviour
         // resets cooldown
         grappleCooldownTimer = 0;
         // chcks if the grapple hits a collider or not
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, grappleDistance))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, grappleDistance, ~ignoreLayer))
         {
 
             Debug.Log(hit.collider.name);
 
+            isGrappling = true;
             grapplePostion = hit.point;
+
+            grappleRope.enabled = true;
+            grappleRope.SetPosition(1, grapplePostion);
+
             grappleState = State.grappleMoving;
 
         }
+        
 
     }
     // handles the grapple moving the character
     void grappleMovement()
     {
-
+        // sets min and max speed for grapple movement
         float grappleSpeed = Mathf.Clamp(Vector3.Distance(transform.position, grapplePostion), grappleSpeedMin, grappleSpeedMax);
         // direction the player will move
         Vector3 grappleDir = (grapplePostion - transform.position).normalized;
         // moving the player
-        controller.Move(grappleDir * grappleSpeed * grappleSpeedMultiplier * Time.deltaTime);
+        controller.Move(grappleSpeed * grappleSpeedMultiplier * Time.deltaTime * grappleDir);
 
         // checks if reached end of grapple
         float grapleDistanceMove = 1f;
@@ -252,15 +268,17 @@ public class playerController : MonoBehaviour
         {
             grappleState = State.grappleNormal;
             playerVelocity.y -= gravity * Time.deltaTime;
+            StopGrapple();
         }
 
-        // if use the jump key it will stop grappling where you are
+        // if use the jump key it will stop grappling 
         else if (testJumpKeyPressed())
         {
-            playerMomentum = grappleLaunchSpeed * grappleSpeed * grappleDir;
+            playerMomentum = grappleSpeed * grappleDir;
             playerMomentum += Vector3.up * grappleLift;
             grappleState = State.grappleNormal;
             playerVelocity.y -= gravity * Time.deltaTime;
+            StopGrapple();
         }
 
     }
@@ -279,27 +297,27 @@ public class playerController : MonoBehaviour
     bool testGrappleKeyPressed()
     {
         if (Input.GetButton("Fire2") && grappleCooldownTimer >= grappleCooldown)
-        {
             return true;
-        }
+        
         else
-        {
             return false;
-        }
+        
     }
 
     // tests if the jump key is pressed and returns a bool
     bool testJumpKeyPressed()
     {
         if (Input.GetButton("Jump"))
-        {
             return true;
-        }
         else
-        {
             return false;
-        }
+        
     }
 
+    public void StopGrapple()
+    {
+        isGrappling = false;
+        grappleRope.enabled = false;
+    }
 
 }
