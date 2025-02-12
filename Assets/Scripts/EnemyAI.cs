@@ -3,7 +3,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class enemyAI : MonoBehaviour, IDamage
+public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
     [SerializeField] Renderer model;
     [SerializeField] NavMeshAgent agent;
@@ -28,6 +28,10 @@ public class enemyAI : MonoBehaviour, IDamage
     Vector3 playerDir;
 
     bool playerInRange;
+
+    // loot drop mechanic variables
+    [SerializeField] GameObject lootItem;
+    [SerializeField] Transform dropPos;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -108,6 +112,7 @@ public class enemyAI : MonoBehaviour, IDamage
         if (HP <= 0)
         {
             gameManager.instance.updateGameGoal(-1);
+            //dropLoot();
             Destroy(gameObject);
         }
     }
@@ -122,7 +127,12 @@ public class enemyAI : MonoBehaviour, IDamage
     void shoot()
     {
         shootTimer = 0;
-
+        //dropLoot(); Moved above in "takeDamage" to be used after enemy dies
         Instantiate(bullet, shootPos.position, transform.rotation);
+    }
+
+    public void dropLoot()
+    {
+        Instantiate(lootItem, dropPos.position, transform.rotation);
     }
 }
