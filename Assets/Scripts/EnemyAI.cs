@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,9 +9,12 @@ public class enemyAI : MonoBehaviour, IDamage
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Animator anim;
 
+    [SerializeField] Transform headPos; //Head position
     [SerializeField] int HP;
     [SerializeField] int animTransSpeed;
     [SerializeField] int faceTargetSpeed;
+
+    [SerializeField] int FOV; //Field of View
 
     [SerializeField] GameObject bullet;
     [SerializeField] Transform shootPos;
@@ -19,8 +23,11 @@ public class enemyAI : MonoBehaviour, IDamage
     Color colorOrig;
 
     float shootTimer;
+    float angleToPlayer;
 
     Vector3 playerDir;
+
+    bool playerInRange;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -32,42 +39,76 @@ public class enemyAI : MonoBehaviour, IDamage
     // Update is called once per frame
     void Update()
     {
-        float agentSpeed = agent.velocity.normalized.magnitude;
-        float animCurSpeed = anim.GetFloat("Speed");
+        float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
+        float animatorCurSpeed = anim.GetFloat("Speed");
 
-        playerDir = gameManager.instance.player.transform.position - transform.position;
+        anim.SetFloat("Speed", Mathf.MoveTowards(animatorCurSpeed, agentSpeed, Time.deltaTime * animTransSpeed));    // added multiplication by animTransSpeed to give control from editor
 
-        anim.SetFloat("Speed", Mathf.MoveTowards(animCurSpeed, agentSpeed, Time.deltaTime * animTransSpeed));
         shootTimer += Time.deltaTime;
-        agent.SetDestination(gameManager.instance.player.transform.position);
 
-        if (shootTimer >= shootRate)
+        if (playerInRange && canSeePlayer())
         {
-            shoot();
+
         }
+    }
 
-        if (agent.remainingDistance <= agent.stoppingDistance)
+    bool canSeePlayer()
+    {
+        playerDir = gameManager.instance.player.transform.position - headPos.position;
+        angleToPlayer = Vector3.Angle(playerDir, transform.forward);
+
+        Debug.DrawRay(headPos.position, playerDir);
+
+        RaycastHit hit;
+        if(Physics.Raycast(headPos.position, playerDir, out hit))
         {
-            faceTarget();
+            if(hit.collider.CompareTag("Player") && angleToPlayer <= FOV)
+            {
+                agent.SetDestination(gameManager.instance.player.transform.position);
+
+                if (shootTimer >= shootRate)
+                    shoot();
+                if (agent.remainingDistance <= agent.stoppingDistance)
+                    faceTarget();
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Player"))
+        {
+            playerInRange = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.CompareTag("Player"))
+        {
+            playerInRange = false;
         }
     }
 
     void faceTarget()
     {
-        Quaternion rot = Quaternion.LookRotation(playerDir);
+        Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, 0, playerDir.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * faceTargetSpeed);
     }
 
     public void takeDamage(int amount)
     {
         HP -= amount;
-
         StartCoroutine(flashRed());
+        agent.SetDestination(gameManager.instance.player.transform.position);
 
         if (HP <= 0)
         {
-            Destroy(gameObject);
             gameManager.instance.updateGameGoal(-1);
+            Destroy(gameObject);
         }
     }
 
