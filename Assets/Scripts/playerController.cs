@@ -19,7 +19,9 @@ public class playerController : MonoBehaviour, IDamage
     [SerializeField] float momentumDrag;
 
     [Header("JetPack Options")]
+    [SerializeField] bool hasJetpack;
     [SerializeField] int jetpackFuelMax;
+    [SerializeField] float jetpackFuel;
     [SerializeField] float jetpackFuelUse;
     [SerializeField] float jetpackFuelRegen;
     [SerializeField] float jetpackFuelRegenDelay;
@@ -60,7 +62,6 @@ public class playerController : MonoBehaviour, IDamage
     bool isSprinting;
     bool isGrappling;
 
-    float jetpackFuel;
     private float jetpackFuelRegenTimer;
 
     // state of the grapple 
@@ -80,9 +81,9 @@ public class playerController : MonoBehaviour, IDamage
     void Start()
     {
         HPOrig = HP;
+        jetpackFuel = jetpackFuelMax;
         updatePlayerUI();
 
-        jetpackFuel = jetpackFuelMax;
         jetpackFuelRegenTimer = 0f;
     }
 
@@ -173,12 +174,12 @@ public class playerController : MonoBehaviour, IDamage
 
     void jump()
     {
-        if (testJumpKeyPressed() && jumpCount < jumpMax)
+        if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
             playerVelocity.y = jumpSpeed;
         }
-        else if (testJumpKeyPressed() && !controller.isGrounded)
+        else if ((Input.GetButton("Jump") && !controller.isGrounded) && hasJetpack)
         {
             jetpack();
         }
@@ -193,6 +194,8 @@ public class playerController : MonoBehaviour, IDamage
             playerVelocity.y = jetpackSpeed;
 
             jetpackFuelRegenTimer = jetpackFuelRegenDelay;
+
+            updatePlayerUI();
         }
     }
 
@@ -208,12 +211,14 @@ public class playerController : MonoBehaviour, IDamage
             {
                 jetpackFuel += jetpackFuelRegen * Time.deltaTime;
                 jetpackFuel = Mathf.Clamp(jetpackFuel, 0, jetpackFuelMax); // Clamp fuel between 0 and max
+                updatePlayerUI();
             }
         }
         else
         {
             // Reset the regen timer if fuel is full
             jetpackFuelRegenTimer = 0f;
+            updatePlayerUI();
         }
     }
 
@@ -337,6 +342,7 @@ public class playerController : MonoBehaviour, IDamage
     void updatePlayerUI()
     {
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
+        gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
     }
 
 }
