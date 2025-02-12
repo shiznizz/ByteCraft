@@ -126,7 +126,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void shoot()
     {
         shootTimer = 0;
-
+        dropLoot();
         Instantiate(bullet, shootPos.position, transform.rotation);
     }
 
