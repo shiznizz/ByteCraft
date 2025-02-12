@@ -20522,6 +20522,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a8efd76a7c7bc6478552a9fa6a60532, type: 3}
+--- !u!1 &668679999 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3219742146149356574, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 476556252240915396}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &669215894 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 135fa340b65c75f4baf2068625e534ec, type: 3}
@@ -22643,7 +22648,10 @@ MonoBehaviour:
   menuActive: {fileID: 0}
   menuPause: {fileID: 147449964}
   menuWin: {fileID: 79966754}
-  menuLose: {fileID: 0}
+  menuLose: {fileID: 668679999}
+  goalCountText: {fileID: 0}
+  playerHPBar: {fileID: 0}
+  playerDamageScreen: {fileID: 0}
   isPaused: 0
   player: {fileID: 0}
   playerScript: {fileID: 0}
@@ -25765,9 +25773,11 @@ MonoBehaviour:
   model: {fileID: 440191514}
   agent: {fileID: 904487994}
   anim: {fileID: 904487992}
+  headPos: {fileID: 0}
   HP: 3
   animTransSpeed: 8
   faceTargetSpeed: 32
+  FOV: 0
   bullet: {fileID: 0}
   shootPos: {fileID: 0}
   shootRate: 0
@@ -57572,6 +57582,10 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 500
       objectReference: {fileID: 0}
+    - target: {fileID: 3219742146149356574, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3354133548953732252, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_Name
       value: UI
@@ -58761,9 +58775,11 @@ MonoBehaviour:
   model: {fileID: 1991277958086441966}
   agent: {fileID: 1991277958082282800}
   anim: {fileID: 1991277958082282798}
+  headPos: {fileID: 0}
   HP: 3
   animTransSpeed: 8
   faceTargetSpeed: 32
+  FOV: 0
   bullet: {fileID: 8404054753871229023, guid: 8b8fbf7ee79c8c24a9eed42fbd5599e6, type: 3}
   shootPos: {fileID: 1710497046}
   shootRate: 1

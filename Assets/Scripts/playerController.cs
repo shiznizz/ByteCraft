@@ -26,6 +26,7 @@ public class playerController : MonoBehaviour
     [SerializeField] float shootRate;
 
     int jumpCount;
+    int HPOrig;
 
     float shootTimer;
 
@@ -39,6 +40,9 @@ public class playerController : MonoBehaviour
 
     void Start()
     {
+        HPOrig = HP;
+        updatePlayerUI();
+
         jetpackFuel = jetpackFuelMax;
         jetpackFuelRegenTimer = 0f;
     }
@@ -154,9 +158,24 @@ public class playerController : MonoBehaviour
     public void takeDamage(int damage)
     {
         HP -= damage;
+        StartCoroutine(flashDamageScreen());
+        updatePlayerUI();
+
         if (HP <= 0)
         {
-            // Destroy(gameObject);
+            gameManager. instance.youLose();
         }
+    }
+
+    IEnumerator flashDamageScreen()
+    {
+        gameManager.instance.playerDamageScreen.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        gameManager.instance.playerDamageScreen.SetActive(false);
+    }
+
+    void updatePlayerUI()
+    {
+        gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
     }
 }
