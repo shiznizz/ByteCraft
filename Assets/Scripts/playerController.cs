@@ -287,6 +287,33 @@ public class playerController : MonoBehaviour
 
     }
 
+    // tests if the grapple key is pressed and returns a bool
+    bool testGrappleKeyPressed()
+    {
+        if (Input.GetButton("Fire2") && grappleCooldownTimer >= grappleCooldown)
+            return true;
+
+        else
+            return false;
+
+    }
+
+    // tests if the jump key is pressed and returns a bool
+    bool testJumpKeyPressed()
+    {
+        if (Input.GetButton("Jump"))
+            return true;
+        else
+            return false;
+
+    }
+
+    public void StopGrapple()
+    {
+        isGrappling = false;
+        grappleRope.enabled = false;
+    }
+
     public void takeDamage(int damage)
     {
         HP -= damage;
