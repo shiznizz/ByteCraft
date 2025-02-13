@@ -69,7 +69,6 @@ public class playerController : MonoBehaviour, IDamage
     {
         grappleNormal, // did not shoot grapple
         grappleMoving, // grapple succesful now moving player
-
     }
 
     private void Awake()
@@ -103,6 +102,8 @@ public class playerController : MonoBehaviour, IDamage
             // is grappling
             case State.grappleMoving:
                 grappleMovement();
+                sprint();
+                handleJetpackFuelRegen();
                 break;
         }
     }
