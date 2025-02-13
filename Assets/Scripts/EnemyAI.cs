@@ -22,6 +22,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] GameObject bullet;
     [SerializeField] Transform shootPos;
     [SerializeField] float shootRate;
+    [SerializeField] float meleeDistance;
 
     Color colorOrig;
 
@@ -74,14 +75,25 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 agent.SetDestination(gameManager.instance.player.transform.position);
 
                 if (shootTimer >= shootRate && type == enemyType.range)
+                {
                     shoot();
+                }
                 if (agent.remainingDistance <= agent.stoppingDistance)
+                {
                     faceTarget();
+                }
 
                 return true;
             }
         }
         return false;
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            meleeAttack();
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -132,6 +144,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         shootTimer = 0;
         //dropLoot(); Moved above in "takeDamage" to be used after enemy dies
         Instantiate(bullet, shootPos.position, transform.rotation);
+    }
+
+    void meleeAttack()
+    {
+        shootTimer = 0;
+        anim.Play("Melee Attack");
     }
 
     public void dropLoot()
