@@ -1,7 +1,5 @@
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 
 
 public class gameManager : MonoBehaviour
@@ -28,7 +26,7 @@ public class gameManager : MonoBehaviour
     {
         instance = this;
         player = GameObject.FindWithTag("Player");
-        playerScript = player.GetComponent<playerController>();
+        playerScript = player.GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
@@ -71,7 +69,6 @@ public class gameManager : MonoBehaviour
     public void updateGameGoal(int amount)
     {
         goalCount += amount;
-        goalCountText.text = goalCount.ToString("F0");
 
         if (goalCount <= 0)
         {
