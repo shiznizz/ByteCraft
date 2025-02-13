@@ -1,5 +1,7 @@
 using UnityEditor;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 
 public class gameManager : MonoBehaviour
@@ -26,7 +28,7 @@ public class gameManager : MonoBehaviour
     {
         instance = this;
         player = GameObject.FindWithTag("Player");
-        playerScript = player.GetComponent<PlayerController>();
+        playerScript = player.GetComponent<playerController>();
     }
 
     // Update is called once per frame

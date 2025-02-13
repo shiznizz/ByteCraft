@@ -41,7 +41,7 @@ public class playerController : MonoBehaviour
     [SerializeField] float grappleCooldown;
 
     [Header("Grapple Gun")]
-   
+
     [SerializeField] Transform grappleShootPos;
     [SerializeField] LineRenderer grappleRope;
 
@@ -120,7 +120,7 @@ public class playerController : MonoBehaviour
             jumpCount = 0;
             playerVelocity = Vector3.zero;
             playerMomentum = Vector3.zero;
-            
+
         }
 
         moveDir = (Input.GetAxis("Horizontal") * transform.right) +
@@ -258,7 +258,7 @@ public class playerController : MonoBehaviour
             grappleState = State.grappleMoving;
 
         }
-        
+
 
     }
     // handles the grapple moving the character
@@ -328,7 +328,7 @@ public class playerController : MonoBehaviour
         if (HP <= 0)
         {
 
-            gameManager. instance.youLose();
+            gameManager.instance.youLose();
         }
     }
 
@@ -343,6 +343,17 @@ public class playerController : MonoBehaviour
     {
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
+    }
+
+    public void PickupLoot(Loot.LootType type, int amount)
+    {
+        switch (type)
+        {
+            case Loot.LootType.Health:
+                HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
+                break;
+        }
+        updatePlayerUI(); // refresh UI after pickup
     }
 
 }
