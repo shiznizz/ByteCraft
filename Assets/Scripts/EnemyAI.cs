@@ -3,8 +3,11 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class enemyAI : MonoBehaviour, IDamage
+public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
+    enum enemyType { range, melee }
+
+    [SerializeField] enemyType type;
     [SerializeField] Renderer model;
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Animator anim;
@@ -19,6 +22,7 @@ public class enemyAI : MonoBehaviour, IDamage
     [SerializeField] GameObject bullet;
     [SerializeField] Transform shootPos;
     [SerializeField] float shootRate;
+    [SerializeField] float meleeDistance;
 
     Color colorOrig;
 
@@ -28,6 +32,10 @@ public class enemyAI : MonoBehaviour, IDamage
     Vector3 playerDir;
 
     bool playerInRange;
+
+    // loot drop mechanic variables
+    [SerializeField] GameObject lootItem;
+    [SerializeField] Transform dropPos;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -66,15 +74,26 @@ public class enemyAI : MonoBehaviour, IDamage
             {
                 agent.SetDestination(gameManager.instance.player.transform.position);
 
-                if (shootTimer >= shootRate)
+                if (shootTimer >= shootRate && type == enemyType.range)
+                {
                     shoot();
+                }
                 if (agent.remainingDistance <= agent.stoppingDistance)
+                {
                     faceTarget();
+                }
 
                 return true;
             }
         }
         return false;
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            meleeAttack();
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -108,6 +127,7 @@ public class enemyAI : MonoBehaviour, IDamage
         if (HP <= 0)
         {
             gameManager.instance.updateGameGoal(-1);
+            //dropLoot();
             Destroy(gameObject);
         }
     }
@@ -122,7 +142,18 @@ public class enemyAI : MonoBehaviour, IDamage
     void shoot()
     {
         shootTimer = 0;
-
+        //dropLoot(); Moved above in "takeDamage" to be used after enemy dies
         Instantiate(bullet, shootPos.position, transform.rotation);
+    }
+
+    void meleeAttack()
+    {
+        shootTimer = 0;
+        anim.Play("Melee Attack");
+    }
+
+    public void dropLoot()
+    {
+        Instantiate(lootItem, dropPos.position, transform.rotation);
     }
 }

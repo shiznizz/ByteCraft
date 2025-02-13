@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class damage : MonoBehaviour
 {
-
     enum damageType { moving, stationary}
     [SerializeField] damageType type;
     [SerializeField] Rigidbody rb;
@@ -33,7 +32,7 @@ public class damage : MonoBehaviour
             dmg.takeDamage(damageAmount);
         }
 
-        if(type == damageType.moving)
+        if (type == damageType.moving)
         {
             Destroy(gameObject);
         }

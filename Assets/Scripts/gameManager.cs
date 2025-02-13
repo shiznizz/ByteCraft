@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine.UI;
 
 
 public class gameManager : MonoBehaviour
@@ -15,6 +15,7 @@ public class gameManager : MonoBehaviour
     [SerializeField] TMP_Text goalCountText;
 
     public Image playerHPBar;
+    public Image JPFuelGauge;
     public GameObject playerDamageScreen;
     public bool isPaused;
     public GameObject player;

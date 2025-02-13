@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class playerController : MonoBehaviour
+public class playerController : MonoBehaviour, IDamage
 {
 
     [SerializeField] CharacterController controller;
@@ -19,7 +19,9 @@ public class playerController : MonoBehaviour
     [SerializeField] float momentumDrag;
 
     [Header("JetPack Options")]
+    [SerializeField] bool hasJetpack;
     [SerializeField] int jetpackFuelMax;
+    [SerializeField] float jetpackFuel;
     [SerializeField] float jetpackFuelUse;
     [SerializeField] float jetpackFuelRegen;
     [SerializeField] float jetpackFuelRegenDelay;
@@ -39,7 +41,7 @@ public class playerController : MonoBehaviour
     [SerializeField] float grappleCooldown;
 
     [Header("Grapple Gun")]
-   
+
     [SerializeField] Transform grappleShootPos;
     [SerializeField] LineRenderer grappleRope;
 
@@ -60,7 +62,6 @@ public class playerController : MonoBehaviour
     bool isSprinting;
     bool isGrappling;
 
-    float jetpackFuel;
     private float jetpackFuelRegenTimer;
 
     // state of the grapple 
@@ -68,7 +69,6 @@ public class playerController : MonoBehaviour
     {
         grappleNormal, // did not shoot grapple
         grappleMoving, // grapple succesful now moving player
-
     }
 
     private void Awake()
@@ -80,9 +80,9 @@ public class playerController : MonoBehaviour
     void Start()
     {
         HPOrig = HP;
+        jetpackFuel = jetpackFuelMax;
         updatePlayerUI();
 
-        jetpackFuel = jetpackFuelMax;
         jetpackFuelRegenTimer = 0f;
     }
 
@@ -102,6 +102,8 @@ public class playerController : MonoBehaviour
             // is grappling
             case State.grappleMoving:
                 grappleMovement();
+                sprint();
+                handleJetpackFuelRegen();
                 break;
         }
     }
@@ -119,7 +121,7 @@ public class playerController : MonoBehaviour
             jumpCount = 0;
             playerVelocity = Vector3.zero;
             playerMomentum = Vector3.zero;
-            
+
         }
 
         moveDir = (Input.GetAxis("Horizontal") * transform.right) +
@@ -173,12 +175,12 @@ public class playerController : MonoBehaviour
 
     void jump()
     {
-        if (testJumpKeyPressed() && jumpCount < jumpMax)
+        if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
             playerVelocity.y = jumpSpeed;
         }
-        else if (testJumpKeyPressed() && !controller.isGrounded)
+        else if ((Input.GetButton("Jump") && !controller.isGrounded) && hasJetpack)
         {
             jetpack();
         }
@@ -193,6 +195,8 @@ public class playerController : MonoBehaviour
             playerVelocity.y = jetpackSpeed;
 
             jetpackFuelRegenTimer = jetpackFuelRegenDelay;
+
+            updatePlayerUI();
         }
     }
 
@@ -208,12 +212,14 @@ public class playerController : MonoBehaviour
             {
                 jetpackFuel += jetpackFuelRegen * Time.deltaTime;
                 jetpackFuel = Mathf.Clamp(jetpackFuel, 0, jetpackFuelMax); // Clamp fuel between 0 and max
+                updatePlayerUI();
             }
         }
         else
         {
             // Reset the regen timer if fuel is full
             jetpackFuelRegenTimer = 0f;
+            updatePlayerUI();
         }
     }
 
@@ -253,7 +259,7 @@ public class playerController : MonoBehaviour
             grappleState = State.grappleMoving;
 
         }
-        
+
 
     }
     // handles the grapple moving the character
@@ -322,8 +328,7 @@ public class playerController : MonoBehaviour
 
         if (HP <= 0)
         {
-
-            gameManager. instance.youLose();
+            gameManager.instance.youLose();
         }
     }
 
@@ -337,6 +342,21 @@ public class playerController : MonoBehaviour
     void updatePlayerUI()
     {
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
+        gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
+    }
+
+    private pickup.LootType lastLootType;
+    public void PickupLoot(pickup.LootType type, int amount)
+    {
+        lastLootType = type;
+
+        switch (type)
+        {
+            case pickup.LootType.Health:
+                HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
+                break;
+        }
+        updatePlayerUI(); // refresh UI after pickup
     }
 
 }
