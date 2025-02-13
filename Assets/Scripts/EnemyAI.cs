@@ -5,6 +5,9 @@ using UnityEngine.AI;
 
 public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
+    enum enemyType { range, melee }
+
+    [SerializeField] enemyType type;
     [SerializeField] Renderer model;
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Animator anim;
@@ -70,7 +73,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             {
                 agent.SetDestination(gameManager.instance.player.transform.position);
 
-                if (shootTimer >= shootRate)
+                if (shootTimer >= shootRate && type == enemyType.range)
                     shoot();
                 if (agent.remainingDistance <= agent.stoppingDistance)
                     faceTarget();
