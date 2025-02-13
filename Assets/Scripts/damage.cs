@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class damage : MonoBehaviour
 {
-
     enum damageType { moving, stationary}
     [SerializeField] damageType type;
     [SerializeField] Rigidbody rb;

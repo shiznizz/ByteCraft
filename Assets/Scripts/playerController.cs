@@ -328,7 +328,6 @@ public class playerController : MonoBehaviour, IDamage
 
         if (HP <= 0)
         {
-
             gameManager.instance.youLose();
         }
     }
@@ -346,11 +345,14 @@ public class playerController : MonoBehaviour, IDamage
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
     }
 
-    public void PickupLoot(Loot.LootType type, int amount)
+    private pickup.LootType lastLootType;
+    public void PickupLoot(pickup.LootType type, int amount)
     {
+        lastLootType = type;
+
         switch (type)
         {
-            case Loot.LootType.Health:
+            case pickup.LootType.Health:
                 HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
                 break;
         }
