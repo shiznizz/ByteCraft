@@ -180,8 +180,9 @@ MonoBehaviour:
   shootPos: {fileID: 1226905049197040701}
   shootRate: 2
   meleeDistance: 3
-  lootItem: {fileID: 0}
-  dropPos: {fileID: 0}
+  dropsLoot: 1
+  lootItem: {fileID: 8735450752145313020, guid: 6a5dccca8f423594f9aa244a57531997, type: 3}
+  dropPos: {fileID: 1231919823848600009}
 --- !u!195 &8573114166066744710
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -267,3 +268,8 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 2, z: 0.5}
+--- !u!4 &1231919823848600009 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5797436365741315306, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+  m_PrefabInstance: {fileID: 4714152964865959203}
+  m_PrefabAsset: {fileID: 0}

@@ -23,6 +23,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] Transform shootPos;
     [SerializeField] float shootRate;
     [SerializeField] float meleeDistance;
+    [SerializeField] bool dropsLoot;
 
     Color colorOrig;
 
@@ -127,7 +128,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (HP <= 0)
         {
             gameManager.instance.updateGameGoal(-1);
-            //dropLoot();
+            if (dropsLoot)
+                dropLoot();
             Destroy(gameObject);
         }
     }
@@ -142,7 +144,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void shoot()
     {
         shootTimer = 0;
-        //dropLoot(); Moved above in "takeDamage" to be used after enemy dies
         Instantiate(bullet, shootPos.position, transform.rotation);
     }
 
