@@ -87,7 +87,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         HPOrig = HP;
         jetpackFuel = jetpackFuelMax;
-        updatePlayerUI();
+        spawnPlayer();
 
         jetpackFuelRegenTimer = 0f;
 
@@ -371,7 +371,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         updatePlayerUI(); // refresh UI after pickup
     }
 
-
     public void heal(int amount)
     {
         HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
@@ -427,4 +426,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         }
     }
+    public void spawnPlayer()
+    {
+        HP = HPOrig;
+        updatePlayerUI();
+        controller.enabled = false;
+        controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
+        controller.enabled = true;
+    }
+
 }

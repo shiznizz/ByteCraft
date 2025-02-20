@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -38,6 +37,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] GameObject lootItem;
     [SerializeField] Transform dropPos;
 
+    // enemy roaming variables
+    [SerializeField] int roamPauseTime;
+    [SerializeField] int roamDist;
+    Vector3 startingPos;
+    float roamTimer;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -55,10 +60,14 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
         shootTimer += Time.deltaTime;
 
-        if (playerInRange && canSeePlayer())
-        {
+        if (agent.remainingDistance < 0.01f)
+            roamTimer += Time.deltaTime;
 
-        }
+
+        if (playerInRange && !canSeePlayer())
+            checkRoam();
+        else if (!playerInRange)
+            checkRoam();
     }
 
     bool canSeePlayer()
@@ -156,5 +165,25 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void dropLoot()
     {
         Instantiate(lootItem, dropPos.position, transform.rotation);
+    }
+
+    void checkRoam()
+    {
+        if (roamTimer > roamPauseTime && agent.remainingDistance < 0.01f)
+            roam();
+    }
+
+    void roam()
+    {
+        roamTimer = 0;
+        agent.stoppingDistance = 0;
+
+        Vector3 randPos = Random.insideUnitSphere * roamDist;
+        randPos += startingPos;
+
+        NavMeshHit hit;
+
+        NavMesh.SamplePosition(randPos, out hit, roamDist, 1);
+        agent.SetDestination(hit.position);
     }
 }
