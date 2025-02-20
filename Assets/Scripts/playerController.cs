@@ -81,7 +81,7 @@ public class playerController : MonoBehaviour, IDamage
     {
         HPOrig = HP;
         jetpackFuel = jetpackFuelMax;
-        updatePlayerUI();
+        spawnPlayer();
 
         jetpackFuelRegenTimer = 0f;
     }
@@ -357,6 +357,15 @@ public class playerController : MonoBehaviour, IDamage
                 break;
         }
         updatePlayerUI(); // refresh UI after pickup
+    }
+
+    public void spawnPlayer()
+    {
+        HP = HPOrig;
+        updatePlayerUI();
+        controller.enabled = false;
+        controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
+        controller.enabled = true;
     }
 
 }
