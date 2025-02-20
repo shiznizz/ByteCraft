@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -34,7 +35,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     bool playerInRange;
 
     // loot drop mechanic variables
-    [SerializeField] GameObject lootItem;
+    [Header("Loot Drop Settings")]
+    [SerializeField] List<LootItem> lootTable;
     [SerializeField] Transform dropPos;
 
     // enemy roaming variables
@@ -164,7 +166,15 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     public void dropLoot()
     {
-        Instantiate(lootItem, dropPos.position, transform.rotation);
+        foreach (LootItem loot in lootTable)
+        {
+            float roll = Random.Range(0f, 100f);
+            if (roll <= loot.dropChance)
+            {
+                Instantiate(loot.itemModel, dropPos.position, transform.rotation);
+                Debug.Log($"Dropped: {loot.itemName}");
+            }
+        }
     }
 
     void checkRoam()
