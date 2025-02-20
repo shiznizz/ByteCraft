@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class playerController : MonoBehaviour, IDamage
+public class playerController : MonoBehaviour, IDamage, IPickup
 {
 
     [SerializeField] CharacterController controller;
@@ -28,6 +28,9 @@ public class playerController : MonoBehaviour, IDamage
     [SerializeField] int jetpackSpeed;
 
     [Header("Weapon Options")]
+    [SerializeField] GameObject gunModel;
+    [SerializeField] gunStats startGun;
+    [SerializeField] List<gunStats> gunList = new List<gunStats>();
     [SerializeField] int shootDamage;
     [SerializeField] int shootDistance;
     [SerializeField] float shootRate;
@@ -41,7 +44,6 @@ public class playerController : MonoBehaviour, IDamage
     [SerializeField] float grappleCooldown;
 
     [Header("Grapple Gun")]
-
     [SerializeField] Transform grappleShootPos;
     [SerializeField] LineRenderer grappleRope;
 
@@ -50,6 +52,10 @@ public class playerController : MonoBehaviour, IDamage
 
     int jumpCount;
     int HPOrig;
+
+    //gun inventory
+    int gunListPos;
+
 
     float grappleCooldownTimer;
     float shootTimer;
@@ -84,6 +90,9 @@ public class playerController : MonoBehaviour, IDamage
         updatePlayerUI();
 
         jetpackFuelRegenTimer = 0f;
+
+        if (startGun != null)
+            getGunStats(startGun);
     }
 
     private void Update()
@@ -94,8 +103,8 @@ public class playerController : MonoBehaviour, IDamage
         {
             // not grappling 
             case State.grappleNormal:
-
-                movement();
+                if (!gameManager.instance.isPaused)
+                    movement();
                 sprint();
                 handleJetpackFuelRegen();
                 break;
@@ -150,7 +159,7 @@ public class playerController : MonoBehaviour, IDamage
         shootTimer += Time.deltaTime;
         grappleCooldownTimer += Time.deltaTime;
 
-        if (Input.GetButton("Fire1") && shootTimer >= shootRate)
+        if (Input.GetButton("Fire1") && gunList.Count > 0 && gunList[gunListPos].ammoCur > 0 && shootTimer >= shootRate)   //Want button input to be the first condition for performance - other evaluations wont occur unless button is pressed
         {
             shoot();
         }
@@ -159,6 +168,9 @@ public class playerController : MonoBehaviour, IDamage
         {
             shootGrapple();
         }
+
+        selectGun();
+        gunReload();
     }
 
     void sprint()
@@ -226,9 +238,9 @@ public class playerController : MonoBehaviour, IDamage
     void shoot()
     {
         shootTimer = 0;
+        gunList[gunListPos].ammoCur--;
 
         RaycastHit hit;
-
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDistance, ~ignoreLayer))
         {
             Debug.Log(hit.collider.name);
@@ -359,4 +371,60 @@ public class playerController : MonoBehaviour, IDamage
         updatePlayerUI(); // refresh UI after pickup
     }
 
+
+    public void heal(int amount)
+    {
+        HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
+        updatePlayerUI(); // refresh UI after pickup
+    }
+
+    public void getGunStats(gunStats gun)
+    {
+        gunList.Add(gun);
+        gunListPos = gunList.Count - 1;
+
+        changeGun();
+    }
+
+    void selectGun()
+    {
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 && gunListPos < gunList.Count - 1)
+        {
+            gunListPos++;
+            changeGun();
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0 && gunListPos > 0)
+        {
+            gunListPos--;
+            changeGun();
+        }
+    }
+
+    void changeGun()
+    {
+        shootDamage = gunList[gunListPos].shootDamage;
+        shootDistance = gunList[gunListPos].shootRange;
+        shootRate = gunList[gunListPos].shootRate;
+
+        gunModel.GetComponent<MeshFilter>().sharedMesh = gunList[gunListPos].model.GetComponent<MeshFilter>().sharedMesh;
+        gunModel.GetComponent<MeshRenderer>().sharedMaterial = gunList[gunListPos].model.GetComponent<MeshRenderer>().sharedMaterial;
+    }
+
+    void gunReload()
+    {
+        if (Input.GetButtonDown("Reload") && gunList.Count > 0)
+        {
+            if (gunList[gunListPos].ammoReserve > gunList[gunListPos].ammoMax)          //Check if the player can reload a full clip
+            {
+                gunList[gunListPos].ammoReserve -= (gunList[gunListPos].ammoMax - gunList[gunListPos].ammoCur);
+                gunList[gunListPos].ammoCur = gunList[gunListPos].ammoMax;
+            }
+            else if (gunList[gunListPos].ammoReserve > 0)                               //If there is ammo in reserve but not a full clip reload remaining ammo
+            {
+                gunList[gunListPos].ammoCur = gunList[gunListPos].ammoReserve;
+                gunList[gunListPos].ammoReserve = 0;
+            }
+
+        }
+    }
 }
