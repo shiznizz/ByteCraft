@@ -239,6 +239,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         shootTimer = 0;
         gunList[gunListPos].ammoCur--;
+        updatePlayerUI();
 
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDistance, ~ignoreLayer))
@@ -355,6 +356,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
+        
+        if (gunList.Count > 0)
+            gameManager.instance.updateAmmo(gunList[gunListPos]);
     }
 
     private pickup.LootType lastLootType;
@@ -424,6 +428,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 gunList[gunListPos].ammoReserve = 0;
             }
 
+            updatePlayerUI();
         }
     }
     public void spawnPlayer()
