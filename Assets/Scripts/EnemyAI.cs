@@ -20,6 +20,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     [SerializeField] GameObject bullet;
     [SerializeField] Transform shootPos;
+    [SerializeField] Collider attackCol;
     [SerializeField] float shootRate;
     [SerializeField] float meleeDistance;
     [SerializeField] bool dropsLoot;
@@ -185,5 +186,15 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
         NavMesh.SamplePosition(randPos, out hit, roamDist, 1);
         agent.SetDestination(hit.position);
+    }
+
+    public void turnOnCol()
+    {
+        attackCol.enabled = true;
+    }
+
+    public void turnOffCol()
+    {
+        attackCol.enabled = false;
     }
 }
