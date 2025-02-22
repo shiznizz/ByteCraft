@@ -94,6 +94,10 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 {
                     shoot();
                 }
+                if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= meleeDistance) // Ensures attack happens when the shoot timer is ready
+                {
+                    meleeAttack();
+                }
                 if (agent.remainingDistance <= agent.stoppingDistance)
                 {
                     faceTarget();
@@ -107,23 +111,23 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         agent.stoppingDistance = 0;
         return false;
     }
-    private void OnTriggerStay(Collider other)
-    {
-        //if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= agent.stoppingDistance)
-        //{
-        //    meleeAttack();
-        //}
+    //private void OnTriggerStay(Collider other)
+    //{
+    //    //if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= agent.stoppingDistance)
+    //    //{
+    //    //    meleeAttack();
+    //    //}
 
-        if (other.CompareTag("Player") && agent.remainingDistance <= meleeDistance) // Checks against meleeDistance instead of stoppingDistance
-        {
-            if (shootTimer >= shootRate && type == enemyType.melee) // Ensures attack happens when the shoot timer is ready
-            {
-                meleeAttack();
-            }
-        }
-    }
+    //    if (other.CompareTag("Player") && agent.remainingDistance <= meleeDistance) // Checks against meleeDistance instead of stoppingDistance
+    //    {
+    //        if (shootTimer >= shootRate && type == enemyType.melee) // Ensures attack happens when the shoot timer is ready
+    //        {
+    //            meleeAttack();
+    //        }
+    //    }
+    //}
 
-    private void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Player"))
         {
@@ -184,9 +188,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     void meleeAttack()
     {
-        //shootTimer = 0;
-        anim.Play("Melee Attack");
-        shootTimer = 0; // Reset the shoot timer for the cooldown between melee attacks
+        shootTimer = 0;
+        anim.SetTrigger("Melee Attack");
+        //shootTimer = 0; // Reset the shoot timer for the cooldown between melee attacks
     }
 
     public void dropLoot()

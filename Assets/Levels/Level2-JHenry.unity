@@ -276,37 +276,113 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4774848186364594, guid: f2532f10600de29418d706af66b4b7d3, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.5070734
+      value: -0.06956982
       objectReference: {fileID: 0}
     - target: {fileID: 4774848186364594, guid: f2532f10600de29418d706af66b4b7d3, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.20838298
+      value: 0.35652703
       objectReference: {fileID: 0}
     - target: {fileID: 4774848186364594, guid: f2532f10600de29418d706af66b4b7d3, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.77511126
+      value: -0.92362446
       objectReference: {fileID: 0}
     - target: {fileID: 4774848186364594, guid: f2532f10600de29418d706af66b4b7d3, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.314095
+      value: 0.122337274
       objectReference: {fileID: 0}
     - target: {fileID: 4774848186364594, guid: f2532f10600de29418d706af66b4b7d3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 44.287
+      value: 10.159
       objectReference: {fileID: 0}
     - target: {fileID: 4774848186364594, guid: f2532f10600de29418d706af66b4b7d3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 246.238
+      value: 167.339
       objectReference: {fileID: 0}
     - target: {fileID: 4774848186364594, guid: f2532f10600de29418d706af66b4b7d3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 359.64
+      value: 316.656
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4774848186364594, guid: f2532f10600de29418d706af66b4b7d3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 840604074}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f2532f10600de29418d706af66b4b7d3, type: 3}
+--- !u!1 &840604071
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 840604074}
+  - component: {fileID: 840604073}
+  - component: {fileID: 840604072}
+  m_Layer: 0
+  m_Name: Capsule
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!136 &840604072
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840604071}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 0.6
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: -0.7, z: 0}
+--- !u!114 &840604073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840604071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bfb08c61bb591f43aa94311eab97330, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
+  rb: {fileID: 0}
+  damageAmount: 1
+  speed: 0
+  destroyTime: 0
+--- !u!4 &840604074
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840604071}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1051273416}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &841719537
 GameObject:
   m_ObjectHideFlags: 0
@@ -637,10 +713,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy Sniper
       objectReference: {fileID: 0}
-    - target: {fileID: 2605874252724814514, guid: 1f7a3fb7c8f7c7b44a2c797849650707, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4176012937833824853, guid: 1f7a3fb7c8f7c7b44a2c797849650707, type: 3}
       propertyPath: m_LocalPosition.x
       value: -7
@@ -680,18 +752,6 @@ PrefabInstance:
     - target: {fileID: 4176012937833824853, guid: 1f7a3fb7c8f7c7b44a2c797849650707, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5251323147203830899, guid: 1f7a3fb7c8f7c7b44a2c797849650707, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5918150826399878262, guid: 1f7a3fb7c8f7c7b44a2c797849650707, type: 3}
-      propertyPath: roamDist
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 5918150826399878262, guid: 1f7a3fb7c8f7c7b44a2c797849650707, type: 3}
-      propertyPath: roamPauseTime
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3882,6 +3942,7 @@ GameObject:
   - component: {fileID: 95139111253883443}
   - component: {fileID: 95139111253883440}
   - component: {fileID: 95139111253883441}
+  - component: {fileID: 95139111253883444}
   m_Layer: 7
   m_Name: Melee Warrior
   m_TagString: Untagged
@@ -7381,7 +7442,7 @@ MonoBehaviour:
   FOV: 90
   bullet: {fileID: 1348404931}
   shootPos: {fileID: 4617411209731330}
-  attackCol: {fileID: 0}
+  attackCol: {fileID: 840604072}
   shootRate: 1
   meleeDistance: 2
   dropsLoot: 0
@@ -7412,6 +7473,27 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!135 &95139111253883444
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1948535200545740}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 15
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!137 &137383226297423818
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0
