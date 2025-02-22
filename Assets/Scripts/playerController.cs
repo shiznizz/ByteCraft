@@ -10,7 +10,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] LayerMask ignoreLayer;
 
     [Header("Player Options")]
-    [SerializeField] int HP;
+    public int HP;
     [SerializeField] int speed;
     [SerializeField] int speedModifer;
     [SerializeField] int jumpSpeed;
@@ -31,6 +31,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] GameObject gunModel;
     [SerializeField] gunStats startGun;
     [SerializeField] List<gunStats> gunList = new List<gunStats>();
+    [SerializeField] Transform muzzleFlash;
     [SerializeField] int shootDamage;
     [SerializeField] int shootDistance;
     [SerializeField] float shootRate;
@@ -263,10 +264,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         gunList[gunListPos].ammoCur--;
         updatePlayerUI();
 
+        StartCoroutine(flashMuzzle());
+
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDistance, ~ignoreLayer))
         {
-            Debug.Log(hit.collider.name);
+            // Debug.Log(hit.collider.name);
+
+            Instantiate(gunList[gunListPos].hitEffect, hit.point, Quaternion.identity);
 
             IDamage damage = hit.collider.GetComponent<IDamage>();
 
@@ -378,7 +383,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
-        
+
         if (gunList.Count > 0)
             gameManager.instance.updateAmmo(gunList[gunListPos]);
     }
@@ -491,11 +496,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     }
     public void spawnPlayer()
     {
+        controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
+
         HP = HPOrig;
         updatePlayerUI();
-        controller.enabled = false;
-        controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
-        controller.enabled = true;
     }
 
     void meleeAttack()
@@ -526,4 +530,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     }
 
+    IEnumerator flashMuzzle()
+    {
+        muzzleFlash.localEulerAngles = new Vector3(0, 0, Random.Range(0, 360));
+        muzzleFlash.gameObject.SetActive(true);
+        yield return new WaitForSeconds(0.05f);
+        muzzleFlash.gameObject.SetActive(false);
+    }
 }
