@@ -496,7 +496,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     }
     public void spawnPlayer()
     {
+        controller.enabled = false;
         controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
+        controller.enabled = true;
 
         HP = HPOrig;
         updatePlayerUI();
