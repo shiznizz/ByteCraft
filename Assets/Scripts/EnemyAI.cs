@@ -99,6 +99,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                     faceTarget();
                 }
 
+                agent.stoppingDistance = stoppingDistOrig;
+
                 return true;
             }
         }
