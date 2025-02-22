@@ -25,10 +25,13 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] float meleeDistance;
     [SerializeField] bool dropsLoot;
 
+    [SerializeField] Collider weaponCol;
+
     Color colorOrig;
 
     float shootTimer;
     float angleToPlayer;
+    float stoppingDistOrig;
 
     Vector3 playerDir;
 
@@ -48,7 +51,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void Start()
     {
         colorOrig = model.material.color;
-        gameManager.instance.updateGameGoal(1);
+        //gameManager.instance.updateGameGoal(1);
+        startingPos = transform.position;
+        stoppingDistOrig = agent.stoppingDistance;
     }
 
     // Update is called once per frame
@@ -74,12 +79,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     bool canSeePlayer()
     {
         playerDir = gameManager.instance.player.transform.position - headPos.position;
-        angleToPlayer = Vector3.Angle(playerDir, transform.forward);
+        angleToPlayer = Vector3.Angle(new Vector3(playerDir.x, transform.position.y, playerDir.z), transform.forward);
 
         Debug.DrawRay(headPos.position, playerDir);
 
         RaycastHit hit;
-        if(Physics.Raycast(headPos.position, playerDir, out hit))
+        if (Physics.Raycast(headPos.position, playerDir, out hit) && angleToPlayer <= FOV)
         {
             if(hit.collider.CompareTag("Player") && angleToPlayer <= FOV)
             {
@@ -97,6 +102,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 return true;
             }
         }
+        agent.stoppingDistance = 0;
         return false;
     }
     private void OnTriggerStay(Collider other)
@@ -121,6 +127,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         {
             playerInRange = false;
         }
+        agent.stoppingDistance = 0;
     }
 
     void faceTarget()
@@ -134,6 +141,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         HP -= amount;
         StartCoroutine(flashRed());
         agent.SetDestination(gameManager.instance.player.transform.position);
+
+        //weaponColOff();
 
         if (HP <= 0)
         {
@@ -154,6 +163,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void shoot()
     {
         shootTimer = 0;
+
+        anim.SetTrigger("Shoot");
+    }
+
+    public void createBullet()
+    {
         Instantiate(bullet, shootPos.position, transform.rotation);
     }
 
