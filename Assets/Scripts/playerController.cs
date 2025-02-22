@@ -10,7 +10,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] LayerMask ignoreLayer;
 
     [Header("Player Options")]
-    [SerializeField] int HP;
+    public int HP;
     [SerializeField] int speed;
     [SerializeField] int speedModifer;
     [SerializeField] int jumpSpeed;
@@ -27,13 +27,24 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] float jetpackFuelRegenDelay;
     [SerializeField] int jetpackSpeed;
 
-    [Header("Weapon Options")]
+    [Header("Range Options")]
     [SerializeField] GameObject gunModel;
     [SerializeField] gunStats startGun;
     [SerializeField] List<gunStats> gunList = new List<gunStats>();
+    [SerializeField] Transform muzzleFlash;
     [SerializeField] int shootDamage;
     [SerializeField] int shootDistance;
     [SerializeField] float shootRate;
+
+    [Header("Melee Options")]
+    [SerializeField] GameObject meleeWeaponModel;
+    [SerializeField] meleeWepStats startMelee;
+    [SerializeField] List<meleeWepStats> meleeList = new List<meleeWepStats>();
+    [SerializeField] int meleeDamage;
+    [SerializeField] float meleeRange;
+    [SerializeField] float meleeCooldown;
+    private float meleeCooldownTimer = 0f;
+    [SerializeField] Animator playerAnimator;
 
     [Header("Grapple Options")]
     [SerializeField] int grappleDistance;
@@ -53,8 +64,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     int jumpCount;
     int HPOrig;
 
-    //gun inventory
+    //Weapons inventory (gun, melee)
     int gunListPos;
+    int meleeListPos;
 
 
     float grappleCooldownTimer;
@@ -93,6 +105,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         if (startGun != null)
             getGunStats(startGun);
+
+        if(startMelee != null)
+            getMeleeWeaponStats(startMelee);
     }
 
     private void Update()
@@ -104,7 +119,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             // not grappling 
             case State.grappleNormal:
                 if (!gameManager.instance.isPaused)
-                    movement();
+                movement();
                 sprint();
                 handleJetpackFuelRegen();
                 break;
@@ -114,6 +129,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 sprint();
                 handleJetpackFuelRegen();
                 break;
+        }
+
+        //Handles melee attack
+        meleeCooldownTimer -= Time.deltaTime; // Decreases cooldown timer each frame
+
+        if (Input.GetButtonDown("MeleeAttack") && meleeCooldownTimer <= 0)
+        {
+            meleeAttack();
         }
     }
 
@@ -241,10 +264,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         gunList[gunListPos].ammoCur--;
         updatePlayerUI();
 
+        StartCoroutine(flashMuzzle());
+
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDistance, ~ignoreLayer))
         {
-            Debug.Log(hit.collider.name);
+            // Debug.Log(hit.collider.name);
+
+            Instantiate(gunList[gunListPos].hitEffect, hit.point, Quaternion.identity);
 
             IDamage damage = hit.collider.GetComponent<IDamage>();
 
@@ -356,7 +383,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
-        
+
         if (gunList.Count > 0)
             gameManager.instance.updateAmmo(gunList[gunListPos]);
     }
@@ -389,6 +416,19 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         changeGun();
     }
 
+    public void getMeleeWeaponStats(meleeWepStats melee)
+    {
+        meleeList.Add(melee);
+        meleeListPos = meleeList.Count - 1;
+
+        changeMeleeWep();
+
+        if (meleeWeaponModel != null)
+        {
+            meleeWeaponModel.SetActive(true);
+        }
+    }
+
     void selectGun()
     {
         if (Input.GetAxis("Mouse ScrollWheel") > 0 && gunListPos < gunList.Count - 1)
@@ -403,6 +443,20 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
 
+    void selectMelee()
+    {
+        if(Input.GetAxis("Mouse ScrollWheel") > 0 && meleeListPos < meleeList.Count - 1)
+        {
+            meleeListPos++;
+            changeMeleeWep();
+        }
+        else if(Input.GetAxis("Mouse ScrollWheel") < 0 && meleeListPos > 0)
+        {
+            meleeListPos--;
+            changeMeleeWep();
+        }
+    }
+
     void changeGun()
     {
         shootDamage = gunList[gunListPos].shootDamage;
@@ -411,6 +465,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         gunModel.GetComponent<MeshFilter>().sharedMesh = gunList[gunListPos].model.GetComponent<MeshFilter>().sharedMesh;
         gunModel.GetComponent<MeshRenderer>().sharedMaterial = gunList[gunListPos].model.GetComponent<MeshRenderer>().sharedMaterial;
+    }
+
+    void changeMeleeWep()
+    {
+        meleeDamage = meleeList[meleeListPos].meleeDamage;
+        meleeRange = meleeList[meleeListPos].meleeDitance;
+
+        meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = meleeList[meleeListPos].model.GetComponent<MeshFilter>().sharedMesh;
+        meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = meleeList[meleeListPos].model.GetComponent<MeshRenderer>().sharedMaterial;
     }
 
     void gunReload()
@@ -433,11 +496,47 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     }
     public void spawnPlayer()
     {
-        HP = HPOrig;
-        updatePlayerUI();
         controller.enabled = false;
         controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
         controller.enabled = true;
+
+        HP = HPOrig;
+        updatePlayerUI();
     }
 
+    void meleeAttack()
+    {
+        meleeCooldownTimer = meleeCooldown; // Will Reset the cooldown timer
+
+        if (playerAnimator != null)
+        {
+            playerAnimator.SetTrigger("MeleeAttack");
+        }
+
+        //Activate melee weapon
+        if (meleeWeaponModel != null)
+        {
+            meleeWeaponModel.SetActive(true); // Shows the melee weapon during the attack
+        }
+
+        //Raycast to detect enemies in melee range
+        RaycastHit hit;
+        if(Physics.Raycast(transform.position, transform.forward, out hit, meleeRange, ~ignoreLayer)) 
+        {
+            Debug.Log("Melee hit; " + hit.collider.name);
+
+            //Apply damage if the object hit implements IDamage
+            IDamage damageable = hit.collider.GetComponent<IDamage>();
+            damageable.takeDamage(meleeDamage);
+        }
+
+    }
+
+    IEnumerator flashMuzzle()
+    {
+        muzzleFlash.localEulerAngles = new Vector3(0, 0, Random.Range(0, 360));
+        muzzleFlash.gameObject.SetActive(true);
+        yield return new WaitForSeconds(0.05f);
+        muzzleFlash.gameObject.SetActive(false);
+    }
 }

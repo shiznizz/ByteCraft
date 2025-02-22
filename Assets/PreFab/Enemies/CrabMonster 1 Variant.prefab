@@ -146,7 +146,7 @@ SphereCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Radius: 0.001
   m_Center: {x: 0, y: 0, z: 0}
@@ -178,11 +178,14 @@ MonoBehaviour:
   FOV: 180
   bullet: {fileID: 1229310425171102399}
   shootPos: {fileID: 1226905049197040701}
+  attackCol: {fileID: 7391637136945108204}
   shootRate: 2
   meleeDistance: 3
   dropsLoot: 1
   lootItem: {fileID: 8735450752145313020, guid: 6a5dccca8f423594f9aa244a57531997, type: 3}
   dropPos: {fileID: 1231919823848600009}
+  roamPauseTime: 0
+  roamDist: 0
 --- !u!195 &8573114166066744710
 NavMeshAgent:
   m_ObjectHideFlags: 0

@@ -21,14 +21,18 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     [SerializeField] GameObject bullet;
     [SerializeField] Transform shootPos;
+    [SerializeField] Collider attackCol;
     [SerializeField] float shootRate;
     [SerializeField] float meleeDistance;
     [SerializeField] bool dropsLoot;
+
+    [SerializeField] Collider weaponCol;
 
     Color colorOrig;
 
     float shootTimer;
     float angleToPlayer;
+    float stoppingDistOrig;
 
     Vector3 playerDir;
 
@@ -50,6 +54,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     {
         colorOrig = model.material.color;
         gameManager.instance.updateGameGoal(1);
+        startingPos = transform.position;
+        stoppingDistOrig = agent.stoppingDistance;
     }
 
     // Update is called once per frame
@@ -75,12 +81,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     bool canSeePlayer()
     {
         playerDir = gameManager.instance.player.transform.position - headPos.position;
-        angleToPlayer = Vector3.Angle(playerDir, transform.forward);
+        angleToPlayer = Vector3.Angle(new Vector3(playerDir.x, transform.position.y, playerDir.z), transform.forward);
 
         Debug.DrawRay(headPos.position, playerDir);
 
         RaycastHit hit;
-        if(Physics.Raycast(headPos.position, playerDir, out hit))
+        if (Physics.Raycast(headPos.position, playerDir, out hit) && angleToPlayer <= FOV)
         {
             if(hit.collider.CompareTag("Player") && angleToPlayer <= FOV)
             {
@@ -90,25 +96,40 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 {
                     shoot();
                 }
+                if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= meleeDistance) // Ensures attack happens when the shoot timer is ready
+                {
+                    meleeAttack();
+                }
                 if (agent.remainingDistance <= agent.stoppingDistance)
                 {
                     faceTarget();
                 }
 
+                agent.stoppingDistance = stoppingDistOrig;
+
                 return true;
             }
         }
+        agent.stoppingDistance = 0;
         return false;
     }
-    private void OnTriggerStay(Collider other)
-    {
-        if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= agent.stoppingDistance)
-        {
-            meleeAttack();
-        }
-    }
+    //private void OnTriggerStay(Collider other)
+    //{
+    //    //if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= agent.stoppingDistance)
+    //    //{
+    //    //    meleeAttack();
+    //    //}
 
-    private void OnTriggerEnter(Collider other)
+    //    if (other.CompareTag("Player") && agent.remainingDistance <= meleeDistance) // Checks against meleeDistance instead of stoppingDistance
+    //    {
+    //        if (shootTimer >= shootRate && type == enemyType.melee) // Ensures attack happens when the shoot timer is ready
+    //        {
+    //            meleeAttack();
+    //        }
+    //    }
+    //}
+
+        private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Player"))
         {
@@ -122,6 +143,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         {
             playerInRange = false;
         }
+        agent.stoppingDistance = 0;
     }
 
     void faceTarget()
@@ -135,6 +157,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         HP -= amount;
         StartCoroutine(flashRed());
         agent.SetDestination(gameManager.instance.player.transform.position);
+
+        //weaponColOff();
 
         if (HP <= 0)
         {
@@ -155,13 +179,20 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void shoot()
     {
         shootTimer = 0;
+
+        anim.SetTrigger("Shoot");
+    }
+
+    public void createBullet()
+    {
         Instantiate(bullet, shootPos.position, transform.rotation);
     }
 
     void meleeAttack()
     {
         shootTimer = 0;
-        anim.Play("Melee Attack");
+        anim.SetTrigger("Melee Attack");
+        //shootTimer = 0; // Reset the shoot timer for the cooldown between melee attacks
     }
 
     public void dropLoot()
@@ -179,7 +210,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     void checkRoam()
     {
-        if (roamTimer > roamPauseTime && agent.remainingDistance < 0.01f)
+        if ((roamTimer > roamPauseTime && agent.remainingDistance < 0.01f) || gameManager.instance.playerScript.HP <= 0)
             roam();
     }
 
@@ -195,5 +226,15 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
         NavMesh.SamplePosition(randPos, out hit, roamDist, 1);
         agent.SetDestination(hit.position);
+    }
+
+    public void turnOnCol()
+    {
+        attackCol.enabled = true;
+    }
+
+    public void turnOffCol()
+    {
+        attackCol.enabled = false;
     }
 }
