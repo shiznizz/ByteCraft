@@ -185,7 +185,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     void checkRoam()
     {
-        if (roamTimer > roamPauseTime && agent.remainingDistance < 0.01f)
+        if ((roamTimer > roamPauseTime && agent.remainingDistance < 0.01f) || gameManager.instance.playerScript.HP <= 0)
             roam();
     }
 
