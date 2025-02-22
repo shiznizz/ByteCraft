@@ -13,6 +13,9 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
     [SerializeField] TMP_Text goalCountText;
+    [SerializeField] TMP_Text ammoCurText;
+    [SerializeField] TMP_Text ammoMaxText;
+    [SerializeField] TMP_Text ammoReserveText;
 
     public Image playerHPBar;
     public Image JPFuelGauge;
@@ -23,12 +26,16 @@ public class gameManager : MonoBehaviour
 
     int goalCount;
 
+    public GameObject playerSpawnPos;
+    public GameObject checkpointPopup;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         instance = this;
         player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<playerController>();
+        playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
     }
 
     // Update is called once per frame
@@ -79,6 +86,13 @@ public class gameManager : MonoBehaviour
             menuActive = menuWin;
             menuActive.SetActive(true);
         }
+    }
+
+    public void updateAmmo(gunStats gun)
+    {
+        ammoCurText.text = gun.ammoCur.ToString("D3");
+        ammoMaxText.text = gun.ammoMax.ToString("D3");
+        ammoReserveText.text = gun.ammoReserve.ToString("D3");
     }
 
     public void youLose()

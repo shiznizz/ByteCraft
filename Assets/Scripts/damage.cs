@@ -10,6 +10,8 @@ public class damage : MonoBehaviour
     [SerializeField] int speed;
     [SerializeField] int destroyTime;
 
+    float damageTimer;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -20,21 +22,46 @@ public class damage : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void Update()
+    {
+        damageTimer += Time.deltaTime;
+    }
+
+    private void OnTriggerStay(Collider other)
     {
         if (other.isTrigger)
             return;
 
-        IDamage dmg = other.GetComponent<IDamage>();
-
-        if(dmg != null )
+        if (type == damageType.stationary && damageTimer > speed)
         {
-            dmg.takeDamage(damageAmount);
-        }
+            damageTimer = 0;
 
+            IDamage dmg = other.GetComponent<IDamage>();
+
+            if (dmg != null)
+            {
+                dmg.takeDamage(damageAmount);
+            }
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
         if (type == damageType.moving)
         {
-            Destroy(gameObject);
+            if (other.isTrigger)
+                return;
+
+            IDamage dmg = other.GetComponent<IDamage>();
+
+            if (dmg != null)
+            {
+                dmg.takeDamage(damageAmount);
+            }
+
+            if (type == damageType.moving)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

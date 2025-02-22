@@ -65,7 +65,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6171055195017240931}
-  - {fileID: 8285903873153423212}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6367921215274828822
@@ -98,6 +97,9 @@ MonoBehaviour:
   jetpackFuelRegen: 100
   jetpackFuelRegenDelay: 1.5
   jetpackSpeed: 8
+  gunModel: {fileID: 5264184484870760792}
+  startGun: {fileID: 11400000, guid: 03b9dc372d46210429f41e8e4912f0be, type: 2}
+  gunList: []
   shootDamage: 1
   shootDistance: 100
   shootRate: 1
@@ -125,7 +127,7 @@ CharacterController:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Height: 2
   m_Radius: 0.5
@@ -215,13 +217,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5984708132743886513}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.439, y: 0.657, z: 0.519}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.4468264, y: -0.46800005, z: 0.7688778}
+  m_LocalScale: {x: 0.01, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3704177444564449881}
-  m_Father: {fileID: 3400437105452468489}
+  m_Father: {fileID: 6171055195017240931}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3946346467836274659
 MeshFilter:
@@ -238,7 +240,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5984708132743886513}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -436,7 +438,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 8285903873153423212}
+  - {fileID: 8366069508807288102}
   m_Father: {fileID: 3400437105452468489}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5126700613926910122
@@ -558,3 +562,87 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!1001 &3213437186668215568
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6171055195017240931}
+    m_Modifications:
+    - target: {fileID: 2194346670438762635, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255868058141295436, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: gun
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4824081795317776663, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377752364472653878, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.37499556
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377752364472653878, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.625
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377752364472653878, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.7500022
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377752364472653878, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377752364472653878, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377752364472653878, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377752364472653878, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377752364472653878, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377752364472653878, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6377752364472653878, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7320126194257204296, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_Name
+      value: Black Auto Rifle
+      objectReference: {fileID: 0}
+    - target: {fileID: 7624629573317014950, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4255868058141295436, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+--- !u!1 &5264184484870760792 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7320126194257204296, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+  m_PrefabInstance: {fileID: 3213437186668215568}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8366069508807288102 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6377752364472653878, guid: 4ae7b36808f20b640966e26040268823, type: 3}
+  m_PrefabInstance: {fileID: 3213437186668215568}
+  m_PrefabAsset: {fileID: 0}
