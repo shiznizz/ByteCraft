@@ -100,9 +100,17 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     }
     private void OnTriggerStay(Collider other)
     {
-        if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= agent.stoppingDistance)
+        //if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= agent.stoppingDistance)
+        //{
+        //    meleeAttack();
+        //}
+
+        if (other.CompareTag("Player") && agent.remainingDistance <= meleeDistance) // Checks against meleeDistance instead of stoppingDistance
         {
-            meleeAttack();
+            if (shootTimer >= shootRate && type == enemyType.melee) // Ensures attack happens when the shoot timer is ready
+            {
+                meleeAttack();
+            }
         }
     }
 
@@ -158,8 +166,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     void meleeAttack()
     {
-        shootTimer = 0;
+        //shootTimer = 0;
         anim.Play("Melee Attack");
+        shootTimer = 0; // Reset the shoot timer for the cooldown between melee attacks
     }
 
     public void dropLoot()

@@ -4,8 +4,9 @@ using UnityEngine;
 public class pickup : MonoBehaviour
 {
     [SerializeField] gunStats gun;
+    [SerializeField] meleeWepStats meleeWeapon;
 
-    public enum LootType {Health,Gun}
+    public enum LootType {Health,Gun, MeleeWeapon}
     public LootType lootType;
     public int amount; // how much value the loot gives to player
 
@@ -24,6 +25,9 @@ public class pickup : MonoBehaviour
                         break;
                     case pickup.LootType.Gun:
                         player.getGunStats(gun);
+                        break;
+                    case pickup.LootType.MeleeWeapon:
+                        player.getMeleeWeaponStats(meleeWeapon);
                         break;
                 }
                 Destroy(gameObject); // remove loot from scene
