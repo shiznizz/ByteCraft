@@ -572,7 +572,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (magicProjectile != null && magicWeaponModel != null)
         {
             //Creates the projectile at the player's position
-            Instantiate(magicProjectile, magicWeaponModel.transform.position, Quaternion.LookRotation(Camera.main.transform.forward));
+            //Instantiate(magicProjectile, magicWeaponModel.transform.position, Quaternion.LookRotation(Camera.main.transform.forward));
+
+            Instantiate(magicProjectile, magicWeaponModel.transform.position, Quaternion.LookRotation(Camera.main.transform.forward))
+            .GetComponent<Rigidbody>().velocity = Camera.main.transform.forward * magicProjectileSpeed;
+
 
             ////Add a forward velocity to the projectile
             //Rigidbody rb = projectile.GetComponent<Rigidbody>();
