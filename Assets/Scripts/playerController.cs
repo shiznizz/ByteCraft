@@ -474,6 +474,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         gunModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
         gunModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;
+
+        meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
+        magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
     }
 
     void changeMeleeWep()
@@ -481,8 +484,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         attackDamage = weaponList[weaponListPos].meleeWep.meleeDamage;
         attackRange = weaponList[weaponListPos].meleeWep.meleeDistance;
 
+        attackCooldown = weaponList[weaponListPos].meleeWep.meleeCooldown;
+
         meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].meleeWep.model.GetComponent<MeshFilter>().sharedMesh;
         meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].meleeWep.model.GetComponent<MeshRenderer>().sharedMaterial;
+
+        gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+        magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
     }
 
     void changeMagicWep()
@@ -490,8 +498,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         attackDamage = weaponList[weaponListPos].magicWep.magicDamage;
         attackRange = weaponList[weaponListPos].magicWep.magicDitance;
 
+        attackCooldown = weaponList[weaponListPos].magicWep.magicCooldown;
+
         magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].magicWep.model.GetComponent<MeshFilter>().sharedMesh;
         magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].magicWep.model.GetComponent<MeshRenderer>().sharedMaterial;
+
+        gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+        meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
     }
 
     void gunReload()
