@@ -25601,14 +25601,15 @@ MonoBehaviour:
   animTransSpeed: 8
   faceTargetSpeed: 32
   FOV: 0
+  shootAngle: 0
   bullet: {fileID: 316416748}
   shootPos: {fileID: 316416749}
-  attackCol: {fileID: 0}
+  meleeCol: {fileID: 0}
   shootRate: 3
   meleeDistance: 0
   dropsLoot: 0
   weaponCol: {fileID: 0}
-  lootItem: {fileID: 0}
+  lootTable: []
   dropPos: {fileID: 0}
   roamPauseTime: 0
   roamDist: 0
@@ -47149,6 +47150,10 @@ PrefabInstance:
       propertyPath: ignoreLayer.m_Bits
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 8853223791844105196, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -58761,14 +58766,15 @@ MonoBehaviour:
   animTransSpeed: 8
   faceTargetSpeed: 32
   FOV: 90
+  shootAngle: 0
   bullet: {fileID: 8404054753871229023, guid: 8b8fbf7ee79c8c24a9eed42fbd5599e6, type: 3}
   shootPos: {fileID: 1710497046}
-  attackCol: {fileID: 0}
+  meleeCol: {fileID: 0}
   shootRate: 1
   meleeDistance: 0
   dropsLoot: 0
   weaponCol: {fileID: 0}
-  lootItem: {fileID: 0}
+  lootTable: []
   dropPos: {fileID: 0}
   roamPauseTime: 0
   roamDist: 0

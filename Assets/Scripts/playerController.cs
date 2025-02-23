@@ -413,7 +413,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         //else
         //    gameManager.instance.hideAmmo();
 
-        if (weaponList.Count > 0 && weaponListPos >= 0 && weaponListPos < weaponList.Count)
+        if (weaponList.Count > 0 && weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
         {
             if (weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
                 gameManager.instance.updateAmmo(weaponList[weaponListPos].gun);
