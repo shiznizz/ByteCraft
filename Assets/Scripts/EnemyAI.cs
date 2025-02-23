@@ -18,6 +18,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] int faceTargetSpeed;
 
     [SerializeField] int FOV; //Field of View
+    [SerializeField] int shootAngle;
 
     [SerializeField] GameObject bullet;
     [SerializeField] Transform shootPos;
@@ -100,7 +101,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                     agent.SetDestination(gameManager.instance.player.transform.position);
                 }
 
-                if (shootTimer >= shootRate && type != enemyType.melee)
+                if (type != enemyType.melee && shootTimer >= shootRate && angleToPlayer <= shootAngle)
                 {
                     shoot();
                 }
