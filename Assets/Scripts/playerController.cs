@@ -465,7 +465,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void changeGun()
     {
         attackDamage = weaponList[weaponListPos].gun.shootDamage;
-        attackRange = weaponList[weaponListPos].gun.shootRange;
+        attackDistance = weaponList[weaponListPos].gun.shootRange;
         attackCooldown = weaponList[weaponListPos].gun.shootRate;
         muzzleFlash.SetLocalPositionAndRotation(new Vector3(weaponList[weaponListPos].gun.moveFlashX,weaponList[weaponListPos].gun.moveFlashY,weaponList[weaponListPos].gun.moveFlashZ),muzzleFlash.rotation);
 
