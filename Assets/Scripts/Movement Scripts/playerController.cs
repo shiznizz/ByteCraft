@@ -9,6 +9,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
 
+
     [Header("Player Options")]
     public int HP;
     [SerializeField] int speed;
@@ -163,7 +164,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             jumpCount = 0;
             playerVelocity = Vector3.zero;
             playerMomentum = Vector3.zero;
-
+            isGrounded = true;
         }
 
         moveDir = (Input.GetAxis("Horizontal") * transform.right) +
@@ -307,10 +308,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             grappleRope.SetPosition(1, grapplePostion);
 
             grappleState = movementState.grappleMoving;
-
         }
-
-
     }
     // handles the grapple moving the character
     void grappleMovement()
