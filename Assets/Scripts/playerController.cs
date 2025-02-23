@@ -471,6 +471,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         attackDamage = weaponList[weaponListPos].gun.shootDamage;
         attackRange = weaponList[weaponListPos].gun.shootRange;
         attackCooldown = weaponList[weaponListPos].gun.shootRate;
+        muzzleFlash.SetLocalPositionAndRotation(new Vector3(weaponList[weaponListPos].gun.moveFlashX,weaponList[weaponListPos].gun.moveFlashY,weaponList[weaponListPos].gun.moveFlashZ),muzzleFlash.rotation);
 
         gunModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
         gunModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;

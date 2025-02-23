@@ -368,6 +368,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2b8d82904df72646b79a14ca14edc71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
   model: {fileID: 4847591418665215874}
   agent: {fileID: 5709111648268748456}
   anim: {fileID: 8603464238501867689}
@@ -376,9 +377,18 @@ MonoBehaviour:
   animTransSpeed: 8
   faceTargetSpeed: 32
   FOV: 180
+  shootAngle: 5
   bullet: {fileID: 8404054753871229023, guid: 8b8fbf7ee79c8c24a9eed42fbd5599e6, type: 3}
   shootPos: {fileID: 3365133894034214699}
+  meleeCol: {fileID: 0}
   shootRate: 2
+  meleeDistance: 0
+  dropsLoot: 0
+  weaponCol: {fileID: 0}
+  lootTable: []
+  dropPos: {fileID: 0}
+  roamPauseTime: 0
+  roamDist: 0
 --- !u!195 &5709111648268748456
 NavMeshAgent:
   m_ObjectHideFlags: 0
