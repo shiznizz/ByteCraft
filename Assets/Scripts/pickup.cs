@@ -5,8 +5,9 @@ public class pickup : MonoBehaviour
 {
     [SerializeField] gunStats gun;
     [SerializeField] meleeWepStats meleeWeapon;
+    [SerializeField] playerController playerController; // Reference to playerController to access equipScepter
 
-    public enum LootType {Health,Gun, MeleeWeapon}
+    public enum LootType {Health,Gun, MeleeWeapon, Scepter}
     public LootType lootType;
     public int amount; // how much value the loot gives to player
 
@@ -28,6 +29,13 @@ public class pickup : MonoBehaviour
                         break;
                     case pickup.LootType.MeleeWeapon:
                         player.getMeleeWeaponStats(meleeWeapon);
+                        break;
+                    case pickup.LootType.Scepter:
+                        if(playerController != null)
+                        {
+                            playerController.equipScepter(true);
+                            playerController.isScepterEquipped = true;
+                        }
                         break;
                 }
                 Destroy(gameObject); // remove loot from scene

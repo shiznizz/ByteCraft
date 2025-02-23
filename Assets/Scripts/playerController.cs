@@ -46,6 +46,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private float meleeCooldownTimer = 0f;
     [SerializeField] Animator playerAnimator;
 
+    [Header("Magic Options")]
+    [SerializeField] GameObject scepterModel;
+    [SerializeField] GameObject magicProjectile; // Projectile Prefab
+    [SerializeField] float magicProjectileSpeed; // Speed of projectile
+    [SerializeField] float magicProjectileCooldown; // Cooldown for projectile shooting
+    private float magicProjectileCooldownTimer = 0f;
+    public bool isScepterEquipped = false; // Checks to see if Scepter is equipped
+
     [Header("Grapple Options")]
     [SerializeField] int grappleDistance;
     [SerializeField] int grappleLift;
@@ -137,6 +145,18 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (Input.GetButtonDown("MeleeAttack") && meleeCooldownTimer <= 0)
         {
             meleeAttack();
+        }
+
+        if (isScepterEquipped)
+        {
+            //Handles magicProjectiles
+            magicProjectileCooldownTimer -= Time.deltaTime; // Decreases cooldown over time
+
+            if (Input.GetButtonDown("MagicProjectile") && magicProjectileCooldownTimer <= 0)
+            {
+                shootMagicProjectile();
+                magicProjectileCooldownTimer = magicProjectileCooldown; // Resets cooldown
+            }
         }
     }
 
@@ -530,6 +550,42 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             damageable.takeDamage(meleeDamage);
         }
 
+    }
+
+    void shootMagicProjectile()
+    {
+        if (magicProjectile != null)
+        {
+            //Creates the projectile at the player's position
+            GameObject projectile = Instantiate(magicProjectile, Camera.main.transform.position, Quaternion.identity);
+
+            //Add a forward velocity to the projectile
+            Rigidbody rb = projectile.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Camera.main.transform.position * magicProjectileSpeed;
+            }
+        }
+    }
+
+    //This method can be called to equiped the Scepter
+    public void equipScepter(bool equipped)
+    {
+        isScepterEquipped = equipped;
+
+        //If the scepter is equipped, move it to the first slot in the gunList
+        if(isScepterEquipped && !gunList.Contains(startGun))
+        {
+            //Adds the scepter as the first item in the gunList
+            gunList.Insert(0, startGun);
+            gunListPos = 0; // Makes sure to set the gunListPos to 0 for the Scepter
+        }
+        else if(!isScepterEquipped && gunList.Contains(startGun))
+        {
+            //Removes the scepter from the list if it is unequipped
+            gunList.Remove(startGun);
+            gunListPos = Mathf.Max(0, gunList.Count - 1); //Ensures gunListPos is valid
+        }
     }
 
     IEnumerator flashMuzzle()
