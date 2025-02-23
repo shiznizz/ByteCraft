@@ -72,7 +72,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     //Weapons inventory (gun, melee)
     int weaponListPos;
 
-
     float grappleCooldownTimer;
     float shootTimer;
     float attackTimer;
@@ -409,10 +408,18 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
 
-        if (weaponList.Count > 0 && weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
-            gameManager.instance.updateAmmo(weaponList[weaponListPos].gun);
-        else
-            gameManager.instance.hideAmmo();
+        //if (weaponList.Count > 0 && weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+        //    gameManager.instance.updateAmmo(weaponList[weaponListPos].gun);
+        //else
+        //    gameManager.instance.hideAmmo();
+
+        if (weaponList.Count > 0 && weaponListPos >= 0 && weaponListPos < weaponList.Count)
+        {
+            if (weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+                gameManager.instance.updateAmmo(weaponList[weaponListPos].gun);
+            else
+                gameManager.instance.hideAmmo();
+        }
     }
 
     private pickup.LootType lastLootType;
@@ -438,7 +445,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public void getWeaponStats(weaponStats weapon)
     {
         weaponList.Add(weapon);
-        weaponListPos = weaponListPos - 1;
+        weaponListPos = weaponList.Count - 1; // Selects the newly added weapon
 
         changeWeapon();
     }
@@ -483,8 +490,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         attackDamage = weaponList[weaponListPos].magicWep.magicDamage;
         attackRange = weaponList[weaponListPos].magicWep.magicDitance;
 
-        magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].meleeWep.model.GetComponent<MeshFilter>().sharedMesh;
-        magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].meleeWep.model.GetComponent<MeshRenderer>().sharedMaterial;
+        magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].magicWep.model.GetComponent<MeshFilter>().sharedMesh;
+        magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].magicWep.model.GetComponent<MeshRenderer>().sharedMaterial;
     }
 
     void gunReload()
@@ -551,17 +558,17 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (magicProjectile != null && magicWeaponModel != null)
         {
             //Creates the projectile at the player's position
-            GameObject projectile = Instantiate(magicProjectile, magicWeaponModel.transform.position, Quaternion.identity);
+            Instantiate(magicProjectile, magicWeaponModel.transform.position, Quaternion.LookRotation(Camera.main.transform.forward));
 
-            //Add a forward velocity to the projectile
-            Rigidbody rb = projectile.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.linearVelocity = magicWeaponModel.transform.forward * magicProjectileSpeed;
-            }
+            ////Add a forward velocity to the projectile
+            //Rigidbody rb = projectile.GetComponent<Rigidbody>();
+            //if (rb != null)
+            //{
+            //    rb.linearVelocity = Camera.main.transform.forward * magicProjectileSpeed;
+            //}
         }
     }
-
+      
     IEnumerator flashMuzzle()
     {
         muzzleFlash.localEulerAngles = new Vector3(0, 0, Random.Range(0, 360));

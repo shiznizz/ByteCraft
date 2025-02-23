@@ -186,7 +186,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void createProjectile()
     {
         //Creates a projectile at shootPos with the same rotation as the enemy
-        GameObject projectileInstance = Instantiate(bullet, shootPos.position, transform.rotation);
+        Instantiate(bullet, shootPos.position, transform.rotation);
 
     }
 

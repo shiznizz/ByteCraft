@@ -204,6 +204,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6367921215274828822, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
+      propertyPath: startMelee
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6367921215274828822, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
       propertyPath: grappleRope
       value: 
       objectReference: {fileID: 0}
@@ -230,7 +234,7 @@ PrefabInstance:
     - target: {fileID: 6367921215274828822, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
       propertyPath: magicProjectile
       value: 
-      objectReference: {fileID: 509375798219859286, guid: 83955c33d9195d04a9d878597ad4309c, type: 3}
+      objectReference: {fileID: 509375798219859286, guid: 08e0f98f418812e49bef0a5dde709f5b, type: 3}
     - target: {fileID: 6367921215274828822, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
       propertyPath: magicWeaponModel
       value: 
@@ -245,7 +249,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6367921215274828822, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
       propertyPath: magicProjectileSpeed
-      value: 0
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 6367921215274828822, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
       propertyPath: magicProjectileCooldown
@@ -265,17 +269,6 @@ PrefabInstance:
       addedObject: {fileID: 7127172934171160319}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
---- !u!114 &698040653 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6367921215274828822, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
-  m_PrefabInstance: {fileID: 263036371}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adb7d3a06dc56fe4a821613f25c92e9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &723109413
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -712,11 +705,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b52cb9f6e9bc1743933b09c77c5dd23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gun: {fileID: 0}
-  meleeWeapon: {fileID: 0}
-  magicWeapon: {fileID: 11400000, guid: 1e7e71939ba435a4791abed32119dad3, type: 2}
-  playerController: {fileID: 698040653}
-  lootType: 3
+  weapon: {fileID: 11400000, guid: c6f9b4d47695adb4998d5bd6a147f393, type: 2}
+  lootType: 1
   amount: 1
 --- !u!4 &963625958
 Transform:
@@ -9517,7 +9507,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7611961507068032069}
-  m_Mesh: {fileID: 2502713816230843238, guid: 6f1a48b66181346468b4627154769336, type: 3}
+  m_Mesh: {fileID: 0}
 --- !u!1 &6162590825879254428
 GameObject:
   m_ObjectHideFlags: 0
@@ -10410,11 +10400,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b52cb9f6e9bc1743933b09c77c5dd23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gun: {fileID: 0}
-  meleeWeapon: {fileID: 11400000, guid: 8d5f4ae3f01b1a944bfc6747fa6037be, type: 2}
-  magicWeapon: {fileID: 0}
-  playerController: {fileID: 698040653}
-  lootType: 2
+  weapon: {fileID: 11400000, guid: 06e0c476878379f49a30af7a2b1382d1, type: 2}
+  lootType: 1
   amount: 1
 --- !u!135 &8573527559848541036
 SphereCollider:
