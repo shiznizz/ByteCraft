@@ -6,7 +6,7 @@ public class meleeWepStats : ScriptableObject
 {
     public GameObject model;
     public int meleeDamage;
-    public int meleeDitance;
+    public int meleeDistance;
     //public float meleeRange;
 
     public ParticleSystem hitEffect;

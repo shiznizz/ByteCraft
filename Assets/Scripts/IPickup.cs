@@ -6,9 +6,5 @@ public interface IPickup
 
     void heal(int amount);
 
-    void getGunStats(gunStats gun);
-
-    void getMeleeWeaponStats(meleeWepStats meleeWeapon);
-
-    void getMagicWeaponStats(magicWepStats magicWeapon);
+    void getWeaponStats(weaponStats weapon);
 }

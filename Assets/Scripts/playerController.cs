@@ -27,35 +27,29 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] float jetpackFuelRegenDelay;
     [SerializeField] int jetpackSpeed;
 
+    [SerializeField] List<weaponStats> weaponList = new List<weaponStats>();
+
+    [Header("Common Weapon Options")]
+    [SerializeField] float attackCooldown;
+    [SerializeField] int attackDamage;
+    [SerializeField] int attackDistance;
+    [SerializeField] int attackRange;
+
     [Header("Range Options")]
     [SerializeField] GameObject gunModel;
-    [SerializeField] gunStats startGun;
-    [SerializeField] List<gunStats> gunList = new List<gunStats>();
+    [SerializeField] weaponStats startGun;
     [SerializeField] Transform muzzleFlash;
-    [SerializeField] int shootDamage;
-    [SerializeField] int shootDistance;
-    [SerializeField] float shootRate;
 
     [Header("Melee Options")]
     [SerializeField] GameObject meleeWeaponModel;
-    [SerializeField] meleeWepStats startMelee;
-    [SerializeField] List<meleeWepStats> meleeList = new List<meleeWepStats>();
-    [SerializeField] int meleeDamage;
-    [SerializeField] float meleeRange;
-    [SerializeField] float meleeCooldown;
-    private float meleeCooldownTimer = 0f;
+    [SerializeField] weaponStats startMelee;
     [SerializeField] Animator playerAnimator;
 
     [Header("Magic Options")]
     [SerializeField] GameObject magicWeaponModel;
-    [SerializeField] magicWepStats startMagic;
+    [SerializeField] weaponStats startMagic;
     [SerializeField] GameObject magicProjectile; // Projectile Prefab
-    [SerializeField] List<magicWepStats> magicList = new List<magicWepStats>();
-    [SerializeField] int magicDamage;
-    [SerializeField] int magicDistance;
     [SerializeField] float magicProjectileSpeed; // Speed of projectile
-    [SerializeField] float magicProjectileCooldown; // Cooldown for projectile shooting
-    private float magicProjectileCooldownTimer = 0f;
 
     [Header("Grapple Options")]
     [SerializeField] int grappleDistance;
@@ -76,13 +70,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     int HPOrig;
 
     //Weapons inventory (gun, melee)
-    int gunListPos;
-    int meleeListPos;
-    int magicListPos;
+    int weaponListPos;
 
 
     float grappleCooldownTimer;
     float shootTimer;
+    float attackTimer;
 
     private Vector3 moveDir;
     private Vector3 playerVelocity;
@@ -120,34 +113,27 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         jetpackFuelRegenTimer = 0f;
 
         if (startGun != null)
-            getGunStats(startGun);
-        if(startMelee != null)
-            getMeleeWeaponStats(startMelee);
+        {
+            weaponList.Add(startGun);
+        }
+        if (startMelee != null)
+        {
+            weaponList.Add(startMelee);
+        }
         if (startMagic != null)
-            getMagicWeaponStats(startMagic);
+        {
+            weaponList.Add(startMagic);
+        }
 
-        //Sets the default weapon based on available weapons
-        if (gunList.Count > 0)
+        if (weaponList.Count > 0)
         {
-            currentWeapon = WeaponType.Gun;
-            changeGun();
+            changeWeapon();
         }
-        else if (meleeList.Count > 0)
-        {
-            currentWeapon = WeaponType.Melee;
-            changeMeleeWep();
-        }
-        else if (magicList.Count > 0)
-        {
-            currentWeapon = WeaponType.Magic;
-            changeMagicWep();
-        }
-        updateWeaponModels();
     }
 
     private void Update()
     {
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * shootDistance, Color.red);
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * attackDistance, Color.red);
         // switches states of grapple
         switch (grappleState)
         {
@@ -165,22 +151,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 handleJetpackFuelRegen();
                 break;
         }
-
-        //Handles melee attack
-        meleeCooldownTimer -= Time.deltaTime; // Decreases cooldown timer each frame
-
-        if (Input.GetButtonDown("MeleeAttack") && meleeCooldownTimer <= 0)
-        {
-            meleeAttack();
-        }
-
-        //Handles magic weapon shooting if currently selected
-        if(Input.GetButtonDown("Fire1") && magicProjectileCooldownTimer >= magicProjectileCooldown && currentWeapon == WeaponType.Magic)
-        {
-            shootMagicProjectile();
-            magicProjectileCooldownTimer = 0f;
-        }
-        magicProjectileCooldownTimer += Time.deltaTime;
     }
 
     private void LateUpdate()
@@ -222,12 +192,24 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             }
         }
 
-        shootTimer += Time.deltaTime;
+        attackTimer += Time.deltaTime;
         grappleCooldownTimer += Time.deltaTime;
 
-        if (Input.GetButton("Fire1") && gunList.Count > 0 && gunList[gunListPos].ammoCur > 0 && shootTimer >= shootRate)   //Want button input to be the first condition for performance - other evaluations wont occur unless button is pressed
+        if (Input.GetButton("Fire1") && weaponList.Count > 0 && attackTimer >= attackCooldown)   //Want button input to be the first condition for performance - other evaluations wont occur unless button is pressed
         {
-            shoot();
+            if (weaponList[weaponListPos].type == weaponStats.weaponType.Gun && weaponList[weaponListPos].gun.ammoCur > 0)
+            {
+                shoot();
+            }
+            else if (weaponList[weaponListPos].type == weaponStats.weaponType.Melee)
+            {
+                meleeAttack();
+            }
+            else if (weaponList[weaponListPos].type == weaponStats.weaponType.Magic )
+            {
+                shootMagicProjectile();
+            }
+
         }
         // checks if clicking mouse 2 (right click)
         if (testGrappleKeyPressed())
@@ -235,7 +217,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             shootGrapple();
         }
 
-        selectGun();
+        selectWeapon();
         gunReload();
     }
 
@@ -303,22 +285,22 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void shoot()
     {
-        shootTimer = 0;
-        gunList[gunListPos].ammoCur--;
+        attackTimer = 0;
+        weaponList[weaponListPos].gun.ammoCur--;
         updatePlayerUI();
 
         StartCoroutine(flashMuzzle());
 
         RaycastHit hit;
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, shootDistance, ~ignoreLayer))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackDistance, ~ignoreLayer))
         {
             // Debug.Log(hit.collider.name);
 
-            Instantiate(gunList[gunListPos].hitEffect, hit.point, Quaternion.identity);
+            Instantiate(weaponList[weaponListPos].gun.hitEffect, hit.point, Quaternion.identity);
 
             IDamage damage = hit.collider.GetComponent<IDamage>();
 
-            damage?.takeDamage(shootDamage);
+            damage?.takeDamage(attackDamage);
         }
     }
 
@@ -427,8 +409,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
 
-        if (gunList.Count > 0)
-            gameManager.instance.updateAmmo(gunList[gunListPos]);
+        if (weaponList.Count > 0 && weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+            gameManager.instance.updateAmmo(weaponList[weaponListPos].gun);
+        else
+            gameManager.instance.hideAmmo();
     }
 
     private pickup.LootType lastLootType;
@@ -451,147 +435,77 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         updatePlayerUI(); // refresh UI after pickup
     }
 
-    public void getGunStats(gunStats gun)
+    public void getWeaponStats(weaponStats weapon)
     {
-        gunList.Add(gun);
-        gunListPos = gunList.Count - 1;
+        weaponList.Add(weapon);
+        weaponListPos = weaponListPos - 1;
 
-        changeGun();
+        changeWeapon();
     }
 
-    public void getMeleeWeaponStats(meleeWepStats melee)
+    void changeWeapon()
     {
-        meleeList.Add(melee);
-        meleeListPos = meleeList.Count - 1;
-
-        changeMeleeWep();
-
-        //Automatically switch to melee when picked up
-        currentWeapon = WeaponType.Melee;
-        updateWeaponModels();
-
-        if (meleeWeaponModel != null)
+        switch (weaponList[weaponListPos].type)
         {
-            meleeWeaponModel.SetActive(true);
-        }
-    }
-
-    public void getMagicWeaponStats(magicWepStats magic)
-    {
-        magicList.Add(magic);
-        magicListPos = magicList.Count - 1;
-
-        changeMagicWep();
-
-        //Automatically switch to magic when picked up
-        currentWeapon = WeaponType.Magic;
-        updateWeaponModels();
-
-        if(magicWeaponModel != null)
-        {
-            magicWeaponModel.SetActive(true);
-        }
-    }
-
-    void selectGun()
-    {
-        if (Input.GetAxis("Mouse ScrollWheel") > 0 && gunListPos < gunList.Count - 1)
-        {
-            gunListPos++;
-            changeGun();
-        }
-        else if (Input.GetAxis("Mouse ScrollWheel") < 0 && gunListPos > 0)
-        {
-            gunListPos--;
-            changeGun();
-        }
-    }
-
-    void selectMelee()
-    {
-        if(Input.GetAxis("Mouse ScrollWheel") > 0 && meleeListPos < meleeList.Count - 1)
-        {
-            meleeListPos++;
-            changeMeleeWep();
-        }
-        else if(Input.GetAxis("Mouse ScrollWheel") < 0 && meleeListPos > 0)
-        {
-            meleeListPos--;
-            changeMeleeWep();
-        }
-    }
-
-    void selectMagic()
-    {
-        if (Input.GetAxis("Mouse ScrollWheel") > 0 && magicListPos < magicList.Count - 1)
-        {
-            magicListPos++;
-            changeMagicWep();
-        }
-        else if (Input.GetAxis("Mouse ScrollWheel") < 0 && magicListPos > 0)
-        {
-            magicListPos--;
-            changeMagicWep();
+            case weaponStats.weaponType.Gun:
+                changeGun();
+                break;
+            case weaponStats.weaponType.Melee:
+                changeMeleeWep();
+                break;
+            case weaponStats.weaponType.Magic:
+                changeMagicWep();
+                break;
         }
     }
 
     void changeGun()
     {
-        if (gunList.Count < 0)
-        {
-            return;
-        }
+        attackDamage = weaponList[weaponListPos].gun.shootDamage;
+        attackRange = weaponList[weaponListPos].gun.shootRange;
+        attackCooldown = weaponList[weaponListPos].gun.shootRate;
 
-        shootDamage = gunList[gunListPos].shootDamage;
-        shootDistance = gunList[gunListPos].shootRange;
-        shootRate = gunList[gunListPos].shootRate;
-
-        gunModel.GetComponent<MeshFilter>().sharedMesh = gunList[gunListPos].model.GetComponent<MeshFilter>().sharedMesh;
-        gunModel.GetComponent<MeshRenderer>().sharedMaterial = gunList[gunListPos].model.GetComponent<MeshRenderer>().sharedMaterial;
+        gunModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
+        gunModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;
     }
 
     void changeMeleeWep()
     {
-        if (meleeList.Count < 0)
-            return;
+        attackDamage = weaponList[weaponListPos].meleeWep.meleeDamage;
+        attackRange = weaponList[weaponListPos].meleeWep.meleeDistance;
 
-        meleeDamage = meleeList[meleeListPos].meleeDamage;
-        meleeRange = meleeList[meleeListPos].meleeDitance;
-
-        meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = meleeList[meleeListPos].model.GetComponent<MeshFilter>().sharedMesh;
-        meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = meleeList[meleeListPos].model.GetComponent<MeshRenderer>().sharedMaterial;
+        meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].meleeWep.model.GetComponent<MeshFilter>().sharedMesh;
+        meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].meleeWep.model.GetComponent<MeshRenderer>().sharedMaterial;
     }
 
     void changeMagicWep()
     {
-        if (magicList.Count < 0)
-            return;
+        attackDamage = weaponList[weaponListPos].magicWep.magicDamage;
+        attackRange = weaponList[weaponListPos].magicWep.magicDitance;
 
-        magicDamage = magicList[magicListPos].magicDamage;
-        magicDistance = magicList[magicListPos].magicDitance;
-
-        magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = magicList[magicListPos].model.GetComponent<MeshFilter>().sharedMesh;
-        magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = magicList[magicListPos].model.GetComponent<MeshRenderer>().sharedMaterial;
+        magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].meleeWep.model.GetComponent<MeshFilter>().sharedMesh;
+        magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].meleeWep.model.GetComponent<MeshRenderer>().sharedMaterial;
     }
 
     void gunReload()
     {
-        if (Input.GetButtonDown("Reload") && gunList.Count > 0)
+        if (Input.GetButtonDown("Reload") && weaponList.Count > 0 && weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
         {
-            if (gunList[gunListPos].ammoReserve > gunList[gunListPos].ammoMax)          //Check if the player can reload a full clip
+            if (weaponList[weaponListPos].gun.ammoReserve > weaponList[weaponListPos].gun.ammoMax)          //Check if the player can reload a full clip
             {
-                gunList[gunListPos].ammoReserve -= (gunList[gunListPos].ammoMax - gunList[gunListPos].ammoCur);
-                gunList[gunListPos].ammoCur = gunList[gunListPos].ammoMax;
+                weaponList[weaponListPos].gun.ammoReserve -= (weaponList[weaponListPos].gun.ammoMax - weaponList[weaponListPos].gun.ammoCur);
+                weaponList[weaponListPos].gun.ammoCur = weaponList[weaponListPos].gun.ammoMax;
             }
-            else if (gunList[gunListPos].ammoReserve > 0)                               //If there is ammo in reserve but not a full clip reload remaining ammo
+            else if (weaponList[weaponListPos].gun.ammoReserve > 0)                               //If there is ammo in reserve but not a full clip reload remaining ammo
             {
-                gunList[gunListPos].ammoCur = gunList[gunListPos].ammoReserve;
-                gunList[gunListPos].ammoReserve = 0;
+                weaponList[weaponListPos].gun.ammoCur = weaponList[weaponListPos].gun.ammoReserve;
+                weaponList[weaponListPos].gun.ammoReserve = 0;
             }
 
             updatePlayerUI();
         }
     }
+
     public void spawnPlayer()
     {
         controller.enabled = false;
@@ -604,7 +518,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void meleeAttack()
     {
-        meleeCooldownTimer = meleeCooldown; // Will Reset the cooldown timer
+        attackTimer = 0; // Will Reset the cooldown timer
 
         if (playerAnimator != null)
         {
@@ -619,19 +533,21 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         //Raycast to detect enemies in melee range
         RaycastHit hit;
-        if(Physics.Raycast(transform.position, transform.forward, out hit, meleeRange, ~ignoreLayer)) 
+        if(Physics.Raycast(transform.position, transform.forward, out hit, attackRange, ~ignoreLayer)) 
         {
             Debug.Log("Melee hit; " + hit.collider.name);
 
             //Apply damage if the object hit implements IDamage
             IDamage damageable = hit.collider.GetComponent<IDamage>();
-            damageable.takeDamage(meleeDamage);
+            damageable.takeDamage(attackDamage);
         }
 
     }
 
     void shootMagicProjectile()
     {
+        attackTimer = 0;
+
         if (magicProjectile != null && magicWeaponModel != null)
         {
             //Creates the projectile at the player's position
@@ -666,28 +582,18 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     }
 
     //Switches between weapon types using a mouse scroll wheel
-    void handleWeaponScroll()
+    void selectWeapon()
     {
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if(scrollInput != 0)
+        if(scrollInput > 0 && weaponListPos < weaponList.Count - 1)
         {
-            //Cycles through the weapon types: Gun -> Melee -> Magic -> Gun...
-            if (currentWeapon == WeaponType.Gun)
-                currentWeapon = WeaponType.Melee;
-            else if (currentWeapon == WeaponType.Melee)
-                currentWeapon = WeaponType.Magic;
-            else
-                currentWeapon = WeaponType.Gun;
-
-            //Updates the weapon states for teh selected weapon type
-            if (currentWeapon == WeaponType.Gun && gunList.Count > 0)
-                changeGun();
-            else if (currentWeapon == WeaponType.Melee && meleeList.Count > 0)
-                changeMeleeWep();
-            else if (currentWeapon == WeaponType.Magic && magicList.Count > 0)
-                changeMagicWep();
-
-            updateWeaponModels();
+            weaponListPos++;
+            changeWeapon();
+        }
+        else if (scrollInput < 0 && weaponListPos > 0)
+        {
+            weaponListPos--;
+            changeWeapon();
         }
     }
 }
