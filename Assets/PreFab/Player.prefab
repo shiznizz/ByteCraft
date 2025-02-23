@@ -41,6 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3400437105452468489}
   - component: {fileID: 6367921215274828822}
+  - component: {fileID: 8416549853519660346}
   - component: {fileID: 7171065596406949458}
   - component: {fileID: 6707193194621522668}
   - component: {fileID: 6622220557307201882}
@@ -100,9 +101,17 @@ MonoBehaviour:
   gunModel: {fileID: 5264184484870760792}
   startGun: {fileID: 11400000, guid: 03b9dc372d46210429f41e8e4912f0be, type: 2}
   gunList: []
+  muzzleFlash: {fileID: 0}
   shootDamage: 1
   shootDistance: 100
   shootRate: 1
+  meleeWeaponModel: {fileID: 0}
+  startMelee: {fileID: 0}
+  meleeList: []
+  meleeDamage: 0
+  meleeRange: 0
+  meleeCooldown: 0
+  playerAnimator: {fileID: 0}
   grappleDistance: 40
   grappleLift: 30
   grappleSpeedMultiplier: 2
@@ -111,6 +120,39 @@ MonoBehaviour:
   grappleCooldown: 1
   grappleShootPos: {fileID: 3704177444564449881}
   grappleRope: {fileID: 4819788767520455329}
+  isGrounded: 0
+  isSprinting: 0
+  isGrappling: 0
+  isSliding: 0
+  isCrouching: 0
+  isWallRunning: 0
+--- !u!114 &8416549853519660346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5682474206311374275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8f39af10be6c5447a888b177d386172, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  whatIsWall:
+    serializedVersion: 2
+    m_Bits: 2048
+  whatIsGround:
+    serializedVersion: 2
+    m_Bits: 0
+  wallRunForce: 0
+  maxWallRunTime: 0
+  wallRunSpeed: 0
+  wallRunTimer: 0
+  wallJumpUpForce: 0
+  wallJumpSideForce: 0
+  wallCheckDistance: 0
+  exitWallTime: 0
+  orientation: {fileID: 0}
 --- !u!143 &7171065596406949458
 CharacterController:
   m_ObjectHideFlags: 0

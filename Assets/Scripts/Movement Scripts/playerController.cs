@@ -59,7 +59,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] LineRenderer grappleRope;
 
     // holds state of the grapple 
-    private State grappleState;
+    private movementState grappleState;
 
     int jumpCount;
     int HPOrig;
@@ -77,14 +77,24 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private Vector3 playerMomentum;
     private Vector3 grapplePostion;
 
-    bool isSprinting;
-    bool isGrappling;
+    public bool isGrounded;
+    public bool isSprinting;
+    public bool isGrappling;
+    public bool isSliding;
+    public bool isCrouching;
+    public bool isWallRunning;
 
     private float jetpackFuelRegenTimer;
 
     // state of the grapple 
-    private enum State
+    public enum movementState
     {
+        walking,
+        sprinting,
+        wallRunning,
+        crouching,
+        sliding,
+        air,
         grappleNormal, // did not shoot grapple
         grappleMoving, // grapple succesful now moving player
     }
@@ -92,7 +102,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private void Awake()
     {
         // sets state of the grapple
-        grappleState = State.grappleNormal;
+        grappleState = movementState.grappleNormal;
     }
 
     void Start()
@@ -117,14 +127,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         switch (grappleState)
         {
             // not grappling 
-            case State.grappleNormal:
+            case movementState.grappleNormal:
                 if (!gameManager.instance.isPaused)
                 movement();
                 sprint();
                 handleJetpackFuelRegen();
                 break;
             // is grappling
-            case State.grappleMoving:
+            case movementState.grappleMoving:
                 grappleMovement();
                 sprint();
                 handleJetpackFuelRegen();
@@ -296,7 +306,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             grappleRope.enabled = true;
             grappleRope.SetPosition(1, grapplePostion);
 
-            grappleState = State.grappleMoving;
+            grappleState = movementState.grappleMoving;
 
         }
 
@@ -316,7 +326,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         float grapleDistanceMove = 1f;
         if (Vector3.Distance(transform.position, grapplePostion) < grapleDistanceMove)
         {
-            grappleState = State.grappleNormal;
+            grappleState = movementState.grappleNormal;
             playerVelocity.y -= gravity * Time.deltaTime;
             StopGrapple();
         }
@@ -326,7 +336,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         {
             playerMomentum = grappleSpeed * grappleDir;
             playerMomentum += Vector3.up * grappleLift;
-            grappleState = State.grappleNormal;
+            grappleState = movementState.grappleNormal;
             playerVelocity.y -= gravity * Time.deltaTime;
             StopGrapple();
         }
