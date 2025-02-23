@@ -5,9 +5,10 @@ public class pickup : MonoBehaviour
 {
     [SerializeField] gunStats gun;
     [SerializeField] meleeWepStats meleeWeapon;
+    [SerializeField] magicWepStats magicWeapon;
     [SerializeField] playerController playerController; // Reference to playerController to access equipScepter
 
-    public enum LootType {Health,Gun, MeleeWeapon, Scepter}
+    public enum LootType {Health,Gun, MeleeWeapon, MagicWeapon}
     public LootType lootType;
     public int amount; // how much value the loot gives to player
 
@@ -16,7 +17,7 @@ public class pickup : MonoBehaviour
         if (other.CompareTag("Player")) // check if player touches loot
         {
             IPickup player = other.GetComponent<IPickup>();
-            //playerController player = other.GetComponent<playerController>();
+            playerController pc = other.GetComponent<playerController>();
             if (player != null) 
             {
                 switch (lootType)
@@ -28,14 +29,10 @@ public class pickup : MonoBehaviour
                         player.getGunStats(gun);
                         break;
                     case pickup.LootType.MeleeWeapon:
-                        player.getMeleeWeaponStats(meleeWeapon);
+                        pc.getMeleeWeaponStats(meleeWeapon);
                         break;
-                    case pickup.LootType.Scepter:
-                        if(playerController != null)
-                        {
-                            playerController.equipScepter(true);
-                            playerController.isScepterEquipped = true;
-                        }
+                    case pickup.LootType.MagicWeapon:
+                        pc.getMagicWeaponStats(magicWeapon);
                         break;
                 }
                 Destroy(gameObject); // remove loot from scene

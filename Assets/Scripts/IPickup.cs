@@ -9,4 +9,6 @@ public interface IPickup
     void getGunStats(gunStats gun);
 
     void getMeleeWeaponStats(meleeWepStats meleeWeapon);
+
+    void getMagicWeaponStats(magicWepStats magicWeapon);
 }

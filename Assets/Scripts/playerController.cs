@@ -47,12 +47,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] Animator playerAnimator;
 
     [Header("Magic Options")]
-    [SerializeField] GameObject scepterModel;
+    [SerializeField] GameObject magicWeaponModel;
+    [SerializeField] magicWepStats startMagic;
     [SerializeField] GameObject magicProjectile; // Projectile Prefab
+    [SerializeField] List<magicWepStats> magicList = new List<magicWepStats>();
+    [SerializeField] int magicDamage;
+    [SerializeField] int magicDistance;
     [SerializeField] float magicProjectileSpeed; // Speed of projectile
     [SerializeField] float magicProjectileCooldown; // Cooldown for projectile shooting
     private float magicProjectileCooldownTimer = 0f;
-    public bool isScepterEquipped = false; // Checks to see if Scepter is equipped
 
     [Header("Grapple Options")]
     [SerializeField] int grappleDistance;
@@ -75,6 +78,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     //Weapons inventory (gun, melee)
     int gunListPos;
     int meleeListPos;
+    int magicListPos;
 
 
     float grappleCooldownTimer;
@@ -89,6 +93,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     bool isGrappling;
 
     private float jetpackFuelRegenTimer;
+
+    //Tracks which weapon is active
+    public enum WeaponType { Gun, Melee, Magic }
+    public WeaponType currentWeapon = WeaponType.Gun;
 
     // state of the grapple 
     private enum State
@@ -113,9 +121,28 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         if (startGun != null)
             getGunStats(startGun);
-
         if(startMelee != null)
             getMeleeWeaponStats(startMelee);
+        if (startMagic != null)
+            getMagicWeaponStats(startMagic);
+
+        //Sets the default weapon based on available weapons
+        if (gunList.Count > 0)
+        {
+            currentWeapon = WeaponType.Gun;
+            changeGun();
+        }
+        else if (meleeList.Count > 0)
+        {
+            currentWeapon = WeaponType.Melee;
+            changeMeleeWep();
+        }
+        else if (magicList.Count > 0)
+        {
+            currentWeapon = WeaponType.Magic;
+            changeMagicWep();
+        }
+        updateWeaponModels();
     }
 
     private void Update()
@@ -147,17 +174,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             meleeAttack();
         }
 
-        if (isScepterEquipped)
+        //Handles magic weapon shooting if currently selected
+        if(Input.GetButtonDown("Fire1") && magicProjectileCooldownTimer >= magicProjectileCooldown && currentWeapon == WeaponType.Magic)
         {
-            //Handles magicProjectiles
-            magicProjectileCooldownTimer -= Time.deltaTime; // Decreases cooldown over time
-
-            if (Input.GetButtonDown("MagicProjectile") && magicProjectileCooldownTimer <= 0)
-            {
-                shootMagicProjectile();
-                magicProjectileCooldownTimer = magicProjectileCooldown; // Resets cooldown
-            }
+            shootMagicProjectile();
+            magicProjectileCooldownTimer = 0f;
         }
+        magicProjectileCooldownTimer += Time.deltaTime;
     }
 
     private void LateUpdate()
@@ -443,9 +466,30 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         changeMeleeWep();
 
+        //Automatically switch to melee when picked up
+        currentWeapon = WeaponType.Melee;
+        updateWeaponModels();
+
         if (meleeWeaponModel != null)
         {
             meleeWeaponModel.SetActive(true);
+        }
+    }
+
+    public void getMagicWeaponStats(magicWepStats magic)
+    {
+        magicList.Add(magic);
+        magicListPos = magicList.Count - 1;
+
+        changeMagicWep();
+
+        //Automatically switch to magic when picked up
+        currentWeapon = WeaponType.Magic;
+        updateWeaponModels();
+
+        if(magicWeaponModel != null)
+        {
+            magicWeaponModel.SetActive(true);
         }
     }
 
@@ -477,8 +521,27 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
 
+    void selectMagic()
+    {
+        if (Input.GetAxis("Mouse ScrollWheel") > 0 && magicListPos < magicList.Count - 1)
+        {
+            magicListPos++;
+            changeMagicWep();
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0 && magicListPos > 0)
+        {
+            magicListPos--;
+            changeMagicWep();
+        }
+    }
+
     void changeGun()
     {
+        if (gunList.Count < 0)
+        {
+            return;
+        }
+
         shootDamage = gunList[gunListPos].shootDamage;
         shootDistance = gunList[gunListPos].shootRange;
         shootRate = gunList[gunListPos].shootRate;
@@ -489,11 +552,26 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void changeMeleeWep()
     {
+        if (meleeList.Count < 0)
+            return;
+
         meleeDamage = meleeList[meleeListPos].meleeDamage;
         meleeRange = meleeList[meleeListPos].meleeDitance;
 
         meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = meleeList[meleeListPos].model.GetComponent<MeshFilter>().sharedMesh;
         meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = meleeList[meleeListPos].model.GetComponent<MeshRenderer>().sharedMaterial;
+    }
+
+    void changeMagicWep()
+    {
+        if (magicList.Count < 0)
+            return;
+
+        magicDamage = magicList[magicListPos].magicDamage;
+        magicDistance = magicList[magicListPos].magicDitance;
+
+        magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = magicList[magicListPos].model.GetComponent<MeshFilter>().sharedMesh;
+        magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = magicList[magicListPos].model.GetComponent<MeshRenderer>().sharedMaterial;
     }
 
     void gunReload()
@@ -554,37 +632,17 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void shootMagicProjectile()
     {
-        if (magicProjectile != null)
+        if (magicProjectile != null && magicWeaponModel != null)
         {
             //Creates the projectile at the player's position
-            GameObject projectile = Instantiate(magicProjectile, Camera.main.transform.position, Quaternion.identity);
+            GameObject projectile = Instantiate(magicProjectile, magicWeaponModel.transform.position, Quaternion.identity);
 
             //Add a forward velocity to the projectile
             Rigidbody rb = projectile.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.linearVelocity = Camera.main.transform.position * magicProjectileSpeed;
+                rb.linearVelocity = magicWeaponModel.transform.forward * magicProjectileSpeed;
             }
-        }
-    }
-
-    //This method can be called to equiped the Scepter
-    public void equipScepter(bool equipped)
-    {
-        isScepterEquipped = equipped;
-
-        //If the scepter is equipped, move it to the first slot in the gunList
-        if(isScepterEquipped && !gunList.Contains(startGun))
-        {
-            //Adds the scepter as the first item in the gunList
-            gunList.Insert(0, startGun);
-            gunListPos = 0; // Makes sure to set the gunListPos to 0 for the Scepter
-        }
-        else if(!isScepterEquipped && gunList.Contains(startGun))
-        {
-            //Removes the scepter from the list if it is unequipped
-            gunList.Remove(startGun);
-            gunListPos = Mathf.Max(0, gunList.Count - 1); //Ensures gunListPos is valid
         }
     }
 
@@ -594,5 +652,42 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         muzzleFlash.gameObject.SetActive(true);
         yield return new WaitForSeconds(0.05f);
         muzzleFlash.gameObject.SetActive(false);
+    }
+
+    //Updates which weapon model is active based on currentWeapon
+    void updateWeaponModels()
+    {
+        if(gunModel != null)
+        gunModel.SetActive(currentWeapon == WeaponType.Gun);
+        if(meleeWeaponModel != null)
+        meleeWeaponModel.SetActive(currentWeapon == WeaponType.Melee);
+        if(magicWeaponModel != null)
+        magicWeaponModel.SetActive(currentWeapon == WeaponType.Magic);
+    }
+
+    //Switches between weapon types using a mouse scroll wheel
+    void handleWeaponScroll()
+    {
+        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+        if(scrollInput != 0)
+        {
+            //Cycles through the weapon types: Gun -> Melee -> Magic -> Gun...
+            if (currentWeapon == WeaponType.Gun)
+                currentWeapon = WeaponType.Melee;
+            else if (currentWeapon == WeaponType.Melee)
+                currentWeapon = WeaponType.Magic;
+            else
+                currentWeapon = WeaponType.Gun;
+
+            //Updates the weapon states for teh selected weapon type
+            if (currentWeapon == WeaponType.Gun && gunList.Count > 0)
+                changeGun();
+            else if (currentWeapon == WeaponType.Melee && meleeList.Count > 0)
+                changeMeleeWep();
+            else if (currentWeapon == WeaponType.Magic && magicList.Count > 0)
+                changeMagicWep();
+
+            updateWeaponModels();
+        }
     }
 }

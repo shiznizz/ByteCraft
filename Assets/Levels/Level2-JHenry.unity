@@ -228,6 +228,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6367921215274828822, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
+      propertyPath: magicProjectile
+      value: 
+      objectReference: {fileID: 509375798219859286, guid: 83955c33d9195d04a9d878597ad4309c, type: 3}
+    - target: {fileID: 6367921215274828822, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
+      propertyPath: magicWeaponModel
+      value: 
+      objectReference: {fileID: 7611961507068032069}
+    - target: {fileID: 6367921215274828822, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
       propertyPath: meleeWeaponModel
       value: 
       objectReference: {fileID: 1475645584}
@@ -257,6 +265,17 @@ PrefabInstance:
       addedObject: {fileID: 7127172934171160319}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
+--- !u!114 &698040653 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6367921215274828822, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
+  m_PrefabInstance: {fileID: 263036371}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adb7d3a06dc56fe4a821613f25c92e9d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &723109413
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -693,9 +712,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b52cb9f6e9bc1743933b09c77c5dd23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gun: {fileID: 11400000, guid: 1e7e71939ba435a4791abed32119dad3, type: 2}
+  gun: {fileID: 0}
   meleeWeapon: {fileID: 0}
-  playerController: {fileID: 0}
+  magicWeapon: {fileID: 11400000, guid: 1e7e71939ba435a4791abed32119dad3, type: 2}
+  playerController: {fileID: 698040653}
   lootType: 3
   amount: 1
 --- !u!4 &963625958
@@ -9497,7 +9517,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7611961507068032069}
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 2502713816230843238, guid: 6f1a48b66181346468b4627154769336, type: 3}
 --- !u!1 &6162590825879254428
 GameObject:
   m_ObjectHideFlags: 0
@@ -9924,7 +9944,8 @@ GameObject:
   - component: {fileID: 7127172934171160319}
   - component: {fileID: 6144903928883700058}
   - component: {fileID: 8260695563667969424}
-  m_Layer: 0
+  - component: {fileID: 8260695563667969425}
+  m_Layer: 3
   m_Name: Scepter Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10206,6 +10227,28 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!95 &8260695563667969425
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7611961507068032069}
+  m_Enabled: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8572857407957059956
 GameObject:
   m_ObjectHideFlags: 0
@@ -10369,7 +10412,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gun: {fileID: 0}
   meleeWeapon: {fileID: 11400000, guid: 8d5f4ae3f01b1a944bfc6747fa6037be, type: 2}
-  playerController: {fileID: 0}
+  magicWeapon: {fileID: 0}
+  playerController: {fileID: 698040653}
   lootType: 2
   amount: 1
 --- !u!135 &8573527559848541036
