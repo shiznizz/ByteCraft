@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
-    enum enemyType { range, melee }
+    enum enemyType { range, melee, stationary }
 
     [SerializeField] enemyType type;
     [SerializeField] Renderer model;
@@ -18,10 +18,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] int faceTargetSpeed;
 
     [SerializeField] int FOV; //Field of View
+    [SerializeField] int shootAngle;
 
     [SerializeField] GameObject bullet;
     [SerializeField] Transform shootPos;
-    [SerializeField] Collider attackCol;
+    [SerializeField] Collider meleeCol;
     [SerializeField] float shootRate;
     [SerializeField] float meleeDistance;
     [SerializeField] bool dropsLoot;
@@ -55,22 +56,27 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         colorOrig = model.material.color;
         gameManager.instance.updateGameGoal(1);
         startingPos = transform.position;
-        stoppingDistOrig = agent.stoppingDistance;
+        if (type != enemyType.stationary)
+        {
+            stoppingDistOrig = agent.stoppingDistance;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
-        float animatorCurSpeed = anim.GetFloat("Speed");
+        if (type != enemyType.stationary)
+        {
+            float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
+            float animatorCurSpeed = anim.GetFloat("Speed");
 
-        anim.SetFloat("Speed", Mathf.MoveTowards(animatorCurSpeed, agentSpeed, Time.deltaTime * animTransSpeed));    // added multiplication by animTransSpeed to give control from editor
+            anim.SetFloat("Speed", Mathf.MoveTowards(animatorCurSpeed, agentSpeed, Time.deltaTime * animTransSpeed));    // added multiplication by animTransSpeed to give control from editor
+            
+            if (agent.remainingDistance < 0.01f)
+                roamTimer += Time.deltaTime;
+        }
 
         shootTimer += Time.deltaTime;
-
-        if (agent.remainingDistance < 0.01f)
-            roamTimer += Time.deltaTime;
-
 
         if (playerInRange && !canSeePlayer())
             checkRoam();
@@ -90,9 +96,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         {
             if(hit.collider.CompareTag("Player") && angleToPlayer <= FOV)
             {
-                agent.SetDestination(gameManager.instance.player.transform.position);
+                if (type != enemyType.stationary)
+                {
+                    agent.SetDestination(gameManager.instance.player.transform.position);
+                }
 
-                if (shootTimer >= shootRate && type == enemyType.range)
+                if (type != enemyType.melee && shootTimer >= shootRate && angleToPlayer <= shootAngle)
                 {
                     shoot();
                 }
@@ -113,21 +122,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         agent.stoppingDistance = 0;
         return false;
     }
-    //private void OnTriggerStay(Collider other)
-    //{
-    //    //if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= agent.stoppingDistance)
-    //    //{
-    //    //    meleeAttack();
-    //    //}
 
-    //    if (other.CompareTag("Player") && agent.remainingDistance <= meleeDistance) // Checks against meleeDistance instead of stoppingDistance
-    //    {
-    //        if (shootTimer >= shootRate && type == enemyType.melee) // Ensures attack happens when the shoot timer is ready
-    //        {
-    //            meleeAttack();
-    //        }
-    //    }
-    //}
 
         private void OnTriggerEnter(Collider other)
     {
@@ -156,9 +151,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     {
         HP -= amount;
         StartCoroutine(flashRed());
-        agent.SetDestination(gameManager.instance.player.transform.position);
+        if (type != enemyType.stationary)
+            agent.SetDestination(gameManager.instance.player.transform.position);
 
-        //weaponColOff();
+        if (meleeCol != null)
+            turnOffCol();
 
         if (HP <= 0)
         {
@@ -180,7 +177,10 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     {
         shootTimer = 0;
 
-        anim.SetTrigger("Shoot");
+        if (anim != null)
+            anim.SetTrigger("Shoot");
+        else
+            createBullet();
     }
 
     public void createBullet()
@@ -210,6 +210,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     void checkRoam()
     {
+        if (type == enemyType.stationary)
+            return;
+
         if ((roamTimer > roamPauseTime && agent.remainingDistance < 0.01f) || gameManager.instance.playerScript.HP <= 0)
             roam();
     }
@@ -230,11 +233,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     public void turnOnCol()
     {
-        attackCol.enabled = true;
+        meleeCol.enabled = true;
     }
 
     public void turnOffCol()
     {
-        attackCol.enabled = false;
+        meleeCol.enabled = false;
     }
 }
