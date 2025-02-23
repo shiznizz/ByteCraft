@@ -94,7 +94,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         RaycastHit hit;
         if (Physics.Raycast(headPos.position, playerDir, out hit) && angleToPlayer <= FOV)
         {
-            if(hit.collider.CompareTag("Player") && angleToPlayer <= FOV)
+            if (hit.collider.CompareTag("Player") && angleToPlayer <= FOV)
             {
                 if (type != enemyType.stationary)
                 {
@@ -124,9 +124,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     }
 
 
-        private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
             playerInRange = true;
         }
@@ -134,7 +134,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     private void OnTriggerExit(Collider other)
     {
-        if(other.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
             playerInRange = false;
         }
@@ -180,13 +180,20 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (anim != null)
             anim.SetTrigger("Shoot");
         else
-            createBullet();
+            createProjectile();
     }
 
-    public void createBullet()
+    public void createProjectile()
     {
+        //Creates a projectile at shootPos with the same rotation as the enemy
         Instantiate(bullet, shootPos.position, transform.rotation);
+
     }
+
+    //public void createBullet()
+    //{
+    //    Instantiate(bullet, shootPos.position, transform.rotation);
+    //}
 
     void meleeAttack()
     {

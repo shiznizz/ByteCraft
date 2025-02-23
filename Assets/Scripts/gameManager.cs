@@ -13,6 +13,7 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
     [SerializeField] TMP_Text goalCountText;
+    [SerializeField] GameObject ammoHUD;
     [SerializeField] TMP_Text ammoCurText;
     [SerializeField] TMP_Text ammoMaxText;
     [SerializeField] TMP_Text ammoReserveText;
@@ -93,6 +94,11 @@ public class gameManager : MonoBehaviour
         ammoCurText.text = gun.ammoCur.ToString("D3");
         ammoMaxText.text = gun.ammoMax.ToString("D3");
         ammoReserveText.text = gun.ammoReserve.ToString("D3");
+    }
+
+    public void hideAmmo()
+    {
+
     }
 
     public void youLose()
