@@ -23,7 +23,7 @@ public class damage : MonoBehaviour
                 rb.linearVelocity = (gameManager.instance.player.transform.position - transform.position).normalized * speed;
             else
             {
-                rb.linearVelocity = transform.forward * speed;
+                rb.linearVelocity = Camera.main.transform.forward * speed;
             }
             Destroy(gameObject, destroyTime);
         }
