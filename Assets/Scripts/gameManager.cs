@@ -20,6 +20,7 @@ public class gameManager : MonoBehaviour
 
     public Image playerHPBar;
     public Image JPFuelGauge;
+    public Image grappleGauge;
     public GameObject playerDamageScreen;
     public bool isPaused;
     public GameObject player;

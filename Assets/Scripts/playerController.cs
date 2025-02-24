@@ -409,6 +409,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
 
+        //Grapple recharge UI
+        if (grappleCooldownTimer <= grappleCooldown)
+        {
+            gameManager.instance.grappleGauge.enabled = true;
+            gameManager.instance.grappleGauge.fillAmount = (float)grappleCooldownTimer / grappleCooldown;
+        }
+        else if (gameManager.instance.grappleGauge.enabled)
+            gameManager.instance.grappleGauge.enabled = false;
+
+        // Toggle ammo counter based on weapon type
         if (weaponList.Count > 0)
         {
             if (weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
