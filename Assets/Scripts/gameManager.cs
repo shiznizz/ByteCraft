@@ -98,7 +98,12 @@ public class gameManager : MonoBehaviour
 
     public void hideAmmo()
     {
+        ammoHUD.SetActive(false);
+    }
 
+    public void showAmmo()
+    {
+        ammoHUD.SetActive(true);
     }
 
     public void youLose()

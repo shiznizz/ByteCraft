@@ -409,10 +409,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
 
-        if (weaponList.Count > 0 && weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+        if (weaponList.Count > 0)
         {
             if (weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+            {
                 gameManager.instance.updateAmmo(weaponList[weaponListPos].gun);
+                gameManager.instance.showAmmo();
+            }
             else
                 gameManager.instance.hideAmmo();
         }
@@ -511,7 +514,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         if (gunModel != null && weaponList[weaponListPos].type != weaponStats.weaponType.Gun)
             gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-
     }
 
     void gunReload()
