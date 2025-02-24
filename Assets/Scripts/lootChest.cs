@@ -20,27 +20,11 @@ public class lootChest : MonoBehaviour, lootDrop
 
     public void dropLoot()
     {
-        Debug.Log("Running the dropLoot function...");
-
-        Debug.Log("Inside of drop loot.");
         for(int i = 0; i < numItems; i++)
         {
-            Debug.Log("Inside of the for statement");
-            LootItem item = lootTable[i];
-            Transform pos = dropPositions[i];
-            Instantiate(item.itemModel, pos.position, pos.rotation);
-            Debug.Log("Instantiated item");
+            Instantiate(lootTable[i].itemModel, dropPositions[i].position, dropPositions[i].rotation);
         }
-/*        foreach (LootItem loot in lootTable) 
-        {
-            Debug.Log("Inside of the foreach statement");
-            Instantiate(loot.itemModel, dropPositions[posIdx].position, dropPositions[posIdx].rotation);
-
-        }*/
 
         Destroy(gameObject);
-        Debug.Log("Chest destroyed");
     }
-
-
 }

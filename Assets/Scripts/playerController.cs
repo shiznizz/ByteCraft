@@ -143,7 +143,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 movement();
                 sprint();
                 handleJetpackFuelRegen();
-                if (Input.GetButtonDown("Open"))
+                if (Input.GetButtonDown("Open")) // for opening loot chests
                     openChest();
                 break;
             // is grappling
