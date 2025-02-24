@@ -586,7 +586,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void shootMagicProjectile()
     {
         attackTimer = 0;
-        
+
         Instantiate(magicProjectile, magicPosition.position, transform.rotation);
     }
       
