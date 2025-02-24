@@ -3,10 +3,9 @@ using UnityEngine;
 
 public class pickup : MonoBehaviour
 {
-    [SerializeField] gunStats gun;
-    [SerializeField] meleeWepStats meleeWeapon;
+    [SerializeField] weaponStats weapon;
 
-    public enum LootType {Health,Gun, MeleeWeapon}
+    public enum LootType {Health, Weapon}
     public LootType lootType;
     public int amount; // how much value the loot gives to player
 
@@ -15,7 +14,6 @@ public class pickup : MonoBehaviour
         if (other.CompareTag("Player")) // check if player touches loot
         {
             IPickup player = other.GetComponent<IPickup>();
-            //playerController player = other.GetComponent<playerController>();
             if (player != null) 
             {
                 switch (lootType)
@@ -23,11 +21,8 @@ public class pickup : MonoBehaviour
                     case pickup.LootType.Health:
                         player.heal(amount);
                         break;
-                    case pickup.LootType.Gun:
-                        player.getGunStats(gun);
-                        break;
-                    case pickup.LootType.MeleeWeapon:
-                        player.getMeleeWeaponStats(meleeWeapon);
+                    case pickup.LootType.Weapon:
+                        player.getWeaponStats(weapon);
                         break;
                 }
                 Destroy(gameObject); // remove loot from scene
@@ -38,10 +33,10 @@ public class pickup : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (lootType == LootType.Gun)
+        if (lootType == LootType.Weapon && weapon.type == weaponStats.weaponType.Gun)
         {
-            gun.ammoCur = gun.ammoMax;
-            gun.ammoReserve = gun.ammoReserveMax;
+            weapon.gun.ammoCur = weapon.gun.ammoMax;
+            weapon.gun.ammoReserve = weapon.gun.ammoReserveMax;
         }
     }
 }

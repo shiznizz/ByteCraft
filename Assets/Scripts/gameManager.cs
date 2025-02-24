@@ -13,12 +13,14 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
     [SerializeField] TMP_Text goalCountText;
+    [SerializeField] GameObject ammoHUD;
     [SerializeField] TMP_Text ammoCurText;
     [SerializeField] TMP_Text ammoMaxText;
     [SerializeField] TMP_Text ammoReserveText;
 
     public Image playerHPBar;
     public Image JPFuelGauge;
+    public Image grappleGauge;
     public GameObject playerDamageScreen;
     public bool isPaused;
     public GameObject player;
@@ -93,6 +95,16 @@ public class gameManager : MonoBehaviour
         ammoCurText.text = gun.ammoCur.ToString("D3");
         ammoMaxText.text = gun.ammoMax.ToString("D3");
         ammoReserveText.text = gun.ammoReserve.ToString("D3");
+    }
+
+    public void hideAmmo()
+    {
+        ammoHUD.SetActive(false);
+    }
+
+    public void showAmmo()
+    {
+        ammoHUD.SetActive(true);
     }
 
     public void youLose()
