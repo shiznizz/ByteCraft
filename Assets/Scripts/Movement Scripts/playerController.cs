@@ -5,28 +5,15 @@ using UnityEngine;
 
 public class playerController : MonoBehaviour, IDamage, IPickup
 {
-
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
-
+    [SerializeField] LayerMask groundLayer;
 
     [Header("Player Options")]
     public int HP;
-    [SerializeField] int speed;
-    [SerializeField] int speedModifer;
-    [SerializeField] int jumpSpeed;
     [SerializeField] int jumpMax;
-    [SerializeField] int gravity;
-    [SerializeField] float momentumDrag;
-
-    [Header("JetPack Options")]
-    [SerializeField] bool hasJetpack;
-    [SerializeField] int jetpackFuelMax;
-    [SerializeField] float jetpackFuel;
-    [SerializeField] float jetpackFuelUse;
-    [SerializeField] float jetpackFuelRegen;
-    [SerializeField] float jetpackFuelRegenDelay;
-    [SerializeField] int jetpackSpeed;
+    int jumpCount;
+    int HPOrig;
 
     [SerializeField] List<weaponStats> weaponList = new List<weaponStats>();
 
@@ -53,6 +40,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] float magicProjectileSpeed; // Speed of projectile
     [SerializeField] Transform magicPosition;
 
+    //Weapons inventory (gun, melee)
+    int weaponListPos;
+
+    float shootTimer;
+    float attackTimer;
+
+    //Tracks which weapon is active
+    public enum WeaponType { Gun, Melee, Magic }
+    public WeaponType currentWeapon = WeaponType.Gun;
+
     [Header("Grapple Options")]
     [SerializeField] int grappleDistance;
     [SerializeField] int grappleLift;
@@ -67,21 +64,33 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     // holds state of the grapple 
     private movementState grappleState;
-
-    int jumpCount;
-    int HPOrig;
-
-    //Weapons inventory (gun, melee)
-    int weaponListPos;
-
     float grappleCooldownTimer;
-    float shootTimer;
-    float attackTimer;
+
+    [Header("Player Movement")]
+    [SerializeField] int speedModifer;
+    [SerializeField] float momentumDrag;
+    [SerializeField] int jumpSpeed;
+    [SerializeField] int gravity;
+
+    public float speed;
+    public float walkSpeed;
+    public float sprintSpeed;
+    public float crouchSpeed;
+    public float slideSpeed;
+    public float slideSpeedIncrease;
+    public float slideSpeedDecrease;
 
     private Vector3 moveDir;
     private Vector3 playerVelocity;
     private Vector3 playerMomentum;
     private Vector3 grapplePostion;
+    private Vector3 forwardDir;
+
+    float playerHeight;
+    float standingHeight = 2f;
+    float crouchHeight = 1f;
+    Vector3 crouchingCenter = new Vector3(0, 0.5f, 0);
+    Vector3 standingCenter = new Vector3(0, 0, 0);
 
     public bool isGrounded;
     public bool isSprinting;
@@ -90,11 +99,21 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isCrouching;
     public bool isWallRunning;
 
-    private float jetpackFuelRegenTimer;
+    float slideTimer;
+    float maxSlideTime;
 
-    //Tracks which weapon is active
-    public enum WeaponType { Gun, Melee, Magic }
-    public WeaponType currentWeapon = WeaponType.Gun;
+    public Transform groundCheck;
+
+    [Header("JetPack Options")]
+    [SerializeField] bool hasJetpack;
+    [SerializeField] int jetpackFuelMax;
+    [SerializeField] float jetpackFuel;
+    [SerializeField] float jetpackFuelUse;
+    [SerializeField] float jetpackFuelRegen;
+    [SerializeField] float jetpackFuelRegenDelay;
+    [SerializeField] int jetpackSpeed;
+
+    private float jetpackFuelRegenTimer;
 
     // state of the grapple 
     public enum movementState
@@ -119,6 +138,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         HPOrig = HP;
         jetpackFuel = jetpackFuelMax;
+        playerHeight = standingHeight;
         spawnPlayer();
 
         jetpackFuelRegenTimer = 0f;
@@ -153,12 +173,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 if (!gameManager.instance.isPaused)
                 movement();
                 sprint();
+                crouch();
                 handleJetpackFuelRegen();
                 break;
             // is grappling
             case movementState.grappleMoving:
                 grappleMovement();
                 sprint();
+                crouch();
                 handleJetpackFuelRegen();
                 break;
         }
@@ -170,18 +192,23 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             grappleRope.SetPosition(0, grappleShootPos.position);
     }
 
+    void increaseSpeed(float speedIncrease)
+    {
+        speed += speedIncrease;
+    }
+
+    void decreaseSpeed(float speedDecrease)
+    {
+        speed -= speedDecrease;
+    }
     void movement()
     {
-        if (controller.isGrounded)
-        {
-            jumpCount = 0;
-            playerVelocity = Vector3.zero;
-            playerMomentum = Vector3.zero;
-            isGrounded = true;
-        }
+        checkGround();
 
         moveDir = (Input.GetAxis("Horizontal") * transform.right) +
                   (Input.GetAxis("Vertical") * transform.forward);
+
+        speed = isSprinting ? sprintSpeed : isCrouching ? crouchSpeed : walkSpeed;
 
         controller.Move(moveDir * speed * Time.deltaTime);
 
@@ -189,11 +216,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         // apply momentum
         playerVelocity += playerMomentum;
-        // move player
-        controller.Move(playerVelocity * Time.deltaTime);
-        // make player fall
-        playerVelocity.y -= gravity * Time.deltaTime;
-        //dampen momentum
+
+        applyGravity();
+
         if (playerMomentum.magnitude >= 0f)
         {
             playerMomentum -= playerMomentum * momentumDrag * Time.deltaTime;
@@ -202,6 +227,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 playerMomentum = Vector3.zero;
             }
         }
+
+        // checks if clicking mouse 2 (right click)
+        if (testGrappleKeyPressed())
+            shootGrapple();
+
+        moveDir = Vector3.ClampMagnitude(moveDir, speed);
+
+        // ==========================
+        // player attack settings below
+        // ==========================
 
         attackTimer += Time.deltaTime;
         grappleCooldownTimer += Time.deltaTime;
@@ -220,27 +255,39 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             {
                 shootMagicProjectile();
             }
-
         }
-        // checks if clicking mouse 2 (right click)
-        if (testGrappleKeyPressed())
-        {
-            shootGrapple();
-        }
-
         selectWeapon();
         gunReload();
+    }
+
+    void applyGravity()
+    {
+        controller.Move(playerVelocity * Time.deltaTime);
+        playerVelocity.y -= gravity * Time.deltaTime;              
+    }
+
+    void checkGround()
+    {
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
+        if (isGrounded)
+        {
+            jumpCount = 0;
+            playerVelocity = Vector3.zero;
+            playerMomentum = Vector3.zero;
+        }
     }
 
     void sprint()
     {
         if (Input.GetButtonDown("Sprint"))
         {
-            speed *= speedModifer;
+            //speed *= speedModifer;
+            isSprinting = true;
         }
         else if (Input.GetButtonUp("Sprint"))
         {
-            speed /= speedModifer;
+            //speed /= speedModifer;
+            isSprinting = false;
         }
     }
 
@@ -251,13 +298,58 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             jumpCount++;
             playerVelocity.y = jumpSpeed;
         }
-        else if ((Input.GetButton("Jump") && !controller.isGrounded) && hasJetpack)
+        else if ((Input.GetButton("Jump") && !isGrounded) && hasJetpack)
         {
             jetpack();
         }
     }
 
-    void jetpack()
+    void crouch()
+    {
+        if (Input.GetButtonDown("Crouch"))
+        {
+            isCrouching = !isCrouching;
+
+            if(isCrouching)
+            {
+                controller.height = crouchHeight;
+                controller.center = crouchingCenter;
+                playerHeight = crouchHeight;
+
+                if (speed > walkSpeed)
+                {
+                    isSliding = true;
+                    slideTimer = maxSlideTime;
+                    forwardDir = transform.forward;
+                    if(isGrounded)
+                        increaseSpeed(slideSpeedIncrease);
+                }
+            }
+            else
+            {
+                controller.height = standingHeight;
+                controller.center = standingCenter;
+                playerHeight = standingHeight;
+                isSliding = false;
+            }
+        }
+    }
+
+    void slideMovement()
+    {
+        if (isSliding)
+        {
+            slideTimer -= Time.deltaTime;
+            controller.Move(forwardDir * slideSpeed * Time.deltaTime);
+            if (slideTimer <= 0)
+            {
+                isSliding = false;
+                decreaseSpeed(slideSpeedDecrease);
+            }
+        }
+    }
+
+        void jetpack()
     {
         if (jetpackFuel > 0)
         {
