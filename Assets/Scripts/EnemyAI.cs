@@ -210,7 +210,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             if (roll <= loot.dropChance)
             {
                 Instantiate(loot.itemModel, dropPos.position, transform.rotation);
-                Debug.Log($"Dropped: {loot.itemName}");
             }
         }
     }
