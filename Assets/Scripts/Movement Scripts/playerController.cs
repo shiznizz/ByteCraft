@@ -85,15 +85,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] int jumpSpeed;
     [SerializeField] int gravity;
 
-    public float speed;
-    public float walkSpeed;
-    public float sprintSpeed;
-    public float crouchSpeed;
-    public float slideSpeed;
-    private float slideSpeedIncrease;
-    private float slideSpeedDecrease;
+    private float speed;
+    [SerializeField] float walkSpeed;
+    [SerializeField] float sprintSpeed;
+    [SerializeField] float crouchSpeed;
+    [SerializeField] float slideSpeed;
     private float desiredSpeed;
     private float prevDesiredSpeed;
+    private float slideSpeedIncrease;
+    private float slideSpeedDecrease;
 
     private Vector3 moveDir;
     private Vector3 playerVelocity;
@@ -102,9 +102,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private Vector3 forwardDir;
 
     float playerHeight;
-    float standingHeight;
+    float standingHeight = 2f;
     float crouchHeight = 0.5f;
-    Vector3 crouchingCenter = new Vector3(0, -.5f, 0);
+
+    Vector3 crouchingCenter = new Vector3(0, -0.5f, 0);
     Vector3 standingCenter = new Vector3(0, 0, 0);
 
     public bool isGrounded;
@@ -114,10 +115,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isCrouching;
     public bool isWallRunning;
 
-    [SerializeField] float slideTimer;
-    [SerializeField] float maxSlideTime;
 
-    public Transform groundCheck;
+    [SerializeField] float maxSlideTime;
+    float slideTimer;
 
     public movementState state;
     public enum movementState
@@ -143,13 +143,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         HPOrig = HP;
         jetpackFuel = jetpackFuelMax;
-
-        standingHeight = controller.height;
         playerHeight = standingHeight;
         spawnPlayer();
-
-        isCrouching = false;
-        
 
         jetpackFuelRegenTimer = 0f;
 
@@ -176,7 +171,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * attackDistance, Color.red);
         // switches states of grapple
-        updatePlayerUI();
         checkGround();
 
         switch (grappleState)
@@ -184,11 +178,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             // not grappling 
             case movementState.grappleNormal:
                 if (!gameManager.instance.isPaused)
-                    movement();
 
-                
+                movement();
+                updatePlayerUI();
                 handleJetpackFuelRegen();
-
                 if (Input.GetButtonDown("Open")) // for opening loot chests
                     openChest();
                 break;
@@ -271,13 +264,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f);
 
+
         if (isGrounded)
         {
             jumpCount = 0;
             playerVelocity = Vector3.zero;
             playerMomentum = Vector3.zero;
         }
-       
     }
 
     private void playerMoveHandler()
@@ -322,11 +315,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             {
                 if (isCrouching)
                     exitCrouch();
-
-                state = movementState.sprinting;
             }
-            else
-                state = movementState.walking;
         }
     }
 
@@ -392,7 +381,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Crouch and Slide
     void crouch()
     {
-        
 
         if (Input.GetButtonDown("Crouch"))
         {
@@ -400,15 +388,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
             if (isCrouching)
             {
-                
+
                 controller.height = crouchHeight;
                 controller.center = crouchingCenter;
                 playerHeight = crouchHeight;
 
                 if (speed > walkSpeed)
                 {
-                    
-                    isCrouching = false;
+
                     isSliding = true;
                     isSprinting = false;
                     slideTimer = maxSlideTime;
@@ -424,7 +411,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void exitCrouch()
     {
-        state = movementState.walking;
+
         controller.height = standingHeight;
         controller.center = standingCenter;
         playerHeight = standingHeight;
@@ -435,20 +422,21 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void slideMovement()
     {
-        
-            Debug.Log("yeah we slide or nah");
+
+        if (isSliding)
+        {
+
             slideTimer -= Time.deltaTime;
             controller.Move(forwardDir * slideSpeed * Time.deltaTime);
             //if(currSpeed == walkSpeed)
             if (slideTimer <= 0)
             {
-                state = movementState.walking;
                 isSliding = false;
-                // decreaseSpeed(slideSpeedDecrease);
             }
         
     }
     #endregion Crouch and Slide
+
     IEnumerator smoothSpeedLerp()
     {
         float time = 0;
@@ -484,8 +472,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public float wallCheckDistance = 1f;
     private RaycastHit rightWallHit;
     private RaycastHit leftWallHit;
-    public bool wallRight;
-    public bool wallLeft;
+    private bool wallRight;
+    private bool wallLeft;
     private Vector3 wallNormal;
 
     [Header("Exiting")]
@@ -495,7 +483,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     [Header("References")]
     public Transform orientation;
-    private playerController pc;
 
     private float currentWallRunSpeed = 0f;
     public float wallRunAcceleration = 10f;
@@ -524,8 +511,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             if (!isWallRunning)
                 StartWallRun();
 
-
-            
             if (wallRunTimer > 0)
             {
                 wallRunTimer -= Time.deltaTime;
@@ -573,13 +558,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void WallRunMovement()
     {
-        playerVelocity.y = 0;
-
-
-        
-
         Vector3 wallForward = Vector3.Cross(wallNormal, Vector3.up).normalized;
-        Vector3 test = controller.transform.forward;
 
         // Ensure correct movement direction
         if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
@@ -589,8 +568,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         currentWallRunSpeed = Mathf.Lerp(currentWallRunSpeed, maxWallRunSpeed, wallRunAcceleration * Time.deltaTime);
 
         // Apply movement
-        //transform.position += wallForward * currentWallRunSpeed * Time.deltaTime;
-        controller.Move(currentWallRunSpeed * Time.deltaTime * test);
+        transform.position += wallForward * currentWallRunSpeed * Time.deltaTime;
     }
 
     private void wallJump()
@@ -601,23 +579,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         //Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
 
         //Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
-        if (wallLeft)
-        { 
-            Vector3 jumpDirection = Vector3.right + Vector3.up;
-            playerVelocity = wallJumpForce * jumpDirection;
-        }
-        if (wallRight)
-        {
-            Vector3 jumpDirection = Vector3.left + Vector3.up ;
-            
-            playerVelocity = wallJumpForce * jumpDirection;
-        }
-
-
-
-
-        //controller.Move(Vector3.up * wallJumpForce);
-
+        Vector3 jumpDirection = wallNormal + Vector3.up;
+        //apply jump vector to move controller
+        //pc.moveDir(jumpDirection * wallJumpForce);
         StopWallRun();
     }
 
