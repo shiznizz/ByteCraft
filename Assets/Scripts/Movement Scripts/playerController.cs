@@ -104,7 +104,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     float playerHeight;
     float standingHeight;
     float crouchHeight = 0.5f;
-    Vector3 crouchingCenter = new Vector3(0, 0, 0);
+    Vector3 crouchingCenter = new Vector3(0, -.5f, 0);
     Vector3 standingCenter = new Vector3(0, 0, 0);
 
     public bool isGrounded;
@@ -114,8 +114,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isCrouching;
     public bool isWallRunning;
 
-    float slideTimer;
-    float maxSlideTime;
+    [SerializeField] float slideTimer;
+    [SerializeField] float maxSlideTime;
 
     public Transform groundCheck;
 
@@ -178,6 +178,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         // switches states of grapple
         updatePlayerUI();
         checkGround();
+
         switch (grappleState)
         {
             // not grappling 
@@ -267,18 +268,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void checkGround()
     {
-        //isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f, groundLayer);
-        if (controller.isGrounded)
+
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f);
+
+        if (isGrounded)
         {
-            isGrounded = true;
             jumpCount = 0;
             playerVelocity = Vector3.zero;
             playerMomentum = Vector3.zero;
         }
-        else
-        {
-            isGrounded = false;
-        }
+       
     }
 
     private void playerMoveHandler()
@@ -393,10 +392,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Crouch and Slide
     void crouch()
     {
-        //float standingHeight = 2f;
-        //float crouchHeight = 0.5f;
-        //Vector3 crouchingCenter = new Vector3(0, 0.5f, 0);
-        //Vector3 standingCenter = new Vector3(0, 0, 0);
+        
 
         if (Input.GetButtonDown("Crouch"))
         {
@@ -404,14 +400,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
             if (isCrouching)
             {
-                state = movementState.crouching;
+                
                 controller.height = crouchHeight;
-                //controller.center = crouchingCenter;
+                controller.center = crouchingCenter;
                 playerHeight = crouchHeight;
 
                 if (speed > walkSpeed)
                 {
-                    state = movementState.sliding;
+                    
+                    isCrouching = false;
                     isSliding = true;
                     isSprinting = false;
                     slideTimer = maxSlideTime;
@@ -428,19 +425,17 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void exitCrouch()
     {
         state = movementState.walking;
-        //playerHeight = standingHeight;
         controller.height = standingHeight;
-        //controller.center = standingCenter;
+        controller.center = standingCenter;
         playerHeight = standingHeight;
         isCrouching = false;
         isSliding = false;
-        transform.position += Vector3.up * 0.1f;
+        //transform.position += Vector3.up * 0.1f;
     }
 
     void slideMovement()
     {
-        if (isSliding)
-        {
+        
             Debug.Log("yeah we slide or nah");
             slideTimer -= Time.deltaTime;
             controller.Move(forwardDir * slideSpeed * Time.deltaTime);
@@ -451,7 +446,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 isSliding = false;
                 // decreaseSpeed(slideSpeedDecrease);
             }
-        }
+        
     }
     #endregion Crouch and Slide
     IEnumerator smoothSpeedLerp()
