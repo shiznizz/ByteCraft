@@ -441,6 +441,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         if (isSliding)
         {
+            Debug.Log("yeah we slide or nah");
             slideTimer -= Time.deltaTime;
             controller.Move(forwardDir * slideSpeed * Time.deltaTime);
             //if(currSpeed == walkSpeed)
