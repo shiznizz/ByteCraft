@@ -102,7 +102,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private Vector3 forwardDir;
 
     float playerHeight;
-    float standingHeight = 1.8f;
+    float standingHeight = 2f;
     float crouchHeight = 0.5f;
     Vector3 crouchingCenter = new Vector3(0, 0.5f, 0);
     Vector3 standingCenter = new Vector3(0, 0, 0);
@@ -177,8 +177,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             case movementState.grappleNormal:
                 if (!gameManager.instance.isPaused)
 
-                    movement();
+                movement();
                 crouch();
+                updatePlayerUI();
                 handleJetpackFuelRegen();
                 if (Input.GetButtonDown("Open")) // for opening loot chests
                     openChest();

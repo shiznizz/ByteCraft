@@ -303,16 +303,9 @@ MonoBehaviour:
     m_Bits: 8
   groundLayer:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 33792
   HP: 100
   jumpMax: 1
-  hasJetpack: 1
-  jetpackFuelMax: 100
-  jetpackFuel: 0
-  jetpackFuelUse: 85
-  jetpackFuelRegen: 100
-  jetpackFuelRegenDelay: 1.5
-  jetpackSpeed: 8
   weaponList: []
   attackCooldown: 0
   attackDamage: 0
@@ -329,6 +322,7 @@ MonoBehaviour:
   magicProjectile: {fileID: 509375798219859286, guid: 08e0f98f418812e49bef0a5dde709f5b, type: 3}
   magicProjectileSpeed: 0
   magicPosition: {fileID: 264476666605605342}
+  currentWeapon: 0
   grappleDistance: 40
   grappleLift: 30
   grappleSpeedMultiplier: 2
@@ -337,7 +331,13 @@ MonoBehaviour:
   grappleCooldown: 1
   grappleShootPos: {fileID: 3704177444564449881}
   grappleRope: {fileID: 4819788767520455329}
-  speedModifer: 2
+  hasJetpack: 1
+  jetpackFuelMax: 100
+  jetpackFuel: 0
+  jetpackFuelUse: 85
+  jetpackFuelRegen: 100
+  jetpackFuelRegenDelay: 1.5
+  jetpackSpeed: 8
   momentumDrag: 100
   jumpSpeed: 8
   gravity: 32
@@ -353,7 +353,23 @@ MonoBehaviour:
   isCrouching: 0
   isWallRunning: 0
   groundCheck: {fileID: 3400437105452468489}
-  currentWeapon: 0
+  state: 0
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 65536
+  wallRunForce: 0
+  maxWallRunTime: 0
+  wallRunSpeed: 0
+  wallRunTimer: 0
+  wallJumpUpForce: 0
+  wallJumpSideForce: 0
+  wallCheckDistance: 1
+  exitWallTime: 0
+  orientation: {fileID: 3400437105452468489}
+  wallRunAcceleration: 10
+  maxWallRunSpeed: 10
+  wallRunTime: 1.5
+  wallJumpForce: 12
 --- !u!143 &7171065596406949458
 CharacterController:
   m_ObjectHideFlags: 0
