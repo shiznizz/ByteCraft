@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class playerController : MonoBehaviour, IDamage, IPickup
 {
+    #region Variables
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] LayerMask groundLayer;
@@ -66,8 +68,19 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private movementState grappleState;
     float grappleCooldownTimer;
 
+    [Header("JetPack Options")]
+    [SerializeField] bool hasJetpack;
+    [SerializeField] int jetpackFuelMax;
+    [SerializeField] float jetpackFuel;
+    [SerializeField] float jetpackFuelUse;
+    [SerializeField] float jetpackFuelRegen;
+    [SerializeField] float jetpackFuelRegenDelay;
+    [SerializeField] int jetpackSpeed;
+
+    private float jetpackFuelRegenTimer;
+
     [Header("Player Movement")]
-    [SerializeField] int speedModifer;
+    //[SerializeField] int speedModifer;
     [SerializeField] float momentumDrag;
     [SerializeField] int jumpSpeed;
     [SerializeField] int gravity;
@@ -77,8 +90,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public float sprintSpeed;
     public float crouchSpeed;
     public float slideSpeed;
-    public float slideSpeedIncrease;
-    public float slideSpeedDecrease;
+    private float slideSpeedIncrease;
+    private float slideSpeedDecrease;
+    private float desiredSpeed;
+    private float prevDesiredSpeed;
 
     private Vector3 moveDir;
     private Vector3 playerVelocity;
@@ -87,8 +102,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private Vector3 forwardDir;
 
     float playerHeight;
-    float standingHeight = 2f;
-    float crouchHeight = 1f;
+    float standingHeight = 1.8f;
+    float crouchHeight = 0.5f;
     Vector3 crouchingCenter = new Vector3(0, 0.5f, 0);
     Vector3 standingCenter = new Vector3(0, 0, 0);
 
@@ -104,18 +119,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public Transform groundCheck;
 
-    [Header("JetPack Options")]
-    [SerializeField] bool hasJetpack;
-    [SerializeField] int jetpackFuelMax;
-    [SerializeField] float jetpackFuel;
-    [SerializeField] float jetpackFuelUse;
-    [SerializeField] float jetpackFuelRegen;
-    [SerializeField] float jetpackFuelRegenDelay;
-    [SerializeField] int jetpackSpeed;
-
-    private float jetpackFuelRegenTimer;
-
-    // state of the grapple 
+    public movementState state;
     public enum movementState
     {
         walking,
@@ -127,6 +131,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         grappleNormal, // did not shoot grapple
         grappleMoving, // grapple succesful now moving player
     }
+    #endregion Variables
 
     private void Awake()
     {
@@ -171,8 +176,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             // not grappling 
             case movementState.grappleNormal:
                 if (!gameManager.instance.isPaused)
-                movement();
-                sprint();
+
+                    movement();
                 crouch();
                 handleJetpackFuelRegen();
                 if (Input.GetButtonDown("Open")) // for opening loot chests
@@ -181,39 +186,20 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             // is grappling
             case movementState.grappleMoving:
                 grappleMovement();
-                sprint();
-                crouch();
                 handleJetpackFuelRegen();
                 break;
         }
     }
 
-    private void LateUpdate()
-    {
-        if (isGrappling)
-            grappleRope.SetPosition(0, grappleShootPos.position);
-    }
-
-    void increaseSpeed(float speedIncrease)
-    {
-        speed += speedIncrease;
-    }
-
-    void decreaseSpeed(float speedDecrease)
-    {
-        speed -= speedDecrease;
-    }
+    #region Movement
     void movement()
     {
         checkGround();
-
-        moveDir = (Input.GetAxis("Horizontal") * transform.right) +
-                  (Input.GetAxis("Vertical") * transform.forward);
-
-        speed = isSprinting ? sprintSpeed : isCrouching ? crouchSpeed : walkSpeed;
-
-        controller.Move(moveDir * speed * Time.deltaTime);
-
+        checkWall();
+        wallRun();
+        sprint();
+        crouch();
+        playerMoveHandler();
         jump();
 
         // apply momentum
@@ -265,7 +251,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void applyGravity()
     {
         controller.Move(playerVelocity * Time.deltaTime);
-        playerVelocity.y -= gravity * Time.deltaTime;              
+        playerVelocity.y -= gravity * Time.deltaTime;
     }
 
     void checkGround()
@@ -279,26 +265,69 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
 
+    private void playerMoveHandler()
+    {
+        if (isWallRunning) return;
+
+        speed = isSprinting ? sprintSpeed : isSliding ? slideSpeed : isCrouching ? crouchSpeed : walkSpeed;
+
+        if (isGrounded && isSliding)
+        {
+            slideMovement();
+        }
+        else
+        {
+            moveDir = (Input.GetAxis("Horizontal") * transform.right) +
+                      (Input.GetAxis("Vertical") * transform.forward);
+            controller.Move(moveDir * speed * Time.deltaTime);
+        }
+    }
+
     void sprint()
     {
+        //// hold sprint
+        //if (Input.GetButtonDown("Sprint"))
+        //{
+        //    //speed *= speedModifer;
+        //    isSprinting = true;
+        //    state = movementState.sprinting;
+        //}
+        //else if (Input.GetButtonUp("Sprint"))
+        //{
+        //    //speed /= speedModifer;
+        //    isSprinting = false;
+        //    state = movementState.walking;
+        //}
+
+        // toggle sprint
         if (Input.GetButtonDown("Sprint"))
         {
-            //speed *= speedModifer;
-            isSprinting = true;
-        }
-        else if (Input.GetButtonUp("Sprint"))
-        {
-            //speed /= speedModifer;
-            isSprinting = false;
+            isSprinting = !isSprinting;
+            if (isSprinting)
+            {
+                if (isCrouching)
+                    exitCrouch();
+
+                state = movementState.sprinting;
+            }
+            else
+                state = movementState.walking;
         }
     }
 
     void jump()
     {
+
         if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
             playerVelocity.y = jumpSpeed;
+
+            //if (isCrouching)
+            //    exitCrouch();
+            if (isSliding)
+                isSliding = false;
+
         }
         else if ((Input.GetButton("Jump") && !isGrounded) && hasJetpack)
         {
@@ -306,52 +335,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
 
-    void crouch()
-    {
-        if (Input.GetButtonDown("Crouch"))
-        {
-            isCrouching = !isCrouching;
-
-            if(isCrouching)
-            {
-                controller.height = crouchHeight;
-                controller.center = crouchingCenter;
-                playerHeight = crouchHeight;
-
-                if (speed > walkSpeed)
-                {
-                    isSliding = true;
-                    slideTimer = maxSlideTime;
-                    forwardDir = transform.forward;
-                    if(isGrounded)
-                        increaseSpeed(slideSpeedIncrease);
-                }
-            }
-            else
-            {
-                controller.height = standingHeight;
-                controller.center = standingCenter;
-                playerHeight = standingHeight;
-                isSliding = false;
-            }
-        }
-    }
-
-    void slideMovement()
-    {
-        if (isSliding)
-        {
-            slideTimer -= Time.deltaTime;
-            controller.Move(forwardDir * slideSpeed * Time.deltaTime);
-            if (slideTimer <= 0)
-            {
-                isSliding = false;
-                decreaseSpeed(slideSpeedDecrease);
-            }
-        }
-    }
-
-        void jetpack()
+    #region Jetpack
+    void jetpack()
     {
         if (jetpackFuel > 0)
         {
@@ -387,28 +372,217 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             updatePlayerUI();
         }
     }
+    #endregion Jetpack
 
-    void shoot()
+    #region Crouch and Slide
+    void crouch()
     {
-        attackTimer = 0;
-        weaponList[weaponListPos].gun.ammoCur--;
-        updatePlayerUI();
-
-        StartCoroutine(flashMuzzle());
-
-        RaycastHit hit;
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackDistance, ~ignoreLayer))
+        if (Input.GetButtonDown("Crouch"))
         {
-            Debug.Log(hit.collider.name);
+            isCrouching = !isCrouching;
 
-            Instantiate(weaponList[weaponListPos].gun.hitEffect, hit.point, Quaternion.identity);
+            if (isCrouching)
+            {
+                state = movementState.crouching;
+                controller.height = crouchHeight;
+                controller.center = crouchingCenter;
+                playerHeight = crouchHeight;
 
-            IDamage damage = hit.collider.GetComponent<IDamage>();
-
-            damage?.takeDamage(attackDamage);
+                if (speed > walkSpeed)
+                {
+                    state = movementState.sliding;
+                    isSliding = true;
+                    isSprinting = false;
+                    slideTimer = maxSlideTime;
+                    forwardDir = transform.forward;
+                }
+            }
+            else
+            {
+                exitCrouch();
+            }
         }
     }
 
+    void exitCrouch()
+    {
+        state = movementState.walking;
+        //playerHeight = standingHeight;
+        controller.height = standingHeight;
+        controller.center = standingCenter;
+        playerHeight = standingHeight;
+        isCrouching = false;
+        isSliding = false;
+        transform.position += Vector3.up * 0.1f;
+    }
+
+    void slideMovement()
+    {
+        if (isSliding)
+        {
+            slideTimer -= Time.deltaTime;
+            controller.Move(forwardDir * slideSpeed * Time.deltaTime);
+            //if(currSpeed == walkSpeed)
+            if (slideTimer <= 0)
+            {
+                state = movementState.walking;
+                isSliding = false;
+                // decreaseSpeed(slideSpeedDecrease);
+            }
+        }
+    }
+    #endregion Crouch and Slide
+    IEnumerator smoothSpeedLerp()
+    {
+        float time = 0;
+        float difference = Mathf.Abs(desiredSpeed - speed);
+        float startValue = speed;
+
+        while (time < difference)
+        {
+            speed = Mathf.Lerp(startValue, desiredSpeed, time / difference);
+            time += Time.deltaTime;
+            yield return null;
+        }
+
+        speed = desiredSpeed;
+    }
+
+    #region WallRunning
+
+    [Header("Wallrunning")]
+    public LayerMask wallLayer;
+    public float wallRunForce;
+    public float maxWallRunTime;
+    public float wallRunSpeed;
+    public float wallRunTimer;
+    public float wallJumpUpForce;
+    public float wallJumpSideForce;
+
+    [Header("Input")]
+    private float horizontalInput;
+    private float verticalInput;
+
+    [Header("Detection")]
+    public float wallCheckDistance = 1f;
+    private RaycastHit rightWallHit;
+    private RaycastHit leftWallHit;
+    private bool wallRight;
+    private bool wallLeft;
+    private Vector3 wallNormal;
+
+    [Header("Exiting")]
+    private bool isExitingWall;
+    public float exitWallTime;
+    private float exitWallTimer;
+
+    [Header("References")]
+    public Transform orientation;
+    private playerController pc;
+
+    private float currentWallRunSpeed = 0f;
+    public float wallRunAcceleration = 10f;
+    public float maxWallRunSpeed = 10f;
+    public float wallRunTime = 1.5f;
+    public float wallJumpForce = 12f;
+
+    private void checkWall()
+    {
+        RaycastHit hit;
+        wallRight = Physics.Raycast(transform.position, orientation.right, out hit, wallCheckDistance, wallLayer);
+        wallLeft = Physics.Raycast(transform.position, -orientation.right, out hit, wallCheckDistance, wallLayer);
+        if (wallRight || wallLeft)
+            wallNormal = hit.normal;
+    }
+
+    private void wallRun()
+    {
+        // Getting Inputs
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
+
+        // State 1 - Wallrunning
+        if ((wallLeft || wallRight) && !pc.isGrounded && verticalInput > 0)
+        {
+            if (!isWallRunning)
+                StartWallRun();
+
+            if (wallRunTimer > 0)
+            {
+                wallRunTimer -= Time.deltaTime;
+                WallRunMovement();
+            }
+
+            if (wallRunTimer <= 0 && isWallRunning)
+            {
+                isExitingWall = true;
+                exitWallTimer = exitWallTime;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
+                wallJump();
+        }
+        else if (isExitingWall)
+        {
+            if (isWallRunning)
+                StopWallRun();
+
+            if (exitWallTimer > 0)
+                exitWallTimer -= Time.deltaTime;
+
+            if (exitWallTimer <= 0)
+                isExitingWall = false;
+        }
+        else
+        {
+            if (isWallRunning)
+                StopWallRun();
+        }
+    }
+
+    private void StartWallRun()
+    {
+        isWallRunning = true;
+        wallRunTimer = maxWallRunTime;
+    }
+
+    private void StopWallRun()
+    {
+        isWallRunning = false;
+        currentWallRunSpeed = 0f;
+    }
+
+    private void WallRunMovement()
+    {
+        Vector3 wallForward = Vector3.Cross(wallNormal, Vector3.up).normalized;
+
+        // Ensure correct movement direction
+        if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
+            wallForward = -wallForward;
+
+        // Smooth acceleration to max speed
+        currentWallRunSpeed = Mathf.Lerp(currentWallRunSpeed, maxWallRunSpeed, wallRunAcceleration * Time.deltaTime);
+
+        // Apply movement
+        transform.position += wallForward * currentWallRunSpeed * Time.deltaTime;
+    }
+
+    private void wallJump()
+    {
+        isExitingWall = true;
+        exitWallTimer = exitWallTime;
+
+        //Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
+
+        //Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
+        Vector3 jumpDirection = wallNormal + Vector3.up;
+        //pc.moveDir(jumpDirection * wallJumpForce);
+        StopWallRun();
+    }
+
+    #endregion WallRunning
+
+    #region GrappleHook
     // handles where the grapple is hitting
     void shootGrapple()
     {
@@ -428,6 +602,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
             grappleState = movementState.grappleMoving;
         }
+    }
+    private void LateUpdate()
+    {
+        if (isGrappling)
+            grappleRope.SetPosition(0, grappleShootPos.position);
     }
     // handles the grapple moving the character
     void grappleMovement()
@@ -486,81 +665,40 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         isGrappling = false;
         grappleRope.enabled = false;
     }
+    #endregion GrappleHook
+    #endregion Movement
 
-    public void takeDamage(int damage)
+    #region Weapons
+    void shoot()
     {
-        HP -= damage;
-        StartCoroutine(flashDamageScreen());
+        attackTimer = 0;
+        weaponList[weaponListPos].gun.ammoCur--;
         updatePlayerUI();
 
-        if (HP <= 0)
+        StartCoroutine(flashMuzzle());
+
+        RaycastHit hit;
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackDistance, ~ignoreLayer))
         {
-            gameManager.instance.youLose();
+            Debug.Log(hit.collider.name);
+
+
         }
+
+        IDamage damage = hit.collider.GetComponent<IDamage>();
+
+        damage?.takeDamage(attackDamage);
     }
 
-    IEnumerator flashDamageScreen()
-    {
-        gameManager.instance.playerDamageScreen.SetActive(true);
-        yield return new WaitForSeconds(0.1f);
-        gameManager.instance.playerDamageScreen.SetActive(false);
-    }
-
-    void updatePlayerUI()
-    {
-        gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
-        gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
-
-        //Grapple recharge UI
-        if (grappleCooldownTimer <= grappleCooldown)
-        {
-            gameManager.instance.grappleGauge.enabled = true;
-            gameManager.instance.grappleGauge.fillAmount = (float)grappleCooldownTimer / grappleCooldown;
-        }
-        else if (gameManager.instance.grappleGauge.enabled)
-            gameManager.instance.grappleGauge.enabled = false;
-
-        // Toggle ammo counter based on weapon type
-        if (weaponList.Count > 0)
-        {
-            if (weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
-            {
-                gameManager.instance.updateAmmo(weaponList[weaponListPos].gun);
-                gameManager.instance.showAmmo();
-            }
-            else
-                gameManager.instance.hideAmmo();
-        }
-    }
-
-    private pickup.LootType lastLootType;
-    public void PickupLoot(pickup.LootType type, int amount)
-    {
-        lastLootType = type;
-
-        switch (type)
-        {
-            case pickup.LootType.Health:
-                HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
-                break;
-        }
-        updatePlayerUI(); // refresh UI after pickup
-    }
-
-    public void heal(int amount)
-    {
-        HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
-        updatePlayerUI(); // refresh UI after pickup
-    }
 
     public void getWeaponStats(weaponStats weapon)
     {
         weaponList.Add(weapon);
         weaponListPos = weaponList.Count - 1; // Selects the newly added weapon
-
+    
         changeWeapon();
     }
-
+    
     void changeWeapon()
     {
         switch (weaponList[weaponListPos].type)
@@ -576,58 +714,58 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 break;
         }
     }
-
+    
     void changeGun()
     {
         attackDamage = weaponList[weaponListPos].gun.shootDamage;
         attackDistance = weaponList[weaponListPos].gun.shootRange;
         attackCooldown = weaponList[weaponListPos].gun.shootRate;
-        muzzleFlash.SetLocalPositionAndRotation(new Vector3(weaponList[weaponListPos].gun.moveFlashX,weaponList[weaponListPos].gun.moveFlashY,weaponList[weaponListPos].gun.moveFlashZ),muzzleFlash.rotation);
-
+        muzzleFlash.SetLocalPositionAndRotation(new Vector3(weaponList[weaponListPos].gun.moveFlashX, weaponList[weaponListPos].gun.moveFlashY, weaponList[weaponListPos].gun.moveFlashZ), muzzleFlash.rotation);
+    
         gunModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
         gunModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;
-
+    
         turnOffWeaponModels();
     }
-
+    
     void changeMeleeWep()
     {
         attackDamage = weaponList[weaponListPos].meleeWep.meleeDamage;
         attackRange = weaponList[weaponListPos].meleeWep.meleeDistance;
-
+    
         attackCooldown = weaponList[weaponListPos].meleeWep.meleeCooldown;
-
+    
         meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].meleeWep.model.GetComponent<MeshFilter>().sharedMesh;
         meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].meleeWep.model.GetComponent<MeshRenderer>().sharedMaterial;
-
+    
         turnOffWeaponModels();
     }
-
+    
     void changeMagicWep()
     {
         attackDamage = weaponList[weaponListPos].magicWep.magicDamage;
         attackRange = weaponList[weaponListPos].magicWep.magicDitance;
-
+    
         attackCooldown = weaponList[weaponListPos].magicWep.magicCooldown;
-
+    
         magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].magicWep.model.GetComponent<MeshFilter>().sharedMesh;
         magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].magicWep.model.GetComponent<MeshRenderer>().sharedMaterial;
-
+    
         turnOffWeaponModels();
     }
-
+    
     void turnOffWeaponModels()
     {
         if (meleeWeaponModel != null && weaponList[weaponListPos].type != weaponStats.weaponType.Melee)
             meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
-
+    
         if (magicWeaponModel != null && weaponList[weaponListPos].type != weaponStats.weaponType.Magic)
             magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
-
+    
         if (gunModel != null && weaponList[weaponListPos].type != weaponStats.weaponType.Gun)
             gunModel.GetComponent<MeshFilter>().sharedMesh = null;
     }
-
+    
     void gunReload()
     {
         if (Input.GetButtonDown("Reload") && weaponList.Count > 0 && weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
@@ -642,56 +780,47 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 weaponList[weaponListPos].gun.ammoCur = weaponList[weaponListPos].gun.ammoReserve;
                 weaponList[weaponListPos].gun.ammoReserve = 0;
             }
-
+    
             updatePlayerUI();
         }
     }
-
-    public void spawnPlayer()
-    {
-        controller.enabled = false;
-        controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
-        controller.enabled = true;
-
-        HP = HPOrig;
-        updatePlayerUI();
-    }
-
+    
+    
     void meleeAttack()
     {
         attackTimer = 0; // Will Reset the cooldown timer
-
+    
         if (playerAnimator != null)
         {
             playerAnimator.SetTrigger("MeleeAttack");
         }
-
+    
         //Activate melee weapon
         if (meleeWeaponModel != null)
         {
             meleeWeaponModel.SetActive(true); // Shows the melee weapon during the attack
         }
-
+    
         //Raycast to detect enemies in melee range
         RaycastHit hit;
-        if(Physics.Raycast(transform.position, transform.forward, out hit, attackRange, ~ignoreLayer)) 
+        if (Physics.Raycast(transform.position, transform.forward, out hit, attackRange, ~ignoreLayer))
         {
             Debug.Log("Melee hit; " + hit.collider.name);
-
+    
             //Apply damage if the object hit implements IDamage
             IDamage damageable = hit.collider.GetComponent<IDamage>();
             damageable.takeDamage(attackDamage);
         }
-
+    
     }
-
+    
     void shootMagicProjectile()
     {
         attackTimer = 0;
-
+    
         Instantiate(magicProjectile, magicPosition.position, transform.rotation);
     }
-      
+    
     IEnumerator flashMuzzle()
     {
         muzzleFlash.localEulerAngles = new Vector3(0, 0, Random.Range(0, 360));
@@ -699,12 +828,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         yield return new WaitForSeconds(0.05f);
         muzzleFlash.gameObject.SetActive(false);
     }
-
+    
     //Switches between weapon types using a mouse scroll wheel
     void selectWeapon()
     {
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if(scrollInput > 0 && weaponListPos < weaponList.Count - 1)
+        if (scrollInput > 0 && weaponListPos < weaponList.Count - 1)
         {
             weaponListPos++;
             changeWeapon();
@@ -714,6 +843,72 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             weaponListPos--;
             changeWeapon();
         }
+    }
+    #endregion Weapons
+    
+    #region Everything Else
+    public void spawnPlayer()
+    {
+        controller.enabled = false;
+        controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
+        controller.enabled = true;
+    
+        HP = HPOrig;
+        updatePlayerUI();
+    }
+    
+    public void takeDamage(int damage)
+    {
+        HP -= damage;
+        StartCoroutine(flashDamageScreen());
+        updatePlayerUI();
+    
+        if (HP <= 0)
+        {
+            gameManager.instance.youLose();
+        }
+    }
+    
+    void updatePlayerUI()
+    {
+        gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
+        gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
+    
+        //Grapple recharge UI
+        if (grappleCooldownTimer <= grappleCooldown)
+        {
+            gameManager.instance.grappleGauge.enabled = true;
+            gameManager.instance.grappleGauge.fillAmount = (float)grappleCooldownTimer / grappleCooldown;
+        }
+        else if (gameManager.instance.grappleGauge.enabled)
+            gameManager.instance.grappleGauge.enabled = false;
+    
+        // Toggle ammo counter based on weapon type
+        if (weaponList.Count > 0)
+        {
+            if (weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+            {
+                gameManager.instance.updateAmmo(weaponList[weaponListPos].gun);
+                gameManager.instance.showAmmo();
+            }
+            else
+                gameManager.instance.hideAmmo();
+        }
+    }
+    
+    private pickup.LootType lastLootType;
+    
+    public void PickupLoot(pickup.LootType type, int amount)
+    {
+        lastLootType = type;
+    
+        switch (type)
+        {
+            case pickup.LootType.Health:
+                HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
+                break;
+        }
+        updatePlayerUI(); // refresh UI after pickup
     }
 
     void openChest()
@@ -731,4 +926,18 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
 
     }
+
+    public void heal(int amount)
+    {
+        HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
+        updatePlayerUI(); // refresh UI after pickup
+    }
+    
+    IEnumerator flashDamageScreen()
+    {
+        gameManager.instance.playerDamageScreen.SetActive(true);
+        yield return new WaitForSeconds(0.1f);
+        gameManager.instance.playerDamageScreen.SetActive(false);
+    }
+    #endregion Everything Else
 }
