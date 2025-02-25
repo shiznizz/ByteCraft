@@ -430,7 +430,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
     #endregion Crouch and Slide
-
     IEnumerator smoothSpeedLerp()
     {
         float time = 0;
