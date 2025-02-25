@@ -479,7 +479,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     [Header("References")]
     public Transform orientation;
-    private playerController pc;
 
     private float currentWallRunSpeed = 0f;
     public float wallRunAcceleration = 10f;
@@ -503,7 +502,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // State 1 - Wallrunning
-        if ((wallLeft || wallRight) && !pc.isGrounded && verticalInput > 0)
+        if ((wallLeft || wallRight) && !isGrounded && verticalInput > 0)
         {
             if (!isWallRunning)
                 StartWallRun();
@@ -577,6 +576,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         //Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
         Vector3 jumpDirection = wallNormal + Vector3.up;
+        //apply jump vector to move controller
         //pc.moveDir(jumpDirection * wallJumpForce);
         StopWallRun();
     }
