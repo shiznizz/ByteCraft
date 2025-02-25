@@ -339,20 +339,19 @@ MonoBehaviour:
   jetpackFuelRegenDelay: 1.5
   jetpackSpeed: 8
   momentumDrag: 100
-  jumpSpeed: 8
+  jumpSpeed: 12
   gravity: 32
-  speed: 7
   walkSpeed: 7
   sprintSpeed: 14
   crouchSpeed: 4
-  slideSpeed: 14
+  slideSpeed: 40
   isGrounded: 0
   isSprinting: 0
   isGrappling: 0
   isSliding: 0
   isCrouching: 0
   isWallRunning: 0
-  groundCheck: {fileID: 3400437105452468489}
+  maxSlideTime: 0
   state: 0
   wallLayer:
     serializedVersion: 2
@@ -364,8 +363,6 @@ MonoBehaviour:
   wallJumpUpForce: 2
   wallJumpSideForce: 2
   wallCheckDistance: 1
-  wallRight: 0
-  wallLeft: 0
   exitWallTime: 5
   orientation: {fileID: 3400437105452468489}
   wallRunAcceleration: 10
