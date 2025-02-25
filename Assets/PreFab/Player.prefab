@@ -324,14 +324,14 @@ MonoBehaviour:
   magicPosition: {fileID: 264476666605605342}
   currentWeapon: 0
   grappleDistance: 40
-  grappleLift: 30
+  grappleLift: 7
   grappleSpeedMultiplier: 2
-  grappleSpeedMin: 10
-  grappleSpeedMax: 20
+  grappleSpeedMin: 8
+  grappleSpeedMax: 12
   grappleCooldown: 1
   grappleShootPos: {fileID: 3704177444564449881}
   grappleRope: {fileID: 4819788767520455329}
-  hasJetpack: 1
+  hasJetpack: 0
   jetpackFuelMax: 100
   jetpackFuel: 0
   jetpackFuelUse: 85
@@ -358,13 +358,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 65536
   wallRunForce: 0
-  maxWallRunTime: 0
+  maxWallRunTime: 50
   wallRunSpeed: 0
   wallRunTimer: 0
-  wallJumpUpForce: 0
-  wallJumpSideForce: 0
+  wallJumpUpForce: 2
+  wallJumpSideForce: 2
   wallCheckDistance: 1
-  exitWallTime: 0
+  wallRight: 0
+  wallLeft: 0
+  exitWallTime: 5
   orientation: {fileID: 3400437105452468489}
   wallRunAcceleration: 10
   maxWallRunSpeed: 10

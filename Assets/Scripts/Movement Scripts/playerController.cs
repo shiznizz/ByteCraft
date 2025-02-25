@@ -102,9 +102,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private Vector3 forwardDir;
 
     float playerHeight;
-    float standingHeight = 2f;
+    float standingHeight;
     float crouchHeight = 0.5f;
-    Vector3 crouchingCenter = new Vector3(0, 0.5f, 0);
+    Vector3 crouchingCenter = new Vector3(0, 0, 0);
     Vector3 standingCenter = new Vector3(0, 0, 0);
 
     public bool isGrounded;
@@ -143,8 +143,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         HPOrig = HP;
         jetpackFuel = jetpackFuelMax;
+
+        standingHeight = controller.height;
         playerHeight = standingHeight;
         spawnPlayer();
+
+        isCrouching = false;
+        
 
         jetpackFuelRegenTimer = 0f;
 
@@ -171,16 +176,18 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * attackDistance, Color.red);
         // switches states of grapple
+        updatePlayerUI();
+        checkGround();
         switch (grappleState)
         {
             // not grappling 
             case movementState.grappleNormal:
                 if (!gameManager.instance.isPaused)
+                    movement();
 
-                movement();
-                crouch();
-                updatePlayerUI();
+                
                 handleJetpackFuelRegen();
+
                 if (Input.GetButtonDown("Open")) // for opening loot chests
                     openChest();
                 break;
@@ -195,9 +202,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Movement
     void movement()
     {
-        checkGround();
-        checkWall();
-        wallRun();
+        if (!isGrounded)
+        {
+            checkWall();
+            wallRun();
+        }
+
         sprint();
         crouch();
         playerMoveHandler();
@@ -257,12 +267,17 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void checkGround()
     {
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
-        if (isGrounded)
+        //isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f, groundLayer);
+        if (controller.isGrounded)
         {
+            isGrounded = true;
             jumpCount = 0;
             playerVelocity = Vector3.zero;
             playerMomentum = Vector3.zero;
+        }
+        else
+        {
+            isGrounded = false;
         }
     }
 
@@ -378,6 +393,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Crouch and Slide
     void crouch()
     {
+        //float standingHeight = 2f;
+        //float crouchHeight = 0.5f;
+        //Vector3 crouchingCenter = new Vector3(0, 0.5f, 0);
+        //Vector3 standingCenter = new Vector3(0, 0, 0);
+
         if (Input.GetButtonDown("Crouch"))
         {
             isCrouching = !isCrouching;
@@ -386,7 +406,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             {
                 state = movementState.crouching;
                 controller.height = crouchHeight;
-                controller.center = crouchingCenter;
+                //controller.center = crouchingCenter;
                 playerHeight = crouchHeight;
 
                 if (speed > walkSpeed)
@@ -410,7 +430,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         state = movementState.walking;
         //playerHeight = standingHeight;
         controller.height = standingHeight;
-        controller.center = standingCenter;
+        //controller.center = standingCenter;
         playerHeight = standingHeight;
         isCrouching = false;
         isSliding = false;
@@ -468,8 +488,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public float wallCheckDistance = 1f;
     private RaycastHit rightWallHit;
     private RaycastHit leftWallHit;
-    private bool wallRight;
-    private bool wallLeft;
+    public bool wallRight;
+    public bool wallLeft;
     private Vector3 wallNormal;
 
     [Header("Exiting")]
@@ -503,11 +523,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         verticalInput = Input.GetAxisRaw("Vertical");
 
         // State 1 - Wallrunning
-        if ((wallLeft || wallRight) && !pc.isGrounded && verticalInput > 0)
+        if ((wallLeft || wallRight) && !isGrounded && verticalInput > 0)
         {
             if (!isWallRunning)
                 StartWallRun();
 
+
+            
             if (wallRunTimer > 0)
             {
                 wallRunTimer -= Time.deltaTime;
@@ -555,7 +577,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void WallRunMovement()
     {
+        playerVelocity.y = 0;
+
+
+        
+
         Vector3 wallForward = Vector3.Cross(wallNormal, Vector3.up).normalized;
+        Vector3 test = controller.transform.forward;
 
         // Ensure correct movement direction
         if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
@@ -565,7 +593,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         currentWallRunSpeed = Mathf.Lerp(currentWallRunSpeed, maxWallRunSpeed, wallRunAcceleration * Time.deltaTime);
 
         // Apply movement
-        transform.position += wallForward * currentWallRunSpeed * Time.deltaTime;
+        //transform.position += wallForward * currentWallRunSpeed * Time.deltaTime;
+        controller.Move(currentWallRunSpeed * Time.deltaTime * test);
     }
 
     private void wallJump()
@@ -576,8 +605,23 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         //Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
 
         //Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
-        Vector3 jumpDirection = wallNormal + Vector3.up;
-        //pc.moveDir(jumpDirection * wallJumpForce);
+        if (wallLeft)
+        { 
+            Vector3 jumpDirection = Vector3.right + Vector3.up;
+            playerVelocity = wallJumpForce * jumpDirection;
+        }
+        if (wallRight)
+        {
+            Vector3 jumpDirection = Vector3.left + Vector3.up ;
+            
+            playerVelocity = wallJumpForce * jumpDirection;
+        }
+
+
+
+
+        //controller.Move(Vector3.up * wallJumpForce);
+
         StopWallRun();
     }
 
