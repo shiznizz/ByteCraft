@@ -104,6 +104,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     float playerHeight;
     float standingHeight = 2f;
     float crouchHeight = 0.5f;
+
     Vector3 crouchingCenter = new Vector3(0, -0.5f, 0);
     Vector3 standingCenter = new Vector3(0, 0, 0);
 
@@ -113,6 +114,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isSliding;
     public bool isCrouching;
     public bool isWallRunning;
+
 
     [SerializeField] float maxSlideTime;
     float slideTimer;
@@ -259,12 +261,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void checkGround()
     {
-        //isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
 
-        float checkRadius = 0.3f; 
-        Vector3 sphereOrigin = transform.position + Vector3.down * (playerHeight * 0.4f);
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f);
 
-        isGrounded = Physics.SphereCast(sphereOrigin, checkRadius, Vector3.down, out _, 0.2f);
 
         if (isGrounded)
         {
@@ -382,18 +381,21 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Crouch and Slide
     void crouch()
     {
+
         if (Input.GetButtonDown("Crouch"))
         {
             isCrouching = !isCrouching;
 
             if (isCrouching)
             {
+
                 controller.height = crouchHeight;
                 controller.center = crouchingCenter;
                 playerHeight = crouchHeight;
 
                 if (speed > walkSpeed)
                 {
+
                     isSliding = true;
                     isSprinting = false;
                     slideTimer = maxSlideTime;
@@ -409,6 +411,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void exitCrouch()
     {
+
         controller.height = standingHeight;
         controller.center = standingCenter;
         playerHeight = standingHeight;
@@ -419,8 +422,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void slideMovement()
     {
+
         if (isSliding)
         {
+
             slideTimer -= Time.deltaTime;
             controller.Move(forwardDir * slideSpeed * Time.deltaTime);
             //if(currSpeed == walkSpeed)
@@ -428,7 +433,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             {
                 isSliding = false;
             }
-        }
+        
     }
     #endregion Crouch and Slide
 
