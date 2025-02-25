@@ -175,6 +175,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 sprint();
                 crouch();
                 handleJetpackFuelRegen();
+                if (Input.GetButtonDown("Open")) // for opening loot chests
+                    openChest();
                 break;
             // is grappling
             case movementState.grappleMoving:
@@ -509,10 +511,23 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
 
-        if (weaponList.Count > 0 && weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+        //Grapple recharge UI
+        if (grappleCooldownTimer <= grappleCooldown)
+        {
+            gameManager.instance.grappleGauge.enabled = true;
+            gameManager.instance.grappleGauge.fillAmount = (float)grappleCooldownTimer / grappleCooldown;
+        }
+        else if (gameManager.instance.grappleGauge.enabled)
+            gameManager.instance.grappleGauge.enabled = false;
+
+        // Toggle ammo counter based on weapon type
+        if (weaponList.Count > 0)
         {
             if (weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+            {
                 gameManager.instance.updateAmmo(weaponList[weaponListPos].gun);
+                gameManager.instance.showAmmo();
+            }
             else
                 gameManager.instance.hideAmmo();
         }
@@ -611,7 +626,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         if (gunModel != null && weaponList[weaponListPos].type != weaponStats.weaponType.Gun)
             gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-
     }
 
     void gunReload()
@@ -674,7 +688,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void shootMagicProjectile()
     {
         attackTimer = 0;
-        
+
         Instantiate(magicProjectile, magicPosition.position, transform.rotation);
     }
       
@@ -700,5 +714,21 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             weaponListPos--;
             changeWeapon();
         }
+    }
+
+    void openChest()
+    {
+        Debug.Log("Starting the openChest function...");
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
+        {
+            lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
+
+            if (dropsLoot != null)
+            {
+                Debug.Log("dropsLoot was not null!");
+                dropsLoot.dropLoot();
+            }
+        }
+
     }
 }

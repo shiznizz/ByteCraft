@@ -20,6 +20,7 @@ public class gameManager : MonoBehaviour
 
     public Image playerHPBar;
     public Image JPFuelGauge;
+    public Image grappleGauge;
     public GameObject playerDamageScreen;
     public bool isPaused;
     public GameObject player;
@@ -98,7 +99,12 @@ public class gameManager : MonoBehaviour
 
     public void hideAmmo()
     {
+        ammoHUD.SetActive(false);
+    }
 
+    public void showAmmo()
+    {
+        ammoHUD.SetActive(true);
     }
 
     public void youLose()
