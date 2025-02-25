@@ -85,15 +85,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] int jumpSpeed;
     [SerializeField] int gravity;
 
-    public float speed;
-    public float walkSpeed;
-    public float sprintSpeed;
-    public float crouchSpeed;
-    public float slideSpeed;
-    private float slideSpeedIncrease;
-    private float slideSpeedDecrease;
+    private float speed;
+    [SerializeField] float walkSpeed;
+    [SerializeField] float sprintSpeed;
+    [SerializeField] float crouchSpeed;
+    [SerializeField] float slideSpeed;
     private float desiredSpeed;
     private float prevDesiredSpeed;
+    private float slideSpeedIncrease;
+    private float slideSpeedDecrease;
 
     private Vector3 moveDir;
     private Vector3 playerVelocity;
@@ -104,7 +104,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     float playerHeight;
     float standingHeight = 2f;
     float crouchHeight = 0.5f;
-    Vector3 crouchingCenter = new Vector3(0, 0.5f, 0);
+    Vector3 crouchingCenter = new Vector3(0, -0.5f, 0);
     Vector3 standingCenter = new Vector3(0, 0, 0);
 
     public bool isGrounded;
@@ -114,10 +114,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isCrouching;
     public bool isWallRunning;
 
+    [SerializeField] float maxSlideTime;
     float slideTimer;
-    float maxSlideTime;
-
-    public Transform groundCheck;
 
     public movementState state;
     public enum movementState
@@ -318,11 +316,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             {
                 if (isCrouching)
                     exitCrouch();
-
-                state = movementState.sprinting;
             }
-            else
-                state = movementState.walking;
         }
     }
 
@@ -394,14 +388,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
             if (isCrouching)
             {
-                state = movementState.crouching;
                 controller.height = crouchHeight;
                 controller.center = crouchingCenter;
                 playerHeight = crouchHeight;
 
                 if (speed > walkSpeed)
                 {
-                    state = movementState.sliding;
                     isSliding = true;
                     isSprinting = false;
                     slideTimer = maxSlideTime;
@@ -417,14 +409,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void exitCrouch()
     {
-        state = movementState.walking;
-        //playerHeight = standingHeight;
         controller.height = standingHeight;
         controller.center = standingCenter;
         playerHeight = standingHeight;
         isCrouching = false;
         isSliding = false;
-        transform.position += Vector3.up * 0.1f;
+        //transform.position += Vector3.up * 0.1f;
     }
 
     void slideMovement()
@@ -436,13 +426,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             //if(currSpeed == walkSpeed)
             if (slideTimer <= 0)
             {
-                state = movementState.walking;
                 isSliding = false;
-                // decreaseSpeed(slideSpeedDecrease);
             }
         }
     }
     #endregion Crouch and Slide
+
     IEnumerator smoothSpeedLerp()
     {
         float time = 0;
