@@ -171,6 +171,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * attackDistance, Color.red);
         // switches states of grapple
+        checkGround();
+
         switch (grappleState)
         {
             // not grappling 
@@ -178,7 +180,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 if (!gameManager.instance.isPaused)
 
                 movement();
-                crouch();
                 updatePlayerUI();
                 handleJetpackFuelRegen();
                 if (Input.GetButtonDown("Open")) // for opening loot chests
@@ -195,9 +196,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Movement
     void movement()
     {
-        checkGround();
-        checkWall();
-        wallRun();
+        if (!isGrounded)
+        {
+            checkWall();
+            wallRun();
+        }
+
         sprint();
         crouch();
         playerMoveHandler();
@@ -257,7 +261,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void checkGround()
     {
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
+        //isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, groundLayer);
+
+        float checkRadius = 0.3f; 
+        Vector3 sphereOrigin = transform.position + Vector3.down * (playerHeight * 0.4f);
+
+        isGrounded = Physics.SphereCast(sphereOrigin, checkRadius, Vector3.down, out _, 0.2f);
+
         if (isGrounded)
         {
             jumpCount = 0;
