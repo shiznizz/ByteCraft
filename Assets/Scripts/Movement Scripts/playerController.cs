@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public class playerController : MonoBehaviour, IDamage, IPickup
@@ -12,7 +13,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] LayerMask groundLayer;
 
-    [Header("Audio")]
+    [Header("Camera Options")]
+    [SerializeField] Transform cameraTransform;
+    Vector3 normalCamPos;
+    Vector3 crouchCamPos;
+    public float cameraChangeTime;
+    public float wallRunTilt;
+    public float tilt;
+
+    [Header("Audio Options")]
     [SerializeField] AudioClip[] stepSounds;
     [Range(0, 1)][SerializeField] float stepVolume;
     [SerializeField] float walkSoundInterval;
@@ -76,6 +85,17 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     // holds state of the grapple 
     private movementState grappleState;
+    public enum movementState
+    {
+        walking,
+        sprinting,
+        wallRunning,
+        crouching,
+        sliding,
+        air,
+        grappleNormal, // did not shoot grapple
+        grappleMoving, // grapple succesful now moving player
+    }
     float grappleCooldownTimer;
 
     [Header("JetPack Options")]
@@ -131,18 +151,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] float maxSlideTime;
     float slideTimer;
 
-    public movementState state;
-    public enum movementState
-    {
-        walking,
-        sprinting,
-        wallRunning,
-        crouching,
-        sliding,
-        air,
-        grappleNormal, // did not shoot grapple
-        grappleMoving, // grapple succesful now moving player
-    }
 
     [SerializeField] bool isPlayerInStartingLevel;
 
@@ -157,6 +165,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void Start()
     {
+        normalCamPos = cameraTransform.localPosition;
+        crouchCamPos = new Vector3(0, crouchHeight, 0);
+
         HPOrig = HP;
         jetpackFuel = jetpackFuelMax;
 
@@ -191,6 +202,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 break;
         }
         handleJetpackFuelRegen();
+        //cameraChange();
     }
 
     #region Movement
@@ -423,6 +435,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 controller.height = crouchHeight;
                 controller.center = crouchingCenter;
                 playerHeight = crouchHeight;
+                //cameraTransform.localPosition = crouchCamPos;
+
+                cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
 
                 if (speed > walkSpeed)
                 {
@@ -441,18 +456,21 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void exitCrouch()
     {
+
         controller.height = standingHeight;
         controller.center = standingCenter;
         playerHeight = standingHeight;
         isCrouching = false;
         isSliding = false;
+        //cameraTransform.localPosition = normalCamPos;
+        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, normalCamPos, cameraChangeTime);
         Debug.Log("exit crouch");
     }
 
     void slideMovement()
     {    
         // costs jp fuel to slide while not moving
-        if (controller.velocity.magnitude < 0.1f)
+        if (moveDir == Vector3.zero)
             jetpackFuel += -(jetpackFuelMax * .25f);
         
         // slide countdown and force player to move one direction
@@ -991,7 +1009,5 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         inventoryManager.instance.addItem(item);
     }
-
-
     #endregion Everything Else
 }
