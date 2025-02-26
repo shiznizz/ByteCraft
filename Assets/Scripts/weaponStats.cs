@@ -10,6 +10,8 @@ public class weaponStats : itemSO
     public meleeWepStats meleeWep;
     public magicWepStats magicWep;
 
+
+
     public override itemSO GetItem()
     {
         return this;
@@ -24,4 +26,5 @@ public class weaponStats : itemSO
     {
         return this;
     }
+
 }

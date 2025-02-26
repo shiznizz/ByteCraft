@@ -21,4 +21,13 @@ public class gunStats : weaponStats
     public ParticleSystem hitEffect;
     public AudioClip[] shootSounds;
     public float shootVolume;
+
+    public void RefreshAmmo()
+    {
+        if (type == weaponType.Gun)
+        {
+            gun.ammoCur = gun.ammoMax;
+            gun.ammoReserve = gun.ammoReserveMax;
+        }
+    }
 }
