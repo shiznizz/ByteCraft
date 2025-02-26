@@ -19350,71 +19350,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 434982, guid: 6812e31ceb91fc04da03973c6b1054cd, type: 3}
   m_PrefabInstance: {fileID: 701450095}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &704517842 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5682474206311374275, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
-  m_PrefabInstance: {fileID: 2132812047}
-  m_PrefabAsset: {fileID: 0}
---- !u!143 &704517846 stripped
-CharacterController:
-  m_CorrespondingSourceObject: {fileID: 7171065596406949458, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
-  m_PrefabInstance: {fileID: 2132812047}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &704517849
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 704517842}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adb7d3a06dc56fe4a821613f25c92e9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controller: {fileID: 704517846}
-  ignoreLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  HP: 10
-  speed: 5
-  speedModifer: 3
-  jumpSpeed: 0
-  jumpMax: 0
-  gravity: 0
-  momentumDrag: 0
-  hasJetpack: 0
-  jetpackFuelMax: 0
-  jetpackFuel: 0
-  jetpackFuelUse: 0
-  jetpackFuelRegen: 0
-  jetpackFuelRegenDelay: 0
-  jetpackSpeed: 0
-  weaponList: []
-  attackCooldown: 0
-  attackDamage: 0
-  attackDistance: 0
-  attackRange: 0
-  gunModel: {fileID: 0}
-  startGun: {fileID: 0}
-  muzzleFlash: {fileID: 0}
-  meleeWeaponModel: {fileID: 0}
-  startMelee: {fileID: 0}
-  playerAnimator: {fileID: 0}
-  magicWeaponModel: {fileID: 0}
-  startMagic: {fileID: 0}
-  magicProjectile: {fileID: 0}
-  magicProjectileSpeed: 0
-  magicPosition: {fileID: 0}
-  grappleDistance: 0
-  grappleLift: 0
-  grappleSpeedMultiplier: 0
-  grappleSpeedMin: 0
-  grappleSpeedMax: 0
-  grappleCooldown: 0
-  grappleShootPos: {fileID: 0}
-  grappleRope: {fileID: 0}
-  currentWeapon: 0
 --- !u!1001 &705627520
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26797,30 +26732,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3219742146149356574, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3354133548953732252, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_Name
       value: UI
-      objectReference: {fileID: 0}
-    - target: {fileID: 3354133548953732252, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5809270350288258848, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: playerSpawnPos
       value: 
       objectReference: {fileID: 837681492}
-    - target: {fileID: 5809270350288258848, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
-      propertyPath: checkpointPopup
-      value: 
-      objectReference: {fileID: 957677730}
-    - target: {fileID: 6188392099927108575, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8386706001582953583, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -26906,11 +26825,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
---- !u!1 &957677730 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6188392099927108575, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
-  m_PrefabInstance: {fileID: 957677729}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &958947185
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -57021,10 +56935,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5682474206311374275, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
-      insertIndex: 3
-      addedObject: {fileID: 704517849}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
 --- !u!1001 &2133481945
 PrefabInstance:

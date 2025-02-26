@@ -6,5 +6,7 @@ public interface IPickup
 
     void heal(int amount);
 
-    void getWeaponStats(weaponStats weapon);
+   // void getWeaponStats(weaponStats weapon);
+
+    void addInventory(itemSO item);
 }

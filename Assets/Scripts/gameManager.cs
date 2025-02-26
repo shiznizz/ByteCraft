@@ -2,16 +2,19 @@ using UnityEditor;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 
 public class gameManager : MonoBehaviour
 {
     public static gameManager instance;
 
+    [SerializeField] GameObject menuInventory;
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
+
     [SerializeField] TMP_Text goalCountText;
     [SerializeField] GameObject ammoHUD;
     [SerializeField] TMP_Text ammoCurText;
@@ -31,6 +34,11 @@ public class gameManager : MonoBehaviour
     public GameObject playerSpawnPos;
     public GameObject checkpointPopup;
 
+    [Header("Inventory Options")]
+    [SerializeField] GameObject inventorySlot;
+
+    public GameObject[] slots;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -38,6 +46,8 @@ public class gameManager : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<playerController>();
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
+
+        updateInventory();
     }
 
     // Update is called once per frame
@@ -55,6 +65,10 @@ public class gameManager : MonoBehaviour
             {
                 stateUnpause();
             }
+        }
+        if (Input.GetButtonDown("Inventory"))
+        {
+            inventoryMenu();
         }
     }
 
@@ -74,6 +88,21 @@ public class gameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         menuActive.SetActive(false);
         menuActive = null;
+    }
+
+    public void inventoryMenu()
+    {
+
+        if (menuActive == null)
+        {
+            statePause();
+            menuActive = menuInventory;
+            menuActive.SetActive(true);
+        }
+        else if (menuActive == menuInventory)
+        {
+            stateUnpause();
+        }
     }
 
 
@@ -112,5 +141,50 @@ public class gameManager : MonoBehaviour
         statePause();
         menuActive = menuLose;
         menuActive.SetActive(true);
+    }
+    public void updateInventory()
+    {
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+
+            if (inventoryManager.instance.inventory.Count == 0)
+            {
+                slots[i].transform.GetChild(1).GetComponent<Image>().sprite = null;
+                slots[i].transform.GetChild(1).GetComponent<Image>().enabled = false;
+                slots[i].GetComponent<SlotBoss>().isFull = false;
+                slots[i].GetComponent<SlotBoss>().item = null;
+            }
+
+            try
+            {
+                slots[i].transform.GetChild(1).GetComponent<Image>().enabled = true;
+                slots[i].transform.GetChild(1).GetComponent<Image>().sprite = inventoryManager.instance.inventory[i].itemIcon;
+                slots[i].GetComponent<SlotBoss>().item = inventoryManager.instance.inventory[i];
+                slots[i].GetComponent<SlotBoss>().isFull = true;
+
+            }
+            catch
+            {
+                slots[i].transform.GetChild(1).GetComponent<Image>().sprite = null;
+                slots[i].transform.GetChild(1).GetComponent<Image>().enabled = false;
+                slots[i].GetComponent<SlotBoss>().isFull = false;
+                slots[i].GetComponent<SlotBoss>().item = null;
+
+            }
+        }
+    }
+
+    public void deselectItem()
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            gameManager.instance.slots[i].transform.GetChild(2).gameObject.SetActive(false);
+            slots[i].GetComponent<SlotBoss>().isSelected = false;
+            slots[i].GetComponent<SlotBoss>().displaySlot.SetActive(false);
+
+            slots[i].GetComponent<SlotBoss>().itemDescription.text = "";
+            slots[i].GetComponent<SlotBoss>().itemName.text = "";
+        }
     }
 }
