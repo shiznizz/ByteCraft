@@ -5,7 +5,7 @@ public class pickup : MonoBehaviour
 {
     [SerializeField] itemSO item;
 
-    public enum LootType {Health, Weapon, armor}
+    public enum LootType {Health, Weapon, armor, Ammo, Fuel}
     public LootType lootType;
     public int amount; // how much value the loot gives to player
 
@@ -25,6 +25,12 @@ public class pickup : MonoBehaviour
                         player.addInventory(item);
                         break;
                     case pickup.LootType.armor:
+                        player.addInventory(item);
+                        break;
+                    case pickup.LootType.Fuel:
+                        player.addInventory(item);
+                        break;
+                    case pickup.LootType.Ammo:
                         player.addInventory(item);
                         break;
                 }
