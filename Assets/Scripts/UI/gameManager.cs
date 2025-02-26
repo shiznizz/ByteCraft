@@ -17,11 +17,14 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuLose;
     [SerializeField] GameObject ammoHUD;
     [SerializeField] GameObject jetpackHUD;
+
     public Image playerHPBar;
     public Image JPFuelGauge;
     public Image grappleGauge;
     public GameObject playerDamageScreen;
     public GameObject checkpointPopup;
+
+    public GameObject selectedEquipSlot;
 
     [Header("Text Fields to Update")]
     [SerializeField] TMP_Text goalCountText;
