@@ -693,7 +693,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackDistance, ~ignoreLayer))
         {
             Debug.Log(hit.collider.name);
-
+            Instantiate(inventoryManager.instance.weaponList[weaponListPos].gun.hitEffect, hit.point, Quaternion.identity);
 
         }
 
