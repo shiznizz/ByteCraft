@@ -2,7 +2,7 @@ using UnityEngine;
 
 [CreateAssetMenu]
 
-public class meleeWepStats : ScriptableObject
+public class meleeWepStats : weaponStats
 {
     public GameObject model;
     public int meleeDamage;

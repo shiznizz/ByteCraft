@@ -17,7 +17,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     int jumpCount;
     int HPOrig;
 
-    [SerializeField] List<weaponStats> weaponList = new List<weaponStats>();
+    //[SerializeField] List<weaponStats> weaponList = new List<weaponStats>();
 
     [Header("Common Weapon Options")]
     [SerializeField] float attackCooldown;
@@ -44,6 +44,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     //Weapons inventory (gun, melee)
     int weaponListPos;
+
+    bool isGunPOSSet;
 
     float shootTimer;
     float attackTimer;
@@ -148,23 +150,23 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         jetpackFuelRegenTimer = 0f;
 
-        if (startGun != null)
-        {
-            weaponList.Add(startGun);
-        }
-        if (startMelee != null)
-        {
-            weaponList.Add(startMelee);
-        }
-        if (startMagic != null)
-        {
-            weaponList.Add(startMagic);
-        }
+        //if (startGun != null)
+        //{
+        //    weaponList.Add(startGun);
+        //}
+        //if (startMelee != null)
+        //{
+        //    weaponList.Add(startMelee);
+        //}
+        //if (startMagic != null)
+        //{
+        //    weaponList.Add(startMagic);
+        //}
 
-        if (weaponList.Count > 0)
-        {
-            changeWeapon();
-        }
+        //if (weaponList.Count > 0)
+        //{
+        //    changeWeapon();
+        //}
     }
 
     private void Update()
@@ -231,20 +233,23 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         // player attack settings below
         // ==========================
 
+        if (!isGunPOSSet && inventoryManager.instance.weaponList.Count > 0)
+            getWeaponStats(); 
+
         attackTimer += Time.deltaTime;
         grappleCooldownTimer += Time.deltaTime;
 
-        if (Input.GetButton("Fire1") && weaponList.Count > 0 && attackTimer >= attackCooldown)   //Want button input to be the first condition for performance - other evaluations wont occur unless button is pressed
+        if (Input.GetButton("Fire1") && inventoryManager.instance.weaponList.Count > 0 && attackTimer >= attackCooldown)   //Want button input to be the first condition for performance - other evaluations wont occur unless button is pressed
         {
-            if (weaponList[weaponListPos].type == weaponStats.weaponType.Gun && weaponList[weaponListPos].gun.ammoCur > 0)
+            if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun && inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur > 0)
             {
                 shoot();
             }
-            else if (weaponList[weaponListPos].type == weaponStats.weaponType.Melee)
+            else if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Melee)
             {
                 meleeAttack();
             }
-            else if (weaponList[weaponListPos].type == weaponStats.weaponType.Magic)
+            else if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Magic)
             {
                 shootMagicProjectile();
             }
@@ -252,6 +257,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         selectWeapon();
         gunReload();
     }
+
+    
 
     void applyGravity()
     {
@@ -433,7 +440,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             {
                 isSliding = false;
             }
-        
+        }
     }
     #endregion Crouch and Slide
 
@@ -677,7 +684,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void shoot()
     {
         attackTimer = 0;
-        weaponList[weaponListPos].gun.ammoCur--;
+        inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur--;
         updatePlayerUI();
 
         StartCoroutine(flashMuzzle());
@@ -696,17 +703,19 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     }
 
 
-    public void getWeaponStats(weaponStats weapon)
+    public void getWeaponStats()
     {
-        weaponList.Add(weapon);
-        weaponListPos = weaponList.Count - 1; // Selects the newly added weapon
-    
+        
+        weaponListPos = inventoryManager.instance.weaponList.Count - 1; // Selects the newly added weapon
         changeWeapon();
+
+        isGunPOSSet = true;
+        
     }
     
     void changeWeapon()
     {
-        switch (weaponList[weaponListPos].type)
+        switch (inventoryManager.instance.weaponList[weaponListPos].type)
         {
             case weaponStats.weaponType.Gun:
                 changeGun();
@@ -722,68 +731,68 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
     void changeGun()
     {
-        attackDamage = weaponList[weaponListPos].gun.shootDamage;
-        attackDistance = weaponList[weaponListPos].gun.shootRange;
-        attackCooldown = weaponList[weaponListPos].gun.shootRate;
-        muzzleFlash.SetLocalPositionAndRotation(new Vector3(weaponList[weaponListPos].gun.moveFlashX, weaponList[weaponListPos].gun.moveFlashY, weaponList[weaponListPos].gun.moveFlashZ), muzzleFlash.rotation);
+        attackDamage = inventoryManager.instance.weaponList[weaponListPos].gun.shootDamage;
+        attackDistance = inventoryManager.instance.weaponList[weaponListPos].gun.shootRange;
+        attackCooldown = inventoryManager.instance.weaponList[weaponListPos].gun.shootRate;
+        muzzleFlash.SetLocalPositionAndRotation(new Vector3(inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashX, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashY, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashZ), muzzleFlash.rotation);
     
-        gunModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
-        gunModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;
+        gunModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
+        gunModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;
     
         turnOffWeaponModels();
     }
     
     void changeMeleeWep()
     {
-        attackDamage = weaponList[weaponListPos].meleeWep.meleeDamage;
-        attackRange = weaponList[weaponListPos].meleeWep.meleeDistance;
+        attackDamage = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDamage;
+        attackRange = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDistance;
     
-        attackCooldown = weaponList[weaponListPos].meleeWep.meleeCooldown;
+        attackCooldown = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeCooldown;
     
-        meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].meleeWep.model.GetComponent<MeshFilter>().sharedMesh;
-        meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].meleeWep.model.GetComponent<MeshRenderer>().sharedMaterial;
+        meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshFilter>().sharedMesh;
+        meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshRenderer>().sharedMaterial;
     
         turnOffWeaponModels();
     }
     
     void changeMagicWep()
     {
-        attackDamage = weaponList[weaponListPos].magicWep.magicDamage;
-        attackRange = weaponList[weaponListPos].magicWep.magicDitance;
+        attackDamage = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDamage;
+        attackRange = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDitance;
     
-        attackCooldown = weaponList[weaponListPos].magicWep.magicCooldown;
+        attackCooldown = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicCooldown;
     
-        magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = weaponList[weaponListPos].magicWep.model.GetComponent<MeshFilter>().sharedMesh;
-        magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = weaponList[weaponListPos].magicWep.model.GetComponent<MeshRenderer>().sharedMaterial;
+        magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshFilter>().sharedMesh;
+        magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshRenderer>().sharedMaterial;
     
         turnOffWeaponModels();
     }
     
     void turnOffWeaponModels()
     {
-        if (meleeWeaponModel != null && weaponList[weaponListPos].type != weaponStats.weaponType.Melee)
+        if (meleeWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Melee)
             meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
     
-        if (magicWeaponModel != null && weaponList[weaponListPos].type != weaponStats.weaponType.Magic)
+        if (magicWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Magic)
             magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
     
-        if (gunModel != null && weaponList[weaponListPos].type != weaponStats.weaponType.Gun)
+        if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Gun)
             gunModel.GetComponent<MeshFilter>().sharedMesh = null;
     }
     
     void gunReload()
     {
-        if (Input.GetButtonDown("Reload") && weaponList.Count > 0 && weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+        if (Input.GetButtonDown("Reload") && inventoryManager.instance.weaponList.Count > 0 && inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
         {
-            if (weaponList[weaponListPos].gun.ammoReserve > weaponList[weaponListPos].gun.ammoMax)          //Check if the player can reload a full clip
+            if (inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve > inventoryManager.instance.weaponList[weaponListPos].gun.ammoMax)          //Check if the player can reload a full clip
             {
-                weaponList[weaponListPos].gun.ammoReserve -= (weaponList[weaponListPos].gun.ammoMax - weaponList[weaponListPos].gun.ammoCur);
-                weaponList[weaponListPos].gun.ammoCur = weaponList[weaponListPos].gun.ammoMax;
+                inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve -= (inventoryManager.instance.weaponList[weaponListPos].gun.ammoMax - inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur);
+                inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur = inventoryManager.instance.weaponList[weaponListPos].gun.ammoMax;
             }
-            else if (weaponList[weaponListPos].gun.ammoReserve > 0)                               //If there is ammo in reserve but not a full clip reload remaining ammo
+            else if (inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve > 0)                               //If there is ammo in reserve but not a full clip reload remaining ammo
             {
-                weaponList[weaponListPos].gun.ammoCur = weaponList[weaponListPos].gun.ammoReserve;
-                weaponList[weaponListPos].gun.ammoReserve = 0;
+                inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur = inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve;
+                inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve = 0;
             }
     
             updatePlayerUI();
@@ -838,7 +847,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void selectWeapon()
     {
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if (scrollInput > 0 && weaponListPos < weaponList.Count - 1)
+        if (scrollInput > 0 && weaponListPos < inventoryManager.instance.weaponList.Count - 1)
         {
             weaponListPos++;
             changeWeapon();
@@ -889,11 +898,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             gameManager.instance.grappleGauge.enabled = false;
     
         // Toggle ammo counter based on weapon type
-        if (weaponList.Count > 0)
+        if (inventoryManager.instance.weaponList.Count > 0)
         {
-            if (weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+            if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
             {
-                gameManager.instance.updateAmmo(weaponList[weaponListPos].gun);
+                gameManager.instance.updateAmmo(inventoryManager.instance.weaponList[weaponListPos].gun);
                 gameManager.instance.showAmmo();
             }
             else
@@ -944,5 +953,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         yield return new WaitForSeconds(0.1f);
         gameManager.instance.playerDamageScreen.SetActive(false);
     }
+
+    public void addInventory(itemSO item)
+    {
+        inventoryManager.instance.addItem(item);
+    }
+
+   
+
+
     #endregion Everything Else
 }
