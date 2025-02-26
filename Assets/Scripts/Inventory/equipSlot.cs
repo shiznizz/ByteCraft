@@ -49,42 +49,31 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
     {
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            //if (isSelected)
-            //    gameManager.instance.deselectItem();
-            //else if (!isSelected && isFull)
-            
             if (isFull && !isSelected)
             {
-                if (gameManager.instance.selectedEquipSlot != null)
+                if (gameManager.instance.selectedEquipSlot != null || gameManager.instance.selectedInventorySlot != null)
                 {
-                    gameManager.instance.selectedEquipSlot.transform.GetChild(1).gameObject.SetActive(false);
-                    gameManager.instance.selectedEquipSlot.GetComponent<equipSlot>().isSelected = false;
+                    gameManager.instance.deselectSlot();
+                   
                 }
-                Debug.Log("1");
+               
                 selectItem(eventData);
             }
             else if (isSelected)
             {
-                selected.SetActive(false);
-                isSelected = false;
+                gameManager.instance.deselectSlot();
             }
-
-
         }
     }
 
     public void selectItem(PointerEventData eventData)
     {
-        //gameManager.instance.deselectItem();
-        Debug.Log("2");
+       
+        
         gameManager.instance.selectedEquipSlot = null;
         gameManager.instance.selectedEquipSlot = eventData.pointerClick;
         
         selected.SetActive(true);
         isSelected = true;
-        //displaySlot.SetActive(true);
-        //itemDescription.text = item.itemDescription;
-        //itemName.text = item.itemName;
-        //itemIcon.sprite = item.itemIcon;
     }
 }

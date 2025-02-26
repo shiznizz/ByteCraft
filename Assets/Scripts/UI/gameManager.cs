@@ -25,6 +25,7 @@ public class gameManager : MonoBehaviour
     public GameObject checkpointPopup;
 
     public GameObject selectedEquipSlot;
+    public GameObject selectedInventorySlot;
 
     [Header("Text Fields to Update")]
     [SerializeField] TMP_Text goalCountText;
@@ -195,16 +196,24 @@ public class gameManager : MonoBehaviour
         }
     }
 
-    public void deselectItem()
+    public void deselectSlot()
     {
-        for (int i = 0; i < slots.Length; i++)
+        if (selectedEquipSlot != null)
         {
-            gameManager.instance.slots[i].transform.GetChild(2).gameObject.SetActive(false);
-            slots[i].GetComponent<SlotBoss>().isSelected = false;
-            slots[i].GetComponent<SlotBoss>().displaySlot.SetActive(false);
-
-            slots[i].GetComponent<SlotBoss>().itemDescription.text = "";
-            slots[i].GetComponent<SlotBoss>().itemName.text = "";
+            selectedEquipSlot.GetComponent<equipSlot>().isSelected = false;
+            selectedEquipSlot.transform.GetChild(1).gameObject.SetActive(false);
+            
+           
         }
+
+        if(selectedInventorySlot != null)
+        {
+            selectedInventorySlot.GetComponent<SlotBoss>().isSelected = false;
+            selectedInventorySlot.transform.GetChild(2).gameObject.SetActive(false);
+            
+            
+        }
+        
+        
     }
 }
