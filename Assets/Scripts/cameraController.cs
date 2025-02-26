@@ -7,6 +7,9 @@ public class cameraController : MonoBehaviour
     [SerializeField] int sens;
     [SerializeField] int lockVertMin, lockVertMax;
     [SerializeField] bool invertY;
+    private float fallingTimer;
+
+    [SerializeField] private bool isStartFalling;
 
     float rotX;
 
@@ -15,11 +18,17 @@ public class cameraController : MonoBehaviour
     {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+
+        fallingTimer = 10f;
+        if (isStartFalling)
+            fallingTimer = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
+        fallingTimer += Time.deltaTime;
+
         float mouseX = Input.GetAxis("Mouse X") * sens * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * sens * Time.deltaTime;
 
@@ -31,8 +40,12 @@ public class cameraController : MonoBehaviour
 
         rotX = Mathf.Clamp(rotX, lockVertMin, lockVertMax);
 
-        transform.localRotation = Quaternion.Euler(rotX, 0, 0);
+        if(fallingTimer > 2.3f)
+        {
+            //isStartFalling = true;
+            transform.localRotation = Quaternion.Euler(rotX, 0, 0);
 
-        transform.parent.Rotate(Vector3.up * mouseX);
+            transform.parent.Rotate(Vector3.up * mouseX);
+        }
     }
 }

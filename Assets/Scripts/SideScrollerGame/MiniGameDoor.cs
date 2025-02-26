@@ -1,0 +1,20 @@
+using TMPro.Examples;
+using UnityEngine;
+
+public class MiniGameDoor : MonoBehaviour
+{
+    [SerializeField] private Transform previousRoom;
+    [SerializeField] private Transform nextRoom;
+    [SerializeField] private MiniGameCameraController cam;
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Player")
+        {
+            if(collision.transform.position.x < transform.position.x)
+                cam.MoveToNewRoom(nextRoom);
+            else
+                cam.MoveToNewRoom(previousRoom);
+        }
+    }
+}

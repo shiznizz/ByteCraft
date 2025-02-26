@@ -1,11 +1,11 @@
 using System.Collections;
-using Unity.Mathematics;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
-    enum enemyType { range, melee }
+    enum enemyType { range, melee, stationary }
 
     [SerializeField] enemyType type;
     [SerializeField] Renderer model;
@@ -18,87 +18,115 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] int faceTargetSpeed;
 
     [SerializeField] int FOV; //Field of View
+    [SerializeField] int shootAngle;
 
     [SerializeField] GameObject bullet;
     [SerializeField] Transform shootPos;
+    [SerializeField] Collider meleeCol;
     [SerializeField] float shootRate;
     [SerializeField] float meleeDistance;
+    [SerializeField] bool dropsLoot;
+
+    [SerializeField] Collider weaponCol;
 
     Color colorOrig;
 
     float shootTimer;
     float angleToPlayer;
+    float stoppingDistOrig;
 
     Vector3 playerDir;
 
     bool playerInRange;
 
     // loot drop mechanic variables
-    [SerializeField] GameObject lootItem;
+    [Header("Loot Drop Settings")]
+    [SerializeField] List<LootItem> lootTable;
     [SerializeField] Transform dropPos;
+
+    // enemy roaming variables
+    [SerializeField] int roamPauseTime;
+    [SerializeField] int roamDist;
+    Vector3 startingPos;
+    float roamTimer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         colorOrig = model.material.color;
         gameManager.instance.updateGameGoal(1);
+        startingPos = transform.position;
+        if (type != enemyType.stationary)
+        {
+            stoppingDistOrig = agent.stoppingDistance;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
-        float animatorCurSpeed = anim.GetFloat("Speed");
+        if (type != enemyType.stationary)
+        {
+            float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
+            float animatorCurSpeed = anim.GetFloat("Speed");
 
-        anim.SetFloat("Speed", Mathf.MoveTowards(animatorCurSpeed, agentSpeed, Time.deltaTime * animTransSpeed));    // added multiplication by animTransSpeed to give control from editor
+            anim.SetFloat("Speed", Mathf.MoveTowards(animatorCurSpeed, agentSpeed, Time.deltaTime * animTransSpeed));    // added multiplication by animTransSpeed to give control from editor
+            
+            if (agent.remainingDistance < 0.01f)
+                roamTimer += Time.deltaTime;
+        }
 
         shootTimer += Time.deltaTime;
 
-        if (playerInRange && canSeePlayer())
-        {
-
-        }
+        if (playerInRange && !canSeePlayer())
+            checkRoam();
+        else if (!playerInRange)
+            checkRoam();
     }
 
     bool canSeePlayer()
     {
         playerDir = gameManager.instance.player.transform.position - headPos.position;
-        angleToPlayer = Vector3.Angle(playerDir, transform.forward);
+        angleToPlayer = Vector3.Angle(new Vector3(playerDir.x, transform.position.y, playerDir.z), transform.forward);
 
         Debug.DrawRay(headPos.position, playerDir);
 
         RaycastHit hit;
-        if(Physics.Raycast(headPos.position, playerDir, out hit))
+        if (Physics.Raycast(headPos.position, playerDir, out hit) && angleToPlayer <= FOV)
         {
-            if(hit.collider.CompareTag("Player") && angleToPlayer <= FOV)
+            if (hit.collider.CompareTag("Player") && angleToPlayer <= FOV)
             {
-                agent.SetDestination(gameManager.instance.player.transform.position);
+                if (type != enemyType.stationary)
+                {
+                    agent.SetDestination(gameManager.instance.player.transform.position);
+                }
 
-                if (shootTimer >= shootRate && type == enemyType.range)
+                if (type != enemyType.melee && shootTimer >= shootRate && angleToPlayer <= shootAngle)
                 {
                     shoot();
+                }
+                if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= meleeDistance) // Ensures attack happens when the shoot timer is ready
+                {
+                    meleeAttack();
                 }
                 if (agent.remainingDistance <= agent.stoppingDistance)
                 {
                     faceTarget();
                 }
 
+                agent.stoppingDistance = stoppingDistOrig;
+
                 return true;
             }
         }
+        agent.stoppingDistance = 0;
         return false;
     }
-    private void OnTriggerStay(Collider other)
-    {
-        if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= agent.stoppingDistance)
-        {
-            meleeAttack();
-        }
-    }
+
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
             playerInRange = true;
         }
@@ -106,10 +134,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     private void OnTriggerExit(Collider other)
     {
-        if(other.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
             playerInRange = false;
         }
+        agent.stoppingDistance = 0;
     }
 
     void faceTarget()
@@ -122,12 +151,17 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     {
         HP -= amount;
         StartCoroutine(flashRed());
-        agent.SetDestination(gameManager.instance.player.transform.position);
+        if (type != enemyType.stationary)
+            agent.SetDestination(gameManager.instance.player.transform.position);
+
+        if (meleeCol != null)
+            turnOffCol();
 
         if (HP <= 0)
         {
             gameManager.instance.updateGameGoal(-1);
-            //dropLoot();
+            if (dropsLoot)
+                dropLoot();
             Destroy(gameObject);
         }
     }
@@ -142,18 +176,74 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void shoot()
     {
         shootTimer = 0;
-        //dropLoot(); Moved above in "takeDamage" to be used after enemy dies
-        Instantiate(bullet, shootPos.position, transform.rotation);
+
+        if (anim != null)
+            anim.SetTrigger("Shoot");
+        else
+            createProjectile();
     }
+
+    public void createProjectile()
+    {
+        //Creates a projectile at shootPos with the same rotation as the enemy
+        Instantiate(bullet, shootPos.position, transform.rotation);
+
+    }
+
+    //public void createBullet()
+    //{
+    //    Instantiate(bullet, shootPos.position, transform.rotation);
+    //}
 
     void meleeAttack()
     {
         shootTimer = 0;
-        anim.Play("Melee Attack");
+        anim.SetTrigger("Melee Attack");
+        //shootTimer = 0; // Reset the shoot timer for the cooldown between melee attacks
     }
 
     public void dropLoot()
     {
-        Instantiate(lootItem, dropPos.position, transform.rotation);
+        foreach (LootItem loot in lootTable)
+        {
+            float roll = Random.Range(0f, 100f);
+            if (roll <= loot.dropChance)
+            {
+                Instantiate(loot.itemModel, dropPos.position, transform.rotation);
+            }
+        }
+    }
+
+    void checkRoam()
+    {
+        if (type == enemyType.stationary)
+            return;
+
+        if ((roamTimer > roamPauseTime && agent.remainingDistance < 0.01f) || gameManager.instance.playerScript.HP <= 0)
+            roam();
+    }
+
+    void roam()
+    {
+        roamTimer = 0;
+        agent.stoppingDistance = 0;
+
+        Vector3 randPos = Random.insideUnitSphere * roamDist;
+        randPos += startingPos;
+
+        NavMeshHit hit;
+
+        NavMesh.SamplePosition(randPos, out hit, roamDist, 1);
+        agent.SetDestination(hit.position);
+    }
+
+    public void turnOnCol()
+    {
+        meleeCol.enabled = true;
+    }
+
+    public void turnOffCol()
+    {
+        meleeCol.enabled = false;
     }
 }
