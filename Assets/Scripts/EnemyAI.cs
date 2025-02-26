@@ -89,7 +89,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         playerDir = gameManager.instance.player.transform.position - headPos.position;
         angleToPlayer = Vector3.Angle(new Vector3(playerDir.x, transform.position.y, playerDir.z), transform.forward);
 
-        Debug.DrawRay(headPos.position, playerDir);
+        Debug.DrawRay(headPos.position, playerDir,Color.cyan);
 
         RaycastHit hit;
         if (Physics.Raycast(headPos.position, playerDir, out hit) && angleToPlayer <= FOV)
@@ -143,6 +143,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     void faceTarget()
     {
+        playerDir = gameManager.instance.player.transform.position - headPos.position;
         Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, 0, playerDir.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * faceTargetSpeed);
     }
@@ -151,8 +152,19 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     {
         HP -= amount;
         StartCoroutine(flashRed());
+
+
         if (type != enemyType.stationary)
+        {
+            Debug.Log("Set Position");
             agent.SetDestination(gameManager.instance.player.transform.position);
+            Debug.Log("Set Position2");
+        }
+        else
+        {
+            Debug.Log("Set Position3");
+            faceTarget();
+        }
 
         if (meleeCol != null)
             turnOffCol();
@@ -189,11 +201,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         Instantiate(bullet, shootPos.position, transform.rotation);
 
     }
-
-    //public void createBullet()
-    //{
-    //    Instantiate(bullet, shootPos.position, transform.rotation);
-    //}
 
     void meleeAttack()
     {

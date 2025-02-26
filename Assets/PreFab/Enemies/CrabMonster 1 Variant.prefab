@@ -129,6 +129,7 @@ MonoBehaviour:
   damageAmount: 5
   speed: 0
   destroyTime: 0
+  playerProjectile: 0
 --- !u!135 &7391637136945108204
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -176,7 +177,7 @@ MonoBehaviour:
   animTransSpeed: 4
   faceTargetSpeed: 5
   FOV: 180
-  shootAngle: 0
+  shootAngle: 5
   bullet: {fileID: 1229310425171102399}
   shootPos: {fileID: 1226905049197040701}
   meleeCol: {fileID: 7391637136945108204}
@@ -186,8 +187,8 @@ MonoBehaviour:
   weaponCol: {fileID: 0}
   lootTable: []
   dropPos: {fileID: 1226905049197040701}
-  roamPauseTime: 0
-  roamDist: 0
+  roamPauseTime: 2
+  roamDist: 5
 --- !u!195 &8573114166066744710
 NavMeshAgent:
   m_ObjectHideFlags: 0
