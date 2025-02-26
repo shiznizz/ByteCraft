@@ -8,6 +8,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 {
     #region Variables
     [SerializeField] CharacterController controller;
+    [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] LayerMask groundLayer;
 
@@ -661,6 +662,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         updatePlayerUI();
 
         StartCoroutine(flashMuzzle());
+        audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].gun.shootSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].gun.shootSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].gun.shootVolume);
+
 
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackDistance, ~ignoreLayer))
@@ -761,11 +764,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             {
                 inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve -= (inventoryManager.instance.weaponList[weaponListPos].gun.ammoMax - inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur);
                 inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur = inventoryManager.instance.weaponList[weaponListPos].gun.ammoMax;
+                audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].gun.reloadSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].gun.reloadSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].gun.reloadVolume);
             }
             else if (inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve > 0)                               //If there is ammo in reserve but not a full clip reload remaining ammo
             {
                 inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur = inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve;
                 inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve = 0;
+                audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].gun.reloadSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].gun.reloadSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].gun.reloadVolume);
             }
     
             updatePlayerUI();

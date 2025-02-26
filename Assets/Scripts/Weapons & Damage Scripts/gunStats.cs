@@ -20,7 +20,9 @@ public class gunStats : weaponStats
     [Header("Visuals and Sounds")]
     public ParticleSystem hitEffect;
     public AudioClip[] shootSounds;
-    public float shootVolume;
+    [Range(0, 1)] public float shootVolume;
+    public AudioClip[] reloadSounds;
+    [Range(0,1)] public float reloadVolume;
 
     public void RefreshAmmo()
     {
