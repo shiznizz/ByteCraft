@@ -133,6 +133,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         grappleNormal, // did not shoot grapple
         grappleMoving, // grapple succesful now moving player
     }
+
+    [SerializeField] bool isPlayerInStartingLevel;
+
+    // variable for player input action map
     #endregion Variables
 
     private void Awake()
@@ -145,28 +149,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         HPOrig = HP;
         jetpackFuel = jetpackFuelMax;
-        playerHeight = standingHeight;
+
+        if(!isPlayerInStartingLevel)
+            playerHeight = standingHeight;
+
         spawnPlayer();
 
         jetpackFuelRegenTimer = 0f;
-
-        //if (startGun != null)
-        //{
-        //    weaponList.Add(startGun);
-        //}
-        //if (startMelee != null)
-        //{
-        //    weaponList.Add(startMelee);
-        //}
-        //if (startMagic != null)
-        //{
-        //    weaponList.Add(startMagic);
-        //}
-
-        //if (weaponList.Count > 0)
-        //{
-        //    changeWeapon();
-        //}
     }
 
     private void Update()
@@ -174,6 +163,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * attackDistance, Color.red);
         // switches states of grapple
         checkGround();
+        updatePlayerUI();
 
         switch (grappleState)
         {
@@ -182,7 +172,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 if (!gameManager.instance.isPaused)
 
                 movement();
-                updatePlayerUI();
                 handleJetpackFuelRegen();
                 if (Input.GetButtonDown("Open")) // for opening loot chests
                     openChest();
@@ -258,8 +247,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         gunReload();
     }
 
-    
-
     void applyGravity()
     {
         controller.Move(playerVelocity * Time.deltaTime);
@@ -268,9 +255,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void checkGround()
     {
-
         isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f);
-
 
         if (isGrounded)
         {
@@ -303,15 +288,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         //// hold sprint
         //if (Input.GetButtonDown("Sprint"))
         //{
-        //    //speed *= speedModifer;
         //    isSprinting = true;
-        //    state = movementState.sprinting;
         //}
         //else if (Input.GetButtonUp("Sprint"))
         //{
-        //    //speed /= speedModifer;
         //    isSprinting = false;
-        //    state = movementState.walking;
         //}
 
         // toggle sprint
@@ -328,21 +309,18 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void jump()
     {
-
         if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
         {
             jumpCount++;
             playerVelocity.y = jumpSpeed;
 
-            //if (isCrouching)
-            //    exitCrouch();
             if (isSliding)
                 isSliding = false;
 
         }
         else if ((Input.GetButton("Jump") && !isGrounded) && hasJetpack)
         {
-            jetpack();
+           jetpack();
         }
     }
 
@@ -356,8 +334,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             playerVelocity.y = jetpackSpeed;
 
             jetpackFuelRegenTimer = jetpackFuelRegenDelay;
-
-            updatePlayerUI();
         }
     }
 
@@ -373,23 +349,22 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             {
                 jetpackFuel += jetpackFuelRegen * Time.deltaTime;
                 jetpackFuel = Mathf.Clamp(jetpackFuel, 0, jetpackFuelMax); // Clamp fuel between 0 and max
-                updatePlayerUI();
             }
         }
         else
         {
             // Reset the regen timer if fuel is full
             jetpackFuelRegenTimer = 0f;
-            updatePlayerUI();
         }
     }
+
     #endregion Jetpack
 
     #region Crouch and Slide
     void crouch()
     {
 
-        if (Input.GetButtonDown("Crouch"))
+        if (Input.GetButtonDown("Crouch") && !isPlayerInStartingLevel)
         {
             isCrouching = !isCrouching;
 
@@ -418,13 +393,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void exitCrouch()
     {
-
         controller.height = standingHeight;
         controller.center = standingCenter;
         playerHeight = standingHeight;
         isCrouching = false;
         isSliding = false;
-        //transform.position += Vector3.up * 0.1f;
     }
 
     void slideMovement()
