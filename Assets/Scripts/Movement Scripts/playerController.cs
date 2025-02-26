@@ -86,6 +86,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] float jetpackFuelRegen;
     [SerializeField] float jetpackFuelRegenDelay;
     [SerializeField] int jetpackSpeed;
+    [SerializeField] float jetpackHoldTimer = 0.01f;
 
     private float jetpackFuelRegenTimer;
 
@@ -124,6 +125,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isSliding;
     public bool isCrouching;
     public bool isWallRunning;
+    public bool isJetpacking;
 
 
     [SerializeField] float maxSlideTime;
@@ -178,18 +180,17 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             // not grappling 
             case movementState.grappleNormal:
                 if (!gameManager.instance.isPaused)
+                    movement();
 
-                movement();
-                handleJetpackFuelRegen();
                 if (Input.GetButtonDown("Open")) // for opening loot chests
                     openChest();
                 break;
             // is grappling
             case movementState.grappleMoving:
                 grappleMovement();
-                handleJetpackFuelRegen();
                 break;
         }
+        handleJetpackFuelRegen();
     }
 
     #region Movement
@@ -197,7 +198,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         if (!isGrounded)
         {
-            
             checkWall();
             wallRun();
         }
@@ -345,13 +345,35 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 isSliding = false;
 
         }
-        else if ((Input.GetButton("Jump") && !isGrounded) && hasJetpack)
+        else if (Input.GetButtonDown("Jump") && !isJetpacking && !isGrounded && hasJetpack)
         {
-           jetpack();
+            // if existing jetpackCoroutine stop routine
+            if(jetpackCoroutine != null)
+                 StopCoroutine(jetpackCoroutine);
+            // start jetpack wait timer and enable jetpack
+            jetpackCoroutine = StartCoroutine(jetpackWait());
+        }
+        
+        if (isJetpacking)
+            jetpack();
+
+        // stop jetpack and jetpack coroutine
+        if(Input.GetButtonUp("Jump"))
+        {
+            // stop coroutine and disable jetpack
+            if (jetpackCoroutine != null)
+            {
+                StopCoroutine(jetpackCoroutine);
+                jetpackCoroutine = null;
+            }
+
+            isJetpacking = false;
         }
     }
 
     #region Jetpack
+    Coroutine jetpackCoroutine;
+
     void jetpack()
     {
         if (jetpackFuel > 0)
@@ -383,6 +405,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             // Reset the regen timer if fuel is full
             jetpackFuelRegenTimer = 0f;
         }
+    }
+
+    IEnumerator jetpackWait()
+    {
+        // make player wait hold timer before jetpacking
+        yield return new WaitForSeconds(jetpackHoldTimer);
+
+        isJetpacking = true;
+        jetpackCoroutine = null;
     }
 
     #endregion Jetpack
