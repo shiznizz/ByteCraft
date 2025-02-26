@@ -271,7 +271,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void checkGround()
     {
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f,~ignoreLayer);
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f/*,~ignoreLayer*/);
 
         if (isGrounded)
         {
@@ -306,22 +306,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         {
             moveDir = (Input.GetAxis("Horizontal") * transform.right) +
                       (Input.GetAxis("Vertical") * transform.forward);
-            controller.Move(moveDir * speed * Time.deltaTime);
+            if(moveDir != Vector3.zero)
+            {
+                controller.Move(moveDir * speed * Time.deltaTime);
+            }
         }
     }
 
     void sprint()
     {
-        //// hold sprint
-        //if (Input.GetButtonDown("Sprint"))
-        //{
-        //    isSprinting = true;
-        //}
-        //else if (Input.GetButtonUp("Sprint"))
-        //{
-        //    isSprinting = false;
-        //}
-
         // toggle sprint
         if (Input.GetButtonDown("Sprint"))
         {
@@ -341,9 +334,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             jumpCount++;
             playerVelocity.y = jumpSpeed;
 
-            if (isSliding)
-                isSliding = false;
-
+            if(isCrouching || isSliding)
+                exitCrouch();
         }
         else if (Input.GetButtonDown("Jump") && !isJetpacking && !isGrounded && hasJetpack)
         {
@@ -421,21 +413,19 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Crouch and Slide
     void crouch()
     {
-
         if (Input.GetButtonDown("Crouch") && !isPlayerInStartingLevel)
         {
-            isCrouching = !isCrouching;
+            if(isGrounded)
+                isCrouching = !isCrouching;
 
             if (isCrouching)
             {
-
                 controller.height = crouchHeight;
                 controller.center = crouchingCenter;
                 playerHeight = crouchHeight;
 
                 if (speed > walkSpeed)
                 {
-
                     isSliding = true;
                     isSprinting = false;
                     slideTimer = maxSlideTime;
@@ -456,22 +446,23 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         playerHeight = standingHeight;
         isCrouching = false;
         isSliding = false;
+        Debug.Log("exit crouch");
     }
 
     void slideMovement()
-    {
-
-        if (isSliding)
+    {    
+        // costs jp fuel to slide while not moving
+        if (controller.velocity.magnitude < 0.1f)
+            jetpackFuel += -(jetpackFuelMax * .25f);
+        
+        // slide countdown and force player to move one direction
+        slideTimer -= Time.deltaTime;
+        controller.Move(forwardDir * slideSpeed * Time.deltaTime);
+        if (slideTimer <= 0)
         {
-
-            slideTimer -= Time.deltaTime;
-            controller.Move(forwardDir * slideSpeed * Time.deltaTime);
-            //if(currSpeed == walkSpeed)
-            if (slideTimer <= 0)
-            {
-                isSliding = false;
-            }
+            exitCrouch();
         }
+        
     }
     #endregion Crouch and Slide
 
