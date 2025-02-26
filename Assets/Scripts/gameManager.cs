@@ -9,30 +9,33 @@ public class gameManager : MonoBehaviour
 {
     public static gameManager instance;
 
+    [Header("UI Elements to Toggle Visibility")]
     [SerializeField] GameObject menuInventory;
     [SerializeField] GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
-
-    [SerializeField] TMP_Text goalCountText;
     [SerializeField] GameObject ammoHUD;
-    [SerializeField] TMP_Text ammoCurText;
-    [SerializeField] TMP_Text ammoMaxText;
-    [SerializeField] TMP_Text ammoReserveText;
-
+    [SerializeField] GameObject jetpackHUD;
     public Image playerHPBar;
     public Image JPFuelGauge;
     public Image grappleGauge;
     public GameObject playerDamageScreen;
+    public GameObject checkpointPopup;
+
+    [Header("Text Fields to Update")]
+    [SerializeField] TMP_Text goalCountText;
+    [SerializeField] TMP_Text ammoCurText;
+    [SerializeField] TMP_Text ammoMaxText;
+    [SerializeField] TMP_Text ammoReserveText;
+
+    [Header("State Monitoring Values")]
     public bool isPaused;
     public GameObject player;
     public playerController playerScript;
+    public GameObject playerSpawnPos;
 
     int goalCount;
-
-    public GameObject playerSpawnPos;
-    public GameObject checkpointPopup;
 
     [Header("Inventory Options")]
     [SerializeField] GameObject inventorySlot;
@@ -134,6 +137,16 @@ public class gameManager : MonoBehaviour
     public void showAmmo()
     {
         ammoHUD.SetActive(true);
+    }
+
+    public void showJetpack()
+    {
+        jetpackHUD.SetActive(true);
+    }
+
+    public void hideJetpack()
+    {
+        jetpackHUD.SetActive(false);
     }
 
     public void youLose()

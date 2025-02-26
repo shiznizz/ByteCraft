@@ -860,7 +860,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
-    
+
+        //Toggle jetpack recharge UI
+        if (hasJetpack)
+            gameManager.instance.showJetpack();
+        else if (!hasJetpack)
+            gameManager.instance.hideJetpack();
+
         //Grapple recharge UI
         if (grappleCooldownTimer <= grappleCooldown)
         {
