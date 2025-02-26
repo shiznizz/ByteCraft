@@ -17,6 +17,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] int jumpMax;
     [SerializeField] int gravity;
     [SerializeField] float momentumDrag;
+    [SerializeField] public int maxHP;
 
     [Header("JetPack Options")]
     [SerializeField] bool hasJetpack;
@@ -309,6 +310,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     // handles where the grapple is hitting
     void shootGrapple()
     {
+        // resets cooldown
         // resets cooldown
         grappleCooldownTimer = 0;
         // chcks if the grapple hits a collider or not
@@ -618,14 +620,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void openChest()
     {
-        Debug.Log("Starting the openChest function...");
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
         {
             lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
 
             if (dropsLoot != null)
             {
-                Debug.Log("dropsLoot was not null!");
                 dropsLoot.dropLoot();
             }
         }

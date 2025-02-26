@@ -14,9 +14,9 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuLose;
     [SerializeField] TMP_Text goalCountText;
     [SerializeField] GameObject ammoHUD;
-    [SerializeField] TMP_Text ammoCurText;
-    [SerializeField] TMP_Text ammoMaxText;
-    [SerializeField] TMP_Text ammoReserveText;
+    [SerializeField] public TMP_Text ammoCurText;
+    [SerializeField] public TMP_Text ammoMaxText;
+    [SerializeField] public TMP_Text ammoReserveText;
 
     public Image playerHPBar;
     public Image JPFuelGauge;
