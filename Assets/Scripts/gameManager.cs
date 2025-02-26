@@ -49,7 +49,10 @@ public class gameManager : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<playerController>();
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
+    }
 
+    private void Start()
+    {
         updateInventory();
     }
 
