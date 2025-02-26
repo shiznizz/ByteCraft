@@ -836,9 +836,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Everything Else
     public void spawnPlayer()
     {
-        controller.enabled = false;
+        //controller.enabled = false;
         controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
-        controller.enabled = true;
+        //controller.enabled = true;
     
         HP = HPOrig;
         updatePlayerUI();
@@ -937,8 +937,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         inventoryManager.instance.addItem(item);
     }
-
-   
 
 
     #endregion Everything Else
