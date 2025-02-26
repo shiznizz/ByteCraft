@@ -12,11 +12,18 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] LayerMask groundLayer;
 
-    [Header("Player Options")]
+    [Header("Audio")]
+    [SerializeField] AudioClip[] stepSounds;
+    [Range(0, 1)][SerializeField] float stepVolume;
+    [SerializeField] float walkSoundInterval;
+    [SerializeField] float runSoundInterval;
+
+    [Header("Player Stat Options")]
     public int HP;
     [SerializeField] int jumpMax;
     int jumpCount;
     int HPOrig;
+    bool isPlayingSteps;
 
     //[SerializeField] List<weaponStats> weaponList = new List<weaponStats>();
 
@@ -190,8 +197,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         if (!isGrounded)
         {
+            
             checkWall();
             wallRun();
+        }
+        else
+        {
+            if (moveDir.magnitude > 0 && !isPlayingSteps)
+            {
+                StartCoroutine(PlaySteps());
+            }
         }
 
         sprint();
@@ -264,6 +279,17 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             playerVelocity = Vector3.zero;
             playerMomentum = Vector3.zero;
         }
+    }
+
+    IEnumerator PlaySteps()
+    {
+        isPlayingSteps = true;
+        audioSource.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Length)],stepVolume);
+        if (!isSprinting)
+            yield return new WaitForSeconds(walkSoundInterval);
+        else
+            yield return new WaitForSeconds(runSoundInterval);
+        isPlayingSteps = false;
     }
 
     private void playerMoveHandler()
@@ -811,6 +837,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         attackTimer = 0;
     
         Instantiate(magicProjectile, magicPosition.position, transform.rotation);
+        audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].magicWep.magicSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].magicWep.magicSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].magicWep.magicVolume);
     }
     
     IEnumerator flashMuzzle()
