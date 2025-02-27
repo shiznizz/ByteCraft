@@ -1,8 +1,9 @@
+//using Mono.Cecil;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.Contracts;
 using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
 public class playerController : MonoBehaviour, IDamage, IPickup
@@ -31,8 +32,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public int HP;
     [SerializeField] int jumpMax;
     int jumpCount;
-    int HPOrig;
+    public int HPOrig;
     bool isPlayingSteps;
+
+    [SerializeField] int armor;
+    [SerializeField] int armorMax = 100;
+
 
     //[SerializeField] List<weaponStats> weaponList = new List<weaponStats>();
 
@@ -204,6 +209,31 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
         handleJetpackFuelRegen();
         //cameraChange();
+    }
+
+    public void getArmor(int amount)
+    {
+        armor = Mathf.Min(armor + amount, armorMax);
+        //gameManager.instance.updateArmorUI(armor);
+    }
+
+    public void getAmmo(int amount)
+    {
+        if (inventoryManager.instance.weaponList.Count > 0 &&
+            inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+        {
+            inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve =
+                Mathf.Min(inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve + amount,
+                inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserveMax);
+
+            updatePlayerUI();
+        }
+    }
+
+    public void refillFuel(int amount)
+    {
+        jetpackFuel = Mathf.Min(jetpackFuel + amount, jetpackFuelMax);
+        updatePlayerUI();
     }
 
     #region Movement
@@ -436,9 +466,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 controller.height = crouchHeight;
                 controller.center = crouchingCenter;
                 playerHeight = crouchHeight;
-                //cameraTransform.localPosition = crouchCamPos;
 
-                cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
+                cameraTransform.localPosition = crouchCamPos;
+
+                //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
 
                 if (speed > walkSpeed)
                 {
@@ -463,8 +494,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         playerHeight = standingHeight;
         isCrouching = false;
         isSliding = false;
-        //cameraTransform.localPosition = normalCamPos;
-        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, normalCamPos, cameraChangeTime);
+        cameraTransform.localPosition = normalCamPos;
+        //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, normalCamPos, cameraChangeTime);
         Debug.Log("exit crouch");
     }
 
@@ -606,7 +637,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void WallRunMovement()
     {
+        playerVelocity.y = 0;
+
         Vector3 wallForward = Vector3.Cross(wallNormal, Vector3.up).normalized;
+        Vector3 test = controller.transform.forward;
 
         // Ensure correct movement direction
         if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
@@ -617,19 +651,23 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         // Apply movement
         transform.position += wallForward * currentWallRunSpeed * Time.deltaTime;
+
+        controller.Move(currentWallRunSpeed * Time.deltaTime * test);
     }
 
     private void wallJump()
     {
-        isExitingWall = true;
-        exitWallTimer = exitWallTime;
+        if (wallLeft)
+        {
+            Vector3 jumpDirection = Vector3.right + Vector3.up;
+            playerVelocity = wallJumpForce * jumpDirection;
+        }
+        if (wallRight)
+        {
+            Vector3 jumpDirection = Vector3.left + Vector3.up;
 
-        //Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
-
-        //Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
-        Vector3 jumpDirection = wallNormal + Vector3.up;
-        //apply jump vector to move controller
-        //pc.moveDir(jumpDirection * wallJumpForce);
+            playerVelocity = wallJumpForce * jumpDirection;
+        }
         StopWallRun();
     }
 
@@ -735,7 +773,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackDistance, ~ignoreLayer))
         {
-            Debug.Log(hit.collider.name);
+            
             Instantiate(inventoryManager.instance.weaponList[weaponListPos].gun.hitEffect, hit.point, Quaternion.identity);
 
         }
@@ -855,6 +893,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
 
         //StartCoroutine(toggleWepCol());
+        audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeVolume);
 
 
         //Activate melee weapon
@@ -990,14 +1029,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void openChest()
     {
-        Debug.Log("Starting the openChest function...");
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
         {
             lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
 
             if (dropsLoot != null)
             {
-                Debug.Log("dropsLoot was not null!");
                 dropsLoot.dropLoot();
             }
         }

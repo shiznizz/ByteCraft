@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -38,6 +39,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     Vector3 playerDir;
 
     bool playerInRange;
+
+    weaponStats weaponAmmo;
 
     // loot drop mechanic variables
     [Header("Loot Drop Settings")]
@@ -156,13 +159,10 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
         if (type != enemyType.stationary)
         {
-            Debug.Log("Set Position");
             agent.SetDestination(gameManager.instance.player.transform.position);
-            Debug.Log("Set Position2");
         }
         else
         {
-            Debug.Log("Set Position3");
             faceTarget();
         }
 
@@ -211,10 +211,29 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     public void dropLoot()
     {
+        playerController player = gameManager.instance.playerScript;
+        float healthRatio = player.HP / (float)player.HPOrig;
+        float currAmmo = float.Parse(gameManager.instance.ammoCurText.text);
+        float reserveAmmo = float.Parse(gameManager.instance.ammoReserveText.text);
+        float maxAmmo = float.Parse(gameManager.instance.ammoMaxText.text);
+
+        float ammoRatio = (currAmmo + reserveAmmo) / maxAmmo;
         foreach (LootItem loot in lootTable)
         {
+            float adjustedDropChance = loot.dropChance;
+
+            if (loot.type == itemType.HP && healthRatio < 0.5f)
+            {
+                adjustedDropChance += Mathf.Lerp(0, 50, 1 - healthRatio); // increase drop chance when health is below 50%
+            }
+            else if (loot.type == itemType.Ammo && ammoRatio < 0.5f)
+            {
+                adjustedDropChance += Mathf.Lerp(0, 50, 1 - ammoRatio);
+            }
+
+
             float roll = Random.Range(0f, 100f);
-            if (roll <= loot.dropChance)
+            if (roll <= adjustedDropChance)
             {
                 Instantiate(loot.itemModel, dropPos.position, transform.rotation);
             }

@@ -185,8 +185,9 @@ MonoBehaviour:
   meleeDistance: 5
   dropsLoot: 1
   weaponCol: {fileID: 0}
-  lootTable: []
-  dropPos: {fileID: 1226905049197040701}
+  lootTable:
+  - {fileID: 11400000, guid: d2fac76925cf74040b68765fd8297372, type: 2}
+  dropPos: {fileID: 7495249159418410618}
   roamPauseTime: 2
   roamDist: 5
 --- !u!195 &8573114166066744710
@@ -274,3 +275,8 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 2, z: 0.5}
+--- !u!4 &7495249159418410618 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2983758187097576281, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+  m_PrefabInstance: {fileID: 4714152964865959203}
+  m_PrefabAsset: {fileID: 0}
