@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class equipSlot : MonoBehaviour, IPointerClickHandler
 {
-
     [SerializeField] itemSO item;
 
     [SerializeField] Image itemIcon;
@@ -14,13 +13,11 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
     [SerializeField] GameObject equippedSlot;
     [SerializeField] GameObject selected;
 
-
     public bool isFull;
     public bool isSelected;
 
     private weaponStats weapon;
-    
-
+    // detects left click
     public void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button == PointerEventData.InputButton.Left)

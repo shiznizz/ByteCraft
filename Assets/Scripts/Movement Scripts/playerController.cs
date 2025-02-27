@@ -214,7 +214,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public void getArmor(int amount)
     {
         armor = Mathf.Min(armor + amount, armorMax);
-        //gameManager.instance.updateArmorUI(armor);
+        //gameManager.instance.updateArmorUI(armor);  will be implemented at a alatter time
     }
 
     public void getAmmo(int amount)
@@ -732,7 +732,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             return true;
         else
             return false;
-
     }
 
     public void StopGrapple()
@@ -753,7 +752,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         StartCoroutine(flashMuzzle());
         audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].gun.shootSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].gun.shootSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].gun.shootVolume);
 
-
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackDistance, ~ignoreLayer))
         {
@@ -770,12 +768,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void getWeaponStats()
     {
-        
         weaponListPos = inventoryManager.instance.weaponList.Count - 1; // Selects the newly added weapon
         changeWeapon();
 
         isGunPOSSet = true;
-        
     }
     
     void changeWeapon()
@@ -899,14 +895,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     }
 
-    //IEnumerator toggleWepCol()
-    //{
-    //    meleeCol.enabled = true;
-    //    yield return new WaitForSeconds(0.1f);
-    //    meleeCol.enabled = false;
-
-    //}
-
     void shootMagicProjectile()
     {
         attackTimer = 0;
@@ -943,10 +931,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Everything Else
     public void spawnPlayer()
     {
-        //controller.enabled = false;
         controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
-        //controller.enabled = true;
-    
+
         HP = HPOrig;
         updatePlayerUI();
     }
