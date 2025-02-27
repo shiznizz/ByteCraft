@@ -20,7 +20,7 @@ public class MiniGamePlayerAttack : MonoBehaviour
     private void Update()
     {
         cooldownTimer += Time.deltaTime;
-        Debug.Log("Cooldown Timer: " + cooldownTimer);  // Debugging cooldown timer
+        //Debug.Log("Cooldown Timer: " + cooldownTimer);  // Debugging cooldown timer
 
 
         if (Input.GetMouseButtonDown(0) && cooldownTimer > attackCooldown && playerMovement.canAttack())
