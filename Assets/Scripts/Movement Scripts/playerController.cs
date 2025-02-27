@@ -991,14 +991,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void openChest()
     {
-        Debug.Log("Starting the openChest function...");
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
         {
             lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
 
             if (dropsLoot != null)
             {
-                Debug.Log("dropsLoot was not null!");
                 dropsLoot.dropLoot();
             }
         }
