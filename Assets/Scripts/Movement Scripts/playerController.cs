@@ -855,6 +855,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
 
         //StartCoroutine(toggleWepCol());
+        audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeVolume);
 
 
         //Activate melee weapon
