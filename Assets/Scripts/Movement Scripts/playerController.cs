@@ -32,7 +32,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public int HP;
     [SerializeField] int jumpMax;
     int jumpCount;
-    int HPOrig;
+    public int HPOrig;
     bool isPlayingSteps;
 
     [SerializeField] int armor;
@@ -1029,14 +1029,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void openChest()
     {
-        Debug.Log("Starting the openChest function...");
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
         {
             lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
 
             if (dropsLoot != null)
             {
-                Debug.Log("dropsLoot was not null!");
                 dropsLoot.dropLoot();
             }
         }
