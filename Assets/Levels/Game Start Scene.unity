@@ -3394,6 +3394,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneBuildIndex: 1
+  type: 0
 --- !u!136 &669524080
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -4577,8 +4578,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 964233473}
+  - component: {fileID: 964233477}
   - component: {fileID: 964233475}
   - component: {fileID: 964233474}
+  - component: {fileID: 964233476}
   m_Layer: 0
   m_Name: Particle System (1)
   m_TagString: Untagged
@@ -9289,6 +9292,41 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!65 &964233476
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964233472}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &964233477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 964233472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f32c2497068e534fa5f92f888b5a2cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneBuildIndex: 6
+  type: 0
 --- !u!1001 &1005247620
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14114,6 +14152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneBuildIndex: 5
+  type: 0
 --- !u!1001 &1021696286
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23777,6 +23816,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneBuildIndex: 2
+  type: 0
 --- !u!1001 &1939899345
 PrefabInstance:
   m_ObjectHideFlags: 0
