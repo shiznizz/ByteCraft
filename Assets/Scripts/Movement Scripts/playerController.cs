@@ -230,12 +230,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
 
-    public void refillFuel(int amount)
-    {
-        jetpackFuel = Mathf.Min(jetpackFuel + amount, jetpackFuelMax);
-        updatePlayerUI();
-    }
-
     #region Movement
     void movement()
     {
@@ -458,6 +452,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         isJetpacking = true;
         jetpackCoroutine = null;
+    }
+
+    public void refillFuel(int amount)
+    {
+        jetpackFuel = Mathf.Min(jetpackFuel + amount, jetpackFuelMax);
+        updatePlayerUI();
     }
 
     #endregion Jetpack
