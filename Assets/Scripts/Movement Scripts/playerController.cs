@@ -637,7 +637,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void WallRunMovement()
     {
+        playerVelocity.y = 0;
+
         Vector3 wallForward = Vector3.Cross(wallNormal, Vector3.up).normalized;
+        Vector3 test = controller.transform.forward;
 
         // Ensure correct movement direction
         if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
@@ -648,19 +651,23 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         // Apply movement
         transform.position += wallForward * currentWallRunSpeed * Time.deltaTime;
+
+        controller.Move(currentWallRunSpeed * Time.deltaTime * test);
     }
 
     private void wallJump()
     {
-        isExitingWall = true;
-        exitWallTimer = exitWallTime;
+        if (wallLeft)
+        {
+            Vector3 jumpDirection = Vector3.right + Vector3.up;
+            playerVelocity = wallJumpForce * jumpDirection;
+        }
+        if (wallRight)
+        {
+            Vector3 jumpDirection = Vector3.left + Vector3.up;
 
-        //Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
-
-        //Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
-        Vector3 jumpDirection = wallNormal + Vector3.up;
-        //apply jump vector to move controller
-        //pc.moveDir(jumpDirection * wallJumpForce);
+            playerVelocity = wallJumpForce * jumpDirection;
+        }
         StopWallRun();
     }
 
@@ -766,7 +773,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackDistance, ~ignoreLayer))
         {
-            Debug.Log(hit.collider.name);
+            
             Instantiate(inventoryManager.instance.weaponList[weaponListPos].gun.hitEffect, hit.point, Quaternion.identity);
 
         }
