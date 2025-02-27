@@ -50,6 +50,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] GameObject meleeWeaponModel;
     [SerializeField] weaponStats startMelee;
     [SerializeField] Animator playerAnimator;
+    [SerializeField] Collider meleeCol;
 
     [Header("Magic Options")]
     [SerializeField] GameObject magicWeaponModel;
@@ -850,26 +851,37 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         {
             playerAnimator.SetTrigger("MeleeAttack");
         }
-    
+
+        //StartCoroutine(toggleWepCol());
+
+
         //Activate melee weapon
         if (meleeWeaponModel != null)
         {
             meleeWeaponModel.SetActive(true); // Shows the melee weapon during the attack
         }
-    
+
         //Raycast to detect enemies in melee range
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.forward, out hit, attackRange, ~ignoreLayer))
         {
             Debug.Log("Melee hit; " + hit.collider.name);
-    
+
             //Apply damage if the object hit implements IDamage
             IDamage damageable = hit.collider.GetComponent<IDamage>();
             damageable.takeDamage(attackDamage);
         }
-    
+
     }
-    
+
+    //IEnumerator toggleWepCol()
+    //{
+    //    meleeCol.enabled = true;
+    //    yield return new WaitForSeconds(0.1f);
+    //    meleeCol.enabled = false;
+
+    //}
+
     void shootMagicProjectile()
     {
         attackTimer = 0;

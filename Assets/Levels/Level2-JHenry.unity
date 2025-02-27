@@ -2723,13 +2723,27 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 6367921215274828822, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
+      propertyPath: meleeCol
+      value: 
+      objectReference: {fileID: 1229668884}
+    - target: {fileID: 6367921215274828822, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
       propertyPath: stepVolume
       value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7414971567545274593, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
+      propertyPath: m_Mesh
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 196369159471151266, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
+      insertIndex: 2
+      addedObject: {fileID: 1229668885}
+    - targetCorrespondingSourceObject: {fileID: 196369159471151266, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1229668884}
   m_SourcePrefab: {fileID: 100100000, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
 --- !u!1001 &266332884
 PrefabInstance:
@@ -12531,6 +12545,52 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8567269246012752760, guid: 38651462786ad144a842480354ad7fdb, type: 3}
   m_PrefabInstance: {fileID: 1294719815}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1229668879 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 196369159471151266, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
+  m_PrefabInstance: {fileID: 263036371}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &1229668884
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1229668879}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 72
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 0.09
+  m_Height: 1.736769
+  m_Direction: 1
+  m_Center: {x: -0.00046533346, y: 0.48272976, z: 0.00047021738}
+--- !u!114 &1229668885
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1229668879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bfb08c61bb591f43aa94311eab97330, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
+  rb: {fileID: 0}
+  damageAmount: 1
+  speed: 1
+  destroyTime: 0
+  playerProjectile: 0
 --- !u!4 &1234910940 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4954835709136074, guid: 29228cb21368072479c11a2f8747667f, type: 3}
