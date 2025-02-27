@@ -156,13 +156,10 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
         if (type != enemyType.stationary)
         {
-            Debug.Log("Set Position");
             agent.SetDestination(gameManager.instance.player.transform.position);
-            Debug.Log("Set Position2");
         }
         else
         {
-            Debug.Log("Set Position3");
             faceTarget();
         }
 
