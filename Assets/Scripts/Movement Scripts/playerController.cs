@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
 public class playerController : MonoBehaviour, IDamage, IPickup
@@ -436,7 +435,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 controller.center = crouchingCenter;
                 playerHeight = crouchHeight;
                 //cameraTransform.localPosition = crouchCamPos;
-
                 cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
 
                 if (speed > walkSpeed)
