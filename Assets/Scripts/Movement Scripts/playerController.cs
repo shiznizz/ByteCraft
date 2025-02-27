@@ -436,9 +436,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 controller.height = crouchHeight;
                 controller.center = crouchingCenter;
                 playerHeight = crouchHeight;
-                //cameraTransform.localPosition = crouchCamPos;
+                cameraTransform.localPosition = crouchCamPos;
 
-                cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
+                //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
 
                 if (speed > walkSpeed)
                 {
@@ -463,8 +463,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         playerHeight = standingHeight;
         isCrouching = false;
         isSliding = false;
-        //cameraTransform.localPosition = normalCamPos;
-        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, normalCamPos, cameraChangeTime);
+        cameraTransform.localPosition = normalCamPos;
+        //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, normalCamPos, cameraChangeTime);
         Debug.Log("exit crouch");
     }
 
