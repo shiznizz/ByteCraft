@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class spawner : MonoBehaviour
 {
-    [SerializeField] GameObject objectToSpawn;
+    [SerializeField] GameObject[] objectsToSpawn;
     [SerializeField] int numToSpawn;
     [SerializeField] int timeBetweenSpawns;
     [SerializeField] Transform[] spawnPos;
@@ -43,7 +43,7 @@ public class spawner : MonoBehaviour
     {
         int arrayPos = Random.Range(0, spawnPos.Length);
 
-        Instantiate(objectToSpawn, spawnPos[arrayPos].position, spawnPos[arrayPos].rotation);
+        Instantiate(objectsToSpawn[Random.Range(0,objectsToSpawn.Length)], spawnPos[arrayPos].position, spawnPos[arrayPos].rotation);
         spawnCount++;
         spawnTimer = 0;
     }
