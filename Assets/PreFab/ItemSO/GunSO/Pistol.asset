@@ -25,12 +25,19 @@ MonoBehaviour:
   moveFlashY: -0.45
   moveFlashZ: 1.8
   shootDamage: 1
-  shootRange: 100
+  shootRange: 25
   shootRate: 2
-  ammoCur: 8
+  ammoCur: 11
   ammoMax: 12
   ammoReserve: 60
   ammoReserveMax: 60
-  hitEffect: {fileID: 0}
-  shootSounds: []
-  shootVolume: 0
+  hitEffect: {fileID: 8884371268655795233, guid: 20fda529c996a334da7fd65b48ea40df, type: 3}
+  shootSounds:
+  - {fileID: 8300000, guid: 929fd214252d7034d93c9463bf63e091, type: 3}
+  - {fileID: 8300000, guid: 73b0e478c9b0c4242bc3c687a6869e81, type: 3}
+  - {fileID: 8300000, guid: e87fb2e782bcac14d82191fa02c2c841, type: 3}
+  - {fileID: 8300000, guid: 25d8a6b3073dcbf40b0133fdbfeb55ce, type: 3}
+  shootVolume: 0.5
+  reloadSounds:
+  - {fileID: 8300000, guid: 0eb673dc31e22fd4a8f158be386c8053, type: 3}
+  reloadVolume: 0.5

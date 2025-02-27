@@ -8,13 +8,9 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
 {
     public itemSO item;
 
-    public Image itemIcon;
-   
-    public TMP_Text itemDescription;
-    public TMP_Text itemName;
-
+    
     public GameObject selectedSlot;
-    public GameObject displaySlot;
+    
 
     public bool isSelected;
     public bool isFull;
@@ -28,9 +24,18 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
         if (eventData.button == PointerEventData.InputButton.Left)
         {
            if (isSelected)
-                gameManager.instance.deselectItem();
-            else if (!isSelected && isFull)    
-                selectItem();
+           {
+                gameManager.instance.deselectSlot();
+            }
+               // gameManager.instance.deselectItem();
+            else if (!isSelected && isFull)
+            {
+                if (gameManager.instance.selectedInventorySlot != null || gameManager.instance.selectedEquipSlot != null)
+                {
+                    gameManager.instance.deselectSlot();
+                }
+                selectItem(eventData);
+            }
         }
 
         if (eventData.button == PointerEventData.InputButton.Right)
@@ -38,11 +43,11 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
             if (isFull)
             {
                 equipGear();
-                gameManager.instance.deselectItem();
+                gameManager.instance.deselectSlot();
             }
         }
-
     }
+
 
     public void equipGear()
     {
@@ -89,21 +94,22 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    public void selectItem()
+    public void selectItem(PointerEventData eventData)
     {
-        gameManager.instance.deselectItem();
+        gameManager.instance.selectedInventorySlot = null;
+        gameManager.instance.selectedInventorySlot = eventData.pointerClick;
+
         selectedSlot.SetActive(true);
         isSelected = true;
-        displaySlot.SetActive(true);
-        itemDescription.text = item.itemDescription ;
-        itemName.text = item.itemName;
-        itemIcon.sprite = item.itemIcon;
+        gameManager.instance.displaySlot.SetActive(true);
+
+        gameManager.instance.itemDescription.text = item.itemDescription ;
+        gameManager.instance.itemName.text = item.itemName;
+        gameManager.instance.itemIcon.sprite = item.itemIcon;
     }
 
     public void clearSlot()
     {
         inventoryManager.instance.removeItem(item);
     }
-
-    
 }

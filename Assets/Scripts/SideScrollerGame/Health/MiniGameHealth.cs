@@ -14,6 +14,10 @@ public class MiniGameHealth : MonoBehaviour
     [SerializeField] private int numberOfFlashes;
     private SpriteRenderer spriteRend;
 
+    [Header("Components")]
+    [SerializeField] private Behaviour[] components;
+    private bool invulnerable;
+
 
     private void Awake()
     {
@@ -36,6 +40,10 @@ public class MiniGameHealth : MonoBehaviour
         {
             if (!dead)
             {
+                //Deactivate all attached component classes
+                foreach (Behaviour component in components)
+                    component.enabled = false;
+
                 anim.SetTrigger("die");
                 GetComponent<SideScrollerPlayerController>().enabled = false;
                 dead = true;
@@ -46,6 +54,23 @@ public class MiniGameHealth : MonoBehaviour
     public void AddHealth(float _value)
     {
         currentHealth = Mathf.Clamp(currentHealth + _value, 0, startingHealth);
+    }
+
+    public void Respawn()
+    {
+
+        dead = false;
+        AddHealth(startingHealth);
+        anim.ResetTrigger("die");
+        anim.Play("sideScrollerPlayerIdle");
+        StartCoroutine(Invunerability());
+
+        //Activate all attached component classes
+        foreach (Behaviour component in components)
+            component.enabled = true;
+
+        // Re-enable player movement
+        GetComponent<SideScrollerPlayerController>().enabled = true;
     }
 
     private IEnumerator Invunerability()
