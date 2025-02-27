@@ -8,13 +8,9 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
 {
     public itemSO item;
 
-    public Image itemIcon;
-   
-    public TMP_Text itemDescription;
-    public TMP_Text itemName;
-
+    
     public GameObject selectedSlot;
-    public GameObject displaySlot;
+    
 
     public bool isSelected;
     public bool isFull;
@@ -40,7 +36,6 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
                 }
                 selectItem(eventData);
             }
-                
         }
 
         if (eventData.button == PointerEventData.InputButton.Right)
@@ -51,8 +46,8 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
                 gameManager.instance.deselectSlot();
             }
         }
-
     }
+
 
     public void equipGear()
     {
@@ -99,31 +94,22 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
         }
     }
 
-    //public void selectItem()
-    //{
-    //    gameManager.instance.deselectItem();
-    //    selectedSlot.SetActive(true);
-    //    isSelected = true;
-    //    displaySlot.SetActive(true);
-    //    itemDescription.text = item.itemDescription ;
-    //    itemName.text = item.itemName;
-    //    itemIcon.sprite = item.itemIcon;
-    //}
-
     public void selectItem(PointerEventData eventData)
     {
-        
         gameManager.instance.selectedInventorySlot = null;
         gameManager.instance.selectedInventorySlot = eventData.pointerClick;
 
         selectedSlot.SetActive(true);
         isSelected = true;
+        gameManager.instance.displaySlot.SetActive(true);
+
+        gameManager.instance.itemDescription.text = item.itemDescription ;
+        gameManager.instance.itemName.text = item.itemName;
+        gameManager.instance.itemIcon.sprite = item.itemIcon;
     }
 
     public void clearSlot()
     {
         inventoryManager.instance.removeItem(item);
     }
-
-    
 }

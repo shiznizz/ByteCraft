@@ -1,8 +1,9 @@
+//using Mono.Cecil;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.Contracts;
 using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 
 public class playerController : MonoBehaviour, IDamage, IPickup
@@ -31,8 +32,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public int HP;
     [SerializeField] int jumpMax;
     int jumpCount;
-    int HPOrig;
+    public int HPOrig;
     bool isPlayingSteps;
+
+    [SerializeField] int armor;
+    [SerializeField] int armorMax = 100;
+
 
     //[SerializeField] List<weaponStats> weaponList = new List<weaponStats>();
 
@@ -206,13 +211,38 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         //cameraChange();
     }
 
+    public void getArmor(int amount)
+    {
+        armor = Mathf.Min(armor + amount, armorMax);
+        //gameManager.instance.updateArmorUI(armor);
+    }
+
+    public void getAmmo(int amount)
+    {
+        if (inventoryManager.instance.weaponList.Count > 0 &&
+            inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+        {
+            inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve =
+                Mathf.Min(inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve + amount,
+                inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserveMax);
+
+            updatePlayerUI();
+        }
+    }
+
+    public void refillFuel(int amount)
+    {
+        jetpackFuel = Mathf.Min(jetpackFuel + amount, jetpackFuelMax);
+        updatePlayerUI();
+    }
+
     #region Movement
     void movement()
     {
         if (!isGrounded)
         {
             checkWall();
-            wallRun();
+            //wallRun();
         }
         else
         {
@@ -230,7 +260,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         // apply momentum
         playerVelocity += playerMomentum;
 
-        applyGravity();
+        if(!isWallRunning)
+            applyGravity();
 
         if (playerMomentum.magnitude >= 0f)
         {
@@ -307,9 +338,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void playerMoveHandler()
     {
-        if (isWallRunning) return;
-
-        speed = isSprinting ? sprintSpeed : isSliding ? slideSpeed : isCrouching ? crouchSpeed : walkSpeed;
+        if (isWallRunning)
+        {
+            // apply wallRunSpeed then start wall run
+            speed = wallRunSpeed;
+            WallRunMovement();
+        }
+        // essentially an if else statment that checks movement state and applies the proper speed
+        else
+            speed = isSprinting ? sprintSpeed : isSliding ? slideSpeed : isCrouching ? crouchSpeed : walkSpeed;
 
         if (isGrounded && isSliding)
         {
@@ -349,6 +386,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
             if(isCrouching || isSliding)
                 exitCrouch();
+            if (isWallRunning)
+                wallJump();
         }
         else if (Input.GetButtonDown("Jump") && !isJetpacking && !isGrounded && hasJetpack)
         {
@@ -428,22 +467,27 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         if (Input.GetButtonDown("Crouch") && !isPlayerInStartingLevel)
         {
+            // toggles crouch
             if(isGrounded)
                 isCrouching = !isCrouching;
 
+            // adjusts controller height and orients controller on ground
             if (isCrouching)
             {
                 controller.height = crouchHeight;
                 controller.center = crouchingCenter;
                 playerHeight = crouchHeight;
+
+                // changes camera position (lerp was breaking this)
                 cameraTransform.localPosition = crouchCamPos;
 
                 //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
-
+                // if moving faster than walking - slide
                 if (speed > walkSpeed)
                 {
                     isSliding = true;
                     isSprinting = false;
+                    // starts slide timer and sets vector to lock player movement
                     slideTimer = maxSlideTime;
                     forwardDir = transform.forward;
                 }
@@ -457,7 +501,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void exitCrouch()
     {
-
+        // readjusts controller and camera height
         controller.height = standingHeight;
         controller.center = standingCenter;
         playerHeight = standingHeight;
@@ -485,6 +529,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     }
     #endregion Crouch and Slide
 
+    // previously used to simulate momentum by lerping speed transitions
     IEnumerator smoothSpeedLerp()
     {
         float time = 0;
@@ -532,64 +577,39 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [Header("References")]
     public Transform orientation;
 
-    private float currentWallRunSpeed = 0f;
     public float wallRunAcceleration = 10f;
-    public float maxWallRunSpeed = 10f;
+    //public float maxWallRunSpeed = 10f;
     public float wallRunTime = 1.5f;
     public float wallJumpForce = 12f;
 
     private void checkWall()
     {
         RaycastHit hit;
+
+        // checks if player is next to a left or right wall then enters or exits wall running state accordingly
         wallRight = Physics.Raycast(transform.position, orientation.right, out hit, wallCheckDistance, wallLayer);
         wallLeft = Physics.Raycast(transform.position, -orientation.right, out hit, wallCheckDistance, wallLayer);
-        if (wallRight || wallLeft)
-            wallNormal = hit.normal;
+
+        if ((wallRight || wallLeft) && !isWallRunning)
+            wallRun();
+        if ((!wallRight && !wallLeft) && isWallRunning)
+            stopWallRun();
     }
 
     private void wallRun()
     {
-        // Getting Inputs
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
+        // reset jumps, start wallrun, cancel gravity
+        jumpCount = 0;
+        StartWallRun();
+        playerVelocity = Vector3.zero;
 
-        // State 1 - Wallrunning
-        if ((wallLeft || wallRight) && !isGrounded && verticalInput > 0)
-        {
-            if (!isWallRunning)
-                StartWallRun();
+        // checks wall normal and sets wall normal to left or right wall normal then updates the forwareDir
+        wallNormal = wallLeft ? leftWallHit.normal : rightWallHit.normal;
+        forwardDir = Vector3.Cross(wallNormal, Vector3.up);
 
-            if (wallRunTimer > 0)
-            {
-                wallRunTimer -= Time.deltaTime;
-                WallRunMovement();
-            }
-
-            if (wallRunTimer <= 0 && isWallRunning)
-            {
-                isExitingWall = true;
-                exitWallTimer = exitWallTime;
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space))
-                wallJump();
-        }
-        else if (isExitingWall)
-        {
-            if (isWallRunning)
-                StopWallRun();
-
-            if (exitWallTimer > 0)
-                exitWallTimer -= Time.deltaTime;
-
-            if (exitWallTimer <= 0)
-                isExitingWall = false;
-        }
-        else
-        {
-            if (isWallRunning)
-                StopWallRun();
-        }
+        // if on left wall go backwards
+        if(Vector3.Dot(forwardDir, leftWallHit.normal) < 0)
+            forwardDir = -forwardDir;
     }
 
     private void StartWallRun()
@@ -598,39 +618,41 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         wallRunTimer = maxWallRunTime;
     }
 
-    private void StopWallRun()
+    private void stopWallRun()
     {
         isWallRunning = false;
-        currentWallRunSpeed = 0f;
     }
 
     private void WallRunMovement()
     {
-        Vector3 wallForward = Vector3.Cross(wallNormal, Vector3.up).normalized;
+        horizontalInput = Input.GetAxis("Horizontal");
+        // checks angle of normal vector to make sure you're going forward within 90 degree angle
+        if (moveDir.z > (forwardDir.z - wallRunAcceleration) && moveDir.z < (forwardDir.z + wallRunAcceleration))
+            moveDir += forwardDir;
+        else if (moveDir.z < (forwardDir.z - wallRunAcceleration) && moveDir.z > (forwardDir.z + wallRunAcceleration))
+        {
+            // if not cancel wall run and stop movement vector
+            moveDir = Vector3.zero;
+            stopWallRun();
+        }
 
-        // Ensure correct movement direction
-        if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
-            wallForward = -wallForward;
-
-        // Smooth acceleration to max speed
-        currentWallRunSpeed = Mathf.Lerp(currentWallRunSpeed, maxWallRunSpeed, wallRunAcceleration * Time.deltaTime);
-
-        // Apply movement
-        transform.position += wallForward * currentWallRunSpeed * Time.deltaTime;
+        // allows for seamless movement off the wall left or right during wallrunning
+        moveDir.x += horizontalInput * wallJumpForce;
+        // clamp movement vector to current speed (wall run) 
+        moveDir = Vector3.ClampMagnitude(moveDir, speed);
     }
 
     private void wallJump()
     {
-        isExitingWall = true;
-        exitWallTimer = exitWallTime;
-
-        //Vector3 wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
-
-        //Vector3 forceToApply = transform.up * wallJumpUpForce + wallNormal * wallJumpSideForce;
+        // 
         Vector3 jumpDirection = wallNormal + Vector3.up;
-        //apply jump vector to move controller
-        //pc.moveDir(jumpDirection * wallJumpForce);
-        StopWallRun();
+        jumpDirection.Normalize(); // Normalize to keep a consistent jump force
+
+        // Apply jump force
+        playerVelocity = jumpDirection * wallJumpForce;
+        moveDir.x = wallNormal.x * wallJumpForce;
+
+        stopWallRun();
     }
 
     #endregion WallRunning
@@ -735,7 +757,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackDistance, ~ignoreLayer))
         {
-            Debug.Log(hit.collider.name);
+            
             Instantiate(inventoryManager.instance.weaponList[weaponListPos].gun.hitEffect, hit.point, Quaternion.identity);
 
         }
@@ -991,14 +1013,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void openChest()
     {
-        Debug.Log("Starting the openChest function...");
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
         {
             lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
 
             if (dropsLoot != null)
             {
-                Debug.Log("dropsLoot was not null!");
                 dropsLoot.dropLoot();
             }
         }
