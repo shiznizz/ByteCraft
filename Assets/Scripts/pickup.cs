@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class pickup : MonoBehaviour
 {
-    [SerializeField] weaponStats weapon;
+    [SerializeField] itemSO item;
 
-    public enum LootType {Health, Weapon}
+    public enum LootType {Health, Weapon, armor}
     public LootType lootType;
     public int amount; // how much value the loot gives to player
 
@@ -22,7 +22,12 @@ public class pickup : MonoBehaviour
                         player.heal(amount);
                         break;
                     case pickup.LootType.Weapon:
-                        player.getWeaponStats(weapon);
+                        player.addInventory(item);
+                        if (item.GetWeapon().type == weaponStats.weaponType.Gun)
+                            item.GetWeapon().gun.RefreshAmmo();
+                        break;
+                    case pickup.LootType.armor:
+                        player.addInventory(item);
                         break;
                 }
                 Destroy(gameObject); // remove loot from scene
@@ -33,10 +38,10 @@ public class pickup : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if (lootType == LootType.Weapon && weapon.type == weaponStats.weaponType.Gun)
-        {
-            weapon.gun.ammoCur = weapon.gun.ammoMax;
-            weapon.gun.ammoReserve = weapon.gun.ammoReserveMax;
-        }
+        //if (lootType == LootType.Weapon && weapon.type == weaponStats.weaponType.Gun)
+        //{
+        //    weapon.gun.ammoCur = weapon.gun.ammoMax;
+        //    weapon.gun.ammoReserve = weapon.gun.ammoReserveMax;
+        //}
     }
 }

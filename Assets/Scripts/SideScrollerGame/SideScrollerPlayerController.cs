@@ -21,6 +21,9 @@ public class SideScrollerPlayerController : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         boxCollider = GetComponent<BoxCollider2D>();
+
+        //Prevent rotation of the Rigidbody2D to stop tipping over
+        body.freezeRotation = true;
     }
 
     private void Update()
@@ -44,7 +47,7 @@ public class SideScrollerPlayerController : MonoBehaviour
 
             if (onWall() && !isGrounded())
             {
-                body.gravityScale = 0;
+                body.gravityScale = 1;
                 body.linearVelocity = Vector2.zero;
             }
             else
@@ -80,11 +83,6 @@ public class SideScrollerPlayerController : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-    }
-
     private bool isGrounded()
     {
         RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, Vector2.down, 0.1f, groundLayer);
@@ -95,5 +93,10 @@ public class SideScrollerPlayerController : MonoBehaviour
     {
         RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, boxCollider.bounds.size, 0, new Vector2(transform.localScale.x, 0), 0.1f, wallLayer);
         return raycastHit.collider != null;
+    }
+
+    public bool canAttack()
+    {
+        return horizontalInput == 0 && isGrounded() && !onWall();
     }
 }
