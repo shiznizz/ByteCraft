@@ -1,5 +1,7 @@
+using Mono.Cecil;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics.Contracts;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -33,6 +35,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     int jumpCount;
     int HPOrig;
     bool isPlayingSteps;
+
+    [SerializeField] int armor;
+    [SerializeField] int armorMax = 100;
+
 
     //[SerializeField] List<weaponStats> weaponList = new List<weaponStats>();
 
@@ -203,6 +209,31 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
         handleJetpackFuelRegen();
         //cameraChange();
+    }
+
+    public void getArmor(int amount)
+    {
+        armor = Mathf.Min(armor + amount, armorMax);
+        gameManager.instance.updateArmorUI(armor);
+    }
+
+    public void getAmmo(int amount)
+    {
+        if (inventoryManager.instance.weaponList.Count > 0 &&
+            inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+        {
+            inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve =
+                Mathf.Min(inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve + amount,
+                inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserveMax);
+
+            updatePlayerUI();
+        }
+    }
+
+    public void refillFuel(int amount)
+    {
+        jetpackFuel = Mathf.Min(jetpackFuel + amount, jetpackFuelMax);
+        updatePlayerUI();
     }
 
     #region Movement

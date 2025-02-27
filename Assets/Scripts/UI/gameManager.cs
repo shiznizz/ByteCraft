@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using UnityEngine.Rendering;
 
 
 public class gameManager : MonoBehaviour
@@ -43,6 +44,7 @@ public class gameManager : MonoBehaviour
 
     [Header("Inventory Options")]
     [SerializeField] GameObject inventorySlot;
+    [SerializeField] public Image armorBar;
 
     public GameObject[] slots;
 
@@ -165,7 +167,6 @@ public class gameManager : MonoBehaviour
 
     public void updateInventory()
     {
-
         for (int i = 0; i < slots.Length; i++)
         {
 
@@ -191,7 +192,6 @@ public class gameManager : MonoBehaviour
                 slots[i].transform.GetChild(1).GetComponent<Image>().enabled = false;
                 slots[i].GetComponent<SlotBoss>().isFull = false;
                 slots[i].GetComponent<SlotBoss>().item = null;
-
             }
         }
     }
@@ -210,10 +210,15 @@ public class gameManager : MonoBehaviour
         {
             selectedInventorySlot.GetComponent<SlotBoss>().isSelected = false;
             selectedInventorySlot.transform.GetChild(2).gameObject.SetActive(false);
-            
-            
         }
-        
-        
     }
+
+    public void updateArmorUI(int armorAmount)
+    {
+        if (armorBar != null) 
+        {
+            armorBar.fillAmount = (float)armorAmount / 100f;
+        }
+    }
+   
 }
