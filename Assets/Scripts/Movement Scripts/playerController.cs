@@ -30,7 +30,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public int HP;
     [SerializeField] int jumpMax;
     int jumpCount;
-    int HPOrig;
+    public int HPOrig;
     bool isPlayingSteps;
 
     //[SerializeField] List<weaponStats> weaponList = new List<weaponStats>();

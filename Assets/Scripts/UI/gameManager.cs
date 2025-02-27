@@ -28,10 +28,10 @@ public class gameManager : MonoBehaviour
     public GameObject selectedInventorySlot;
 
     [Header("Text Fields to Update")]
-    [SerializeField] TMP_Text goalCountText;
-    [SerializeField] TMP_Text ammoCurText;
-    [SerializeField] TMP_Text ammoMaxText;
-    [SerializeField] TMP_Text ammoReserveText;
+    [SerializeField] public TMP_Text goalCountText;
+    [SerializeField] public TMP_Text ammoCurText;
+    [SerializeField] public TMP_Text ammoMaxText;
+    [SerializeField] public TMP_Text ammoReserveText;
 
     [Header("State Monitoring Values")]
     public bool isPaused;
