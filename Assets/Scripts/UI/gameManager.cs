@@ -24,8 +24,7 @@ public class gameManager : MonoBehaviour
     public GameObject playerDamageScreen;
     public GameObject checkpointPopup;
 
-    public GameObject selectedEquipSlot;
-    public GameObject selectedInventorySlot;
+    
 
     [Header("Text Fields to Update")]
     [SerializeField] public TMP_Text goalCountText;
@@ -43,8 +42,16 @@ public class gameManager : MonoBehaviour
 
     [Header("Inventory Options")]
     [SerializeField] GameObject inventorySlot;
+    public GameObject selectedEquipSlot;
+    public GameObject selectedInventorySlot;
 
     public GameObject[] slots;
+
+    public Image itemIcon;
+
+    public TMP_Text itemDescription;
+    public TMP_Text itemName;
+    public GameObject displaySlot;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -202,18 +209,16 @@ public class gameManager : MonoBehaviour
         {
             selectedEquipSlot.GetComponent<equipSlot>().isSelected = false;
             selectedEquipSlot.transform.GetChild(1).gameObject.SetActive(false);
-            
-           
         }
 
         if(selectedInventorySlot != null)
         {
             selectedInventorySlot.GetComponent<SlotBoss>().isSelected = false;
             selectedInventorySlot.transform.GetChild(2).gameObject.SetActive(false);
-            
-            
         }
-        
-        
+
+        itemDescription.text = "";
+        itemName.text = "";
+        displaySlot.SetActive(false);
     }
 }
