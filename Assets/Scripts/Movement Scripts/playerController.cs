@@ -1,4 +1,4 @@
-using Mono.Cecil;
+//using Mono.Cecil;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -214,7 +214,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public void getArmor(int amount)
     {
         armor = Mathf.Min(armor + amount, armorMax);
-        gameManager.instance.updateArmorUI(armor);
+        //gameManager.instance.updateArmorUI(armor);
     }
 
     public void getAmmo(int amount)
