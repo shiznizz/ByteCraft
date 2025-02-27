@@ -435,8 +435,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 controller.height = crouchHeight;
                 controller.center = crouchingCenter;
                 playerHeight = crouchHeight;
-                //cameraTransform.localPosition = crouchCamPos;
-                cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
+
+                cameraTransform.localPosition = crouchCamPos;
+
+                //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
 
                 if (speed > walkSpeed)
                 {
@@ -461,8 +463,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         playerHeight = standingHeight;
         isCrouching = false;
         isSliding = false;
-        //cameraTransform.localPosition = normalCamPos;
-        cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, normalCamPos, cameraChangeTime);
+        cameraTransform.localPosition = normalCamPos;
+        //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, normalCamPos, cameraChangeTime);
         Debug.Log("exit crouch");
     }
 
@@ -853,6 +855,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
 
         //StartCoroutine(toggleWepCol());
+        audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeVolume);
 
 
         //Activate melee weapon
