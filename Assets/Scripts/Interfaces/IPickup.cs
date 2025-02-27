@@ -6,6 +6,10 @@ public interface IPickup
 
     void heal(int amount);
 
+    void getArmor(int amount);
+    void getAmmo(int amount);
+    void refillFuel(int amount);
+
    // void getWeaponStats(weaponStats weapon);
 
     void addInventory(itemSO item);
