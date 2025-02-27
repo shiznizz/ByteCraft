@@ -7,21 +7,28 @@ public class MiniGamePlayerRespawn : MonoBehaviour
     //[SerializeField] private AudioClip checkpointSound; 
     private Transform currentCheckpoint;
     private MiniGameHealth playerHealth;
-    //[SerializeField] private Transform checkpointRoom;
+    private MiniGameUIManager uiManager;
 
     private void Awake()
     {
         playerHealth = GetComponent<MiniGameHealth>();
+        uiManager = FindObjectOfType<MiniGameUIManager>();
     }
 
-    public void Respawn()
+    public void checkRespawn()
     {
+        //Check if checkpoint is available
+        if (currentCheckpoint == null)
+        {
+            //Show game over screen
+            uiManager.GameOver();
+
+            return;
+        }
+
         playerHealth.Respawn();
         transform.position = currentCheckpoint.position;
-        
-
-        //Camera.main.transform.position = new Vector3(currentCheckpoint.position.x, Camera.main.transform.position.y, Camera.main.transform.position.z);
-
+              
         //Move camera back to player
         Camera.main.GetComponent<MiniGameCameraController>().MoveToNewRoom(currentCheckpoint.parent);
     }
