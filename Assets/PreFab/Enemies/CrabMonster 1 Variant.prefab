@@ -129,6 +129,7 @@ MonoBehaviour:
   damageAmount: 5
   speed: 0
   destroyTime: 0
+  playerProjectile: 0
 --- !u!135 &7391637136945108204
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -172,11 +173,11 @@ MonoBehaviour:
   agent: {fileID: 8573114166066744710}
   anim: {fileID: 1179212026617153553}
   headPos: {fileID: 1227170283895354183}
-  HP: 10
+  HP: 20
   animTransSpeed: 4
   faceTargetSpeed: 5
   FOV: 180
-  shootAngle: 0
+  shootAngle: 5
   bullet: {fileID: 1229310425171102399}
   shootPos: {fileID: 1226905049197040701}
   meleeCol: {fileID: 7391637136945108204}
@@ -184,10 +185,11 @@ MonoBehaviour:
   meleeDistance: 5
   dropsLoot: 1
   weaponCol: {fileID: 0}
-  lootTable: []
-  dropPos: {fileID: 1226905049197040701}
-  roamPauseTime: 0
-  roamDist: 0
+  lootTable:
+  - {fileID: 11400000, guid: d2fac76925cf74040b68765fd8297372, type: 2}
+  dropPos: {fileID: 7495249159418410618}
+  roamPauseTime: 2
+  roamDist: 5
 --- !u!195 &8573114166066744710
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -273,3 +275,8 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 2, z: 0.5}
+--- !u!4 &7495249159418410618 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2983758187097576281, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+  m_PrefabInstance: {fileID: 4714152964865959203}
+  m_PrefabAsset: {fileID: 0}

@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class inventoryManager : MonoBehaviour
 {
-
     public static inventoryManager instance;
 
     public List<itemSO> inventory = new List<itemSO>();
@@ -20,9 +19,6 @@ public class inventoryManager : MonoBehaviour
     {
         instance = this;
     }
-
-    
-
     // adds item to inventory
     public void addItem(itemSO item)
     {
@@ -35,8 +31,5 @@ public class inventoryManager : MonoBehaviour
         inventory.Remove(item);
         gameManager.instance.updateInventory();
     }
-
-    
-    
 }
 
