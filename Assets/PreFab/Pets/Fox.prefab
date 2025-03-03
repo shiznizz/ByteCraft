@@ -116,6 +116,7 @@ GameObject:
   - component: {fileID: 1063166598304745468}
   - component: {fileID: 6870233032660827669}
   - component: {fileID: 874478098205499245}
+  - component: {fileID: 2725765760324554487}
   m_Layer: 0
   m_Name: Fox
   m_TagString: Untagged
@@ -133,7 +134,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -5.684471, y: 0.0000019073486, z: 2.9499583}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4549263491607102772}
@@ -155,6 +156,7 @@ MonoBehaviour:
   player: {fileID: 0}
   agent: {fileID: 874478098205499245}
   anim: {fileID: 6870233032660827669}
+  interactionText: {fileID: 0}
   followDistance: 6
   stopDistance: 4
   idleTime: 2
@@ -202,6 +204,29 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!136 &2725765760324554487
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1330759289359372040}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 3
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 1.5}
 --- !u!1 &1663766334903906763
 GameObject:
   m_ObjectHideFlags: 0
