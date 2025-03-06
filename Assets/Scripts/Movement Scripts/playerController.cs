@@ -66,7 +66,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] Transform magicPosition;
 
     //Weapons inventory (gun, melee)
-    int weaponListPos;
+    public int weaponListPos;
 
     bool isGunPOSSet;
 
@@ -773,7 +773,26 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         isGunPOSSet = true;
     }
-    
+
+    public void removeWeaponUI()
+    {
+        switch (inventoryManager.instance.weaponList[weaponListPos].type)
+        {
+            case weaponStats.weaponType.Gun:
+                gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+                changeGun();
+                break;
+            case weaponStats.weaponType.Melee:
+                meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
+                changeMeleeWep();
+                break;
+            case weaponStats.weaponType.Magic:
+                magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
+                changeMagicWep();
+                break;
+        }
+    }
+
     void changeWeapon()
     {
         switch (inventoryManager.instance.weaponList[weaponListPos].type)
@@ -836,7 +855,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
         if (magicWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Magic)
             magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
-    
+
         if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Gun)
             gunModel.GetComponent<MeshFilter>().sharedMesh = null;
     }
