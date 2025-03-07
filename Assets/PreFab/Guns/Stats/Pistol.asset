@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f1f80e479f98f44eb7088be746c2fb7, type: 3}
+  m_Name: Pistol
+  m_EditorClassIdentifier: 
+  itemName: Pistol
+  itemDescription: it go pew pew
+  itemIcon: {fileID: 21300022, guid: 71a7f8669de848e45ba57bda95f3a58e, type: 3}
+  itemTypye: 0
+  type: 0
+  gun: {fileID: 11400000}
+  meleeWep: {fileID: 0}
+  magicWep: {fileID: 0}
+  model: {fileID: 3762765695189490583, guid: d2f0f167fbb14c04c9c5382690767fef, type: 3}
+  moveFlashX: 0.36
+  moveFlashY: -0.45
+  moveFlashZ: 1.8
+  shootDamage: 5
+  shootRange: 25
+  shootRate: 0.5
+  ammoCur: 11
+  ammoMax: 12
+  ammoReserve: 58
+  ammoReserveMax: 60
+  hitEffect: {fileID: 8884371268655795233, guid: 20fda529c996a334da7fd65b48ea40df, type: 3}
+  shootSounds:
+  - {fileID: 8300000, guid: 929fd214252d7034d93c9463bf63e091, type: 3}
+  - {fileID: 8300000, guid: 73b0e478c9b0c4242bc3c687a6869e81, type: 3}
+  - {fileID: 8300000, guid: e87fb2e782bcac14d82191fa02c2c841, type: 3}
+  - {fileID: 8300000, guid: 25d8a6b3073dcbf40b0133fdbfeb55ce, type: 3}
+  shootVolume: 0.5
+  reloadSounds:
+  - {fileID: 8300000, guid: 0eb673dc31e22fd4a8f158be386c8053, type: 3}
+  reloadVolume: 0.5
