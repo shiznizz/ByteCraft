@@ -783,12 +783,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 if (inventoryManager.instance.weaponList.Count == 1)
                 {
                     gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-                    Debug.Log("if gun");
+                    Debug.Log("if gun 1");
                 }
                 else
                 {
-                    Debug.Log("else gun");
-                    weaponListPos = weaponListPos - 1;
+                    Debug.Log("else gun 1");
+                   // int test = inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.equippedWeapon);
+
+                    //weaponListPos = test;
                     changeWeapon();
                 }
                 break;
@@ -796,11 +798,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
                 if (inventoryManager.instance.weaponList.Count == 1)
                 {
-                    meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
+                    gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+                    Debug.Log("if gun 2");
                 }
                 else
                 {
-                    weaponListPos = weaponListPos - 1;
+                    //int test = inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.equippedWeapon);
+                    Debug.Log("else gun 2");
+                    //weaponListPos = test;
                     changeWeapon();
                 }
                 break;
@@ -808,13 +813,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
                 if (inventoryManager.instance.weaponList.Count == 1)
                 {
-                    Debug.Log("if magic");
-                    magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
+                    Debug.Log("if gun 3"); ;
+                    gunModel.GetComponent<MeshFilter>().sharedMesh = null;
                 }
                 else
                 {
-                    Debug.Log("else magic");
-                    weaponListPos = weaponListPos - 1;
+                    Debug.Log("else gun 3");
+                    //int test = inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.equippedWeapon);
+
+                    //weaponListPos = test;
                     changeWeapon();
                 }
                 break;
@@ -965,15 +972,36 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void selectWeapon()
     {
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if (scrollInput > 0 && weaponListPos < inventoryManager.instance.weaponList.Count - 1)
+        if (scrollInput > 0 && inventoryManager.instance.weaponList.Count > 0)
         {
-            weaponListPos++;
+            //weaponListPos++;
+            if (weaponListPos == inventoryManager.instance.weaponList.Count - 1)
+            {
+                weaponListPos = 0;
+            }
+            else
+            {
+                weaponListPos++;
+            }
+            
+            inventoryManager.instance.currentWeapon();
             changeWeapon();
+            //&& weaponListPos < inventoryManager.instance.weaponList.Count - 1
         }
-        else if (scrollInput < 0 && weaponListPos > 0)
+        else if (scrollInput < 0 && inventoryManager.instance.weaponList.Count > 0)
         {
-            weaponListPos--;
+            if (weaponListPos == 0)
+            {
+                weaponListPos = inventoryManager.instance.weaponList.Count - 1;
+            }
+            else
+            {
+                weaponListPos--;
+            }
+            
+          
             changeWeapon();
+            inventoryManager.instance.currentWeapon();
         }
     }
     #endregion Weapons

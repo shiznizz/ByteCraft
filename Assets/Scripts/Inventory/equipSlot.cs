@@ -1,3 +1,6 @@
+
+using System.Net;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -18,7 +21,9 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
     public bool isFull;
     public bool isSelected;
 
+    public weaponStats currWeapon;
     public weaponStats weapon;
+    int test;
 
 
     // detects left click
@@ -44,6 +49,7 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
         {
             if (isFull)
             {
+                Debug.Log("1");
                 unequipGear(item);
                 gameManager.instance.deselectSlot();
             }
@@ -56,45 +62,45 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
         itemIcon.sprite = item.itemIcon;
         equippedSlot.SetActive(true);
 
-        if (item.itemTypye == itemSO.itemType.Weapon)
-        {
-            weapon = item.GetWeapon();
-            inventoryManager.instance.weaponList.Insert(weaponSlotIndex, weapon);
-            gameManager.instance.player.GetComponent<playerController>().getWeaponStats();
-        }
+        
+        weapon = item.GetWeapon();
+        inventoryManager.instance.weaponList.Add(weapon);
 
+        gameManager.instance.player.GetComponent<playerController>().getWeaponStats();
+
+        inventoryManager.instance.currentWeapon();
         inventoryManager.instance.removeItem(item);
     }
 
     public void unequipGear(itemSO item)
     {
+        Debug.Log("2");
         // adds item back to the inventory
         inventoryManager.instance.addItem(item);
         // check if item to unequip is a weapon
         if (item.itemTypye == itemSO.itemType.Weapon)
         {    // check if current weapon is the one to remove
-
-            if (gameManager.instance.player.GetComponent<playerController>().weaponListPos == weaponSlotIndex || inventoryManager.instance.weaponList.Count == 1)
+            Debug.Log("3");
+            //gameManager.instance.player.GetComponent<playerController>().weaponListPos == weaponSlotIndex || inventoryManager.instance.weaponList.Count == 1
+            Debug.Log(item.name);
+            //Debug.Log(inventoryManager.instance.equippedWeapon.name);
+            if (item == inventoryManager.instance.equippedWeapon)
             {
                 // remove current weapons UI and Visual
-
-                gameManager.instance.player.GetComponent<playerController>().removeWeaponUI();
-
                 Debug.Log("if 1");
-
+                gameManager.instance.player.GetComponent<playerController>().removeWeaponUI();
             }
-            else
-            {
-                // moves current weapon POS to where the current weapon is after the removal of the weapon
-                Debug.Log("else 1");
-                gameManager.instance.player.GetComponent<playerController>().weaponListPos = gameManager.instance.player.GetComponent<playerController>().weaponListPos - 1;
-            }
+            
 
             // get weapon
             weapon = item.GetWeapon();
             // remove weapon
             inventoryManager.instance.weaponList.Remove(weapon);
-
+            changeWeaponPOS();
+            Debug.Log("4");
+            inventoryManager.instance.currentWeapon();
+            Debug.Log("5");
+            
             // hides UI for guns
             gameManager.instance.hideAmmo();
 
@@ -116,5 +122,26 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
         gameManager.instance.itemDescription.text = item.itemDescription;
         gameManager.instance.itemName.text = item.itemName;
         gameManager.instance.itemIcon.sprite = item.itemIcon;
+    }
+
+    private void changeWeaponPOS()
+    {
+        currWeapon = inventoryManager.instance.equippedWeapon;
+
+
+        if (inventoryManager.instance.weaponList.Count > 0)
+        {
+            Debug.Log("change if");
+            test = inventoryManager.instance.weaponList.IndexOf(currWeapon);
+
+            gameManager.instance.player.GetComponent<playerController>().weaponListPos = test;
+            
+        }
+        else if (inventoryManager.instance.weaponList.Count == 0)
+        {
+            Debug.Log("change else");
+            gameManager.instance.player.GetComponent<playerController>().weaponListPos = 0;
+        }
+        Debug.Log(inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.equippedWeapon) + "Change");
     }
 }
