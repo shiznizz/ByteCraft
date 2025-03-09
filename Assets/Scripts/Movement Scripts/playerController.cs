@@ -276,8 +276,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         // player attack settings below
         // ==========================
 
-        if (!isGunPOSSet && inventoryManager.instance.weaponList.Count > 0)
-            getWeaponStats(); 
+        //if (!isGunPOSSet && inventoryManager.instance.weaponList.Count > 0)
+        //    getWeaponStats(); 
 
         attackTimer += Time.deltaTime;
         grappleCooldownTimer += Time.deltaTime;
@@ -771,7 +771,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         weaponListPos = inventoryManager.instance.weaponList.Count - 1; // Selects the newly added weapon
         changeWeapon();
 
-        isGunPOSSet = true;
+        //isGunPOSSet = true;
     }
 
     public void removeWeaponUI()
@@ -779,18 +779,48 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         switch (inventoryManager.instance.weaponList[weaponListPos].type)
         {
             case weaponStats.weaponType.Gun:
-                gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-                changeGun();
+                
+                if (inventoryManager.instance.weaponList.Count == 1)
+                {
+                    gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+                    Debug.Log("if gun");
+                }
+                else
+                {
+                    Debug.Log("else gun");
+                    weaponListPos = weaponListPos - 1;
+                    changeWeapon();
+                }
                 break;
             case weaponStats.weaponType.Melee:
-                meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
-                changeMeleeWep();
+               
+                if (inventoryManager.instance.weaponList.Count == 1)
+                {
+                    meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
+                }
+                else
+                {
+                    weaponListPos = weaponListPos - 1;
+                    changeWeapon();
+                }
                 break;
             case weaponStats.weaponType.Magic:
-                magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
-                changeMagicWep();
+                
+                if (inventoryManager.instance.weaponList.Count == 1)
+                {
+                    Debug.Log("if magic");
+                    magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
+                }
+                else
+                {
+                    Debug.Log("else magic");
+                    weaponListPos = weaponListPos - 1;
+                    changeWeapon();
+                }
                 break;
         }
+
+        
     }
 
     void changeWeapon()
@@ -891,7 +921,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             playerAnimator.SetTrigger("MeleeAttack");
         }
 
-        //StartCoroutine(toggleWepCol());
+        
         audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeVolume);
 
 
@@ -970,6 +1000,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
     void updatePlayerUI()
     {
+        
         gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
 
@@ -991,13 +1022,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         // Toggle ammo counter based on weapon type
         if (inventoryManager.instance.weaponList.Count > 0)
         {
+            
             if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
             {
                 gameManager.instance.updateAmmo(inventoryManager.instance.weaponList[weaponListPos].gun);
                 gameManager.instance.showAmmo();
             }
             else
+            {
                 gameManager.instance.hideAmmo();
+            }
         }
     }
     

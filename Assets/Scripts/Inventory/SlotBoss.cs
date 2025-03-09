@@ -48,7 +48,6 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
         }
     }
 
-
     public void equipGear()
     {
         if (item.itemTypye == itemSO.itemType.Head && !headSlot.isFull)
