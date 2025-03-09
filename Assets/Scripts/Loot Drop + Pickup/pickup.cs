@@ -23,8 +23,6 @@ public class pickup : MonoBehaviour
                         break;
                     case pickup.LootType.Weapon:
                         player.addInventory(item);
-                        if (item.GetWeapon().type == weaponStats.weaponType.Gun)
-                            item.GetWeapon().gun.RefreshAmmo();
                         break;
                     case pickup.LootType.armor:
                         player.addInventory(item);

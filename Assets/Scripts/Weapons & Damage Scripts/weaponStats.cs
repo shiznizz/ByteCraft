@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class weaponStats : itemSO
 {
-    public enum weaponType { Gun, Melee, Magic }
+    public enum weaponType { primary, secondary, special }
     public weaponType type;
     public gunStats gun;
     public meleeWepStats meleeWep;
