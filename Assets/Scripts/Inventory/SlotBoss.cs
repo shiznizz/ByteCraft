@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class SlotBoss : MonoBehaviour, IPointerClickHandler
 {
     public itemSO item;
-
+    public weaponStats weapon;
     
     public GameObject selectedSlot;
     
@@ -16,7 +16,7 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
     public bool isFull;
 
     [SerializeField] equipSlot headSlot, chestSlot, legSlot, 
-                     gloveSlot, weapon1Slot, weapon2Slot, weapon3Slot;
+                     gloveSlot, primaryWeapon, secondaryWeapon, specialWeapon;
     
 
     public void OnPointerClick(PointerEventData eventData)
@@ -51,6 +51,8 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
 
     public void equipGear()
     {
+        weapon = item.GetWeapon();
+
         if (item.itemTypye == itemSO.itemType.Head && !headSlot.isFull)
         { 
             headSlot.equipGear(item); 
@@ -75,22 +77,22 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
             legSlot.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Weapon && !weapon1Slot.isFull)
+        else if (item.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.primary && !primaryWeapon.isFull) 
         {
-            weapon1Slot.equipGear(item);
-            weapon1Slot.isFull = true;
+            primaryWeapon.equipGear(item);
+            primaryWeapon.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Weapon && !weapon2Slot.isFull)
+        else if (item.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.secondary && !secondaryWeapon.isFull)
         {
-            weapon2Slot.equipGear(item);
-            weapon2Slot.isFull = true;
+            secondaryWeapon.equipGear(item);
+            secondaryWeapon.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Weapon && !weapon3Slot.isFull)
+        else if (item.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.special && !specialWeapon.isFull)
         {
-            weapon3Slot.equipGear(item);
-            weapon3Slot.isFull = true;
+            specialWeapon.equipGear(item);
+            specialWeapon.isFull = true;
         }
     }
 

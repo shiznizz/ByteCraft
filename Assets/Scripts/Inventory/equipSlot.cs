@@ -11,15 +11,16 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
     [SerializeField] Image itemIcon;
 
     [SerializeField] GameObject equippedSlot;
-    [SerializeField] GameObject selected;
 
-    
+    [SerializeField] GameObject selected;
 
     public int weaponSlotIndex;
     public bool isFull;
     public bool isSelected;
 
     public weaponStats weapon;
+
+
     // detects left click
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -58,35 +59,45 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
         if (item.itemTypye == itemSO.itemType.Weapon)
         {
             weapon = item.GetWeapon();
-            inventoryManager.instance.weaponList.Add(weapon);
-            indexSlots();
+            inventoryManager.instance.weaponList.Insert(weaponSlotIndex, weapon);
+            gameManager.instance.player.GetComponent<playerController>().getWeaponStats();
         }
-        
+
         inventoryManager.instance.removeItem(item);
     }
 
     public void unequipGear(itemSO item)
     {
-        
+        // adds item back to the inventory
         inventoryManager.instance.addItem(item);
-
+        // check if item to unequip is a weapon
         if (item.itemTypye == itemSO.itemType.Weapon)
-        {
-            if (gameManager.instance.player.GetComponent<playerController>().weaponListPos == weaponSlotIndex)
+        {    // check if current weapon is the one to remove
+
+            if (gameManager.instance.player.GetComponent<playerController>().weaponListPos == weaponSlotIndex || inventoryManager.instance.weaponList.Count == 1)
             {
+                // remove current weapons UI and Visual
+
                 gameManager.instance.player.GetComponent<playerController>().removeWeaponUI();
-                Debug.Log("weapon POS Check");
+
+                Debug.Log("if 1");
+
+            }
+            else
+            {
+                // moves current weapon POS to where the current weapon is after the removal of the weapon
+                Debug.Log("else 1");
+                gameManager.instance.player.GetComponent<playerController>().weaponListPos = gameManager.instance.player.GetComponent<playerController>().weaponListPos - 1;
             }
 
-            if (gameManager.instance.player.GetComponent<playerController>().weaponListPos > 0)
-                gameManager.instance.player.GetComponent<playerController>().weaponListPos = gameManager.instance.player.GetComponent<playerController>().weaponListPos - 1;
-            else
-                gameManager.instance.player.GetComponent<playerController>().weaponListPos = 0;
-
+            // get weapon
             weapon = item.GetWeapon();
+            // remove weapon
             inventoryManager.instance.weaponList.Remove(weapon);
 
-            indexSlots();
+            // hides UI for guns
+            gameManager.instance.hideAmmo();
+
         }
         isFull = false;
         equippedSlot.SetActive(false);
@@ -96,7 +107,7 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
     {
         gameManager.instance.selectedEquipSlot = null;
         gameManager.instance.selectedEquipSlot = eventData.pointerClick;
-        
+
         selected.SetActive(true);
         isSelected = true;
 
@@ -105,13 +116,5 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
         gameManager.instance.itemDescription.text = item.itemDescription;
         gameManager.instance.itemName.text = item.itemName;
         gameManager.instance.itemIcon.sprite = item.itemIcon;
-    }
-
-    public void indexSlots()
-    {
-       // for (int i = 0; i < inventoryManager.instance.weaponList.Count ; i++)
-       // {
-            weaponSlotIndex = inventoryManager.instance.weaponList.FindIndex(weapon.Equals);
-       // }
     }
 }
