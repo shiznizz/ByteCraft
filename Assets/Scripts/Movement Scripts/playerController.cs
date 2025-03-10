@@ -29,16 +29,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] float runSoundInterval;
 
     [Header("Player Stat Options")]
-    [SerializeField] int jumpMax;
-    int jumpCount;
-    public int HPOrig;
+    //[SerializeField] int jumpMax;
+    //int jumpCount;
+    public int HPOrig; // will move after enemy AI is not in use
     bool isPlayingSteps;
-
-    [SerializeField] int armor;
-    [SerializeField] int armorMax = 100;
-
-
-    //[SerializeField] List<weaponStats> weaponList = new List<weaponStats>();
 
     [Header("Common Weapon Options")]
     [SerializeField] float attackCooldown;
@@ -64,10 +58,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] float magicProjectileSpeed; // Speed of projectile
     [SerializeField] Transform magicPosition;
 
-    //Weapons inventory (gun, melee)
     public int weaponListPos;
 
-    bool isGunPOSSet;
+    //bool isGunPOSSet;
 
     float shootTimer;
     float attackTimer;
@@ -117,15 +110,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     [Header("Player Movement")]
     //[SerializeField] int speedModifer;
-    [SerializeField] float momentumDrag;
-    [SerializeField] int jumpSpeed;
-    [SerializeField] int gravity;
+    //[SerializeField] float momentumDrag;
+    //[SerializeField] int jumpSpeed;
+    //[SerializeField] int gravity;
 
-    private float speed;
-    [SerializeField] float walkSpeed;
-    [SerializeField] float sprintSpeed;
-    [SerializeField] float crouchSpeed;
-    [SerializeField] float slideSpeed;
+    private float speed; // being used with wall run 
+
     private float desiredSpeed;
     private float prevDesiredSpeed;
     private float slideSpeedIncrease;
@@ -212,7 +202,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void getArmor(int amount)
     {
-        armor = Mathf.Min(armor + amount, armorMax);
+        playerStatManager.instance.playerArmor = Mathf.Min(playerStatManager.instance.playerArmor + amount, playerStatManager.instance.playerArmorMax);
         //gameManager.instance.updateArmorUI(armor);  will be implemented at a alatter time
     }
 
@@ -258,7 +248,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         if (playerMomentum.magnitude >= 0f)
         {
-            playerMomentum -= playerMomentum * momentumDrag * Time.deltaTime;
+            playerMomentum -= playerMomentum * playerStatManager.instance.playerDrag * Time.deltaTime;
             if (playerMomentum.magnitude <= .0f)
             {
                 playerMomentum = Vector3.zero;
@@ -269,7 +259,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (testGrappleKeyPressed())
             shootGrapple();
 
-        moveDir = Vector3.ClampMagnitude(moveDir, speed);
+        moveDir = Vector3.ClampMagnitude(moveDir, playerStatManager.instance.playerWalkSpeed);
 
         // ==========================
         // player attack settings below
@@ -303,7 +293,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void applyGravity()
     {
         controller.Move(playerVelocity * Time.deltaTime);
-        playerVelocity.y -= gravity * Time.deltaTime;
+        playerVelocity.y -= playerStatManager.instance.playergravity * Time.deltaTime;
     }
 
     void checkGround()
@@ -312,7 +302,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         if (isGrounded)
         {
-            jumpCount = 0;
+            playerStatManager.instance.playerJumpCount = 0;
             playerVelocity = Vector3.zero;
             playerMomentum = Vector3.zero;
         }
@@ -339,7 +329,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
         // essentially an if else statment that checks movement state and applies the proper speed
         else
-            speed = isSprinting ? sprintSpeed : isSliding ? slideSpeed : isCrouching ? crouchSpeed : walkSpeed;
+            speed = isSprinting ? playerStatManager.instance.playerSprintSpeed : isSliding ? playerStatManager.instance.playerSlideSpeed 
+                    : isCrouching ? playerStatManager.instance.playerCrouchSpeed : playerStatManager.instance.playerWalkSpeed;
 
         if (isGrounded && isSliding)
         {
@@ -372,10 +363,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void jump()
     {
-        if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
+        if (Input.GetButtonDown("Jump") && playerStatManager.instance.playerJumpCount < playerStatManager.instance.playerJumpMax)
         {
-            jumpCount++;
-            playerVelocity.y = jumpSpeed;
+            playerStatManager.instance.playerJumpCount++;
+            playerVelocity.y = playerStatManager.instance.playerJumpSpeed;
 
             if(isCrouching || isSliding)
                 exitCrouch();
@@ -482,7 +473,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
                 //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
                 // if moving faster than walking - slide
-                if (speed > walkSpeed)
+                if (speed > playerStatManager.instance.playerWalkSpeed)
                 {
                     isSliding = true;
                     isSprinting = false;
@@ -519,7 +510,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         
         // slide countdown and force player to move one direction
         slideTimer -= Time.deltaTime;
-        controller.Move(forwardDir * slideSpeed * Time.deltaTime);
+        controller.Move(forwardDir * playerStatManager.instance.playerSlideSpeed * Time.deltaTime);
         if (slideTimer <= 0)
         {
             exitCrouch();
@@ -598,7 +589,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private void wallRun()
     {
         // reset jumps, start wallrun, cancel gravity
-        jumpCount = 0;
+        playerStatManager.instance.playerJumpCount = 0;
         StartWallRun();
         playerVelocity = Vector3.zero;
 
@@ -697,7 +688,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (Vector3.Distance(transform.position, grapplePostion) < grapleDistanceMove)
         {
             grappleState = movementState.grappleNormal;
-            playerVelocity.y -= gravity * Time.deltaTime;
+            playerVelocity.y -= playerStatManager.instance.playergravity * Time.deltaTime;
             StopGrapple();
         }
 
@@ -707,7 +698,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             playerMomentum = grappleSpeed * grappleDir;
             playerMomentum += Vector3.up * grappleLift;
             grappleState = movementState.grappleNormal;
-            playerVelocity.y -= gravity * Time.deltaTime;
+            playerVelocity.y -= playerStatManager.instance.playergravity * Time.deltaTime;
             StopGrapple();
         }
 
