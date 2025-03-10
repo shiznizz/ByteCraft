@@ -17,6 +17,9 @@ public class inventoryManager : MonoBehaviour
 
     public weaponStats equippedWeapon;
 
+    public GameObject inventorySlot;
+    public SlotBoss slotBossScript;
+
     private void Awake()
     {
         instance = this;
@@ -24,7 +27,17 @@ public class inventoryManager : MonoBehaviour
     // adds item to inventory
     public void addItem(itemSO item)
     {
-        inventory.Add(item);
+        if (item.itemTypye == itemSO.itemType.Weapon && !inventorySlot.GetComponent<SlotBoss>().primaryWeapon.isFull 
+            || !inventorySlot.GetComponent<SlotBoss>().secondaryWeapon.isFull || !inventorySlot.GetComponent<SlotBoss>().specialWeapon.isFull)
+        {
+           
+            inventorySlot.GetComponent<SlotBoss>().equipGear(item);
+        }
+        else
+        {
+            inventory.Add(item);
+        }
+        
         gameManager.instance.updateInventory();
     }
     // removes item from inventory
