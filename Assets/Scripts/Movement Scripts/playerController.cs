@@ -29,7 +29,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] float runSoundInterval;
 
     [Header("Player Stat Options")]
-    public int HP;
     [SerializeField] int jumpMax;
     int jumpCount;
     public int HPOrig;
@@ -174,7 +173,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         normalCamPos = cameraTransform.localPosition;
         crouchCamPos = new Vector3(0, crouchHeight, 0);
 
-        HPOrig = HP;
+        HPOrig = playerStatManager.instance.playerHP;
         jetpackFuel = jetpackFuelMax;
 
         if(!isPlayerInStartingLevel)
@@ -969,17 +968,17 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
 
-        HP = HPOrig;
+        playerStatManager.instance.playerHP = HPOrig;
         updatePlayerUI();
     }
     
     public void takeDamage(int damage)
     {
-        HP -= damage;
+        playerStatManager.instance.playerHP -= damage;
         StartCoroutine(flashDamageScreen());
         updatePlayerUI();
     
-        if (HP <= 0)
+        if (playerStatManager.instance.playerHP <= 0)
         {
             gameManager.instance.youLose();
         }
@@ -987,7 +986,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
     void updatePlayerUI()
     {
-        gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
+        gameManager.instance.playerHPBar.fillAmount = (float)playerStatManager.instance.playerHP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
 
         //Toggle jetpack recharge UI
@@ -1027,7 +1026,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         switch (type)
         {
             case pickup.LootType.Health:
-                HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
+                playerStatManager.instance.playerHP = Mathf.Min(playerStatManager.instance.playerHP + amount, HPOrig); // prevent exceeding max HP
                 break;
         }
         updatePlayerUI(); // refresh UI after pickup
@@ -1049,7 +1048,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void heal(int amount)
     {
-        HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
+        playerStatManager.instance.playerHP = Mathf.Min(playerStatManager.instance.playerHP + amount, HPOrig); // prevent exceeding max HP
         updatePlayerUI(); // refresh UI after pickup
     }
     
