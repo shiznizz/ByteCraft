@@ -42,56 +42,58 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
         {
             if (isFull)
             {
-                equipGear();
+                
+                equipGear(item);
                 gameManager.instance.deselectSlot();
             }
         }
     }
 
 
-    public void equipGear()
+    public void equipGear(itemSO gear)
     {
-        weapon = item.GetWeapon();
+        weapon = gear.GetWeapon();
+        Debug.Log(weapon);
 
-        if (item.itemTypye == itemSO.itemType.Head && !headSlot.isFull)
+        if (gear.itemTypye == itemSO.itemType.Head && !headSlot.isFull)
         { 
-            headSlot.equipGear(item); 
+            headSlot.equipGear(gear); 
             headSlot.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Chest && !chestSlot.isFull)
+        else if (gear.itemTypye == itemSO.itemType.Chest && !chestSlot.isFull)
         {
-            chestSlot.equipGear(item);
+            chestSlot.equipGear(gear);
             chestSlot.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Hands && !gloveSlot.isFull)
+        else if (gear.itemTypye == itemSO.itemType.Hands && !gloveSlot.isFull)
         {
-            gloveSlot.equipGear(item);
+            gloveSlot.equipGear(gear);
             gloveSlot.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Legs && !legSlot.isFull)
+        else if (gear.itemTypye == itemSO.itemType.Legs && !legSlot.isFull)
         {
-            legSlot.equipGear(item);
+            legSlot.equipGear(gear);
             legSlot.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.primary && !primaryWeapon.isFull) 
+        else if (gear.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.primary && !primaryWeapon.isFull) 
         {
-            primaryWeapon.equipGear(item);
+            primaryWeapon.equipGear(gear);
             primaryWeapon.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.secondary && !secondaryWeapon.isFull)
+        else if (gear.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.secondary && !secondaryWeapon.isFull)
         {
-            secondaryWeapon.equipGear(item);
+            secondaryWeapon.equipGear(gear);
             secondaryWeapon.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.special && !specialWeapon.isFull)
+        else if (gear.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.special && !specialWeapon.isFull)
         {
-            specialWeapon.equipGear(item);
+            specialWeapon.equipGear(gear);
             specialWeapon.isFull = true;
         }
     }
