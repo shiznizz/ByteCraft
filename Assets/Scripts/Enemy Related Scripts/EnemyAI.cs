@@ -112,11 +112,15 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                     agent.SetDestination(gameManager.instance.player.transform.position);
                 }
 
+                //Ranged attack
                 if (type != enemyType.melee && shootTimer >= shootRate && angleToPlayer <= shootAngle)
                 {
                     shoot();
                 }
-                if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= meleeDistance) // Ensures attack happens when the shoot timer is ready
+                //Melee attack
+                float distanceToPlayer = Vector3.Distance(transform.position, gameManager.instance.player.transform.position);
+                if (type == enemyType.melee && shootTimer >= shootRate && distanceToPlayer <= meleeDistance)
+                //if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= meleeDistance) // Ensures attack happens when the shoot timer is ready
                 {
                     meleeAttack();
                 }
@@ -207,6 +211,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     {
         HP -= amount;
         StartCoroutine(flashRed());
+        anim.SetTrigger("damage");
 
 
         if (type != enemyType.stationary)
@@ -262,12 +267,15 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         shootTimer = 0;
         anim.SetTrigger("Melee Attack");
         //shootTimer = 0; // Reset the shoot timer for the cooldown between melee attacks
+
+        turnOnCol();
+
     }
 
     public void dropLoot()
     {
         playerController player = gameManager.instance.playerScript;
-        float healthRatio = player.HP / (float)player.HPOrig;
+        float healthRatio = playerStatManager.instance.playerHP / (float)player.HPOrig;
         float currAmmo = float.Parse(gameManager.instance.ammoCurText.text);
         float reserveAmmo = float.Parse(gameManager.instance.ammoReserveText.text);
         float maxAmmo = float.Parse(gameManager.instance.ammoMaxText.text);

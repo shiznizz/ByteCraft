@@ -1,3 +1,6 @@
+
+using System.Net;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -6,7 +9,7 @@ using UnityEngine.UI;
 
 public class equipSlot : MonoBehaviour, IPointerClickHandler
 {
-    [SerializeField] itemSO item;
+    public itemSO item;
 
     [SerializeField] Image itemIcon;
 
@@ -18,7 +21,9 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
     public bool isFull;
     public bool isSelected;
 
+    public weaponStats currWeapon;
     public weaponStats weapon;
+    int test;
 
 
     // detects left click
@@ -56,13 +61,13 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
         itemIcon.sprite = item.itemIcon;
         equippedSlot.SetActive(true);
 
-        if (item.itemTypye == itemSO.itemType.Weapon)
-        {
-            weapon = item.GetWeapon();
-            inventoryManager.instance.weaponList.Insert(weaponSlotIndex, weapon);
-            gameManager.instance.player.GetComponent<playerController>().getWeaponStats();
-        }
+        
+        weapon = item.GetWeapon();
+        inventoryManager.instance.weaponList.Add(weapon);
 
+        gameManager.instance.player.GetComponent<playerController>().getWeaponStats();
+
+        
         inventoryManager.instance.removeItem(item);
     }
 
@@ -72,32 +77,18 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
         inventoryManager.instance.addItem(item);
         // check if item to unequip is a weapon
         if (item.itemTypye == itemSO.itemType.Weapon)
-        {    // check if current weapon is the one to remove
-
-            if (gameManager.instance.player.GetComponent<playerController>().weaponListPos == weaponSlotIndex || inventoryManager.instance.weaponList.Count == 1)
+        {   
+            weapon = item.GetWeapon();
+           
+            // checks if weapon to remove is the current weapon equipped
+            if (item == inventoryManager.instance.equippedWeapon)
             {
                 // remove current weapons UI and Visual
-
                 gameManager.instance.player.GetComponent<playerController>().removeWeaponUI();
-
-                Debug.Log("if 1");
-
             }
-            else
-            {
-                // moves current weapon POS to where the current weapon is after the removal of the weapon
-                Debug.Log("else 1");
-                gameManager.instance.player.GetComponent<playerController>().weaponListPos = gameManager.instance.player.GetComponent<playerController>().weaponListPos - 1;
-            }
-
-            // get weapon
-            weapon = item.GetWeapon();
-            // remove weapon
+            // remove weapon then change weapon POS to make sure we dont go out of bounds
             inventoryManager.instance.weaponList.Remove(weapon);
-
-            // hides UI for guns
-            gameManager.instance.hideAmmo();
-
+            inventoryManager.instance.changeWeaponPOS();
         }
         isFull = false;
         equippedSlot.SetActive(false);
@@ -117,4 +108,5 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
         gameManager.instance.itemName.text = item.itemName;
         gameManager.instance.itemIcon.sprite = item.itemIcon;
     }
+
 }

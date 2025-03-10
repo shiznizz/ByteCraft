@@ -29,17 +29,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] float runSoundInterval;
 
     [Header("Player Stat Options")]
-    public int HP;
-    [SerializeField] int jumpMax;
-    int jumpCount;
-    public int HPOrig;
+    //[SerializeField] int jumpMax;
+    //int jumpCount;
+    public int HPOrig; // will move after enemy AI is not in use
     bool isPlayingSteps;
-
-    [SerializeField] int armor;
-    [SerializeField] int armorMax = 100;
-
-
-    //[SerializeField] List<weaponStats> weaponList = new List<weaponStats>();
 
     [Header("Common Weapon Options")]
     [SerializeField] float attackCooldown;
@@ -65,10 +58,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] float magicProjectileSpeed; // Speed of projectile
     [SerializeField] Transform magicPosition;
 
-    //Weapons inventory (gun, melee)
     public int weaponListPos;
 
-    bool isGunPOSSet;
+    //bool isGunPOSSet;
 
     float shootTimer;
     float attackTimer;
@@ -118,15 +110,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     [Header("Player Movement")]
     //[SerializeField] int speedModifer;
-    [SerializeField] float momentumDrag;
-    [SerializeField] int jumpSpeed;
-    [SerializeField] int gravity;
+    //[SerializeField] float momentumDrag;
+    //[SerializeField] int jumpSpeed;
+    //[SerializeField] int gravity;
 
-    private float speed;
-    [SerializeField] float walkSpeed;
-    [SerializeField] float sprintSpeed;
-    [SerializeField] float crouchSpeed;
-    [SerializeField] float slideSpeed;
+    private float speed; // being used with wall run 
+
     private float desiredSpeed;
     private float prevDesiredSpeed;
     private float slideSpeedIncrease;
@@ -174,7 +163,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         normalCamPos = cameraTransform.localPosition;
         crouchCamPos = new Vector3(0, crouchHeight, 0);
 
-        HPOrig = HP;
+        HPOrig = playerStatManager.instance.playerHP;
         jetpackFuel = jetpackFuelMax;
 
         if(!isPlayerInStartingLevel)
@@ -213,7 +202,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void getArmor(int amount)
     {
-        armor = Mathf.Min(armor + amount, armorMax);
+        playerStatManager.instance.playerArmor = Mathf.Min(playerStatManager.instance.playerArmor + amount, playerStatManager.instance.playerArmorMax);
         //gameManager.instance.updateArmorUI(armor);  will be implemented at a alatter time
     }
 
@@ -259,7 +248,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         if (playerMomentum.magnitude >= 0f)
         {
-            playerMomentum -= playerMomentum * momentumDrag * Time.deltaTime;
+            playerMomentum -= playerMomentum * playerStatManager.instance.playerDrag * Time.deltaTime;
             if (playerMomentum.magnitude <= .0f)
             {
                 playerMomentum = Vector3.zero;
@@ -270,7 +259,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (testGrappleKeyPressed())
             shootGrapple();
 
-        moveDir = Vector3.ClampMagnitude(moveDir, speed);
+        moveDir = Vector3.ClampMagnitude(moveDir, playerStatManager.instance.playerWalkSpeed);
 
         // ==========================
         // player attack settings below
@@ -304,7 +293,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void applyGravity()
     {
         controller.Move(playerVelocity * Time.deltaTime);
-        playerVelocity.y -= gravity * Time.deltaTime;
+        playerVelocity.y -= playerStatManager.instance.playergravity * Time.deltaTime;
     }
 
     void checkGround()
@@ -313,7 +302,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         if (isGrounded)
         {
-            jumpCount = 0;
+            playerStatManager.instance.playerJumpCount = 0;
             playerVelocity = Vector3.zero;
             playerMomentum = Vector3.zero;
         }
@@ -340,7 +329,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
         // essentially an if else statment that checks movement state and applies the proper speed
         else
-            speed = isSprinting ? sprintSpeed : isSliding ? slideSpeed : isCrouching ? crouchSpeed : walkSpeed;
+            speed = isSprinting ? playerStatManager.instance.playerSprintSpeed : isSliding ? playerStatManager.instance.playerSlideSpeed 
+                    : isCrouching ? playerStatManager.instance.playerCrouchSpeed : playerStatManager.instance.playerWalkSpeed;
 
         if (isGrounded && isSliding)
         {
@@ -373,10 +363,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void jump()
     {
-        if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
+        if (Input.GetButtonDown("Jump") && playerStatManager.instance.playerJumpCount < playerStatManager.instance.playerJumpMax)
         {
-            jumpCount++;
-            playerVelocity.y = jumpSpeed;
+            playerStatManager.instance.playerJumpCount++;
+            playerVelocity.y = playerStatManager.instance.playerJumpSpeed;
 
             if(isCrouching || isSliding)
                 exitCrouch();
@@ -483,7 +473,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
                 //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
                 // if moving faster than walking - slide
-                if (speed > walkSpeed)
+                if (speed > playerStatManager.instance.playerWalkSpeed)
                 {
                     isSliding = true;
                     isSprinting = false;
@@ -520,7 +510,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         
         // slide countdown and force player to move one direction
         slideTimer -= Time.deltaTime;
-        controller.Move(forwardDir * slideSpeed * Time.deltaTime);
+        controller.Move(forwardDir * playerStatManager.instance.playerSlideSpeed * Time.deltaTime);
         if (slideTimer <= 0)
         {
             exitCrouch();
@@ -599,7 +589,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private void wallRun()
     {
         // reset jumps, start wallrun, cancel gravity
-        jumpCount = 0;
+        playerStatManager.instance.playerJumpCount = 0;
         StartWallRun();
         playerVelocity = Vector3.zero;
 
@@ -698,7 +688,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (Vector3.Distance(transform.position, grapplePostion) < grapleDistanceMove)
         {
             grappleState = movementState.grappleNormal;
-            playerVelocity.y -= gravity * Time.deltaTime;
+            playerVelocity.y -= playerStatManager.instance.playergravity * Time.deltaTime;
             StopGrapple();
         }
 
@@ -708,7 +698,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             playerMomentum = grappleSpeed * grappleDir;
             playerMomentum += Vector3.up * grappleLift;
             grappleState = movementState.grappleNormal;
-            playerVelocity.y -= gravity * Time.deltaTime;
+            playerVelocity.y -= playerStatManager.instance.playergravity * Time.deltaTime;
             StopGrapple();
         }
 
@@ -768,7 +758,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void getWeaponStats()
     {
-        weaponListPos = inventoryManager.instance.weaponList.Count - 1; // Selects the newly added weapon
+        inventoryManager.instance.changeWeaponPOS(); // Selects the newly added weapon
         changeWeapon();
 
        // isGunPOSSet = true;
@@ -776,51 +766,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void removeWeaponUI()
     {
-        switch (inventoryManager.instance.weaponList[weaponListPos].type)
-        {
-            case weaponStats.weaponType.primary:
-
-                if (inventoryManager.instance.weaponList.Count == 1)
-                {
-                    gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-                    Debug.Log("if gun");
-                }
-                else
-                {
-                    Debug.Log("else gun");
-                    weaponListPos = weaponListPos - 1;
-                    changeWeapon();
-                }
-                break;
-            case weaponStats.weaponType.secondary:
-
-                if (inventoryManager.instance.weaponList.Count == 1)
-                {
-                    meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
-                }
-                else
-                {
-                    weaponListPos = weaponListPos - 1;
-                    changeWeapon();
-                }
-                break;
-            case weaponStats.weaponType.special:
-
-                if (inventoryManager.instance.weaponList.Count == 1)
-                {
-                    Debug.Log("if magic");
-                    magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
-                }
-                else
-                {
-                    Debug.Log("else magic");
-                    weaponListPos = weaponListPos - 1;
-                    changeWeapon();
-                }
-                break;
-        }
-
-
+        
+            gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+            Debug.Log("if gun 1");
+        
     }
 
     void changeWeapon()
@@ -839,7 +788,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
     
-    void changeGun()
+    public void changeGun()
     {
         attackDamage = inventoryManager.instance.weaponList[weaponListPos].gun.shootDamage;
         attackDistance = inventoryManager.instance.weaponList[weaponListPos].gun.shootRange;
@@ -849,7 +798,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         gunModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
         gunModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;
     
-        turnOffWeaponModels();
+        //turnOffWeaponModels();
     }
     
     void changeMeleeWep()
@@ -886,8 +835,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         //if (magicWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Magic)
         //    magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
 
-        //if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Gun)
-        //    gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+        if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.primary)
+            gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+
+        else if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.secondary)
+            gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+
+        else if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.special)
+            gunModel.GetComponent<MeshFilter>().sharedMesh = null;
     }
 
     //&& inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun
@@ -965,15 +920,36 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void selectWeapon()
     {
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if (scrollInput > 0 && weaponListPos < inventoryManager.instance.weaponList.Count - 1)
+        if (scrollInput > 0 && inventoryManager.instance.weaponList.Count > 0)
         {
-            weaponListPos++;
+            //weaponListPos++;
+            if (weaponListPos == inventoryManager.instance.weaponList.Count - 1)
+            {
+                weaponListPos = 0;
+            }
+            else
+            {
+                weaponListPos++;
+            }
+            
+            inventoryManager.instance.currentEquippedWeapon();
             changeWeapon();
+            //&& weaponListPos < inventoryManager.instance.weaponList.Count - 1
         }
-        else if (scrollInput < 0 && weaponListPos > 0)
+        else if (scrollInput < 0 && inventoryManager.instance.weaponList.Count > 0)
         {
-            weaponListPos--;
+            if (weaponListPos == 0)
+            {
+                weaponListPos = inventoryManager.instance.weaponList.Count - 1;
+            }
+            else
+            {
+                weaponListPos--;
+            }
+            
+          
             changeWeapon();
+            inventoryManager.instance.currentEquippedWeapon();
         }
     }
     #endregion Weapons
@@ -983,17 +959,17 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
 
-        HP = HPOrig;
+        playerStatManager.instance.playerHP = HPOrig;
         updatePlayerUI();
     }
     
     public void takeDamage(int damage)
     {
-        HP -= damage;
+        playerStatManager.instance.playerHP -= damage;
         StartCoroutine(flashDamageScreen());
         updatePlayerUI();
     
-        if (HP <= 0)
+        if (playerStatManager.instance.playerHP <= 0)
         {
             gameManager.instance.youLose();
         }
@@ -1001,7 +977,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
     void updatePlayerUI()
     {
-        gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
+        gameManager.instance.playerHPBar.fillAmount = (float)playerStatManager.instance.playerHP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
 
         //Toggle jetpack recharge UI
@@ -1041,7 +1017,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         switch (type)
         {
             case pickup.LootType.Health:
-                HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
+                playerStatManager.instance.playerHP = Mathf.Min(playerStatManager.instance.playerHP + amount, HPOrig); // prevent exceeding max HP
                 break;
         }
         updatePlayerUI(); // refresh UI after pickup
@@ -1063,7 +1039,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void heal(int amount)
     {
-        HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
+        playerStatManager.instance.playerHP = Mathf.Min(playerStatManager.instance.playerHP + amount, HPOrig); // prevent exceeding max HP
         updatePlayerUI(); // refresh UI after pickup
     }
     
