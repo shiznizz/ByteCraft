@@ -98,7 +98,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     bool canSeePlayer()
     {
         playerDir = gameManager.instance.player.transform.position - headPos.position;
-        angleToPlayer = Vector3.Angle(new Vector3(playerDir.x, transform.position.y, playerDir.z), transform.forward);
+        angleToPlayer = Vector3.Angle(new Vector3(playerDir.x, 0, playerDir.z), transform.forward);
 
         Debug.DrawRay(headPos.position, playerDir,Color.cyan);
 
