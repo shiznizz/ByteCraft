@@ -4,6 +4,7 @@ using TMPro;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine.UI;
 
 public class inventoryManager : MonoBehaviour
@@ -15,10 +16,6 @@ public class inventoryManager : MonoBehaviour
     public List<weaponStats> weaponList = new List<weaponStats>();
 
     public weaponStats equippedWeapon;
-
-    //private int weaponIndex;
-
-    
 
     private void Awake()
     {
@@ -36,22 +33,32 @@ public class inventoryManager : MonoBehaviour
         inventory.Remove(item);
         gameManager.instance.updateInventory();
     }
-
-    public void currentWeapon()
+    // track the current equipped weapon
+    public void currentEquippedWeapon()
     {
-        Debug.Log("CW");
         try
         {
-            Debug.Log("CW if " + gameManager.instance.player.GetComponent<playerController>().weaponListPos);
-            //weaponIndex = gameManager.instance.player.GetComponent<playerController>().weaponListPos;
             equippedWeapon = weaponList[gameManager.instance.player.GetComponent<playerController>().weaponListPos];
+            gameManager.instance.player.GetComponent<playerController>().changeGun();
         }
         catch
         {
-            Debug.Log("CW else");
-            equippedWeapon = null;
+            equippedWeapon = null;  
         }
-            
+        
+    }
+    // change weapon POS
+    public void changeWeaponPOS()
+    {
+            if (gameManager.instance.player.GetComponent<playerController>().weaponListPos - 1 < 0)
+            {
+                gameManager.instance.player.GetComponent<playerController>().weaponListPos = 0;
+            }
+            else
+            {
+                gameManager.instance.player.GetComponent<playerController>().weaponListPos--;
+            }
+        currentEquippedWeapon();
     }
 }
 

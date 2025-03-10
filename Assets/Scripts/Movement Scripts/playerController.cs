@@ -768,7 +768,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void getWeaponStats()
     {
-        weaponListPos = inventoryManager.instance.weaponList.Count - 1; // Selects the newly added weapon
+        inventoryManager.instance.changeWeaponPOS(); // Selects the newly added weapon
         changeWeapon();
 
        // isGunPOSSet = true;
@@ -776,58 +776,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void removeWeaponUI()
     {
-        switch (inventoryManager.instance.weaponList[weaponListPos].type)
-        {
-            case weaponStats.weaponType.primary:
-
-                if (inventoryManager.instance.weaponList.Count == 1)
-                {
-                    gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-                    Debug.Log("if gun 1");
-                }
-                else
-                {
-                    Debug.Log("else gun 1");
-                   // int test = inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.equippedWeapon);
-
-                    //weaponListPos = test;
-                    changeWeapon();
-                }
-                break;
-            case weaponStats.weaponType.secondary:
-
-                if (inventoryManager.instance.weaponList.Count == 1)
-                {
-                    gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-                    Debug.Log("if gun 2");
-                }
-                else
-                {
-                    //int test = inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.equippedWeapon);
-                    Debug.Log("else gun 2");
-                    //weaponListPos = test;
-                    changeWeapon();
-                }
-                break;
-            case weaponStats.weaponType.special:
-
-                if (inventoryManager.instance.weaponList.Count == 1)
-                {
-                    Debug.Log("if gun 3"); ;
-                    gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-                }
-                else
-                {
-                    Debug.Log("else gun 3");
-                    //int test = inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.equippedWeapon);
-
-                    //weaponListPos = test;
-                    changeWeapon();
-                }
-                break;
-        }
-
-
+        
+            gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+            Debug.Log("if gun 1");
+        
     }
 
     void changeWeapon()
@@ -846,7 +798,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
     
-    void changeGun()
+    public void changeGun()
     {
         attackDamage = inventoryManager.instance.weaponList[weaponListPos].gun.shootDamage;
         attackDistance = inventoryManager.instance.weaponList[weaponListPos].gun.shootRange;
@@ -856,7 +808,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         gunModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
         gunModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;
     
-        turnOffWeaponModels();
+        //turnOffWeaponModels();
     }
     
     void changeMeleeWep()
@@ -893,8 +845,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         //if (magicWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Magic)
         //    magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
 
-        //if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Gun)
-        //    gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+        if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.primary)
+            gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+
+        else if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.secondary)
+            gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+
+        else if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.special)
+            gunModel.GetComponent<MeshFilter>().sharedMesh = null;
     }
 
     //&& inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun
@@ -984,7 +942,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                 weaponListPos++;
             }
             
-            inventoryManager.instance.currentWeapon();
+            inventoryManager.instance.currentEquippedWeapon();
             changeWeapon();
             //&& weaponListPos < inventoryManager.instance.weaponList.Count - 1
         }
@@ -1001,7 +959,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             
           
             changeWeapon();
-            inventoryManager.instance.currentWeapon();
+            inventoryManager.instance.currentEquippedWeapon();
         }
     }
     #endregion Weapons

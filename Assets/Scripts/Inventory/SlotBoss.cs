@@ -15,7 +15,7 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
     public bool isSelected;
     public bool isFull;
 
-    [SerializeField] equipSlot headSlot, chestSlot, legSlot, 
+    public equipSlot headSlot, chestSlot, legSlot, 
                      gloveSlot, primaryWeapon, secondaryWeapon, specialWeapon;
     
 
