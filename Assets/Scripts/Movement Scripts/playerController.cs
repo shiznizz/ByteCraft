@@ -13,6 +13,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] LayerMask groundLayer;
+    [SerializeField] traps trap;
 
     [Header("Camera Options")]
     [SerializeField] Transform cameraTransform;
@@ -756,6 +757,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         {
             
             Instantiate(inventoryManager.instance.weaponList[weaponListPos].gun.hitEffect, hit.point, Quaternion.identity);
+
+            //Check if the hit object is a trap
+            traps hitTrap = hit.collider.GetComponent<traps> ();
+            if (hitTrap != null)
+            {
+                //Call a method in the trap script to trigger its effect
+                hitTrap.TriggerTrapEffect();
+            }
 
         }
 
