@@ -103,7 +103,7 @@ public class gameManager : MonoBehaviour
         menuActive = null;
     }
 
-    public void switchMenu(GameObject menuToOpen)
+    public void switchMenu(GameObject menuToOpen, bool closeMenu = true)
     {
         if (menuActive == null)
         {
@@ -111,9 +111,15 @@ public class gameManager : MonoBehaviour
             menuActive = menuToOpen;
             menuActive.SetActive(true);
         }
-        else if (menuActive == menuToOpen)
+        else if (closeMenu && menuActive == menuToOpen)
         {
             stateUnpause();
+        }
+        else
+        {
+            menuActive.SetActive(false);
+            menuActive = menuToOpen;
+            menuActive.SetActive(true);
         }
 
     }
