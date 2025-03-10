@@ -34,5 +34,10 @@ public class buttonFunctions : MonoBehaviour
         gameManager.instance.playerScript.spawnPlayer();
         gameManager.instance.stateUnpause();
     }
+    
+    public void switchMenu(GameObject menuToOpen)
+    {
+        //gameManager
+    }
 }
 
