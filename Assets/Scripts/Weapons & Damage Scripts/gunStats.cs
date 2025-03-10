@@ -26,10 +26,10 @@ public class gunStats : weaponStats
 
     public void RefreshAmmo()
     {
-        if (type == weaponType.Gun)
-        {
+       // if (type == weaponType.Gun)
+        //{
             gun.ammoCur = gun.ammoMax;
             gun.ammoReserve = gun.ammoReserveMax;
-        }
+        //}
     }
 }
