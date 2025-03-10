@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TMPro;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
@@ -20,6 +21,8 @@ public class inventoryManager : MonoBehaviour
     public GameObject inventorySlot;
     public SlotBoss slotBossScript;
 
+    private weaponStats weapon;
+
     private void Awake()
     {
         instance = this;
@@ -27,17 +30,32 @@ public class inventoryManager : MonoBehaviour
     // adds item to inventory
     public void addItem(itemSO item)
     {
-        if (item.itemTypye == itemSO.itemType.Weapon && !inventorySlot.GetComponent<SlotBoss>().primaryWeapon.isFull 
-            || !inventorySlot.GetComponent<SlotBoss>().secondaryWeapon.isFull || !inventorySlot.GetComponent<SlotBoss>().specialWeapon.isFull)
+        if (item.itemTypye == itemSO.itemType.Weapon)
         {
-           
+            weapon = item.GetWeapon();
+        }
+
+        if (weapon.type == weaponStats.weaponType.primary && !inventorySlot.GetComponent<SlotBoss>().primaryWeapon.isFull)
+        {
+            Debug.Log("7");
+            inventorySlot.GetComponent<SlotBoss>().equipGear(item);
+        }
+        else if (weapon.type == weaponStats.weaponType.secondary && !inventorySlot.GetComponent<SlotBoss>().secondaryWeapon.isFull)
+        {
+            Debug.Log("8");
+            inventorySlot.GetComponent<SlotBoss>().equipGear(item);
+        }
+        else if(weapon.type == weaponStats.weaponType.special && !inventorySlot.GetComponent<SlotBoss>().specialWeapon.isFull)
+        {
+            Debug.Log("9");
             inventorySlot.GetComponent<SlotBoss>().equipGear(item);
         }
         else
         {
+            Debug.Log("2");
             inventory.Add(item);
         }
-        
+        Debug.Log("3");
         gameManager.instance.updateInventory();
     }
     // removes item from inventory
