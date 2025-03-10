@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using System.Diagnostics.Contracts;
 
 
 public class gameManager : MonoBehaviour
@@ -11,10 +12,11 @@ public class gameManager : MonoBehaviour
 
     [Header("UI Elements to Toggle Visibility")]
     [SerializeField] GameObject menuInventory;
-    [SerializeField] GameObject menuActive;
+    public GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
+
     [SerializeField] GameObject ammoHUD;
     [SerializeField] GameObject jetpackHUD;
 
@@ -23,8 +25,6 @@ public class gameManager : MonoBehaviour
     public Image grappleGauge;
     public GameObject playerDamageScreen;
     public GameObject checkpointPopup;
-
-    
 
     [Header("Text Fields to Update")]
     [SerializeField] public TMP_Text goalCountText;
@@ -72,22 +72,18 @@ public class gameManager : MonoBehaviour
     {
         if (Input.GetButtonDown("Cancel"))
         {
-            if(menuActive == null)
-            {
-                statePause();
-                menuActive = menuPause;
-                menuActive.SetActive(true);
-            }
-            else if(menuActive == menuPause)
-            {
+            if (menuActive == null)
+                switchMenu(menuPause);
+            else
                 stateUnpause();
-            }
         }
         if (Input.GetButtonDown("Inventory"))
         {
-            inventoryMenu();
+            switchMenu(menuInventory);
         }
     }
+
+    #region Menus
 
     public void statePause()
     {
@@ -107,22 +103,40 @@ public class gameManager : MonoBehaviour
         menuActive = null;
     }
 
-    public void inventoryMenu()
+    public void switchMenu(GameObject menuToOpen, bool closeMenu = true)
     {
-
         if (menuActive == null)
         {
             statePause();
-            menuActive = menuInventory;
+            menuActive = menuToOpen;
             menuActive.SetActive(true);
         }
-        else if (menuActive == menuInventory)
+        else if (closeMenu && menuActive == menuToOpen)
         {
             stateUnpause();
         }
+        else
+        {
+            menuActive.SetActive(false);
+            menuActive = menuToOpen;
+            menuActive.SetActive(true);
+        }
+
     }
 
+    public void youLose()
+    {
+        switchMenu(menuLose);
+    }
 
+    public void youWin()
+    {
+        switchMenu(menuWin);
+    }
+
+    #endregion Menus
+
+    #region UI Element Updates
     public void updateGameGoal(int amount)
     {
         goalCount += amount;
@@ -161,20 +175,9 @@ public class gameManager : MonoBehaviour
         jetpackHUD.SetActive(false);
     }
 
-    public void youLose()
-    {
-        statePause();
-        menuActive = menuLose;
-        menuActive.SetActive(true);
-    }
+    #endregion UI Element Updates
 
-    public void youWin()
-    {
-        statePause();
-        menuActive = menuWin;
-        menuActive.SetActive(true);
-    }
-
+    #region Inventory
     public void updateInventory()
     {
 
@@ -226,4 +229,5 @@ public class gameManager : MonoBehaviour
         itemName.text = "";
         displaySlot.SetActive(false);
     }
+    #endregion Inventory
 }

@@ -7,51 +7,57 @@ using UnityEngine.AI;
 public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
     enum enemyType { range, melee, stationary }
+    enum movementType { random, setPath, seeking}
 
+    #region Variables
+    [Header("General Enemy Settings")]
     [SerializeField] enemyType type;
+    [SerializeField] movementType movement;
     [SerializeField] Renderer model;
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Animator anim;
 
-    [SerializeField] Transform headPos; //Head position
+    [Header("Enemy Stats")]
     [SerializeField] int HP;
     [SerializeField] int animTransSpeed;
     [SerializeField] int faceTargetSpeed;
-
     [SerializeField] int FOV; //Field of View
-    [SerializeField] int shootAngle;
 
+    [Header("Ranged Enemy Options")]
+    [SerializeField] Transform headPos; //Head position
+    [SerializeField] int shootAngle;
     [SerializeField] GameObject bullet;
     [SerializeField] Transform shootPos;
-    [SerializeField] Collider meleeCol;
     [SerializeField] float shootRate;
-    [SerializeField] float meleeDistance;
-    [SerializeField] bool dropsLoot;
-
-    [SerializeField] Collider weaponCol;
-
-    Color colorOrig;
-
     float shootTimer;
-    float angleToPlayer;
-    float stoppingDistOrig;
 
-    Vector3 playerDir;
+    [Header("Melee Enemy Options")]
+    [SerializeField] Collider meleeCol;
+    [SerializeField] float meleeDistance;
 
-    bool playerInRange;
-
-    weaponStats weaponAmmo;
-
-    // loot drop mechanic variables
     [Header("Loot Drop Settings")]
+    [SerializeField] bool dropsLoot;
     [SerializeField] List<LootItem> lootTable;
     [SerializeField] Transform dropPos;
 
-    // enemy roaming variables
+    [Header("Roaming Settings")]
     [SerializeField] int roamPauseTime;
+    [SerializeField] List<Transform> pathPositions;
     [SerializeField] int roamDist;
+    int currentPathPos;
+
+
     Vector3 startingPos;
     float roamTimer;
+    float stoppingDistOrig;
+    Vector3 playerDir;
+    bool playerInRange;
+    float angleToPlayer;
+
+    Color colorOrig;
+
+    #endregion Variables
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -87,10 +93,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             checkRoam();
     }
 
+    #region EnemyMovement
+
     bool canSeePlayer()
     {
         playerDir = gameManager.instance.player.transform.position - headPos.position;
-        angleToPlayer = Vector3.Angle(new Vector3(playerDir.x, transform.position.y, playerDir.z), transform.forward);
+        angleToPlayer = Vector3.Angle(new Vector3(playerDir.x, 0, playerDir.z), transform.forward);
 
         Debug.DrawRay(headPos.position, playerDir,Color.cyan);
 
@@ -151,6 +159,50 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * faceTargetSpeed);
     }
 
+    void checkRoam()
+    {
+        if (type == enemyType.stationary)
+            return;
+
+        else if (roamTimer > roamPauseTime && agent.remainingDistance < 0.01f)
+        {
+            if (movement == movementType.random)
+                randomRoam();
+            else if (movement == movementType.setPath)
+                setPathRoam();
+        }
+    }
+
+    void randomRoam()
+    {
+        roamTimer = 0;
+        agent.stoppingDistance = 0;
+
+        Vector3 randPos = Random.insideUnitSphere * roamDist;
+        randPos += startingPos;
+
+        NavMeshHit hit;
+
+        NavMesh.SamplePosition(randPos, out hit, roamDist, 1);
+        agent.SetDestination(hit.position);
+    }
+
+    void setPathRoam()
+    {
+        roamTimer = 0;
+        agent.stoppingDistance = 0;
+
+        agent.SetDestination(pathPositions[currentPathPos].position);
+
+        if (currentPathPos < pathPositions.Count - 1)
+            currentPathPos++;
+        else
+            currentPathPos = 0;
+    }
+
+    #endregion EnemyMovement
+
+    #region EnemyDamage
     public void takeDamage(int amount)
     {
         HP -= amount;
@@ -185,6 +237,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         model.material.color = colorOrig;
     }
 
+    #endregion EnemyDamage
+
+    #region EnemyAttack
     void shoot()
     {
         shootTimer = 0;
@@ -240,28 +295,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         }
     }
 
-    void checkRoam()
-    {
-        if (type == enemyType.stationary)
-            return;
-
-        if ((roamTimer > roamPauseTime && agent.remainingDistance < 0.01f) || gameManager.instance.playerScript.HP <= 0)
-            roam();
-    }
-
-    void roam()
-    {
-        roamTimer = 0;
-        agent.stoppingDistance = 0;
-
-        Vector3 randPos = Random.insideUnitSphere * roamDist;
-        randPos += startingPos;
-
-        NavMeshHit hit;
-
-        NavMesh.SamplePosition(randPos, out hit, roamDist, 1);
-        agent.SetDestination(hit.position);
-    }
+    
 
     public void turnOnCol()
     {
@@ -272,4 +306,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     {
         meleeCol.enabled = false;
     }
+
+    #endregion EnemyAttack
 }

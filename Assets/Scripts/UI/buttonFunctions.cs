@@ -14,7 +14,7 @@ public class buttonFunctions : MonoBehaviour
         gameManager.instance.stateUnpause();
     }
 
-    public void backToHub()
+    public void backToMainMenu()
     {
         SceneManager.LoadScene(0);
         gameManager.instance.stateUnpause();
@@ -33,6 +33,11 @@ public class buttonFunctions : MonoBehaviour
     {
         gameManager.instance.playerScript.spawnPlayer();
         gameManager.instance.stateUnpause();
+    }
+    
+    public void switchMenu(GameObject menuToOpen)
+    {
+        gameManager.instance.switchMenu(menuToOpen,false);
     }
 }
 
