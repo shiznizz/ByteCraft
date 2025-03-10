@@ -1,8 +1,10 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine.UI;
 
 public class inventoryManager : MonoBehaviour
@@ -13,7 +15,7 @@ public class inventoryManager : MonoBehaviour
 
     public List<weaponStats> weaponList = new List<weaponStats>();
 
-    private SlotBoss slotBoss;
+    public weaponStats equippedWeapon;
 
     private void Awake()
     {
@@ -30,6 +32,33 @@ public class inventoryManager : MonoBehaviour
     {
         inventory.Remove(item);
         gameManager.instance.updateInventory();
+    }
+    // track the current equipped weapon
+    public void currentEquippedWeapon()
+    {
+        try
+        {
+            equippedWeapon = weaponList[gameManager.instance.player.GetComponent<playerController>().weaponListPos];
+            gameManager.instance.player.GetComponent<playerController>().changeGun();
+        }
+        catch
+        {
+            equippedWeapon = null;  
+        }
+        
+    }
+    // change weapon POS
+    public void changeWeaponPOS()
+    {
+            if (gameManager.instance.player.GetComponent<playerController>().weaponListPos - 1 < 0)
+            {
+                gameManager.instance.player.GetComponent<playerController>().weaponListPos = 0;
+            }
+            else
+            {
+                gameManager.instance.player.GetComponent<playerController>().weaponListPos--;
+            }
+        currentEquippedWeapon();
     }
 }
 
