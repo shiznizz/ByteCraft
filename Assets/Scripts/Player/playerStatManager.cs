@@ -27,6 +27,7 @@ public class playerStatManager : MonoBehaviour
 
     [Header("Player Base Physics/gravity")]
 
+    public float playerGroundDrag;
     public float playerDrag;
     public float playergravity;
 
@@ -36,12 +37,7 @@ public class playerStatManager : MonoBehaviour
     public float playerJumpMax;
     public float playerJumpCount;
 
-    public void Awake()
-    {
-        instance = this;
-    }
-
-    [Header("JetPack Options")]
+    [Header("JetPack Stats")]
     public bool hasJetpack;
     public int jetpackFuelMax;
     public float jetpackFuel;
@@ -51,11 +47,22 @@ public class playerStatManager : MonoBehaviour
     public int jetpackSpeed;
     public float jetpackHoldTimer = 0.01f;
 
+    [Header("Slide Stats")]
     public float maxSlideTime;
 
+    [Header("Wall Run Stats")]
     public float wallRunForce;
     public float maxWallRunTime;
     public float exitWallTime;
     public float wallJumpUpForce;
     public float wallJumpSideForce;
+
+    [Header("Starting Level bool")]
+    public bool isPlayerInStartingLevel;
+
+    public void Awake()
+    {
+        instance = this;
+    }
+
 }

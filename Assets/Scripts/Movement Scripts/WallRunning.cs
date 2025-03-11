@@ -39,7 +39,6 @@ public class WallRunning : MonoBehaviour
 
     [Header("Exiting")]
     private bool isExitingWall;
-  
     private float exitWallTimer;
 
     [Header("References")]

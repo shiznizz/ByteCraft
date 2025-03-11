@@ -1016,18 +1016,19 @@ MonoBehaviour:
   playerCrouchSpeed: 4
   playerSlideSpeed: 12
   playerWallRunSpeed: 0
+  playerGroundDrag: 0
   playerDrag: 100
   playergravity: 32
   playerJumpSpeed: 12
   playerJumpMax: 1
   playerJumpCount: 0
-  hasJetpack: 0
-  jetpackFuelMax: 0
+  hasJetpack: 1
+  jetpackFuelMax: 100
   jetpackFuel: 0
-  jetpackFuelUse: 0
-  jetpackFuelRegen: 0
-  jetpackFuelRegenDelay: 0
-  jetpackSpeed: 0
+  jetpackFuelUse: 5
+  jetpackFuelRegen: 85
+  jetpackFuelRegenDelay: 1.5
+  jetpackSpeed: 10
   jetpackHoldTimer: 0.01
   maxSlideTime: 0
   wallRunForce: 0
@@ -1035,6 +1036,7 @@ MonoBehaviour:
   exitWallTime: 0
   wallJumpUpForce: 0
   wallJumpSideForce: 0
+  isPlayerInStartingLevel: 0
 --- !u!54 &1817004603
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1057,7 +1059,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 112

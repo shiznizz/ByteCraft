@@ -34,7 +34,7 @@ public class CrouchnSlide : MonoBehaviour
 
      void crouch()
     {
-        if (Input.GetButtonDown("Crouch") && !pc.isPlayerInStartingLevel)
+        if (Input.GetButtonDown("Crouch") && !playerStatManager.instance.isPlayerInStartingLevel)
         {
             // toggles crouch
             if(pc.isGrounded)

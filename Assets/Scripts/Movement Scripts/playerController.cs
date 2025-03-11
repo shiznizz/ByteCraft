@@ -15,9 +15,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] LayerMask groundLayer;
 
     [Header("Camera Options")]
-    [SerializeField] Transform cameraTransform;
-    Vector3 normalCamPos;
-    Vector3 crouchCamPos;
+    //[SerializeField] Transform cameraTransform;
+    //Vector3 normalCamPos;
+    //Vector3 crouchCamPos;
     public float cameraChangeTime;
     public float wallRunTilt;
     public float tilt;
@@ -122,7 +122,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private float prevDesiredSpeed;
     private float slideSpeedIncrease;
     private float slideSpeedDecrease;
-    private float groundDrag;
+    
 
     private Vector3 moveDir;
     private Vector3 playerVelocity;
@@ -137,7 +137,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isWallRunning;
     public bool isJetpacking;
 
-    public bool isPlayerInStartingLevel;
+    
 
     // variable for player input action map
     #endregion Variables
@@ -156,7 +156,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         HPOrig = playerStatManager.instance.playerHPMax;
         playerStatManager.instance.jetpackFuel = playerStatManager.instance.jetpackFuelMax;
 
-        if(!isPlayerInStartingLevel)
+        if(!playerStatManager.instance.isPlayerInStartingLevel)
             playerStatManager.instance.playerHeight = playerStatManager.instance.standingHeight;
 
         spawnPlayer();
@@ -277,7 +277,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             playerVelocity = Vector3.zero;
             playerMomentum = Vector3.zero;
 
-            rb.linearDamping = groundDrag;
+            rb.linearDamping = playerStatManager.instance.playerGroundDrag;
         }
         else
             rb.linearDamping = 0;

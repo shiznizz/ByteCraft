@@ -42,7 +42,6 @@ public class cameraController : MonoBehaviour
 
         if(fallingTimer > 2.3f)
         {
-            //isStartFalling = true;
             transform.localRotation = Quaternion.Euler(rotX, 0, 0);
 
             transform.parent.Rotate(Vector3.up * mouseX);
