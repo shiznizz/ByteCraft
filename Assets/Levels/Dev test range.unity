@@ -1165,25 +1165,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2adfaa679c5a92144b4b9a57bedbe925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHP: 50
-  playerHPMax: 100
-  playerArmor: 0
-  playerArmorMax: 0
+  HP: 0
+  HPMax: 100
+  Armor: 0
+  ArmorMax: 0
   playerHeight: 0
   standingHeight: 2
   crouchHeight: 0.5
-  playerSpeed: 0
-  playerWalkSpeed: 7
-  playerSprintSpeed: 10
-  playerCrouchSpeed: 4
-  playerSlideSpeed: 12
-  playerWallRunSpeed: 0
-  playerGroundDrag: 0
-  playerDrag: 100
-  playergravity: 32
-  playerJumpSpeed: 12
-  playerJumpMax: 1
-  playerJumpCount: 0
+  currSpeed: 0
+  speedLimit: 2000
+  walkSpeed: 7
+  sprintSpeed: 10
+  crouchSpeed: 4
+  slideSpeed: 14
+  wallRunSpeed: 14
+  groundDrag: 0
+  drag: 0
+  gravity: 0
+  jumpForce: 12
+  jumpMax: 1
+  jumpCount: 0
   hasJetpack: 1
   jetpackFuelMax: 100
   jetpackFuel: 0

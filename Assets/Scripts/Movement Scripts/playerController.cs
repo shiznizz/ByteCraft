@@ -169,8 +169,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void Update()
     {
-        playerInput();
-        SpeedControl();
+        //playerInput();
+        //SpeedControl();
 
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * attackDistance, Color.red);
         // switches states of grapple
@@ -181,7 +181,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             // not grappling 
             case movementState.grappleNormal:
                 if (!gameManager.instance.isPaused)
-                    //movement();
+                    movement();
 
                 if (Input.GetButtonDown("Open")) // for opening loot chests
                     openChest();
@@ -197,8 +197,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void FixedUpdate()
     {
-        if (!gameManager.instance.isPaused)
-            movePlayer();
+        //if (!gameManager.instance.isPaused)
+            //movePlayer();
     }
 
     void playerInput()
