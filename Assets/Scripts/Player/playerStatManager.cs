@@ -12,6 +12,10 @@ public class playerStatManager : MonoBehaviour
     public int playerArmor;
     public int playerArmorMax;
 
+    public float playerHeight;
+    public float standingHeight = 2f;
+    public float crouchHeight = 0.5f;
+
     [Header("Player Base Movement")]
 
     public float playerSpeed;
@@ -19,6 +23,7 @@ public class playerStatManager : MonoBehaviour
     public float playerSprintSpeed;
     public float playerCrouchSpeed;
     public float playerSlideSpeed;
+    public float playerWallRunSpeed;
 
     [Header("Player Base Physics/gravity")]
 
@@ -36,8 +41,21 @@ public class playerStatManager : MonoBehaviour
         instance = this;
     }
 
+    [Header("JetPack Options")]
+    public bool hasJetpack;
+    public int jetpackFuelMax;
+    public float jetpackFuel;
+    public float jetpackFuelUse;
+    public float jetpackFuelRegen;
+    public float jetpackFuelRegenDelay;
+    public int jetpackSpeed;
+    public float jetpackHoldTimer = 0.01f;
 
+    public float maxSlideTime;
 
-
-
+    public float wallRunForce;
+    public float maxWallRunTime;
+    public float exitWallTime;
+    public float wallJumpUpForce;
+    public float wallJumpSideForce;
 }
