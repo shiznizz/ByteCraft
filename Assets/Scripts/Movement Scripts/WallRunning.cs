@@ -18,6 +18,11 @@ public class WallRunning : MonoBehaviour
         
     }
 
+    private void FixedUpdate()
+    {
+        
+    }
+
     private Vector3 moveDir;
     private Vector3 playerVelocity;
     private Vector3 forwardDir;
@@ -68,7 +73,7 @@ public class WallRunning : MonoBehaviour
     private void wallRun()
     {
         // reset jumps, start wallrun, cancel gravity
-        playerStatManager.instance.playerJumpCount = 0;
+        playerStatManager.instance.jumpCount = 0;
         StartWallRun();
         playerVelocity = Vector3.zero;
 
@@ -108,7 +113,7 @@ public class WallRunning : MonoBehaviour
         // allows for seamless movement off the wall left or right during wallrunning
         moveDir.x += horizontalInput * wallJumpForce;
         // clamp movement vector to current speed (wall run) 
-        moveDir = Vector3.ClampMagnitude(moveDir, pc.speed);
+        moveDir = Vector3.ClampMagnitude(moveDir, playerStatManager.instance.currSpeed);
     }
 
     private void wallJump()

@@ -52,7 +52,7 @@ public class CrouchnSlide : MonoBehaviour
 
                 //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
                 // if moving faster than walking - slide
-                if (pc.speed > playerStatManager.instance.playerWalkSpeed)
+                if (playerStatManager.instance.currSpeed > playerStatManager.instance.walkSpeed)
                 {
                     pc.isSliding = true;
                     pc.isSprinting = false;
@@ -89,7 +89,7 @@ public class CrouchnSlide : MonoBehaviour
         
         // slide countdown and force player to move one direction
         slideTimer -= Time.deltaTime;
-        controller.Move(forwardDir * playerStatManager.instance.playerSlideSpeed * Time.deltaTime);
+        controller.Move(forwardDir * playerStatManager.instance.slideSpeed * Time.deltaTime);
         if (slideTimer <= 0)
         {
             exitCrouch();
