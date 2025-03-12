@@ -6,38 +6,66 @@ public class playerStatManager : MonoBehaviour
 
     [Header("Player Base Stat")]
 
-    public int playerHP;
-    public int playerHPMax;
+    public int HP;
+    public int HPMax;
 
-    public int playerArmor;
-    public int playerArmorMax;
+    public int Armor;
+    public int ArmorMax;
+
+    public float playerHeight;
+    public float standingHeight = 2f;
+    public float crouchHeight = 0.5f;
+
+    public int upgradeCurrency;
 
     [Header("Player Base Movement")]
 
-    public float playerSpeed;
-    public float playerWalkSpeed;
-    public float playerSprintSpeed;
-    public float playerCrouchSpeed;
-    public float playerSlideSpeed;
+    public float currSpeed;
+    public float speedLimit;
+    public float walkSpeed;
+    public float sprintSpeed;
+    public float crouchSpeed;
+    public float slideSpeed;
+    public float wallRunSpeed;
 
     [Header("Player Base Physics/gravity")]
 
-    public float playerDrag;
-    public float playergravity;
+    public float groundDrag;
+    public float drag;
+    public float gravity;
 
     [Header("Player Base Jump")]
 
-    public float playerJumpSpeed;
-    public float playerJumpMax;
-    public float playerJumpCount;
+    public float jumpForce;
+    public float jumpMax;
+    public float jumpCount;
+
+    [Header("JetPack Stats")]
+    public bool hasJetpack;
+    public int jetpackFuelMax;
+    public float jetpackFuel;
+    public float jetpackFuelUse;
+    public float jetpackFuelRegen;
+    public float jetpackFuelRegenDelay;
+    public int jetpackSpeed;
+    public float jetpackHoldTimer = 0.01f;
+
+    [Header("Slide Stats")]
+    public float maxSlideTime;
+
+    [Header("Wall Run Stats")]
+    public float wallRunForce;
+    public float maxWallRunTime;
+    public float exitWallTime;
+    public float wallJumpUpForce;
+    public float wallJumpSideForce;
+
+    [Header("Starting Level bool")]
+    public bool isPlayerInStartingLevel;
 
     public void Awake()
     {
         instance = this;
     }
-
-
-
-
 
 }
