@@ -1,0 +1,87 @@
+using UnityEngine;
+[RequireComponent(typeof(SphereCollider))]
+public class QuestPoint : MonoBehaviour
+{
+    [Header("Quest")]
+    [SerializeField] private QuestInfoSO questInfoForPoint;
+
+    [Header("Config")]
+    [SerializeField] private bool startPoint = true;
+    [SerializeField] private bool endPoint = true;
+
+    [Header("Marker")]
+    [SerializeField] Renderer model;
+
+
+    private bool playerIsNear = false;
+    private string questId;
+    private QuestState currentQuestState;
+
+    private void Awake()
+    {
+        questId = questInfoForPoint.id;
+        model.enabled = false;
+    }
+
+    private void Update()
+    {
+        if (Input.GetButtonDown("Marker"))
+            model.enabled = true;
+        else if (Input.GetButtonUp("Marker"))
+            model.enabled = false;
+    }
+
+    private void OnEnable()
+    {
+        GameEventsManager.instance.questEvents.onQuestStateChange += QuestStateChange;
+        //GameEventsManager.instance.inputEvents.onSubmitPressed += SubmitPressed;
+    }
+
+    private void OnDisable()
+    {
+        GameEventsManager.instance.questEvents.onQuestStateChange -= QuestStateChange;
+        //GameEventsManager.instance.inputEvents.onSubmitPressed -= SubmitPressed;
+    }
+
+    private void SubmitPressed()
+    {
+        if (!playerIsNear)
+        {
+            return;
+        }
+
+        if (currentQuestState.Equals(QuestState.CAN_START) && startPoint)
+        {
+            GameEventsManager.instance.questEvents.StartQuest(questId);
+        } else if (currentQuestState.Equals(QuestState.CAN_FINISH) && endPoint)
+        {
+            GameEventsManager.instance.questEvents.FinishQuest(questId);
+        }
+    }
+
+    private void QuestStateChange(Quest quest)
+    {
+        // only update the quest state if this point has the corresponding quest
+        if (quest.info.id.Equals(questId))
+        {
+            currentQuestState = quest.state;
+            Debug.Log("Quest with id: " + questId + " updated to state: " + currentQuestState);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerIsNear = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerIsNear = false;
+        }
+    }
+}
