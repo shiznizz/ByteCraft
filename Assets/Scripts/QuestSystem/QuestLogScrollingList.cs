@@ -8,9 +8,9 @@ public class QuestLogScrollingList : MonoBehaviour
     [Header("Components")]
     [SerializeField] private GameObject contentParent;
 
-    //[Header("Rect Transforms")]
-    //[SerializeField] private RectTransform scrollRectTransform;
-    //[SerializeField] private RectTransform contentRectTransform;
+    [Header("Rect Transforms")]
+    [SerializeField] private RectTransform scrollRectTransform;
+    [SerializeField] private RectTransform contentRectTransform;
 
     [Header("Quest Log Button")]
     [SerializeField] private GameObject questLogButtonPrefab;
@@ -19,7 +19,7 @@ public class QuestLogScrollingList : MonoBehaviour
 
     // Below is code to test that the scrolling list is working as expected.
     // For it to work, you'll need to change the QuestInfoSO id field to be publicly settable
-    private void Start()
+/*    private void Start()
     {
          for (int i = 0; i < 20; i++) 
          {
@@ -38,7 +38,7 @@ public class QuestLogScrollingList : MonoBehaviour
                  questLogButton.button.Select();
              }
          }
-    }
+    }*/
 
     public QuestLogButton CreateButtonIfNotExists(Quest quest, UnityAction selectAction)
     {
@@ -65,17 +65,17 @@ public class QuestLogScrollingList : MonoBehaviour
         questLogButton.gameObject.name = quest.info.id + "_button";
         questLogButton.Initialize(quest.info.displayName, selectAction);
         // initialize and set up function for when the button is selected
-/*        RectTransform buttonRectTransform = questLogButton.GetComponent<RectTransform>();
+        RectTransform buttonRectTransform = questLogButton.GetComponent<RectTransform>();
         questLogButton.Initialize(quest.info.displayName, () => {
             selectAction();
             UpdateScrolling(buttonRectTransform);
-        });*/
+        });
         // add to map to keep track of the new button
         idToButtonMap[quest.info.id] = questLogButton;
         return questLogButton;
     }
 
-/*    private void UpdateScrolling(RectTransform buttonRectTransform)
+    private void UpdateScrolling(RectTransform buttonRectTransform)
     {
         // calculate the min and max for the selected button
         float buttonYMin = Mathf.Abs(buttonRectTransform.anchoredPosition.y);
@@ -101,5 +101,5 @@ public class QuestLogScrollingList : MonoBehaviour
                 buttonYMin
             );
         }
-    }*/
+    }
 }

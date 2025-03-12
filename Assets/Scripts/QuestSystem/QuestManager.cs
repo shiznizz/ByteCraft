@@ -7,6 +7,8 @@ public class QuestManager : MonoBehaviour
     [SerializeField] private bool loadQuestState = true;
     private Dictionary<string, Quest> questMap;
 
+    [SerializeField] private QuestLogScrollingList questLogScrollingList;
+
     private void Awake()
     {
         questMap = CreateQuestMap();
@@ -34,6 +36,9 @@ public class QuestManager : MonoBehaviour
     {
         foreach (Quest quest in questMap.Values)
         {
+            questLogScrollingList.CreateButtonIfNotExists(quest, () => {
+                Debug.Log("Selected quest: " + quest.info.displayName);
+            });
             // initialize loaded quest steps
             if (quest.state == QuestState.IN_PROGRESS)
             {

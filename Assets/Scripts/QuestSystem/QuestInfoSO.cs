@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class QuestInfoSO : ScriptableObject
 {
-    [SerializeField] public string id { get; set; }
+    [SerializeField] public string id { get; private set; }
 
     [Header("General")]
     public string displayName;
