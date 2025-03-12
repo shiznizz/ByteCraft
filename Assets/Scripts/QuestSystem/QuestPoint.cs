@@ -20,7 +20,6 @@ public class QuestPoint : MonoBehaviour
     private void Awake()
     {
         questId = questInfoForPoint.id;
-        model.enabled = false;
     }
 
     private void Update()
@@ -29,18 +28,18 @@ public class QuestPoint : MonoBehaviour
             model.enabled = true;
         else if (Input.GetButtonUp("Marker"))
             model.enabled = false;
+
+        if (Input.GetButtonDown("Accept")) SubmitPressed();
     }
 
     private void OnEnable()
     {
         GameEventsManager.instance.questEvents.onQuestStateChange += QuestStateChange;
-        //GameEventsManager.instance.inputEvents.onSubmitPressed += SubmitPressed;
     }
 
     private void OnDisable()
     {
         GameEventsManager.instance.questEvents.onQuestStateChange -= QuestStateChange;
-        //GameEventsManager.instance.inputEvents.onSubmitPressed -= SubmitPressed;
     }
 
     private void SubmitPressed()
@@ -52,6 +51,7 @@ public class QuestPoint : MonoBehaviour
 
         if (currentQuestState.Equals(QuestState.CAN_START) && startPoint)
         {
+            Debug.Log("CAN START");
             GameEventsManager.instance.questEvents.StartQuest(questId);
         } else if (currentQuestState.Equals(QuestState.CAN_FINISH) && endPoint)
         {
@@ -74,6 +74,7 @@ public class QuestPoint : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerIsNear = true;
+
         }
     }
 

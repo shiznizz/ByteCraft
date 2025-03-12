@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class QuestManager : MonoBehaviour
 {
+    [Header("Config")]
+    [SerializeField] private bool loadQuestState = true;
     private Dictionary<string, Quest> questMap;
 
     private void Awake()
@@ -186,7 +188,7 @@ public class QuestManager : MonoBehaviour
         try
         {
             // load quest from saved data
-            if (PlayerPrefs.HasKey(questInfo.id)) 
+            if (PlayerPrefs.HasKey(questInfo.id) && loadQuestState) 
             {
                 string serializedData = PlayerPrefs.GetString(questInfo.id);
                 QuestData questData = JsonUtility.FromJson<QuestData>(serializedData);
