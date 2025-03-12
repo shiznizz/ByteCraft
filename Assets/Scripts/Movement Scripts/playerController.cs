@@ -10,6 +10,7 @@ using UnityEngine.Rendering;
 public class playerController : MonoBehaviour, IDamage, IPickup
 {
     #region Variables
+    // please dont move this variable :)
     [SerializeField] Transform orientation;
 
     [SerializeField] CharacterController controller;
@@ -38,40 +39,40 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     //int jumpCount;
     public int HPOrig; // will move after enemy AI is not in use
 
-    [Header("Common Weapon Options")]
-    [SerializeField] float attackCooldown;
-    [SerializeField] int attackDamage;
-    [SerializeField] int attackDistance;
-    [SerializeField] int attackRange;
+    //[Header("Common Weapon Options")]
+    //[SerializeField] float attackCooldown;
+    //[SerializeField] int attackDamage;
+    //[SerializeField] int attackDistance;
+    //[SerializeField] int attackRange;
 
-    [Header("Range Options")]
-    [SerializeField] GameObject gunModel;
-    [SerializeField] weaponStats startGun;
-    [SerializeField] Transform muzzleFlash;
+    //[Header("Range Options")]
+    //[SerializeField] GameObject gunModel;
+    //[SerializeField] weaponStats startGun;
+    //[SerializeField] Transform muzzleFlash;
 
-    [Header("Melee Options")]
-    [SerializeField] GameObject meleeWeaponModel;
-    [SerializeField] weaponStats startMelee;
-    [SerializeField] Animator playerAnimator;
-    [SerializeField] Collider meleeCol;
+    //[Header("Melee Options")]
+    //[SerializeField] GameObject meleeWeaponModel;
+    //[SerializeField] weaponStats startMelee;
+    //[SerializeField] Animator playerAnimator;
+    //[SerializeField] Collider meleeCol;
 
-    [Header("Magic Options")]
-    [SerializeField] GameObject magicWeaponModel;
-    [SerializeField] weaponStats startMagic;
-    [SerializeField] GameObject magicProjectile; // Projectile Prefab
-    [SerializeField] float magicProjectileSpeed; // Speed of projectile
-    [SerializeField] Transform magicPosition;
+    //[Header("Magic Options")]
+    //[SerializeField] GameObject magicWeaponModel;
+    //[SerializeField] weaponStats startMagic;
+    //[SerializeField] GameObject magicProjectile; // Projectile Prefab
+    //[SerializeField] float magicProjectileSpeed; // Speed of projectile
+    //[SerializeField] Transform magicPosition;
 
     public int weaponListPos;
 
-    //bool isGunPOSSet;
+    ////bool isGunPOSSet;
 
-    float shootTimer;
-    float attackTimer;
+    //float shootTimer;
+    //float attackTimer;
 
-    //Tracks which weapon is active
-    public enum WeaponType { Gun, Melee, Magic }
-    public WeaponType currentWeapon = WeaponType.Gun;
+    ////Tracks which weapon is active
+    //public enum WeaponType { Gun, Melee, Magic }
+    //public WeaponType currentWeapon = WeaponType.Gun;
 
     [Header("Grapple Options")]
     [SerializeField] int grappleDistance;
@@ -167,10 +168,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void Update()
     {
-        //playerInput();
-        //SpeedControl();
+        playerInput();
+        SpeedControl();
 
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * attackDistance, Color.red);
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
         // switches states of grapple
         checkGround();
         updatePlayerUI();
@@ -179,7 +180,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             // not grappling 
             case movementState.grappleNormal:
                 if (!gameManager.instance.isPaused)
-                    movement();
+                    //movement();
 
                 if (Input.GetButtonDown("Open")) // for opening loot chests
                     openChest();
@@ -195,8 +196,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void FixedUpdate()
     {
-        //if (!gameManager.instance.isPaused)
-            //movePlayer();
+        if (!gameManager.instance.isPaused)
+            movePlayer();
     }
 
     void playerInput()
@@ -209,7 +210,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Movement
     void movePlayer()
     {
-        moveDir = (horizontalInput * transform.right) + (verticalInput * transform.forward);
+        moveDir = (horizontalInput * orientation.right) + (verticalInput * orientation.forward);
         rb.AddForce(moveDir.normalized * playerStatManager.instance.walkSpeed * 10f, ForceMode.Force);
         Debug.Log("MoveDir: " + moveDir);
     }
@@ -227,8 +228,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void move()
     {
-        moveDir = (Input.GetAxis("Horizontal") * transform.right) +
-                      (Input.GetAxis("Vertical") * transform.forward);
+        moveDir = (Input.GetAxis("Horizontal") * orientation.right) +
+                      (Input.GetAxis("Vertical") * orientation.forward);
 
         if (isSliding) return;
         if(isWallRunning) return;
@@ -266,6 +267,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void movement()
     {
+        // check wall will now be placed in update in wall running script
+        // should conciously add audio to new movement functions
         if (!isGrounded)
         {
             checkWall();
@@ -279,17 +282,24 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             }
         }
 
+        // create new movement functions for sprinting, and jump
         sprint();
-        crouch();
+        // crouch should be called in update in crouch script
+        // crouch();
+        // update playerMoveHandler() then call in update.
         playerMoveHandler();
+        // move jump to update and create conditions for if hasJetpack
         jump();
 
+        // wont touch grapple code.
         // apply momentum
         playerVelocity += playerMomentum;
 
-        if(!isWallRunning)
+        // apply gravity if not wall running or grounded
+        if (!isWallRunning)
             applyGravity();
 
+        // grapple code
         if (playerMomentum.magnitude >= 0f)
         {
             playerMomentum -= playerMomentum * playerStatManager.instance.drag * Time.deltaTime;
@@ -303,6 +313,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (testGrappleKeyPressed())
             shootGrapple();
 
+        // replacing this code in speed control
         moveDir = Vector3.ClampMagnitude(moveDir, playerStatManager.instance.currSpeed);
 
         // ==========================
@@ -312,10 +323,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         //if (!isGunPOSSet && inventoryManager.instance.weaponList.Count > 0)
         //    getWeaponStats(); 
 
-        attackTimer += Time.deltaTime;
+        playerStatManager.instance.attackTimer += Time.deltaTime;
         grappleCooldownTimer += Time.deltaTime;
 
-        if (Input.GetButton("Fire1") && inventoryManager.instance.weaponList.Count > 0 && attackTimer >= attackCooldown)   //Want button input to be the first condition for performance - other evaluations wont occur unless button is pressed
+        if (Input.GetButton("Fire1") && inventoryManager.instance.weaponList.Count > 0 && playerStatManager.instance.attackTimer >= playerStatManager.instance.attackCooldown)   //Want button input to be the first condition for performance - other evaluations wont occur unless button is pressed
         {
             //if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun && inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur > 0)
             //{
@@ -336,22 +347,28 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void applyGravity()
     {
+        // call if not grounded or wall running.
+        // check if needs to be placed in update or fixed update
         rb.AddForce(new Vector3(0, playerStatManager.instance.gravity * Time.deltaTime, 0));
+
+        // old gravity code below
         //controller.Move(playerVelocity * Time.deltaTime);
         //playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
     }
 
     void checkGround()
     {
+        // call in update.
         isGrounded = Physics.Raycast(transform.position, Vector3.down, playerStatManager.instance.playerHeight * 0.5f + 0.1f/*,~ignoreLayer*/);
 
         if (isGrounded)
         {
             playerStatManager.instance.jumpCount = 0;
+            rb.linearDamping = playerStatManager.instance.groundDrag;
+
+            // antiquated code get rid of when no longer being used.
             playerVelocity = Vector3.zero;
             playerMomentum = Vector3.zero;
-
-            rb.linearDamping = playerStatManager.instance.groundDrag;
         }
         else
             rb.linearDamping = 0;
@@ -370,6 +387,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void playerMoveHandler()
     {
+        // gut this then take what you need. this is the old playerInput
+        // wall running and sliding should just boot the player out.
+        // then apply proper speed.
+        // call in update.
+
+        // in different method move the player based on input obtained here.
         if (isWallRunning)
         {
             // apply wallRunSpeed then start wall run
@@ -790,7 +813,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Weapons
     void shoot()
     {
-        attackTimer = 0;
+        playerStatManager.instance.attackTimer = 0;
         inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur--;
         updatePlayerUI();
 
@@ -798,7 +821,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].gun.shootSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].gun.shootSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].gun.shootVolume);
 
         RaycastHit hit;
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackDistance, ~ignoreLayer))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, playerStatManager.instance.attackDistance, ~ignoreLayer))
         {
             
             Instantiate(inventoryManager.instance.weaponList[weaponListPos].gun.hitEffect, hit.point, Quaternion.identity);
@@ -815,7 +838,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         IDamage damage = hit.collider.GetComponent<IDamage>();
 
-        damage?.takeDamage(attackDamage);
+        damage?.takeDamage(playerStatManager.instance.attackDamage);
     }
 
 
@@ -829,8 +852,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void removeWeaponUI()
     {
-        
-            gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+
+        playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
             Debug.Log("if gun 1");
         
     }
@@ -853,39 +876,39 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
     public void changeGun()
     {
-        attackDamage = inventoryManager.instance.weaponList[weaponListPos].gun.shootDamage;
-        attackDistance = inventoryManager.instance.weaponList[weaponListPos].gun.shootRange;
-        attackCooldown = inventoryManager.instance.weaponList[weaponListPos].gun.shootRate;
-        muzzleFlash.SetLocalPositionAndRotation(new Vector3(inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashX, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashY, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashZ), muzzleFlash.rotation);
-    
-        gunModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
-        gunModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;
+        playerStatManager.instance.attackDamage = inventoryManager.instance.weaponList[weaponListPos].gun.shootDamage;
+        playerStatManager.instance.attackDistance = inventoryManager.instance.weaponList[weaponListPos].gun.shootRange;
+        playerStatManager.instance.attackCooldown = inventoryManager.instance.weaponList[weaponListPos].gun.shootRate;
+        playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashX, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashY, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashZ), playerStatManager.instance.muzzleFlash.rotation);
+
+        playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
+        playerStatManager.instance.gunModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;
     
         //turnOffWeaponModels();
     }
     
     void changeMeleeWep()
     {
-        attackDamage = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDamage;
-        attackRange = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDistance;
-    
-        attackCooldown = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeCooldown;
-    
-        meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshFilter>().sharedMesh;
-        meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshRenderer>().sharedMaterial;
+        playerStatManager.instance.attackDamage = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDamage;
+        playerStatManager.instance.attackRange = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDistance;
+
+        playerStatManager.instance.attackCooldown = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeCooldown;
+
+        playerStatManager.instance.meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshFilter>().sharedMesh;
+        playerStatManager.instance.meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshRenderer>().sharedMaterial;
     
         turnOffWeaponModels();
     }
     
     void changeMagicWep()
     {
-        attackDamage = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDamage;
-        attackRange = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDitance;
-    
-        attackCooldown = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicCooldown;
-    
-        magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshFilter>().sharedMesh;
-        magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshRenderer>().sharedMaterial;
+        playerStatManager.instance.attackDamage = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDamage;
+        playerStatManager.instance.attackRange = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDitance;
+
+        playerStatManager.instance.attackCooldown = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicCooldown;
+
+        playerStatManager.instance.magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshFilter>().sharedMesh;
+        playerStatManager.instance.magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshRenderer>().sharedMaterial;
     
         turnOffWeaponModels();
     }
@@ -898,14 +921,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         //if (magicWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Magic)
         //    magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
 
-        if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.primary)
-            gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+        if (playerStatManager.instance.gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.primary)
+            playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
 
-        else if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.secondary)
-            gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+        else if (playerStatManager.instance.gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.secondary)
+            playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
 
-        else if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.special)
-            gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+        else if (playerStatManager.instance.gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.special)
+            playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
     }
 
     //&& inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun
@@ -933,11 +956,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
     void meleeAttack()
     {
-        attackTimer = 0; // Will Reset the cooldown timer
+        playerStatManager.instance.attackTimer = 0; // Will Reset the cooldown timer
     
-        if (playerAnimator != null)
+        if (playerStatManager.instance.playerAnimator != null)
         {
-            playerAnimator.SetTrigger("MeleeAttack");
+            playerStatManager.instance.playerAnimator.SetTrigger("MeleeAttack");
         }
 
         //StartCoroutine(toggleWepCol());
@@ -945,38 +968,38 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
 
         //Activate melee weapon
-        if (meleeWeaponModel != null)
+        if (playerStatManager.instance.meleeWeaponModel != null)
         {
-            meleeWeaponModel.SetActive(true); // Shows the melee weapon during the attack
+            playerStatManager.instance.meleeWeaponModel.SetActive(true); // Shows the melee weapon during the attack
         }
 
         //Raycast to detect enemies in melee range
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, attackRange, ~ignoreLayer))
+        if (Physics.Raycast(transform.position, transform.forward, out hit, playerStatManager.instance.attackRange, ~ignoreLayer))
         {
             Debug.Log("Melee hit; " + hit.collider.name);
 
             //Apply damage if the object hit implements IDamage
             IDamage damageable = hit.collider.GetComponent<IDamage>();
-            damageable.takeDamage(attackDamage);
+            damageable.takeDamage(playerStatManager.instance.attackDamage);
         }
 
     }
 
     void shootMagicProjectile()
     {
-        attackTimer = 0;
+        playerStatManager.instance.attackTimer = 0;
     
-        Instantiate(magicProjectile, magicPosition.position, transform.rotation);
+        Instantiate(playerStatManager.instance.magicProjectile, playerStatManager.instance.magicPosition.position, transform.rotation);
         audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].magicWep.magicSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].magicWep.magicSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].magicWep.magicVolume);
     }
     
     IEnumerator flashMuzzle()
     {
-        muzzleFlash.localEulerAngles = new Vector3(0, 0, Random.Range(0, 360));
-        muzzleFlash.gameObject.SetActive(true);
+        playerStatManager.instance.muzzleFlash.localEulerAngles = new Vector3(0, 0, Random.Range(0, 360));
+        playerStatManager.instance.muzzleFlash.gameObject.SetActive(true);
         yield return new WaitForSeconds(0.05f);
-        muzzleFlash.gameObject.SetActive(false);
+        playerStatManager.instance.muzzleFlash.gameObject.SetActive(false);
     }
     
     //Switches between weapon types using a mouse scroll wheel
