@@ -15,7 +15,7 @@ public class MenuTabGroup : MonoBehaviour
 
     void Start()
     {
-        selectedButton = tabButtons[0];
+        OnTabSelect(tabButtons[0]);
     }
 
     public void OnTabEnter(MenuTabButton button)
