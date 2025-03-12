@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class cameraController : MonoBehaviour
 {
+    [SerializeField] Transform orientation;
+
     [SerializeField] int sens;
     [SerializeField] int lockVertMin, lockVertMax;
     [SerializeField] bool invertY;
 
+
     float rotX;
+    float rotY;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -23,6 +27,8 @@ public class cameraController : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * sens * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * sens * Time.deltaTime;
 
+        rotY += mouseX;
+
         if (invertY)
             rotX += mouseY;
         else
@@ -31,8 +37,10 @@ public class cameraController : MonoBehaviour
 
         rotX = Mathf.Clamp(rotX, lockVertMin, lockVertMax);
 
-        transform.localRotation = Quaternion.Euler(rotX, 0, 0);
+        transform.localRotation = Quaternion.Euler(rotX, rotY, 0);
+        orientation.rotation = Quaternion.Euler(0, rotY, 0);
 
-        transform.parent.Rotate(Vector3.up * mouseX);
+        // can no longer use due to rigidbody preventing use of parented camera
+        //transform.parent.Rotate(Vector3.up * mouseX);
     }
 }

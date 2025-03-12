@@ -10,6 +10,8 @@ using UnityEngine.Rendering;
 public class playerController : MonoBehaviour, IDamage, IPickup
 {
     #region Variables
+    [SerializeField] Transform orientation;
+
     [SerializeField] CharacterController controller;
     [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
@@ -118,13 +120,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     Rigidbody rb;
 
-    
-
     private float desiredSpeed;
     private float prevDesiredSpeed;
     private float slideSpeedIncrease;
     private float slideSpeedDecrease;
-    
 
     private Vector3 moveDir;
     private Vector3 playerVelocity;
@@ -158,9 +157,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         HPOrig = playerStatManager.instance.HPMax;
         playerStatManager.instance.jetpackFuel = playerStatManager.instance.jetpackFuelMax;
-
-        if(!playerStatManager.instance.isPlayerInStartingLevel)
-            playerStatManager.instance.playerHeight = playerStatManager.instance.standingHeight;
+        
+        playerStatManager.instance.playerHeight = playerStatManager.instance.standingHeight;
 
         spawnPlayer();
 
@@ -338,8 +336,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void applyGravity()
     {
-        controller.Move(playerVelocity * Time.deltaTime);
-        playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
+        rb.AddForce(new Vector3(0, playerStatManager.instance.gravity * Time.deltaTime, 0));
+        //controller.Move(playerVelocity * Time.deltaTime);
+        //playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
     }
 
     void checkGround()
