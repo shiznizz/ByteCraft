@@ -5,10 +5,13 @@ using System.Data;
 using System.Diagnostics.Contracts;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class playerController : MonoBehaviour, IDamage, IPickup
 {
     #region Variables
+    [SerializeField] Transform orientation;
+
     [SerializeField] CharacterController controller;
     [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
@@ -28,12 +31,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [Range(0, 1)][SerializeField] float stepVolume;
     [SerializeField] float walkSoundInterval;
     [SerializeField] float runSoundInterval;
+    bool isPlayingSteps;
 
     [Header("Player Stat Options")]
     //[SerializeField] int jumpMax;
     //int jumpCount;
     public int HPOrig; // will move after enemy AI is not in use
-    bool isPlayingSteps;
 
     [Header("Common Weapon Options")]
     [SerializeField] float attackCooldown;
@@ -117,13 +120,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     Rigidbody rb;
 
-    public float speed;
-
     private float desiredSpeed;
     private float prevDesiredSpeed;
     private float slideSpeedIncrease;
     private float slideSpeedDecrease;
-    
 
     private Vector3 moveDir;
     private Vector3 playerVelocity;
@@ -138,7 +138,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isWallRunning;
     public bool isJetpacking;
 
-    
+    private float horizontalInput;
+    private float verticalInput;
 
     // variable for player input action map
     #endregion Variables
@@ -154,11 +155,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
-        HPOrig = playerStatManager.instance.playerHPMax;
+        HPOrig = playerStatManager.instance.HPMax;
         playerStatManager.instance.jetpackFuel = playerStatManager.instance.jetpackFuelMax;
-
-        if(!playerStatManager.instance.isPlayerInStartingLevel)
-            playerStatManager.instance.playerHeight = playerStatManager.instance.standingHeight;
+        
+        playerStatManager.instance.playerHeight = playerStatManager.instance.standingHeight;
 
         spawnPlayer();
 
@@ -167,11 +167,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void Update()
     {
+        //playerInput();
+        //SpeedControl();
+
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * attackDistance, Color.red);
         // switches states of grapple
         checkGround();
         updatePlayerUI();
-
         switch (grappleState)
         {
             // not grappling 
@@ -191,7 +193,77 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         //cameraChange();
     }
 
+    private void FixedUpdate()
+    {
+        //if (!gameManager.instance.isPaused)
+            //movePlayer();
+    }
+
+    void playerInput()
+    {
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
+        Debug.Log("Horizontal: " + horizontalInput + " Vertical: " + verticalInput);
+    }
+
     #region Movement
+    void movePlayer()
+    {
+        moveDir = (horizontalInput * transform.right) + (verticalInput * transform.forward);
+        rb.AddForce(moveDir.normalized * playerStatManager.instance.walkSpeed * 10f, ForceMode.Force);
+        Debug.Log("MoveDir: " + moveDir);
+    }
+
+    private void SpeedControl()
+    {
+        Vector3 flatVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+
+        if(flatVelocity.magnitude > playerStatManager.instance.currSpeed)
+        {
+            Vector3 limitVelocity = flatVelocity.normalized * playerStatManager.instance.currSpeed;
+            rb.linearVelocity = new Vector3(limitVelocity.x, rb.linearVelocity.y, limitVelocity.z);
+        }
+    }
+
+    void move()
+    {
+        moveDir = (Input.GetAxis("Horizontal") * transform.right) +
+                      (Input.GetAxis("Vertical") * transform.forward);
+
+        if (isSliding) return;
+        if(isWallRunning) return;
+
+        if (moveDir == Vector3.zero)
+        { 
+            if (isGrounded) rb.linearVelocity = rb.linearVelocity * 0.6f;
+            return;
+        }
+
+        float horizontalSpeed = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude;
+        float speedToApply = Mathf.Max(playerStatManager.instance.speedLimit, horizontalSpeed);
+
+        if (!isGrounded)
+            speedToApply = playerStatManager.instance.currSpeed;
+
+        if (speedToApply >= playerStatManager.instance.speedLimit)
+            speedToApply *= isGrounded ? 0.985f : 0.99f;
+
+        Vector3 newVelocity = moveDir.normalized * speedToApply;
+        newVelocity.y = rb.linearVelocity.y;
+
+        if(isGrounded) 
+            rb.linearVelocity = newVelocity;
+        else
+            rb.AddForce(moveDir.normalized * speedToApply, ForceMode.Force);
+
+        if (!isGrounded && horizontalSpeed > playerStatManager.instance.speedLimit)
+        {
+            Vector3 newHorizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+            newHorizontalVelocity *= 0.98f;
+            rb.linearVelocity = new Vector3(newHorizontalVelocity.x, rb.linearVelocity.y, newHorizontalVelocity.z);
+        }
+    }
+
     void movement()
     {
         if (!isGrounded)
@@ -220,7 +292,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         if (playerMomentum.magnitude >= 0f)
         {
-            playerMomentum -= playerMomentum * playerStatManager.instance.playerDrag * Time.deltaTime;
+            playerMomentum -= playerMomentum * playerStatManager.instance.drag * Time.deltaTime;
             if (playerMomentum.magnitude <= .0f)
             {
                 playerMomentum = Vector3.zero;
@@ -231,7 +303,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (testGrappleKeyPressed())
             shootGrapple();
 
-        moveDir = Vector3.ClampMagnitude(moveDir, playerStatManager.instance.playerWalkSpeed);
+        moveDir = Vector3.ClampMagnitude(moveDir, playerStatManager.instance.currSpeed);
 
         // ==========================
         // player attack settings below
@@ -264,8 +336,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void applyGravity()
     {
-        controller.Move(playerVelocity * Time.deltaTime);
-        playerVelocity.y -= playerStatManager.instance.playergravity * Time.deltaTime;
+        rb.AddForce(new Vector3(0, playerStatManager.instance.gravity * Time.deltaTime, 0));
+        //controller.Move(playerVelocity * Time.deltaTime);
+        //playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
     }
 
     void checkGround()
@@ -274,11 +347,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         if (isGrounded)
         {
-            playerStatManager.instance.playerJumpCount = 0;
+            playerStatManager.instance.jumpCount = 0;
             playerVelocity = Vector3.zero;
             playerMomentum = Vector3.zero;
 
-            rb.linearDamping = playerStatManager.instance.playerGroundDrag;
+            rb.linearDamping = playerStatManager.instance.groundDrag;
         }
         else
             rb.linearDamping = 0;
@@ -300,13 +373,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (isWallRunning)
         {
             // apply wallRunSpeed then start wall run
-            speed = playerStatManager.instance.playerWallRunSpeed;
+            playerStatManager.instance.currSpeed = playerStatManager.instance.wallRunSpeed;
             WallRunMovement();
         }
         // essentially an if else statment that checks movement state and applies the proper speed
         else
-            speed = isSprinting ? playerStatManager.instance.playerSprintSpeed : isSliding ? playerStatManager.instance.playerSlideSpeed 
-                    : isCrouching ? playerStatManager.instance.playerCrouchSpeed : playerStatManager.instance.playerWalkSpeed;
+            playerStatManager.instance.currSpeed = isSprinting ? playerStatManager.instance.sprintSpeed : isSliding ? playerStatManager.instance.slideSpeed 
+                    : isCrouching ? playerStatManager.instance.crouchSpeed : playerStatManager.instance.walkSpeed;
 
         if (isGrounded && isSliding)
         {
@@ -318,7 +391,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                       (Input.GetAxis("Vertical") * transform.forward);
             if(moveDir != Vector3.zero)
             {
-                controller.Move(moveDir * speed * Time.deltaTime);
+                controller.Move(moveDir * playerStatManager.instance.currSpeed * Time.deltaTime);
             }
         }
     }
@@ -337,12 +410,18 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
 
+    void newJump()
+    {
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.AddForce(Vector3.up * playerStatManager.instance.jumpForce, ForceMode.Impulse);
+    }
+
     void jump()
     {
-        if (Input.GetButtonDown("Jump") && playerStatManager.instance.playerJumpCount < playerStatManager.instance.playerJumpMax)
+        if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
         {
-            playerStatManager.instance.playerJumpCount++;
-            playerVelocity.y = playerStatManager.instance.playerJumpSpeed;
+            playerStatManager.instance.jumpCount++;
+            playerVelocity.y = playerStatManager.instance.jumpForce;
 
             if(isCrouching || isSliding)
                 exitCrouch();
@@ -499,17 +578,17 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     IEnumerator smoothSpeedLerp()
     {
         float time = 0;
-        float difference = Mathf.Abs(desiredSpeed - speed);
-        float startValue = speed;
+        float difference = Mathf.Abs(desiredSpeed - playerStatManager.instance.currSpeed);
+        float startValue = playerStatManager.instance.currSpeed;
 
         while (time < difference)
         {
-            speed = Mathf.Lerp(startValue, desiredSpeed, time / difference);
+            playerStatManager.instance.currSpeed = Mathf.Lerp(startValue, desiredSpeed, time / difference);
             time += Time.deltaTime;
             yield return null;
         }
 
-        speed = desiredSpeed;
+        playerStatManager.instance.currSpeed = desiredSpeed;
     }
 
     #region WallRunning
@@ -664,7 +743,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (Vector3.Distance(transform.position, grapplePostion) < grapleDistanceMove)
         {
             grappleState = movementState.grappleNormal;
-            playerVelocity.y -= playerStatManager.instance.playergravity * Time.deltaTime;
+            playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
             StopGrapple();
         }
 
@@ -674,7 +753,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             playerMomentum = grappleSpeed * grappleDir;
             playerMomentum += Vector3.up * grappleLift;
             grappleState = movementState.grappleNormal;
-            playerVelocity.y -= playerStatManager.instance.playergravity * Time.deltaTime;
+            playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
             StopGrapple();
         }
 
@@ -943,17 +1022,17 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
 
-        playerStatManager.instance.playerHP = HPOrig;
+        playerStatManager.instance.HP = HPOrig;
         updatePlayerUI();
     }
     
     public void takeDamage(int damage)
     {
-        playerStatManager.instance.playerHP -= damage;
+        playerStatManager.instance.HP -= damage;
         StartCoroutine(flashDamageScreen());
         updatePlayerUI();
     
-        if (playerStatManager.instance.playerHP <= 0)
+        if (playerStatManager.instance.HP <= 0)
         {
             gameManager.instance.youLose();
         }
@@ -961,7 +1040,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
     void updatePlayerUI()
     {
-        gameManager.instance.playerHPBar.fillAmount = (float)playerStatManager.instance.playerHP / HPOrig;
+        gameManager.instance.playerHPBar.fillAmount = (float)playerStatManager.instance.HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)playerStatManager.instance.jetpackFuel / playerStatManager.instance.jetpackFuelMax;
 
         //Toggle jetpack recharge UI
@@ -1001,7 +1080,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         switch (type)
         {
             case pickup.LootType.Health:
-                playerStatManager.instance.playerHP = Mathf.Min(playerStatManager.instance.playerHP + amount, HPOrig); // prevent exceeding max HP
+                playerStatManager.instance.HP = Mathf.Min(playerStatManager.instance.HP + amount, HPOrig); // prevent exceeding max HP
                 break;
         }
         updatePlayerUI(); // refresh UI after pickup
@@ -1023,7 +1102,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void heal(int amount)
     {
-        playerStatManager.instance.playerHP = Mathf.Min(playerStatManager.instance.playerHP + amount, HPOrig); // prevent exceeding max HP
+        playerStatManager.instance.HP = Mathf.Min(playerStatManager.instance.HP + amount, HPOrig); // prevent exceeding max HP
         updatePlayerUI(); // refresh UI after pickup
     }
     
@@ -1041,7 +1120,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void getArmor(int amount)
     {
-        playerStatManager.instance.playerArmor = Mathf.Min(playerStatManager.instance.playerArmor + amount, playerStatManager.instance.playerArmorMax);
+        playerStatManager.instance.Armor = Mathf.Min(playerStatManager.instance.Armor + amount, playerStatManager.instance.ArmorMax);
         //gameManager.instance.updateArmorUI(armor);  will be implemented at a alatter time
     }
 

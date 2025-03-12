@@ -53,6 +53,14 @@ public class gameManager : MonoBehaviour
     public TMP_Text itemName;
     public GameObject displaySlot;
 
+    [Header("Low Health Screen Indicator")]
+    public Image lowHealthIndicator;
+
+    [SerializeField] float lowHealthThreshold = 0.25f;
+    [SerializeField] float heartbeatSpeed = 2f;
+    [SerializeField] float heartbeatMagnitude = 0.2f;
+    [SerializeField] float baseAlpha = 0.3f;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -81,6 +89,8 @@ public class gameManager : MonoBehaviour
         {
             switchMenu(menuInventory);
         }
+
+        CheckLowHealth();
     }
 
     #region Menus
@@ -173,6 +183,29 @@ public class gameManager : MonoBehaviour
     public void hideJetpack()
     {
         jetpackHUD.SetActive(false);
+    }
+
+    private void CheckLowHealth()
+    {
+        if (playerStatManager.instance.HPMax <= 0) return;
+
+        float hpRatio = (float)playerStatManager.instance.HP / playerStatManager.instance.HPMax;
+
+        if (hpRatio <= lowHealthThreshold)
+        {
+            float alpha = baseAlpha + Mathf.Sin(Time.time * heartbeatSpeed) * heartbeatMagnitude;
+            alpha = Mathf.Clamp01(alpha);
+
+            Color c = lowHealthIndicator.color;
+            c.a = alpha;
+            lowHealthIndicator.color = c;  
+        }
+        else
+        {
+            Color c = lowHealthIndicator.color;
+            c.a = Mathf.MoveTowards(c.a, 0f, Time.deltaTime);
+            lowHealthIndicator.color = c;
+        }
     }
 
     #endregion UI Element Updates
