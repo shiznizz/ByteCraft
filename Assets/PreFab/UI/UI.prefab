@@ -1492,6 +1492,7 @@ GameObject:
   - component: {fileID: 2354556348598550806}
   - component: {fileID: 8456082156703033566}
   - component: {fileID: 2138272772412557907}
+  - component: {fileID: 3271655824400238671}
   m_Layer: 5
   m_Name: Upgrade node 1
   m_TagString: Untagged
@@ -1556,6 +1557,26 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3271655824400238671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1430421294636279942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8a6dfa01af608d4ba86ccebc7562436, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillToIncrease: 0
+  percentToIncrease: 10
+  upgradeCost: 2
+  skillDependence: {fileID: 0}
+  skillSelected: {fileID: 21300000, guid: 6833d340ee2863b42a348b20151a43b8, type: 3}
+  skillUnselected: {fileID: 21300000, guid: b99d0b818f15da2488fdf459fe42c926, type: 3}
+  skillPurchasable: {fileID: 21300000, guid: fb6583d9c171f1f4c8f694dba6912739, type: 3}
+  skillNotPurchasable: {fileID: 21300000, guid: c8f50b179cc171244afb0cda0e33a8af, type: 3}
 --- !u!1 &1459474087836271008
 GameObject:
   m_ObjectHideFlags: 0
@@ -1931,6 +1952,11 @@ MonoBehaviour:
   itemDescription: {fileID: 2617983940034334719}
   itemName: {fileID: 7373281283163704475}
   displaySlot: {fileID: 1378608812349797936}
+  lowHealthIndicator: {fileID: 0}
+  lowHealthThreshold: 0.25
+  heartbeatSpeed: 2
+  heartbeatMagnitude: 0.2
+  baseAlpha: 0.3
 --- !u!1 &1836674764239873269
 GameObject:
   m_ObjectHideFlags: 0
@@ -4167,6 +4193,7 @@ GameObject:
   - component: {fileID: 3431547867719186148}
   - component: {fileID: 7772168833139238821}
   - component: {fileID: 6097331377286352756}
+  - component: {fileID: 451375893671926061}
   m_Layer: 5
   m_Name: Upgrade node 3
   m_TagString: Untagged
@@ -4231,6 +4258,26 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &451375893671926061
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3445307112012543624}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8a6dfa01af608d4ba86ccebc7562436, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillToIncrease: 0
+  percentToIncrease: 10
+  upgradeCost: 2
+  skillDependence: {fileID: 6705689017151161765}
+  skillSelected: {fileID: 21300000, guid: 6833d340ee2863b42a348b20151a43b8, type: 3}
+  skillUnselected: {fileID: 21300000, guid: b99d0b818f15da2488fdf459fe42c926, type: 3}
+  skillPurchasable: {fileID: 21300000, guid: fb6583d9c171f1f4c8f694dba6912739, type: 3}
+  skillNotPurchasable: {fileID: 21300000, guid: c8f50b179cc171244afb0cda0e33a8af, type: 3}
 --- !u!1 &3454367675650837766
 GameObject:
   m_ObjectHideFlags: 0
@@ -5697,6 +5744,7 @@ GameObject:
   - component: {fileID: 7674604738566623808}
   - component: {fileID: 7396820190329404839}
   - component: {fileID: 1117428834507013432}
+  - component: {fileID: 6705689017151161765}
   m_Layer: 5
   m_Name: Upgrade node 2
   m_TagString: Untagged
@@ -5761,6 +5809,26 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6705689017151161765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4506188422834848802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8a6dfa01af608d4ba86ccebc7562436, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillToIncrease: 0
+  percentToIncrease: 10
+  upgradeCost: 2
+  skillDependence: {fileID: 3271655824400238671}
+  skillSelected: {fileID: 21300000, guid: 6833d340ee2863b42a348b20151a43b8, type: 3}
+  skillUnselected: {fileID: 21300000, guid: b99d0b818f15da2488fdf459fe42c926, type: 3}
+  skillPurchasable: {fileID: 21300000, guid: fb6583d9c171f1f4c8f694dba6912739, type: 3}
+  skillNotPurchasable: {fileID: 21300000, guid: c8f50b179cc171244afb0cda0e33a8af, type: 3}
 --- !u!1 &4590147532559354617
 GameObject:
   m_ObjectHideFlags: 0
@@ -5989,6 +6057,7 @@ GameObject:
   - component: {fileID: 3554272814222109804}
   - component: {fileID: 1455646144782298833}
   - component: {fileID: 8759692451683193997}
+  - component: {fileID: 981111799058797271}
   m_Layer: 5
   m_Name: Upgrade node 4
   m_TagString: Untagged
@@ -6053,6 +6122,26 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &981111799058797271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4736488810113858990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8a6dfa01af608d4ba86ccebc7562436, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillToIncrease: 0
+  percentToIncrease: 10
+  upgradeCost: 2
+  skillDependence: {fileID: 451375893671926061}
+  skillSelected: {fileID: 21300000, guid: 6833d340ee2863b42a348b20151a43b8, type: 3}
+  skillUnselected: {fileID: 21300000, guid: b99d0b818f15da2488fdf459fe42c926, type: 3}
+  skillPurchasable: {fileID: 21300000, guid: fb6583d9c171f1f4c8f694dba6912739, type: 3}
+  skillNotPurchasable: {fileID: 21300000, guid: c8f50b179cc171244afb0cda0e33a8af, type: 3}
 --- !u!1 &4902330659771694206
 GameObject:
   m_ObjectHideFlags: 0
@@ -13688,7 +13777,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1068164834149274755, guid: 5098b6d6c5c63394aab7451ea19d19fa, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1408278846142321320, guid: 5098b6d6c5c63394aab7451ea19d19fa, type: 3}
       propertyPath: m_AnchorMax.y

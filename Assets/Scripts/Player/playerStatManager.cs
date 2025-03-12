@@ -16,6 +16,8 @@ public class playerStatManager : MonoBehaviour
     public float standingHeight = 2f;
     public float crouchHeight = 0.5f;
 
+    public int upgradeCurrency;
+
     [Header("Player Base Movement")]
 
     public float currSpeed;
