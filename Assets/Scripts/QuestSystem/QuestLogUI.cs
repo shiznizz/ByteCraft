@@ -1,6 +1,4 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
 
@@ -13,8 +11,12 @@ public class QuestLogUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI questStatusText;
     [SerializeField] private TextMeshProUGUI experienceRewardsText;
     [SerializeField] private TextMeshProUGUI questRequirementsText;
+    [SerializeField] private TextMeshProUGUI questStepsText;
+
+    public bool isShowing;
 
     private Button firstSelectedButton;
+    private Quest currentQuest;
 
     private void OnEnable()
     {
@@ -26,26 +28,58 @@ public class QuestLogUI : MonoBehaviour
         GameEventsManager.instance.questEvents.onQuestStateChange -= QuestStateChange;
     }
 
-    private void QuestStateChange(Quest quest)
+    private void Update()
     {
-        // add the button to the scrolling list if not already added
-        QuestLogButton questLogButton = scrollingList.CreateButtonIfNotExists(quest, () =>
+        if (gameManager.instance.isPaused)
         {
-            SetQuestLogIngo(quest);
-        });
-
-        if (firstSelectedButton == null)
+            contentParent.SetActive(true);
+        }
+        else
         {
-            firstSelectedButton = questLogButton.button;
-            firstSelectedButton.Select();
+            contentParent.SetActive(false);
         }
     }
 
-    private void SetQuestLogIngo(Quest quest)
-    {
-        questDisplayNameText.text = quest.info.displayName; // quest status
+    /*    public void UpdateQuestLogUI(Quest quest)
+        {
+            currentQuest = quest;  // Track the currently selected quest
+            SetQuestDetails(quest);
+        }*/
 
-        // TODO - status
+    private void QuestStateChange(Quest quest)
+    {
+        Debug.Log("Running QuestStateChange");
+        // add the button to the scrolling list if not already added
+        QuestLogButton questLogButton = scrollingList.CreateButtonIfNotExists(quest, () => {
+            SetQuestLogInfo(quest);
+        });
+
+        // initialize the first selected button if not already so that it's
+        // always the top button
+        if (firstSelectedButton == null)
+        {
+            firstSelectedButton = questLogButton.button;
+        }
+
+        // set the button color based on quest state
+        questLogButton.SetState(quest.state);
+    }
+
+    public void SetQuestLogInfo(Quest quest)
+    {
+        Debug.Log("Setting quest log info");
+        // quest name
+        questDisplayNameText.text = quest.info.displayName;
+
+        // status
+        //questStatusText.text = quest.GetFullStatusText();
+
+        // steps
+        questStepsText.text = "";
+        foreach (GameObject questStep in quest.info.questStepPrefabs)
+        {
+            questStepsText.text += GetQuestStepName(questStep.name) + "\n";
+        }
 
         // requirements
         questRequirementsText.text = "";
@@ -56,5 +90,27 @@ public class QuestLogUI : MonoBehaviour
 
         // rewards
         experienceRewardsText.text = quest.info.experienceReward + " XP";
+    }
+
+    private string GetQuestStepName(string name)
+    {
+        string stepName = "";
+
+        switch (name)
+        {
+            case "VisitFirstLocationQuestStep":
+                stepName = "Visit Location 1";
+                break;
+            case "VisitSecondLocationQuestStep":
+                stepName = "Visit Location 2";
+                break;
+            case "CollectKeysQuestStep":
+                stepName = "Collect 5 keys";
+                break;
+            default:
+                break;
+        }
+
+        return stepName;
     }
 }
