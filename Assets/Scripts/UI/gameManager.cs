@@ -187,9 +187,9 @@ public class gameManager : MonoBehaviour
 
     private void CheckLowHealth()
     {
-        if (playerStatManager.instance.playerHPMax <= 0) return;
+        if (playerStatManager.instance.HPMax <= 0) return;
 
-        float hpRatio = (float)playerStatManager.instance.playerHP / playerStatManager.instance.playerHPMax;
+        float hpRatio = (float)playerStatManager.instance.HP / playerStatManager.instance.HPMax;
 
         if (hpRatio <= lowHealthThreshold)
         {
