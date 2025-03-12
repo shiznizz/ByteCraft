@@ -6,11 +6,11 @@ public class playerStatManager : MonoBehaviour
 
     [Header("Player Base Stat")]
 
-    public int playerHP;
-    public int playerHPMax;
+    public int HP;
+    public int HPMax;
 
-    public int playerArmor;
-    public int playerArmorMax;
+    public int Armor;
+    public int ArmorMax;
 
     public float playerHeight;
     public float standingHeight = 2f;
@@ -18,24 +18,25 @@ public class playerStatManager : MonoBehaviour
 
     [Header("Player Base Movement")]
 
-    public float playerSpeed;
-    public float playerWalkSpeed;
-    public float playerSprintSpeed;
-    public float playerCrouchSpeed;
-    public float playerSlideSpeed;
-    public float playerWallRunSpeed;
+    public float currSpeed;
+    public float speedLimit;
+    public float walkSpeed;
+    public float sprintSpeed;
+    public float crouchSpeed;
+    public float slideSpeed;
+    public float wallRunSpeed;
 
     [Header("Player Base Physics/gravity")]
 
-    public float playerGroundDrag;
-    public float playerDrag;
-    public float playergravity;
+    public float groundDrag;
+    public float drag;
+    public float gravity;
 
     [Header("Player Base Jump")]
 
-    public float playerJumpSpeed;
-    public float playerJumpMax;
-    public float playerJumpCount;
+    public float jumpForce;
+    public float jumpMax;
+    public float jumpCount;
 
     [Header("JetPack Stats")]
     public bool hasJetpack;
