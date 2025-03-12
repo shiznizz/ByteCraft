@@ -1,30 +1,45 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class damage : MonoBehaviour
 {
-    enum damageType { moving, stationary}
+    enum damageType { moving, stationary, seeking}
+
+    [Header("General Projectile Settings")]
     [SerializeField] damageType type;
     [SerializeField] Rigidbody rb;
-
     [SerializeField] int damageAmount;
     [SerializeField] int speed;
     [SerializeField] int destroyTime;
-
     public bool playerProjectile;
+
+    [Header("Seeking Projectile Parameters")]
+    [SerializeField] int targetingDistance;
+    [SerializeField] float turnSpeed;
+
+    
+    private IDamage target;
+    private RaycastHit hit;
 
     float damageTimer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        if(type == damageType.moving)
+        if(type != damageType.stationary)
         {
             if (!playerProjectile)
                 rb.linearVelocity = (gameManager.instance.player.transform.position - transform.position).normalized * speed;
-            else
+            else 
             {
+                if (type == damageType.seeking)
+                {
+                    Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, targetingDistance);
+                    target = hit.collider.GetComponent<IDamage>();
+                }
                 rb.linearVelocity = Camera.main.transform.forward * speed;
             }
+
             Destroy(gameObject, destroyTime);
         }
     }
@@ -32,6 +47,41 @@ public class damage : MonoBehaviour
     private void Update()
     {
         damageTimer += Time.deltaTime;
+        if (type == damageType.seeking)
+            SeekTarget();
+    }
+
+    private void SeekTarget()
+    {
+        if (playerProjectile)
+        {
+            SeekEnemy();
+        }
+        else
+        {
+            SeekPlayer();
+        }
+    }
+
+    private void SeekPlayer()
+    {
+        Vector3 playerDir = gameManager.instance.player.transform.position - transform.position;
+        Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, 0, playerDir.z));
+        transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * turnSpeed);
+        
+        rb.linearVelocity = transform.forward * speed;
+    }
+
+    private void SeekEnemy()
+    {
+        if (target != null)
+        {
+            Vector3 enemyDir = hit.transform.position - transform.position;
+            Quaternion rot = Quaternion.LookRotation(new Vector3(enemyDir.x, 0, enemyDir.z));
+            transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * turnSpeed);
+
+            rb.linearVelocity = transform.forward * speed;
+        }
     }
 
     private void OnTriggerStay(Collider other)
@@ -53,7 +103,7 @@ public class damage : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (type == damageType.moving)
+        if (type != damageType.stationary)
         {
             if (other.isTrigger)
                 return;
@@ -65,10 +115,7 @@ public class damage : MonoBehaviour
                 dmg.takeDamage(damageAmount);
             }
 
-            if (type == damageType.moving)
-            {
-                Destroy(gameObject);
-            }
+            Destroy(gameObject);
         }
     }
 }
