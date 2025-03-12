@@ -36,11 +36,11 @@ public class cameraController : MonoBehaviour
             rotX += mouseY;
         else
             rotX -= mouseY;
-            
+
 
         rotX = Mathf.Clamp(rotX, lockVertMin, lockVertMax);
 
-        if(fallingTimer > 2.3f)
+        if (fallingTimer > 2.3f)
         {
             transform.localRotation = Quaternion.Euler(rotX, 0, 0);
 
