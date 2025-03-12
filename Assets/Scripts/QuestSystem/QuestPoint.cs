@@ -20,16 +20,18 @@ public class QuestPoint : MonoBehaviour
     private void Awake()
     {
         questId = questInfoForPoint.id;
+
     }
 
     private void Update()
     {
+        SubmitPressed();
         if (Input.GetButtonDown("Marker"))
             model.enabled = true;
         else if (Input.GetButtonUp("Marker"))
             model.enabled = false;
 
-        if (Input.GetButtonDown("Accept")) SubmitPressed();
+        //if (Input.GetButtonDown("Accept")) SubmitPressed();
     }
 
     private void OnEnable()
@@ -61,11 +63,11 @@ public class QuestPoint : MonoBehaviour
 
     private void QuestStateChange(Quest quest)
     {
+        Debug.Log("Inside QuestStateChange");
         // only update the quest state if this point has the corresponding quest
         if (quest.info.id.Equals(questId))
         {
             currentQuestState = quest.state;
-            Debug.Log("Quest with id: " + questId + " updated to state: " + currentQuestState);
         }
     }
 

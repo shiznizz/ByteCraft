@@ -54,6 +54,7 @@ public class QuestManager : MonoBehaviour
 
     private bool CheckRequirementsMet(Quest quest)
     {
+
         bool meetsRequirements = true;
         // check quest prerequisites for completion
         foreach (QuestInfoSO prerequisiteQuestInfo in quest.info.questPrerequisites)
@@ -65,6 +66,7 @@ public class QuestManager : MonoBehaviour
             }
         }
 
+
         return meetsRequirements;
     }
 
@@ -72,7 +74,7 @@ public class QuestManager : MonoBehaviour
     {
         foreach (Quest quest in questMap.Values)
         {
-            if (quest.state == QuestState.REQUIREMENTS_NOT_MET && CheckRequirementsMet(quest))
+            if (quest.state == QuestState.REQUIREMENTS_NOT_MET)
             {
                 ChangeQuestState(quest.info.id, QuestState.CAN_START);
             }
@@ -137,7 +139,7 @@ public class QuestManager : MonoBehaviour
         return idToQuestMap;
     }
 
-    private Quest GetQuestById(string id)
+    public Quest GetQuestById(string id)
     {
         Quest quest = questMap[id];
 
@@ -198,6 +200,7 @@ public class QuestManager : MonoBehaviour
             else
             {
                 quest = new Quest(questInfo);
+                quest.state = QuestState.CAN_START;
             }
 
         }
