@@ -111,7 +111,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     //[SerializeField] int jetpackSpeed;
     //[SerializeField] float jetpackHoldTimer = 0.01f;
 
-    private float jetpackFuelRegenTimer;
+        
 
     [Header("Player Movement")]
     //[SerializeField] int speedModifer;
@@ -166,7 +166,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         spawnPlayer();
 
-        jetpackFuelRegenTimer = 0f;
+        //jetpackFuelRegenTimer = 0f;
     }
 
     private void Update()
@@ -174,7 +174,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         playerInput();
         SpeedControl();
         checkGround();
-        newJump();
+        if(!playerStatManager.instance.hasJetpack)
+            jump();
         updatePlayerUI();
         playAtk.weaponHandler();
 
@@ -197,7 +198,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         //        grappleMovement();
         //        break;
         //}
-        handleJetpackFuelRegen();
+        //handleJetpackFuelRegen();
         //cameraChange();
     }
 
@@ -211,7 +212,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
-        //Debug.Log("Horizontal: " + horizontalInput + " Vertical: " + verticalInput);
+
     }
 
     #region Movement
@@ -219,7 +220,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         moveDir = (horizontalInput * orientation.right) + (verticalInput * orientation.forward);
         rb.AddForce(moveDir.normalized * playerStatManager.instance.walkSpeed * 10f, ForceMode.Force);
-        //Debug.Log("MoveDir: " + moveDir);
+
     }
 
     private void SpeedControl()
@@ -440,7 +441,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
 
-    void newJump()
+    void jump()
     {
         if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
         {
@@ -451,88 +452,88 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
 
-    void jump()
-    {
-        if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
-        {
-            playerStatManager.instance.jumpCount++;
-            playerVelocity.y = playerStatManager.instance.jumpForce;
+    //void jump()
+    //{
+    //    if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
+    //    {
+    //        playerStatManager.instance.jumpCount++;
+    //        playerVelocity.y = playerStatManager.instance.jumpForce;
 
-            if(isCrouching || isSliding)
-                exitCrouch();
-            if (isWallRunning)
-                wallJump();
-        }
-        else if (Input.GetButtonDown("Jump") && !isJetpacking && !isGrounded && playerStatManager.instance.hasJetpack)
-        {
-            // if existing jetpackCoroutine stop routine
-            if(jetpackCoroutine != null)
-                 StopCoroutine(jetpackCoroutine);
-            // start jetpack wait timer and enable jetpack
-            jetpackCoroutine = StartCoroutine(jetpackWait());
-        }
+    //        if(isCrouching || isSliding)
+    //            exitCrouch();
+    //        if (isWallRunning)
+    //            wallJump();
+    //    }
+    //    else if (Input.GetButtonDown("Jump") && !isJetpacking && !isGrounded && playerStatManager.instance.hasJetpack)
+    //    {
+    //        // if existing jetpackCoroutine stop routine
+    //        if(jetpackCoroutine != null)
+    //             StopCoroutine(jetpackCoroutine);
+    //        // start jetpack wait timer and enable jetpack
+    //        jetpackCoroutine = StartCoroutine(jetpackWait());
+    //    }
         
-        if (isJetpacking)
-            jetpack();
+    //    if (isJetpacking)
+    //        jetpack();
 
-        // stop jetpack and jetpack coroutine
-        if(Input.GetButtonUp("Jump"))
-        {
-            // stop coroutine and disable jetpack
-            if (jetpackCoroutine != null)
-            {
-                StopCoroutine(jetpackCoroutine);
-                jetpackCoroutine = null;
-            }
+    //    // stop jetpack and jetpack coroutine
+    //    if(Input.GetButtonUp("Jump"))
+    //    {
+    //        // stop coroutine and disable jetpack
+    //        if (jetpackCoroutine != null)
+    //        {
+    //            StopCoroutine(jetpackCoroutine);
+    //            jetpackCoroutine = null;
+    //        }
 
-            isJetpacking = false;
-        }
-    }
+    //        isJetpacking = false;
+    //    }
+    //}
 
     #region Jetpack
-    Coroutine jetpackCoroutine;
+    //Coroutine jetpackCoroutine;
 
-    void jetpack()
-    {
-        if (playerStatManager.instance.jetpackFuel > 0)
-        {
-            playerStatManager.instance.jetpackFuel -= playerStatManager.instance.jetpackFuelUse * Time.deltaTime;
+    //void jetpack()
+    //{
+    //    if (playerStatManager.instance.jetpackFuel > 0)
+    //    {
+    //        playerStatManager.instance.jetpackFuel -= playerStatManager.instance.jetpackFuelUse * Time.deltaTime;
 
-            playerVelocity.y = playerStatManager.instance.jetpackSpeed;
+    //        playerVelocity.y = playerStatManager.instance.jetpackSpeed;
 
-            jetpackFuelRegenTimer = playerStatManager.instance.jetpackFuelRegenDelay;
-        }
-    }
+    //        jetpackFuelRegenTimer = playerStatManager.instance.jetpackFuelRegenDelay;
+    //    }
+    //}
 
-    void handleJetpackFuelRegen()
-    {
-        if (playerStatManager.instance.jetpackFuel < playerStatManager.instance.jetpackFuelMax)
-        {
-            // Decrease the regen timer over time
-            jetpackFuelRegenTimer -= Time.deltaTime;
+    //void handleJetpackFuelRegen()
+    //{
+    //    if (playerStatManager.instance.jetpackFuel < playerStatManager.instance.jetpackFuelMax)
+    //    {
+    //        // Decrease the regen timer over time
+    //        jetpackFuelRegenTimer -= Time.deltaTime;
 
-            // Regenerate fuel only after the delay has passed
-            if (jetpackFuelRegenTimer <= 0)
-            {
-                playerStatManager.instance.jetpackFuel += playerStatManager.instance.jetpackFuelRegen * Time.deltaTime;
-                playerStatManager.instance.jetpackFuel = Mathf.Clamp(playerStatManager.instance.jetpackFuel, 0, playerStatManager.instance.jetpackFuelMax); // Clamp fuel between 0 and max
-            }
-        }
-        else
-        {
-            // Reset the regen timer if fuel is full
-            jetpackFuelRegenTimer = 0f;
-        }
-    }
+    //        // Regenerate fuel only after the delay has passed
+    //        if (jetpackFuelRegenTimer <= 0)
+    //        {
+    //            playerStatManager.instance.jetpackFuel += playerStatManager.instance.jetpackFuelRegen * Time.deltaTime;
+    //            playerStatManager.instance.jetpackFuel = Mathf.Clamp(playerStatManager.instance.jetpackFuel, 0, playerStatManager.instance.jetpackFuelMax); // Clamp fuel between 0 and max
+    //        }
+    //    }
+    //    else
+    //    {
+    //        // Reset the regen timer if fuel is full
+    //        jetpackFuelRegenTimer = 0f;
+    //    }
+    //}
 
-    IEnumerator jetpackWait()
-    {
-        // make player wait hold timer before jetpacking
-        yield return new WaitForSeconds(playerStatManager.instance.jetpackHoldTimer);
+    //IEnumerator jetpackWait()
+    //{
+    //    // make player wait hold timer before jetpacking
+    //    yield return new WaitForSeconds(playerStatManager.instance.jetpackHoldTimer);
 
-        isJetpacking = true;
-        jetpackCoroutine = null;
-    }
+    //    isJetpacking = true;
+    //    jetpackCoroutine = null;
+    //}
 
     public void refillFuel(int amount)
     {

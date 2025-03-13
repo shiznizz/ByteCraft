@@ -680,14 +680,14 @@ GameObject:
   m_Component:
   - component: {fileID: 766754491863903372}
   - component: {fileID: 9064561540285527499}
-  - component: {fileID: 8616815890220636631}
   - component: {fileID: 6068349625053569077}
-  - component: {fileID: 2314152810906989002}
+  - component: {fileID: 5253484042549105276}
   - component: {fileID: 4708629593051710519}
   - component: {fileID: 880456227251678012}
   - component: {fileID: 7572596449197800514}
-  - component: {fileID: 2967244356825983627}
-  - component: {fileID: 2955377384860681948}
+  - component: {fileID: 457446225052251950}
+  - component: {fileID: 903542836045194739}
+  - component: {fileID: 6531325392150728171}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -740,26 +740,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 1
---- !u!114 &8616815890220636631
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6683225297028311546}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 868a7cc30382f9a49b9f4e63e5897ae5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  orientation: {fileID: 1040981787988272564}
-  isGrounded: 0
-  isSprinting: 0
-  isGrappling: 0
-  isSliding: 0
-  isCrouching: 0
-  isWallRunning: 0
-  isJetpacking: 0
 --- !u!114 &6068349625053569077
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -826,7 +806,7 @@ MonoBehaviour:
   shootTimer: 0
   attackTimer: 0
   currentWeapon: 0
---- !u!114 &2314152810906989002
+--- !u!114 &5253484042549105276
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -839,7 +819,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orientation: {fileID: 1040981787988272564}
-  controller: {fileID: 2967244356825983627}
+  controller: {fileID: 903542836045194739}
   audioSource: {fileID: 0}
   ignoreLayer:
     serializedVersion: 2
@@ -933,7 +913,24 @@ MonoBehaviour:
   equippedWeapon: {fileID: 0}
   inventorySlot: {fileID: 0}
   slotBossScript: {fileID: 0}
---- !u!143 &2967244356825983627
+--- !u!114 &457446225052251950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6683225297028311546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c09598082e229b45a91bfadcc86622a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventory: []
+  weaponList: []
+  equippedWeapon: {fileID: 0}
+  inventorySlot: {fileID: 0}
+  slotBossScript: {fileID: 0}
+--- !u!143 &903542836045194739
 CharacterController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -958,7 +955,7 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!82 &2955377384860681948
+--- !u!82 &6531325392150728171
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
