@@ -15,12 +15,17 @@ public class MeleeAttack : MonoBehaviour
     [SerializeField] private Transform orientation;
     [SerializeField] private Transform cameraTransform;
 
+    [SerializeField] private GameObject weaponModel;
+
     private playerAttack playerAttackScript; // Reference to the playerAttack script
 
     void Start()
     {
         animator = GetComponent<Animator>(); // Get the animator component
         playerAttackScript = GetComponent<playerAttack>(); // Get reference to playerAttack script
+
+        //Ensures the melee state is NOT locked at the start
+        isMeleeAttacking = false;
 
         // Automatically find the camera if not set in the Inspector
         if (cameraTransform == null)
@@ -51,8 +56,11 @@ public class MeleeAttack : MonoBehaviour
     {
         isMeleeAttacking = true; // Set attacking to true
 
-        // Disable guns during melee attack
-        //playerAttackScript.DisableWeapons();
+        //Hide the gun when melee starts
+        if (weaponModel != null)
+        {
+            weaponModel.SetActive(false);
+        }
 
         // Trigger the melee attack animation
         animator.SetTrigger("MeleeAttack");
@@ -68,8 +76,9 @@ public class MeleeAttack : MonoBehaviour
 
         isMeleeAttacking = false; // Attack is finished
 
-        // Re-enable guns after melee attack
-        //playerAttackScript.EnableWeapons();
+        // Show the gun again after melee finishes
+        if (weaponModel != null)
+            weaponModel.SetActive(true);
     }
 
     // Turn on melee collider (allowing attacks to hit enemies)
