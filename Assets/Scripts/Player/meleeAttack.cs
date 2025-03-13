@@ -8,11 +8,11 @@ public class MeleeAttack : MonoBehaviour
     private float meleeCooldown = 1f; // Time before we can attack again
     private float nextMeleeTime = 0f; // Cooldown tracking
 
-    [SerializeField] private LayerMask damageLayer; // The layer to detect damageable targets
-    [SerializeField] private float attackRange = 2f;
-    [SerializeField] private float attackRadius = 0.5f;
-    [SerializeField] private Transform attackPoint;
-    [SerializeField] private Transform orientation;
+    [SerializeField] LayerMask damageLayer; // The layer to detect damageable targets
+    [SerializeField] float attackRange = 2f;
+    [SerializeField] float attackRadius = 0.5f;
+    [SerializeField] Transform attackPoint;
+    [SerializeField] Transform orientation;
 
     private playerAttack playerAttackScript; // Reference to the playerAttack script
     private Camera playerCamera;
