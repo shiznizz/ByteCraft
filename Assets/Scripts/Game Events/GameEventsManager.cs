@@ -4,9 +4,9 @@ public class GameEventsManager : MonoBehaviour
 {
     public static GameEventsManager instance { get; private set; }
 
-    public InputEvents inputEvents;
     public MiscEvents miscEvents;
     public QuestEvents questEvents;
+    public KeyEvents keyEvents;
     private void Awake()
     {
         if (instance != null)
@@ -16,7 +16,7 @@ public class GameEventsManager : MonoBehaviour
         instance = this;
 
         // instantiate events
-        inputEvents = new InputEvents();
+        keyEvents = new KeyEvents();
         miscEvents = new MiscEvents();
         questEvents = new QuestEvents();
     }

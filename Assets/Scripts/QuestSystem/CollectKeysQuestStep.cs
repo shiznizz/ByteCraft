@@ -13,11 +13,13 @@ public class CollectKeysQuestStep : QuestStep
 
     private void OnEnable()
     {
+        GameEventsManager.instance.miscEvents.onKeyCollected += KeyCollected;
         // TODO - Set up misc events to detect that a key has been collected
     }
 
     private void OnDisable()
     {
+        GameEventsManager.instance.miscEvents.onKeyCollected -= KeyCollected;
         // TODO - Set up misc events to detect that a key has been collected
     }
 
