@@ -34,8 +34,8 @@ public class damage : MonoBehaviour
             {
                 if (type == damageType.seeking)
                 {
-                    Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, targetingDistance);
-                    target = hit.collider.GetComponent<IDamage>();
+                    if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, targetingDistance))      
+                        target = hit.collider.GetComponent<IDamage>();
                 }
                 rb.linearVelocity = Camera.main.transform.forward * speed;
             }

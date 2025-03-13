@@ -6,6 +6,7 @@ using System.Data;
 using System.Diagnostics.Contracts;
 using Unity.VisualScripting;
 using UnityEngine.Rendering;
+using System.Linq;
 
 public class playerAttack : MonoBehaviour
 {
@@ -41,10 +42,12 @@ public class playerAttack : MonoBehaviour
     {
         playerStatManager.instance.attackTimer = 0;
         StartCoroutine(flashMuzzle());
-        playShootSound();
+        if (inv.returnCurrentWeapon().shootSounds.Length != 0)
+            playShootSound();
 
         if (inv.returnCurrentWeapon().attackType == weaponStats.bulletType.RayCast)
         {
+            Debug.Log("Ray");
             shootRayCast();
         }
         else if (inv.returnCurrentWeapon().attackType == weaponStats.bulletType.Projectile)
@@ -66,8 +69,9 @@ public class playerAttack : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, playerStatManager.instance.attackDistance, ~ignoreLayer))
         {
-
-            Instantiate(inv.returnCurrentWeapon().hitEffect, hit.point, Quaternion.identity);
+            Debug.Log(hit.collider.name);
+            if (inv.returnCurrentWeapon().hitEffect != null)
+                Instantiate(inv.returnCurrentWeapon().hitEffect, hit.point, Quaternion.identity);
 
             //Check if the hit object is a trap
             traps hitTrap = hit.collider.GetComponent<traps>();
@@ -77,11 +81,11 @@ public class playerAttack : MonoBehaviour
                 hitTrap.TriggerTrapEffect();
             }
 
+            IDamage damage = hit.collider.GetComponent<IDamage>();
+            damage?.takeDamage(playerStatManager.instance.attackDamage);
         }
 
-        IDamage damage = hit.collider.GetComponent<IDamage>();
-
-        damage?.takeDamage(playerStatManager.instance.attackDamage);
+        
     }
 
     void shootProjectile()
@@ -185,13 +189,13 @@ public class playerAttack : MonoBehaviour
         if (scrollInput > 0 && inv.weaponList.Count > 0)
         {
             //weaponListPos++;
-            if (pc.weaponListPos == inv.weaponList.Count - 1)
+            if (inv.weaponListPos == inv.weaponList.Count - 1)
             {
-                pc.weaponListPos = 0;
+                inv.weaponListPos = 0;
             }
             else
             {
-                pc.weaponListPos++;
+                inv.weaponListPos++;
             }
 
             inv.currentEquippedWeapon();
@@ -199,13 +203,13 @@ public class playerAttack : MonoBehaviour
         }
         else if (scrollInput < 0 && inv.weaponList.Count > 0)
         {
-            if (pc.weaponListPos == 0)
+            if (inv.weaponListPos == 0)
             {
-                pc.weaponListPos = inv.weaponList.Count - 1;
+                inv.weaponListPos = inv.weaponList.Count - 1;
             }
             else
             {
-                pc.weaponListPos--;
+                inv.weaponListPos--;
             }
 
             changeWeapon();

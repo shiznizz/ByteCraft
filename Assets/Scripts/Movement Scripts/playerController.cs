@@ -176,6 +176,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         checkGround();
         newJump();
         updatePlayerUI();
+        playAtk.weaponHandler();
 
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
         // switches states of grapple
@@ -210,7 +211,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
-        Debug.Log("Horizontal: " + horizontalInput + " Vertical: " + verticalInput);
+        //Debug.Log("Horizontal: " + horizontalInput + " Vertical: " + verticalInput);
     }
 
     #region Movement
@@ -218,7 +219,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         moveDir = (horizontalInput * orientation.right) + (verticalInput * orientation.forward);
         rb.AddForce(moveDir.normalized * playerStatManager.instance.walkSpeed * 10f, ForceMode.Force);
-        Debug.Log("MoveDir: " + moveDir);
+        //Debug.Log("MoveDir: " + moveDir);
     }
 
     private void SpeedControl()

@@ -71,7 +71,7 @@ public class inventoryManager : MonoBehaviour
     {
         try
         {
-            equippedWeapon = weaponList[gameManager.instance.player.GetComponent<playerController>().weaponListPos];
+            equippedWeapon = weaponList[weaponListPos];
             gameManager.instance.player.GetComponent<playerAttack>().changeGun();
         }
         catch
@@ -83,13 +83,13 @@ public class inventoryManager : MonoBehaviour
     // change weapon POS
     public void changeWeaponPOS()
     {
-            if (gameManager.instance.player.GetComponent<playerController>().weaponListPos - 1 < 0)
+            if (weaponListPos - 1 < 0)
             {
-                gameManager.instance.player.GetComponent<playerController>().weaponListPos = 0;
+                weaponListPos = 0;
             }
             else
             {
-                gameManager.instance.player.GetComponent<playerController>().weaponListPos--;
+                weaponListPos--;
             }
         currentEquippedWeapon();
     }
