@@ -33,6 +33,7 @@ public class playerStatManager : MonoBehaviour
     [Header("Player Base Physics/gravity")]
 
     public float groundDrag;
+    public float airDrag;
     public float drag;
     public float gravity;
 

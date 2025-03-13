@@ -202,34 +202,40 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private void FixedUpdate()
     {
         if (!gameManager.instance.isPaused)
-        { 
             movePlayer();
-            applyGravity();
+        { 
         }
     }
 
     void playerInput()
     {
+        setPlayerSpeed();
+
+        if (isWallRunning) return;
+        if (isSliding) return;
+
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        if (!playerStatManager.instance.hasJetpack)
-            jump();
-
+        jump();
         sprint();
-
-        setPlayerSpeed();
-
     }
 
     #region Movement
     void movePlayer()
     {
         moveDir = (horizontalInput * orientation.right) + (verticalInput * orientation.forward);
-        rb.AddForce(moveDir.normalized * playerStatManager.instance.currSpeed * 10f, ForceMode.Force);
 
         if(!isGrounded && !isWallRunning)
             applyGravity();
+
+        if (moveDir == Vector3.zero)
+        {
+            if (isGrounded) rb.linearVelocity = rb.linearVelocity * 0.6f;
+            return;
+        }
+
+        rb.AddForce(moveDir.normalized * playerStatManager.instance.currSpeed * 10f, ForceMode.Force);
     }
 
     private void SpeedControl()
@@ -245,7 +251,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void setPlayerSpeed()
     {
-        playerStatManager.instance.currSpeed = isSprinting ? playerStatManager.instance.sprintSpeed : isSliding ? playerStatManager.instance.slideSpeed
+        playerStatManager.instance.currSpeed = isWallRunning ? playerStatManager.instance.wallRunSpeed : isSprinting ? playerStatManager.instance.sprintSpeed : isSliding ? playerStatManager.instance.slideSpeed
                     : isCrouching ? playerStatManager.instance.crouchSpeed : playerStatManager.instance.walkSpeed;
     }
 
@@ -372,7 +378,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         // call if not grounded or wall running.
         // needs to be placed in fixed update
-        rb.AddForce(new Vector3(0, playerStatManager.instance.gravity * 10f * Time.deltaTime, 0));
+        rb.AddForce(Vector3.down * playerStatManager.instance.gravity);
 
         // old gravity code below
         //controller.Move(playerVelocity * Time.deltaTime);
@@ -390,11 +396,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             rb.linearDamping = playerStatManager.instance.groundDrag;
 
             // antiquated code get rid of when no longer being used.
-            playerVelocity = Vector3.zero;
-            playerMomentum = Vector3.zero;
+            //playerVelocity = Vector3.zero;
+            //playerMomentum = Vector3.zero;
         }
         else
-            rb.linearDamping = 0;
+            rb.linearDamping = playerStatManager.instance.airDrag;
     }
 
     IEnumerator PlaySteps()
@@ -467,12 +473,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void jump()
     {
-        if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
+        if (!playerStatManager.instance.hasJetpack)
         {
-            playerStatManager.instance.jumpCount++;
+            if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
+            {
+                playerStatManager.instance.jumpCount++;
 
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-            rb.AddForce(transform.up * playerStatManager.instance.jumpForce, ForceMode.Impulse);
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+                rb.AddForce(transform.up * playerStatManager.instance.jumpForce, ForceMode.Impulse);
+            }
         }
     }
 
