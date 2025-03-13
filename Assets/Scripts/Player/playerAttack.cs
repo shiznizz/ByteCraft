@@ -46,6 +46,7 @@ public class playerAttack : MonoBehaviour
     {
         playerStatManager.instance.attackTimer = 0;
         StartCoroutine(flashMuzzle());
+        inv.returnCurrentWeapon().ammoCur--;
         if (inv.returnCurrentWeapon().shootSounds.Length != 0)
             playShootSound();
 
@@ -67,9 +68,6 @@ public class playerAttack : MonoBehaviour
 
     void shootRayCast()
     {
-        inv.returnCurrentWeapon().ammoCur--;
-
-
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, playerStatManager.instance.attackDistance, ~ignoreLayer))
         {
@@ -165,7 +163,8 @@ public class playerAttack : MonoBehaviour
             {
                 inv.returnCurrentWeapon().ammoReserve -= (inv.returnCurrentWeapon().ammoMax - inv.returnCurrentWeapon().ammoCur);
                 inv.returnCurrentWeapon().ammoCur = inv.returnCurrentWeapon().ammoMax;
-                audioSource.PlayOneShot(inv.returnCurrentWeapon().reloadSounds[Random.Range(0, inv.returnCurrentWeapon().reloadSounds.Length)], inv.returnCurrentWeapon().reloadVolume);
+                if (inv.returnCurrentWeapon().reloadSounds.Length != 0)
+                    audioSource.PlayOneShot(inv.returnCurrentWeapon().reloadSounds[Random.Range(0, inv.returnCurrentWeapon().reloadSounds.Length)], inv.returnCurrentWeapon().reloadVolume);
             }
             else if (inv.returnCurrentWeapon().ammoReserve > 0)                               //If there is ammo in reserve but not a full clip reload remaining ammo
             {

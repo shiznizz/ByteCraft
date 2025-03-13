@@ -160,8 +160,9 @@ public class gameManager : MonoBehaviour
         }
     }
 
-    public void updateAmmo(weaponStats gun)
+    public void updateAmmo()
     {
+        weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
         ammoCurText.text = gun.ammoCur.ToString("D3");
         ammoMaxText.text = gun.ammoMax.ToString("D3");
         ammoReserveText.text = gun.ammoReserve.ToString("D3");

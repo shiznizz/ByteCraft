@@ -1403,6 +1403,10 @@ PrefabInstance:
       propertyPath: orientation
       value: 
       objectReference: {fileID: 1924610995}
+    - target: {fileID: 2576743438825804831, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 72
+      objectReference: {fileID: 0}
     - target: {fileID: 5043751963829147083, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.28437054
@@ -1452,7 +1456,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1524702375175746182, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+    - {fileID: 7438968554801749307, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+    - {fileID: 100128754730695315, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
@@ -1510,6 +1517,9 @@ MonoBehaviour:
   damageHitSounds: []
   targetingDistance: 0
   turnSpeed: 0
+  ignoreLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!135 &1687593705
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1819,6 +1829,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8386706001582953583, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8549263858775549837, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -2351,6 +2365,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 790011e705d060c47999d8bbb59b3975, type: 3}
   targetingDistance: 0
   turnSpeed: 0
+  ignoreLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!82 &6828292525148746625
 AudioSource:
   m_ObjectHideFlags: 0
