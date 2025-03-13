@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using System.Diagnostics.Contracts;
 
 
 public class gameManager : MonoBehaviour
@@ -11,10 +12,11 @@ public class gameManager : MonoBehaviour
 
     [Header("UI Elements to Toggle Visibility")]
     [SerializeField] GameObject menuInventory;
-    [SerializeField] GameObject menuActive;
+    public GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuLose;
+
     [SerializeField] GameObject ammoHUD;
     [SerializeField] GameObject jetpackHUD;
 
@@ -23,8 +25,6 @@ public class gameManager : MonoBehaviour
     public Image grappleGauge;
     public GameObject playerDamageScreen;
     public GameObject checkpointPopup;
-
-    
 
     [Header("Text Fields to Update")]
     [SerializeField] public TMP_Text goalCountText;
@@ -53,6 +53,14 @@ public class gameManager : MonoBehaviour
     public TMP_Text itemName;
     public GameObject displaySlot;
 
+    [Header("Low Health Screen Indicator")]
+    public Image lowHealthIndicator;
+
+    [SerializeField] float lowHealthThreshold = 0.25f;
+    [SerializeField] float heartbeatSpeed = 2f;
+    [SerializeField] float heartbeatMagnitude = 0.2f;
+    [SerializeField] float baseAlpha = 0.3f;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -72,22 +80,20 @@ public class gameManager : MonoBehaviour
     {
         if (Input.GetButtonDown("Cancel"))
         {
-            if(menuActive == null)
-            {
-                statePause();
-                menuActive = menuPause;
-                menuActive.SetActive(true);
-            }
-            else if(menuActive == menuPause)
-            {
+            if (menuActive == null)
+                switchMenu(menuPause);
+            else
                 stateUnpause();
-            }
         }
         if (Input.GetButtonDown("Inventory"))
         {
-            inventoryMenu();
+            switchMenu(menuInventory);
         }
+
+        CheckLowHealth();
     }
+
+    #region Menus
 
     public void statePause()
     {
@@ -107,22 +113,40 @@ public class gameManager : MonoBehaviour
         menuActive = null;
     }
 
-    public void inventoryMenu()
+    public void switchMenu(GameObject menuToOpen, bool closeMenu = true)
     {
-
         if (menuActive == null)
         {
             statePause();
-            menuActive = menuInventory;
+            menuActive = menuToOpen;
             menuActive.SetActive(true);
         }
-        else if (menuActive == menuInventory)
+        else if (closeMenu && menuActive == menuToOpen)
         {
             stateUnpause();
         }
+        else
+        {
+            menuActive.SetActive(false);
+            menuActive = menuToOpen;
+            menuActive.SetActive(true);
+        }
+
     }
 
+    public void youLose()
+    {
+        switchMenu(menuLose);
+    }
 
+    public void youWin()
+    {
+        switchMenu(menuWin);
+    }
+
+    #endregion Menus
+
+    #region UI Element Updates
     public void updateGameGoal(int amount)
     {
         goalCount += amount;
@@ -130,9 +154,7 @@ public class gameManager : MonoBehaviour
 
         if (goalCount <= 0)
         {
-            statePause();
-            menuActive = menuWin;
-            menuActive.SetActive(true);
+            youWin();
         }
     }
 
@@ -163,13 +185,32 @@ public class gameManager : MonoBehaviour
         jetpackHUD.SetActive(false);
     }
 
-    public void youLose()
+    private void CheckLowHealth()
     {
-        statePause();
-        menuActive = menuLose;
-        menuActive.SetActive(true);
+        if (playerStatManager.instance.HPMax <= 0) return;
+
+        float hpRatio = (float)playerStatManager.instance.HP / playerStatManager.instance.HPMax;
+
+        if (hpRatio <= lowHealthThreshold)
+        {
+            float alpha = baseAlpha + Mathf.Sin(Time.time * heartbeatSpeed) * heartbeatMagnitude;
+            alpha = Mathf.Clamp01(alpha);
+
+            Color c = lowHealthIndicator.color;
+            c.a = alpha;
+            lowHealthIndicator.color = c;  
+        }
+        else
+        {
+            Color c = lowHealthIndicator.color;
+            c.a = Mathf.MoveTowards(c.a, 0f, Time.deltaTime);
+            lowHealthIndicator.color = c;
+        }
     }
 
+    #endregion UI Element Updates
+
+    #region Inventory
     public void updateInventory()
     {
 
@@ -221,4 +262,5 @@ public class gameManager : MonoBehaviour
         itemName.text = "";
         displaySlot.SetActive(false);
     }
+    #endregion Inventory
 }

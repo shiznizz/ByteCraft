@@ -5,19 +5,24 @@ using System.Data;
 using System.Diagnostics.Contracts;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class playerController : MonoBehaviour, IDamage, IPickup
 {
     #region Variables
+    // please dont move this variable :)
+    [SerializeField] Transform orientation;
+
     [SerializeField] CharacterController controller;
     [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] LayerMask groundLayer;
+    [SerializeField] traps trap;
 
     [Header("Camera Options")]
-    [SerializeField] Transform cameraTransform;
-    Vector3 normalCamPos;
-    Vector3 crouchCamPos;
+    //[SerializeField] Transform cameraTransform;
+    //Vector3 normalCamPos;
+    //Vector3 crouchCamPos;
     public float cameraChangeTime;
     public float wallRunTilt;
     public float tilt;
@@ -27,55 +32,47 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [Range(0, 1)][SerializeField] float stepVolume;
     [SerializeField] float walkSoundInterval;
     [SerializeField] float runSoundInterval;
-
-    [Header("Player Stat Options")]
-    public int HP;
-    [SerializeField] int jumpMax;
-    int jumpCount;
-    public int HPOrig;
     bool isPlayingSteps;
 
-    [SerializeField] int armor;
-    [SerializeField] int armorMax = 100;
+    [Header("Player Stat Options")]
+    //[SerializeField] int jumpMax;
+    //int jumpCount;
+    public int HPOrig; // will move after enemy AI is not in use
 
+    //[Header("Common Weapon Options")]
+    //[SerializeField] float attackCooldown;
+    //[SerializeField] int attackDamage;
+    //[SerializeField] int attackDistance;
+    //[SerializeField] int attackRange;
 
-    //[SerializeField] List<weaponStats> weaponList = new List<weaponStats>();
+    //[Header("Range Options")]
+    //[SerializeField] GameObject gunModel;
+    //[SerializeField] weaponStats startGun;
+    //[SerializeField] Transform muzzleFlash;
 
-    [Header("Common Weapon Options")]
-    [SerializeField] float attackCooldown;
-    [SerializeField] int attackDamage;
-    [SerializeField] int attackDistance;
-    [SerializeField] int attackRange;
+    //[Header("Melee Options")]
+    //[SerializeField] GameObject meleeWeaponModel;
+    //[SerializeField] weaponStats startMelee;
+    //[SerializeField] Animator playerAnimator;
+    //[SerializeField] Collider meleeCol;
 
-    [Header("Range Options")]
-    [SerializeField] GameObject gunModel;
-    [SerializeField] weaponStats startGun;
-    [SerializeField] Transform muzzleFlash;
+    //[Header("Magic Options")]
+    //[SerializeField] GameObject magicWeaponModel;
+    //[SerializeField] weaponStats startMagic;
+    //[SerializeField] GameObject magicProjectile; // Projectile Prefab
+    //[SerializeField] float magicProjectileSpeed; // Speed of projectile
+    //[SerializeField] Transform magicPosition;
 
-    [Header("Melee Options")]
-    [SerializeField] GameObject meleeWeaponModel;
-    [SerializeField] weaponStats startMelee;
-    [SerializeField] Animator playerAnimator;
-    [SerializeField] Collider meleeCol;
+    public int weaponListPos;
 
-    [Header("Magic Options")]
-    [SerializeField] GameObject magicWeaponModel;
-    [SerializeField] weaponStats startMagic;
-    [SerializeField] GameObject magicProjectile; // Projectile Prefab
-    [SerializeField] float magicProjectileSpeed; // Speed of projectile
-    [SerializeField] Transform magicPosition;
+    ////bool isGunPOSSet;
 
-    //Weapons inventory (gun, melee)
-    int weaponListPos;
+    //float shootTimer;
+    //float attackTimer;
 
-    bool isGunPOSSet;
-
-    float shootTimer;
-    float attackTimer;
-
-    //Tracks which weapon is active
-    public enum WeaponType { Gun, Melee, Magic }
-    public WeaponType currentWeapon = WeaponType.Gun;
+    ////Tracks which weapon is active
+    //public enum WeaponType { Gun, Melee, Magic }
+    //public WeaponType currentWeapon = WeaponType.Gun;
 
     [Header("Grapple Options")]
     [SerializeField] int grappleDistance;
@@ -105,28 +102,25 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     float grappleCooldownTimer;
 
     [Header("JetPack Options")]
-    [SerializeField] bool hasJetpack;
-    [SerializeField] int jetpackFuelMax;
-    [SerializeField] float jetpackFuel;
-    [SerializeField] float jetpackFuelUse;
-    [SerializeField] float jetpackFuelRegen;
-    [SerializeField] float jetpackFuelRegenDelay;
-    [SerializeField] int jetpackSpeed;
-    [SerializeField] float jetpackHoldTimer = 0.01f;
+    //[SerializeField] bool hasJetpack;
+    //[SerializeField] int jetpackFuelMax;
+    //[SerializeField] float jetpackFuel;
+    //[SerializeField] float jetpackFuelUse;
+    //[SerializeField] float jetpackFuelRegen;
+    //[SerializeField] float jetpackFuelRegenDelay;
+    //[SerializeField] int jetpackSpeed;
+    //[SerializeField] float jetpackHoldTimer = 0.01f;
 
     private float jetpackFuelRegenTimer;
 
     [Header("Player Movement")]
     //[SerializeField] int speedModifer;
-    [SerializeField] float momentumDrag;
-    [SerializeField] int jumpSpeed;
-    [SerializeField] int gravity;
+    //[SerializeField] float momentumDrag;
+    //[SerializeField] int jumpSpeed;
+    //[SerializeField] int gravity;
 
-    private float speed;
-    [SerializeField] float walkSpeed;
-    [SerializeField] float sprintSpeed;
-    [SerializeField] float crouchSpeed;
-    [SerializeField] float slideSpeed;
+    Rigidbody rb;
+
     private float desiredSpeed;
     private float prevDesiredSpeed;
     private float slideSpeedIncrease;
@@ -136,14 +130,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private Vector3 playerVelocity;
     private Vector3 playerMomentum;
     private Vector3 grapplePostion;
-    private Vector3 forwardDir;
-
-    float playerHeight;
-    float standingHeight = 2f;
-    float crouchHeight = 0.5f;
-
-    Vector3 crouchingCenter = new Vector3(0, -0.5f, 0);
-    Vector3 standingCenter = new Vector3(0, 0, 0);
 
     public bool isGrounded;
     public bool isSprinting;
@@ -153,12 +139,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isWallRunning;
     public bool isJetpacking;
 
-
-    [SerializeField] float maxSlideTime;
-    float slideTimer;
-
-
-    [SerializeField] bool isPlayerInStartingLevel;
+    private float horizontalInput;
+    private float verticalInput;
 
     // variable for player input action map
     #endregion Variables
@@ -171,14 +153,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void Start()
     {
-        normalCamPos = cameraTransform.localPosition;
-        crouchCamPos = new Vector3(0, crouchHeight, 0);
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
 
-        HPOrig = HP;
-        jetpackFuel = jetpackFuelMax;
-
-        if(!isPlayerInStartingLevel)
-            playerHeight = standingHeight;
+        HPOrig = playerStatManager.instance.HPMax;
+        playerStatManager.instance.jetpackFuel = playerStatManager.instance.jetpackFuelMax;
+        
+        playerStatManager.instance.playerHeight = playerStatManager.instance.standingHeight;
 
         spawnPlayer();
 
@@ -187,62 +168,112 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void Update()
     {
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * attackDistance, Color.red);
-        // switches states of grapple
+        playerInput();
+        SpeedControl();
         checkGround();
+        newJump();
         updatePlayerUI();
 
-        switch (grappleState)
-        {
-            // not grappling 
-            case movementState.grappleNormal:
-                if (!gameManager.instance.isPaused)
-                    movement();
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
+        // switches states of grapple
+        //switch (grappleState)
+        //{
+        //    // not grappling 
+        //    case movementState.grappleNormal:
+        //        if (!gameManager.instance.isPaused)
+        //            //movement();
 
-                if (Input.GetButtonDown("Open")) // for opening loot chests
-                    openChest();
-                break;
-            // is grappling
-            case movementState.grappleMoving:
-                grappleMovement();
-                break;
-        }
+        //        if (Input.GetButtonDown("Open")) // for opening loot chests
+        //            openChest();
+        //        break;
+        //    // is grappling
+        //    case movementState.grappleMoving:
+        //        grappleMovement();
+        //        break;
+        //}
         handleJetpackFuelRegen();
         //cameraChange();
     }
 
-    public void getArmor(int amount)
+    private void FixedUpdate()
     {
-        armor = Mathf.Min(armor + amount, armorMax);
-        //gameManager.instance.updateArmorUI(armor);
+        //if (!gameManager.instance.isPaused)
+            movePlayer();
     }
 
-    public void getAmmo(int amount)
+    void playerInput()
     {
-        if (inventoryManager.instance.weaponList.Count > 0 &&
-            inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
-        {
-            inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve =
-                Mathf.Min(inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve + amount,
-                inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserveMax);
-
-            updatePlayerUI();
-        }
-    }
-
-    public void refillFuel(int amount)
-    {
-        jetpackFuel = Mathf.Min(jetpackFuel + amount, jetpackFuelMax);
-        updatePlayerUI();
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
+        Debug.Log("Horizontal: " + horizontalInput + " Vertical: " + verticalInput);
     }
 
     #region Movement
+    void movePlayer()
+    {
+        moveDir = (horizontalInput * orientation.right) + (verticalInput * orientation.forward);
+        rb.AddForce(moveDir.normalized * playerStatManager.instance.walkSpeed * 10f, ForceMode.Force);
+        Debug.Log("MoveDir: " + moveDir);
+    }
+
+    private void SpeedControl()
+    {
+        Vector3 flatVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+
+        if(flatVelocity.magnitude > playerStatManager.instance.currSpeed)
+        {
+            Vector3 limitVelocity = flatVelocity.normalized * playerStatManager.instance.currSpeed;
+            rb.linearVelocity = new Vector3(limitVelocity.x, rb.linearVelocity.y, limitVelocity.z);
+        }
+    }
+
+    void move()
+    {
+        moveDir = (Input.GetAxis("Horizontal") * orientation.right) +
+                      (Input.GetAxis("Vertical") * orientation.forward);
+
+        if (isSliding) return;
+        if(isWallRunning) return;
+
+        if (moveDir == Vector3.zero)
+        { 
+            if (isGrounded) rb.linearVelocity = rb.linearVelocity * 0.6f;
+            return;
+        }
+
+        float horizontalSpeed = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude;
+        float speedToApply = Mathf.Max(playerStatManager.instance.speedLimit, horizontalSpeed);
+
+        if (!isGrounded)
+            speedToApply = playerStatManager.instance.currSpeed;
+
+        if (speedToApply >= playerStatManager.instance.speedLimit)
+            speedToApply *= isGrounded ? 0.985f : 0.99f;
+
+        Vector3 newVelocity = moveDir.normalized * speedToApply;
+        newVelocity.y = rb.linearVelocity.y;
+
+        if(isGrounded) 
+            rb.linearVelocity = newVelocity;
+        else
+            rb.AddForce(moveDir.normalized * speedToApply, ForceMode.Force);
+
+        if (!isGrounded && horizontalSpeed > playerStatManager.instance.speedLimit)
+        {
+            Vector3 newHorizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+            newHorizontalVelocity *= 0.98f;
+            rb.linearVelocity = new Vector3(newHorizontalVelocity.x, rb.linearVelocity.y, newHorizontalVelocity.z);
+        }
+    }
+
     void movement()
     {
+        // check wall will now be placed in update in wall running script
+        // should conciously add audio to new movement functions
         if (!isGrounded)
         {
             checkWall();
-            wallRun();
+            //wallRun();
         }
         else
         {
@@ -252,19 +283,27 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             }
         }
 
+        // create new movement functions for sprinting, and jump
         sprint();
-        crouch();
+        // crouch should be called in update in crouch script
+        // crouch();
+        // update playerMoveHandler() then call in update.
         playerMoveHandler();
+        // move jump to update and create conditions for if hasJetpack
         jump();
 
+        // wont touch grapple code.
         // apply momentum
         playerVelocity += playerMomentum;
 
-        applyGravity();
+        // apply gravity if not wall running or grounded
+        if (!isWallRunning)
+            applyGravity();
 
+        // grapple code
         if (playerMomentum.magnitude >= 0f)
         {
-            playerMomentum -= playerMomentum * momentumDrag * Time.deltaTime;
+            playerMomentum -= playerMomentum * playerStatManager.instance.drag * Time.deltaTime;
             if (playerMomentum.magnitude <= .0f)
             {
                 playerMomentum = Vector3.zero;
@@ -275,32 +314,33 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (testGrappleKeyPressed())
             shootGrapple();
 
-        moveDir = Vector3.ClampMagnitude(moveDir, speed);
+        // replacing this code in speed control
+        moveDir = Vector3.ClampMagnitude(moveDir, playerStatManager.instance.currSpeed);
 
         // ==========================
         // player attack settings below
         // ==========================
 
-        if (!isGunPOSSet && inventoryManager.instance.weaponList.Count > 0)
-            getWeaponStats(); 
+        //if (!isGunPOSSet && inventoryManager.instance.weaponList.Count > 0)
+        //    getWeaponStats(); 
 
-        attackTimer += Time.deltaTime;
+        playerStatManager.instance.attackTimer += Time.deltaTime;
         grappleCooldownTimer += Time.deltaTime;
 
-        if (Input.GetButton("Fire1") && inventoryManager.instance.weaponList.Count > 0 && attackTimer >= attackCooldown)   //Want button input to be the first condition for performance - other evaluations wont occur unless button is pressed
+        if (Input.GetButton("Fire1") && inventoryManager.instance.weaponList.Count > 0 && playerStatManager.instance.attackTimer >= playerStatManager.instance.attackCooldown)   //Want button input to be the first condition for performance - other evaluations wont occur unless button is pressed
         {
-            if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun && inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur > 0)
-            {
+            //if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun && inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur > 0)
+            //{
                 shoot();
-            }
-            else if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Melee)
-            {
-                meleeAttack();
-            }
-            else if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Magic)
-            {
-                shootMagicProjectile();
-            }
+            //}
+            //else if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Melee)
+            //{
+            //    meleeAttack();
+            //}
+            //else if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Magic)
+            //{
+            //    shootMagicProjectile();
+            //}
         }
         selectWeapon();
         gunReload();
@@ -308,20 +348,31 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void applyGravity()
     {
-        controller.Move(playerVelocity * Time.deltaTime);
-        playerVelocity.y -= gravity * Time.deltaTime;
+        // call if not grounded or wall running.
+        // check if needs to be placed in update or fixed update
+        rb.AddForce(new Vector3(0, playerStatManager.instance.gravity * Time.deltaTime, 0));
+
+        // old gravity code below
+        //controller.Move(playerVelocity * Time.deltaTime);
+        //playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
     }
 
     void checkGround()
     {
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.1f/*,~ignoreLayer*/);
+        // call in update.
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerStatManager.instance.playerHeight * 0.5f + 0.1f/*,~ignoreLayer*/);
 
         if (isGrounded)
         {
-            jumpCount = 0;
+            playerStatManager.instance.jumpCount = 0;
+            rb.linearDamping = playerStatManager.instance.groundDrag;
+
+            // antiquated code get rid of when no longer being used.
             playerVelocity = Vector3.zero;
             playerMomentum = Vector3.zero;
         }
+        else
+            rb.linearDamping = 0;
     }
 
     IEnumerator PlaySteps()
@@ -337,9 +388,22 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void playerMoveHandler()
     {
-        if (isWallRunning) return;
+        // gut this then take what you need. this is the old playerInput
+        // wall running and sliding should just boot the player out.
+        // then apply proper speed.
+        // call in update.
 
-        speed = isSprinting ? sprintSpeed : isSliding ? slideSpeed : isCrouching ? crouchSpeed : walkSpeed;
+        // in different method move the player based on input obtained here.
+        if (isWallRunning)
+        {
+            // apply wallRunSpeed then start wall run
+            playerStatManager.instance.currSpeed = playerStatManager.instance.wallRunSpeed;
+            WallRunMovement();
+        }
+        // essentially an if else statment that checks movement state and applies the proper speed
+        else
+            playerStatManager.instance.currSpeed = isSprinting ? playerStatManager.instance.sprintSpeed : isSliding ? playerStatManager.instance.slideSpeed 
+                    : isCrouching ? playerStatManager.instance.crouchSpeed : playerStatManager.instance.walkSpeed;
 
         if (isGrounded && isSliding)
         {
@@ -351,7 +415,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                       (Input.GetAxis("Vertical") * transform.forward);
             if(moveDir != Vector3.zero)
             {
-                controller.Move(moveDir * speed * Time.deltaTime);
+                controller.Move(moveDir * playerStatManager.instance.currSpeed * Time.deltaTime);
             }
         }
     }
@@ -370,17 +434,30 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
 
+    void newJump()
+    {
+        if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
+        {
+            playerStatManager.instance.jumpCount++;
+
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+            rb.AddForce(transform.up * playerStatManager.instance.jumpForce, ForceMode.Impulse);
+        }
+    }
+
     void jump()
     {
-        if (Input.GetButtonDown("Jump") && jumpCount < jumpMax)
+        if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
         {
-            jumpCount++;
-            playerVelocity.y = jumpSpeed;
+            playerStatManager.instance.jumpCount++;
+            playerVelocity.y = playerStatManager.instance.jumpForce;
 
             if(isCrouching || isSliding)
                 exitCrouch();
+            if (isWallRunning)
+                wallJump();
         }
-        else if (Input.GetButtonDown("Jump") && !isJetpacking && !isGrounded && hasJetpack)
+        else if (Input.GetButtonDown("Jump") && !isJetpacking && !isGrounded && playerStatManager.instance.hasJetpack)
         {
             // if existing jetpackCoroutine stop routine
             if(jetpackCoroutine != null)
@@ -411,19 +488,19 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void jetpack()
     {
-        if (jetpackFuel > 0)
+        if (playerStatManager.instance.jetpackFuel > 0)
         {
-            jetpackFuel -= jetpackFuelUse * Time.deltaTime;
+            playerStatManager.instance.jetpackFuel -= playerStatManager.instance.jetpackFuelUse * Time.deltaTime;
 
-            playerVelocity.y = jetpackSpeed;
+            playerVelocity.y = playerStatManager.instance.jetpackSpeed;
 
-            jetpackFuelRegenTimer = jetpackFuelRegenDelay;
+            jetpackFuelRegenTimer = playerStatManager.instance.jetpackFuelRegenDelay;
         }
     }
 
     void handleJetpackFuelRegen()
     {
-        if (jetpackFuel < jetpackFuelMax)
+        if (playerStatManager.instance.jetpackFuel < playerStatManager.instance.jetpackFuelMax)
         {
             // Decrease the regen timer over time
             jetpackFuelRegenTimer -= Time.deltaTime;
@@ -431,8 +508,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             // Regenerate fuel only after the delay has passed
             if (jetpackFuelRegenTimer <= 0)
             {
-                jetpackFuel += jetpackFuelRegen * Time.deltaTime;
-                jetpackFuel = Mathf.Clamp(jetpackFuel, 0, jetpackFuelMax); // Clamp fuel between 0 and max
+                playerStatManager.instance.jetpackFuel += playerStatManager.instance.jetpackFuelRegen * Time.deltaTime;
+                playerStatManager.instance.jetpackFuel = Mathf.Clamp(playerStatManager.instance.jetpackFuel, 0, playerStatManager.instance.jetpackFuelMax); // Clamp fuel between 0 and max
             }
         }
         else
@@ -445,10 +522,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     IEnumerator jetpackWait()
     {
         // make player wait hold timer before jetpacking
-        yield return new WaitForSeconds(jetpackHoldTimer);
+        yield return new WaitForSeconds(playerStatManager.instance.jetpackHoldTimer);
 
         isJetpacking = true;
         jetpackCoroutine = null;
+    }
+
+    public void refillFuel(int amount)
+    {
+        playerStatManager.instance.jetpackFuel = Mathf.Min(playerStatManager.instance.jetpackFuel + amount, playerStatManager.instance.jetpackFuelMax);
+        updatePlayerUI();
     }
 
     #endregion Jetpack
@@ -456,219 +539,194 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Crouch and Slide
     void crouch()
     {
-        if (Input.GetButtonDown("Crouch") && !isPlayerInStartingLevel)
-        {
-            if(isGrounded)
-                isCrouching = !isCrouching;
+        //if (Input.GetButtonDown("Crouch") && !isPlayerInStartingLevel)
+        //{
+        //    // toggles crouch
+        //    if(isGrounded)
+        //        isCrouching = !isCrouching;
 
-            if (isCrouching)
-            {
-                controller.height = crouchHeight;
-                controller.center = crouchingCenter;
-                playerHeight = crouchHeight;
+        //    // adjusts controller height and orients controller on ground
+        //    if (isCrouching)
+        //    {
+        //        controller.height = crouchHeight;
+        //        controller.center = crouchingCenter;
+        //        playerHeight = crouchHeight;
 
-                cameraTransform.localPosition = crouchCamPos;
+        //        // changes camera position (lerp was breaking this)
+        //        cameraTransform.localPosition = crouchCamPos;
 
-                //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
-
-                if (speed > walkSpeed)
-                {
-                    isSliding = true;
-                    isSprinting = false;
-                    slideTimer = maxSlideTime;
-                    forwardDir = transform.forward;
-                }
-            }
-            else
-            {
-                exitCrouch();
-            }
-        }
+        //        //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
+        //        // if moving faster than walking - slide
+        //        if (speed > playerStatManager.instance.playerWalkSpeed)
+        //        {
+        //            isSliding = true;
+        //            isSprinting = false;
+        //            // starts slide timer and sets vector to lock player movement
+        //            slideTimer = maxSlideTime;
+        //            forwardDir = transform.forward;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        exitCrouch();
+        //    }
+        //}
     }
 
     void exitCrouch()
     {
-
-        controller.height = standingHeight;
-        controller.center = standingCenter;
-        playerHeight = standingHeight;
-        isCrouching = false;
-        isSliding = false;
-        cameraTransform.localPosition = normalCamPos;
-        //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, normalCamPos, cameraChangeTime);
-        Debug.Log("exit crouch");
+        //// readjusts controller and camera height
+        //controller.height = standingHeight;
+        //controller.center = standingCenter;
+        //playerHeight = standingHeight;
+        //isCrouching = false;
+        //isSliding = false;
+        //cameraTransform.localPosition = normalCamPos;
+        ////cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, normalCamPos, cameraChangeTime);
+        //Debug.Log("exit crouch");
     }
 
     void slideMovement()
     {    
-        // costs jp fuel to slide while not moving
-        if (moveDir == Vector3.zero)
-            jetpackFuel += -(jetpackFuelMax * .25f);
+        //// costs jp fuel to slide while not moving
+        //if (moveDir == Vector3.zero)
+        //    jetpackFuel += -(jetpackFuelMax * .25f);
         
-        // slide countdown and force player to move one direction
-        slideTimer -= Time.deltaTime;
-        controller.Move(forwardDir * slideSpeed * Time.deltaTime);
-        if (slideTimer <= 0)
-        {
-            exitCrouch();
-        }
+        //// slide countdown and force player to move one direction
+        //slideTimer -= Time.deltaTime;
+        //controller.Move(forwardDir * playerStatManager.instance.playerSlideSpeed * Time.deltaTime);
+        //if (slideTimer <= 0)
+        //{
+        //    exitCrouch();
+        //}
         
     }
     #endregion Crouch and Slide
 
+    // previously used to simulate momentum by lerping speed transitions
     IEnumerator smoothSpeedLerp()
     {
         float time = 0;
-        float difference = Mathf.Abs(desiredSpeed - speed);
-        float startValue = speed;
+        float difference = Mathf.Abs(desiredSpeed - playerStatManager.instance.currSpeed);
+        float startValue = playerStatManager.instance.currSpeed;
 
         while (time < difference)
         {
-            speed = Mathf.Lerp(startValue, desiredSpeed, time / difference);
+            playerStatManager.instance.currSpeed = Mathf.Lerp(startValue, desiredSpeed, time / difference);
             time += Time.deltaTime;
             yield return null;
         }
 
-        speed = desiredSpeed;
+        playerStatManager.instance.currSpeed = desiredSpeed;
     }
 
     #region WallRunning
 
-    [Header("Wallrunning")]
-    public LayerMask wallLayer;
-    public float wallRunForce;
-    public float maxWallRunTime;
-    public float wallRunSpeed;
-    public float wallRunTimer;
-    public float wallJumpUpForce;
-    public float wallJumpSideForce;
+    //[Header("Wallrunning")]
+    //public LayerMask wallLayer;
+    //public float wallRunForce;
+    //public float maxWallRunTime;
+    //public float wallRunSpeed;
+    //public float wallRunTimer;
+    //public float wallJumpUpForce;
+    //public float wallJumpSideForce;
 
-    [Header("Input")]
-    private float horizontalInput;
-    private float verticalInput;
+    //[Header("Input")]
+    //private float horizontalInput;
+    //private float verticalInput;
 
-    [Header("Detection")]
-    public float wallCheckDistance = 1f;
-    private RaycastHit rightWallHit;
-    private RaycastHit leftWallHit;
-    private bool wallRight;
-    private bool wallLeft;
-    private Vector3 wallNormal;
+    //[Header("Detection")]
+    //public float wallCheckDistance = 1f;
+    //private RaycastHit rightWallHit;
+    //private RaycastHit leftWallHit;
+    //private bool wallRight;
+    //private bool wallLeft;
+    //private Vector3 wallNormal;
 
-    [Header("Exiting")]
-    private bool isExitingWall;
-    public float exitWallTime;
-    private float exitWallTimer;
+    //[Header("Exiting")]
+    //private bool isExitingWall;
+    //public float exitWallTime;
+    //private float exitWallTimer;
 
-    [Header("References")]
-    public Transform orientation;
+    //[Header("References")]
+    //public Transform orientation;
 
-    private float currentWallRunSpeed = 0f;
-    public float wallRunAcceleration = 10f;
-    public float maxWallRunSpeed = 10f;
-    public float wallRunTime = 1.5f;
-    public float wallJumpForce = 12f;
+    //public float wallRunAcceleration = 10f;
+    ////public float maxWallRunSpeed = 10f;
+    //public float wallRunTime = 1.5f;
+    //public float wallJumpForce = 12f;
 
     private void checkWall()
     {
-        RaycastHit hit;
-        wallRight = Physics.Raycast(transform.position, orientation.right, out hit, wallCheckDistance, wallLayer);
-        wallLeft = Physics.Raycast(transform.position, -orientation.right, out hit, wallCheckDistance, wallLayer);
-        if (wallRight || wallLeft)
-            wallNormal = hit.normal;
+        //RaycastHit hit;
+
+        //// checks if player is next to a left or right wall then enters or exits wall running state accordingly
+        //wallRight = Physics.Raycast(transform.position, orientation.right, out hit, wallCheckDistance, wallLayer);
+        //wallLeft = Physics.Raycast(transform.position, -orientation.right, out hit, wallCheckDistance, wallLayer);
+
+        //if ((wallRight || wallLeft) && !isWallRunning)
+        //    wallRun();
+        //if ((!wallRight && !wallLeft) && isWallRunning)
+        //    stopWallRun();
     }
 
     private void wallRun()
     {
-        // Getting Inputs
-        horizontalInput = Input.GetAxisRaw("Horizontal");
-        verticalInput = Input.GetAxisRaw("Vertical");
+        //// reset jumps, start wallrun, cancel gravity
+        //playerStatManager.instance.playerJumpCount = 0;
+        //StartWallRun();
+        //playerVelocity = Vector3.zero;
 
-        // State 1 - Wallrunning
-        if ((wallLeft || wallRight) && !isGrounded && verticalInput > 0)
-        {
-            if (!isWallRunning)
-                StartWallRun();
+        //// checks wall normal and sets wall normal to left or right wall normal then updates the forwareDir
+        //wallNormal = wallLeft ? leftWallHit.normal : rightWallHit.normal;
+        //forwardDir = Vector3.Cross(wallNormal, Vector3.up);
 
-            if (wallRunTimer > 0)
-            {
-                wallRunTimer -= Time.deltaTime;
-                WallRunMovement();
-            }
-
-            if (wallRunTimer <= 0 && isWallRunning)
-            {
-                isExitingWall = true;
-                exitWallTimer = exitWallTime;
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space))
-                wallJump();
-        }
-        else if (isExitingWall)
-        {
-            if (isWallRunning)
-                StopWallRun();
-
-            if (exitWallTimer > 0)
-                exitWallTimer -= Time.deltaTime;
-
-            if (exitWallTimer <= 0)
-                isExitingWall = false;
-        }
-        else
-        {
-            if (isWallRunning)
-                StopWallRun();
-        }
+        //// if on left wall go backwards
+        //if(Vector3.Dot(forwardDir, leftWallHit.normal) < 0)
+        //    forwardDir = -forwardDir;
     }
 
     private void StartWallRun()
     {
-        isWallRunning = true;
-        wallRunTimer = maxWallRunTime;
+        //isWallRunning = true;
+        //wallRunTimer = maxWallRunTime;
     }
 
-    private void StopWallRun()
+    private void stopWallRun()
     {
-        isWallRunning = false;
-        currentWallRunSpeed = 0f;
+        //isWallRunning = false;
     }
 
     private void WallRunMovement()
     {
-        playerVelocity.y = 0;
+        //horizontalInput = Input.GetAxis("Horizontal");
+        //// checks angle of normal vector to make sure you're going forward within 90 degree angle
+        //if (moveDir.z > (forwardDir.z - wallRunAcceleration) && moveDir.z < (forwardDir.z + wallRunAcceleration))
+        //    moveDir += forwardDir;
+        //else if (moveDir.z < (forwardDir.z - wallRunAcceleration) && moveDir.z > (forwardDir.z + wallRunAcceleration))
+        //{
+        //    // if not cancel wall run and stop movement vector
+        //    moveDir = Vector3.zero;
+        //    stopWallRun();
+        //}
 
-        Vector3 wallForward = Vector3.Cross(wallNormal, Vector3.up).normalized;
-        Vector3 test = controller.transform.forward;
-
-        // Ensure correct movement direction
-        if ((orientation.forward - wallForward).magnitude > (orientation.forward - -wallForward).magnitude)
-            wallForward = -wallForward;
-
-        // Smooth acceleration to max speed
-        currentWallRunSpeed = Mathf.Lerp(currentWallRunSpeed, maxWallRunSpeed, wallRunAcceleration * Time.deltaTime);
-
-        // Apply movement
-        transform.position += wallForward * currentWallRunSpeed * Time.deltaTime;
-
-        controller.Move(currentWallRunSpeed * Time.deltaTime * test);
+        //// allows for seamless movement off the wall left or right during wallrunning
+        //moveDir.x += horizontalInput * wallJumpForce;
+        //// clamp movement vector to current speed (wall run) 
+        //moveDir = Vector3.ClampMagnitude(moveDir, speed);
     }
 
     private void wallJump()
     {
-        if (wallLeft)
-        {
-            Vector3 jumpDirection = Vector3.right + Vector3.up;
-            playerVelocity = wallJumpForce * jumpDirection;
-        }
-        if (wallRight)
-        {
-            Vector3 jumpDirection = Vector3.left + Vector3.up;
+        //// 
+        //Vector3 jumpDirection = wallNormal + Vector3.up;
+        //jumpDirection.Normalize(); // Normalize to keep a consistent jump force
 
-            playerVelocity = wallJumpForce * jumpDirection;
-        }
-        StopWallRun();
+        //// Apply jump force
+        //playerVelocity = jumpDirection * wallJumpForce;
+        //moveDir.x = wallNormal.x * wallJumpForce;
+
+        //stopWallRun();
     }
 
     #endregion WallRunning
@@ -714,7 +772,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (Vector3.Distance(transform.position, grapplePostion) < grapleDistanceMove)
         {
             grappleState = movementState.grappleNormal;
-            playerVelocity.y -= gravity * Time.deltaTime;
+            playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
             StopGrapple();
         }
 
@@ -724,7 +782,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             playerMomentum = grappleSpeed * grappleDir;
             playerMomentum += Vector3.up * grappleLift;
             grappleState = movementState.grappleNormal;
-            playerVelocity.y -= gravity * Time.deltaTime;
+            playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
             StopGrapple();
         }
 
@@ -748,7 +806,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             return true;
         else
             return false;
-
     }
 
     public void StopGrapple()
@@ -762,108 +819,128 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Weapons
     void shoot()
     {
-        attackTimer = 0;
+        playerStatManager.instance.attackTimer = 0;
         inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur--;
         updatePlayerUI();
 
         StartCoroutine(flashMuzzle());
         audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].gun.shootSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].gun.shootSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].gun.shootVolume);
 
-
         RaycastHit hit;
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackDistance, ~ignoreLayer))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, playerStatManager.instance.attackDistance, ~ignoreLayer))
         {
             
             Instantiate(inventoryManager.instance.weaponList[weaponListPos].gun.hitEffect, hit.point, Quaternion.identity);
+
+            //Check if the hit object is a trap
+            traps hitTrap = hit.collider.GetComponent<traps> ();
+            if (hitTrap != null)
+            {
+                //Call a method in the trap script to trigger its effect
+                hitTrap.TriggerTrapEffect();
+            }
 
         }
 
         IDamage damage = hit.collider.GetComponent<IDamage>();
 
-        damage?.takeDamage(attackDamage);
+        damage?.takeDamage(playerStatManager.instance.attackDamage);
     }
 
 
     public void getWeaponStats()
     {
-        
-        weaponListPos = inventoryManager.instance.weaponList.Count - 1; // Selects the newly added weapon
+        inventoryManager.instance.changeWeaponPOS(); // Selects the newly added weapon
         changeWeapon();
 
-        isGunPOSSet = true;
+       // isGunPOSSet = true;
+    }
+
+    public void removeWeaponUI()
+    {
+
+        playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+            Debug.Log("if gun 1");
         
     }
-    
+
     void changeWeapon()
     {
         switch (inventoryManager.instance.weaponList[weaponListPos].type)
         {
-            case weaponStats.weaponType.Gun:
+            case weaponStats.weaponType.primary:
                 changeGun();
                 break;
-            case weaponStats.weaponType.Melee:
-                changeMeleeWep();
+            case weaponStats.weaponType.secondary:
+                changeGun();
                 break;
-            case weaponStats.weaponType.Magic:
-                changeMagicWep();
+            case weaponStats.weaponType.special:
+                changeGun();
                 break;
         }
     }
     
-    void changeGun()
+    public void changeGun()
     {
-        attackDamage = inventoryManager.instance.weaponList[weaponListPos].gun.shootDamage;
-        attackDistance = inventoryManager.instance.weaponList[weaponListPos].gun.shootRange;
-        attackCooldown = inventoryManager.instance.weaponList[weaponListPos].gun.shootRate;
-        muzzleFlash.SetLocalPositionAndRotation(new Vector3(inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashX, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashY, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashZ), muzzleFlash.rotation);
+        playerStatManager.instance.attackDamage = inventoryManager.instance.weaponList[weaponListPos].gun.shootDamage;
+        playerStatManager.instance.attackDistance = inventoryManager.instance.weaponList[weaponListPos].gun.shootRange;
+        playerStatManager.instance.attackCooldown = inventoryManager.instance.weaponList[weaponListPos].gun.shootRate;
+        playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashX, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashY, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashZ), playerStatManager.instance.muzzleFlash.rotation);
+
+        playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
+        playerStatManager.instance.gunModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;
     
-        gunModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
-        gunModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;
-    
-        turnOffWeaponModels();
+        //turnOffWeaponModels();
     }
     
     void changeMeleeWep()
     {
-        attackDamage = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDamage;
-        attackRange = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDistance;
-    
-        attackCooldown = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeCooldown;
-    
-        meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshFilter>().sharedMesh;
-        meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshRenderer>().sharedMaterial;
+        playerStatManager.instance.attackDamage = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDamage;
+        playerStatManager.instance.attackRange = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDistance;
+
+        playerStatManager.instance.attackCooldown = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeCooldown;
+
+        playerStatManager.instance.meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshFilter>().sharedMesh;
+        playerStatManager.instance.meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshRenderer>().sharedMaterial;
     
         turnOffWeaponModels();
     }
     
     void changeMagicWep()
     {
-        attackDamage = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDamage;
-        attackRange = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDitance;
-    
-        attackCooldown = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicCooldown;
-    
-        magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshFilter>().sharedMesh;
-        magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshRenderer>().sharedMaterial;
+        playerStatManager.instance.attackDamage = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDamage;
+        playerStatManager.instance.attackRange = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDitance;
+
+        playerStatManager.instance.attackCooldown = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicCooldown;
+
+        playerStatManager.instance.magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshFilter>().sharedMesh;
+        playerStatManager.instance.magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshRenderer>().sharedMaterial;
     
         turnOffWeaponModels();
     }
     
     void turnOffWeaponModels()
     {
-        if (meleeWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Melee)
-            meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
-    
-        if (magicWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Magic)
-            magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
-    
-        if (gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Gun)
-            gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+        //if (meleeWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Melee)
+        //    meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
+
+        //if (magicWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Magic)
+        //    magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
+
+        if (playerStatManager.instance.gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.primary)
+            playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+
+        else if (playerStatManager.instance.gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.secondary)
+            playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+
+        else if (playerStatManager.instance.gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.special)
+            playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
     }
-    
+
+    //&& inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun
     void gunReload()
     {
-        if (Input.GetButtonDown("Reload") && inventoryManager.instance.weaponList.Count > 0 && inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+        if (Input.GetButtonDown("Reload") && inventoryManager.instance.weaponList.Count > 0 )
         {
             if (inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve > inventoryManager.instance.weaponList[weaponListPos].gun.ammoMax)          //Check if the player can reload a full clip
             {
@@ -885,11 +962,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
     void meleeAttack()
     {
-        attackTimer = 0; // Will Reset the cooldown timer
+        playerStatManager.instance.attackTimer = 0; // Will Reset the cooldown timer
     
-        if (playerAnimator != null)
+        if (playerStatManager.instance.playerAnimator != null)
         {
-            playerAnimator.SetTrigger("MeleeAttack");
+            playerStatManager.instance.playerAnimator.SetTrigger("MeleeAttack");
         }
 
         //StartCoroutine(toggleWepCol());
@@ -897,61 +974,74 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
 
         //Activate melee weapon
-        if (meleeWeaponModel != null)
+        if (playerStatManager.instance.meleeWeaponModel != null)
         {
-            meleeWeaponModel.SetActive(true); // Shows the melee weapon during the attack
+            playerStatManager.instance.meleeWeaponModel.SetActive(true); // Shows the melee weapon during the attack
         }
 
         //Raycast to detect enemies in melee range
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, attackRange, ~ignoreLayer))
+        if (Physics.Raycast(transform.position, transform.forward, out hit, playerStatManager.instance.attackRange, ~ignoreLayer))
         {
             Debug.Log("Melee hit; " + hit.collider.name);
 
             //Apply damage if the object hit implements IDamage
             IDamage damageable = hit.collider.GetComponent<IDamage>();
-            damageable.takeDamage(attackDamage);
+            damageable.takeDamage(playerStatManager.instance.attackDamage);
         }
 
     }
 
-    //IEnumerator toggleWepCol()
-    //{
-    //    meleeCol.enabled = true;
-    //    yield return new WaitForSeconds(0.1f);
-    //    meleeCol.enabled = false;
-
-    //}
-
     void shootMagicProjectile()
     {
-        attackTimer = 0;
+        playerStatManager.instance.attackTimer = 0;
     
-        Instantiate(magicProjectile, magicPosition.position, transform.rotation);
+        Instantiate(playerStatManager.instance.magicProjectile, playerStatManager.instance.magicPosition.position, transform.rotation);
         audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].magicWep.magicSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].magicWep.magicSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].magicWep.magicVolume);
     }
     
     IEnumerator flashMuzzle()
     {
-        muzzleFlash.localEulerAngles = new Vector3(0, 0, Random.Range(0, 360));
-        muzzleFlash.gameObject.SetActive(true);
+        playerStatManager.instance.muzzleFlash.localEulerAngles = new Vector3(0, 0, Random.Range(0, 360));
+        playerStatManager.instance.muzzleFlash.gameObject.SetActive(true);
         yield return new WaitForSeconds(0.05f);
-        muzzleFlash.gameObject.SetActive(false);
+        playerStatManager.instance.muzzleFlash.gameObject.SetActive(false);
     }
     
     //Switches between weapon types using a mouse scroll wheel
     void selectWeapon()
     {
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if (scrollInput > 0 && weaponListPos < inventoryManager.instance.weaponList.Count - 1)
+        if (scrollInput > 0 && inventoryManager.instance.weaponList.Count > 0)
         {
-            weaponListPos++;
+            //weaponListPos++;
+            if (weaponListPos == inventoryManager.instance.weaponList.Count - 1)
+            {
+                weaponListPos = 0;
+            }
+            else
+            {
+                weaponListPos++;
+            }
+            
+            inventoryManager.instance.currentEquippedWeapon();
             changeWeapon();
+            //&& weaponListPos < inventoryManager.instance.weaponList.Count - 1
         }
-        else if (scrollInput < 0 && weaponListPos > 0)
+        else if (scrollInput < 0 && inventoryManager.instance.weaponList.Count > 0)
         {
-            weaponListPos--;
+            if (weaponListPos == 0)
+            {
+                weaponListPos = inventoryManager.instance.weaponList.Count - 1;
+            }
+            else
+            {
+                weaponListPos--;
+            }
+            
+          
             changeWeapon();
+            inventoryManager.instance.currentEquippedWeapon();
         }
     }
     #endregion Weapons
@@ -959,21 +1049,19 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Everything Else
     public void spawnPlayer()
     {
-        //controller.enabled = false;
         controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
-        //controller.enabled = true;
-    
-        HP = HPOrig;
+
+        playerStatManager.instance.HP = HPOrig;
         updatePlayerUI();
     }
     
     public void takeDamage(int damage)
     {
-        HP -= damage;
+        playerStatManager.instance.HP -= damage;
         StartCoroutine(flashDamageScreen());
         updatePlayerUI();
     
-        if (HP <= 0)
+        if (playerStatManager.instance.HP <= 0)
         {
             gameManager.instance.youLose();
         }
@@ -981,13 +1069,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
     void updatePlayerUI()
     {
-        gameManager.instance.playerHPBar.fillAmount = (float)HP / HPOrig;
-        gameManager.instance.JPFuelGauge.fillAmount = (float)jetpackFuel / jetpackFuelMax;
+        gameManager.instance.playerHPBar.fillAmount = (float)playerStatManager.instance.HP / HPOrig;
+        gameManager.instance.JPFuelGauge.fillAmount = (float)playerStatManager.instance.jetpackFuel / playerStatManager.instance.jetpackFuelMax;
 
         //Toggle jetpack recharge UI
-        if (hasJetpack)
+        if (playerStatManager.instance.hasJetpack)
             gameManager.instance.showJetpack();
-        else if (!hasJetpack)
+        else if (!playerStatManager.instance.hasJetpack)
             gameManager.instance.hideJetpack();
 
         //Grapple recharge UI
@@ -1000,16 +1088,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             gameManager.instance.grappleGauge.enabled = false;
     
         // Toggle ammo counter based on weapon type
-        if (inventoryManager.instance.weaponList.Count > 0)
-        {
-            if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
-            {
-                gameManager.instance.updateAmmo(inventoryManager.instance.weaponList[weaponListPos].gun);
-                gameManager.instance.showAmmo();
-            }
-            else
-                gameManager.instance.hideAmmo();
-        }
+        //if (inventoryManager.instance.weaponList.Count > 0)
+        //{
+        //    if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.primary)
+        //    {
+        //        gameManager.instance.updateAmmo(inventoryManager.instance.weaponList[weaponListPos].gun);
+        //        gameManager.instance.showAmmo();
+        //    }
+        //    else
+        //        gameManager.instance.hideAmmo();
+        //}
     }
     
     private pickup.LootType lastLootType;
@@ -1021,7 +1109,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         switch (type)
         {
             case pickup.LootType.Health:
-                HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
+                playerStatManager.instance.HP = Mathf.Min(playerStatManager.instance.HP + amount, HPOrig); // prevent exceeding max HP
                 break;
         }
         updatePlayerUI(); // refresh UI after pickup
@@ -1043,7 +1131,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void heal(int amount)
     {
-        HP = Mathf.Min(HP + amount, HPOrig); // prevent exceeding max HP
+        playerStatManager.instance.HP = Mathf.Min(playerStatManager.instance.HP + amount, HPOrig); // prevent exceeding max HP
         updatePlayerUI(); // refresh UI after pickup
     }
     
@@ -1058,5 +1146,25 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         inventoryManager.instance.addItem(item);
     }
+
+    public void getArmor(int amount)
+    {
+        playerStatManager.instance.Armor = Mathf.Min(playerStatManager.instance.Armor + amount, playerStatManager.instance.ArmorMax);
+        //gameManager.instance.updateArmorUI(armor);  will be implemented at a alatter time
+    }
+
+    public void getAmmo(int amount)
+    {
+        //if (inventoryManager.instance.weaponList.Count > 0 &&
+        //    inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun)
+        //{
+        //    inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve =
+        //        Mathf.Min(inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve + amount,
+        //        inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserveMax);
+
+        //    updatePlayerUI();
+        //}
+    }
+
     #endregion Everything Else
 }

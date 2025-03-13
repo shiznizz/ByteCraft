@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class SlotBoss : MonoBehaviour, IPointerClickHandler
 {
     public itemSO item;
-
+    public weaponStats weapon;
     
     public GameObject selectedSlot;
     
@@ -15,8 +15,8 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
     public bool isSelected;
     public bool isFull;
 
-    [SerializeField] equipSlot headSlot, chestSlot, legSlot, 
-                     gloveSlot, weapon1Slot, weapon2Slot, weapon3Slot;
+    public equipSlot headSlot, chestSlot, legSlot, 
+                     gloveSlot, primaryWeapon, secondaryWeapon, specialWeapon;
     
 
     public void OnPointerClick(PointerEventData eventData)
@@ -42,55 +42,59 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
         {
             if (isFull)
             {
-                equipGear();
+                
+                equipGear(item);
                 gameManager.instance.deselectSlot();
             }
         }
     }
 
 
-    public void equipGear()
+    public void equipGear(itemSO gear)
     {
-        if (item.itemTypye == itemSO.itemType.Head && !headSlot.isFull)
+        weapon = gear.GetWeapon();
+        Debug.Log(weapon);
+
+        if (gear.itemTypye == itemSO.itemType.Head && !headSlot.isFull)
         { 
-            headSlot.equipGear(item); 
+            headSlot.equipGear(gear); 
             headSlot.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Chest && !chestSlot.isFull)
+        else if (gear.itemTypye == itemSO.itemType.Chest && !chestSlot.isFull)
         {
-            chestSlot.equipGear(item);
+            chestSlot.equipGear(gear);
             chestSlot.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Hands && !gloveSlot.isFull)
+        else if (gear.itemTypye == itemSO.itemType.Hands && !gloveSlot.isFull)
         {
-            gloveSlot.equipGear(item);
+            gloveSlot.equipGear(gear);
             gloveSlot.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Legs && !legSlot.isFull)
+        else if (gear.itemTypye == itemSO.itemType.Legs && !legSlot.isFull)
         {
-            legSlot.equipGear(item);
+            legSlot.equipGear(gear);
             legSlot.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Weapon && !weapon1Slot.isFull)
+        else if (gear.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.primary && !primaryWeapon.isFull) 
         {
-            weapon1Slot.equipGear(item);
-            weapon1Slot.isFull = true;
+            primaryWeapon.equipGear(gear);
+            primaryWeapon.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Weapon && !weapon2Slot.isFull)
+        else if (gear.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.secondary && !secondaryWeapon.isFull)
         {
-            weapon2Slot.equipGear(item);
-            weapon2Slot.isFull = true;
+            secondaryWeapon.equipGear(gear);
+            secondaryWeapon.isFull = true;
         }
 
-        else if (item.itemTypye == itemSO.itemType.Weapon && !weapon3Slot.isFull)
+        else if (gear.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.special && !specialWeapon.isFull)
         {
-            weapon3Slot.equipGear(item);
-            weapon3Slot.isFull = true;
+            specialWeapon.equipGear(gear);
+            specialWeapon.isFull = true;
         }
     }
 

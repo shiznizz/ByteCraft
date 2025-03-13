@@ -833,7 +833,7 @@ MonoBehaviour:
   agent: {fileID: 672211027710067372}
   anim: {fileID: 4194712027355285402}
   headPos: {fileID: 6382001114435576378}
-  HP: 3
+  HP: 10
   animTransSpeed: 8
   faceTargetSpeed: 32
   FOV: 90
@@ -845,8 +845,10 @@ MonoBehaviour:
   meleeDistance: 0
   dropsLoot: 0
   weaponCol: {fileID: 0}
-  lootTable: []
-  dropPos: {fileID: 0}
+  lootTable:
+  - {fileID: 11400000, guid: d2fac76925cf74040b68765fd8297372, type: 2}
+  - {fileID: 11400000, guid: 52b1930380fd3f047a5f600e5c7dd893, type: 2}
+  dropPos: {fileID: 2771046927680024141}
   roamPauseTime: 0
   roamDist: 0
 --- !u!195 &672211027710067372

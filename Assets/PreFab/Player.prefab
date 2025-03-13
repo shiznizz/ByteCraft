@@ -297,6 +297,9 @@ MonoBehaviour:
   runSoundInterval: 0.2
   HP: 100
   jumpMax: 1
+  HPOrig: 0
+  armor: 0
+  armorMax: 100
   attackCooldown: 0
   attackDamage: 0
   attackDistance: 0
@@ -307,6 +310,7 @@ MonoBehaviour:
   meleeWeaponModel: {fileID: 196369159471151266}
   startMelee: {fileID: 0}
   playerAnimator: {fileID: 8223778283042912598}
+  meleeCol: {fileID: 0}
   magicWeaponModel: {fileID: 952951101818923497}
   startMagic: {fileID: 0}
   magicProjectile: {fileID: 509375798219859286, guid: 08e0f98f418812e49bef0a5dde709f5b, type: 3}
@@ -333,9 +337,9 @@ MonoBehaviour:
   jumpSpeed: 12
   gravity: 32
   walkSpeed: 7
-  sprintSpeed: 14
+  sprintSpeed: 10
   crouchSpeed: 4
-  slideSpeed: 18
+  slideSpeed: 12
   isGrounded: 0
   isSprinting: 0
   isGrappling: 0
@@ -358,7 +362,6 @@ MonoBehaviour:
   exitWallTime: 5
   orientation: {fileID: 3400437105452468489}
   wallRunAcceleration: 10
-  maxWallRunSpeed: 10
   wallRunTime: 1.5
   wallJumpForce: 12
 --- !u!114 &5116521620893417484
