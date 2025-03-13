@@ -187,6 +187,9 @@ public class gameManager : MonoBehaviour
 
     private void CheckLowHealth()
     {
+        // Check if playerStatManager or lowHealthIndicator is null to avoid NullReferenceException
+        if (playerStatManager.instance == null || lowHealthIndicator == null) return;
+
         if (playerStatManager.instance.HPMax <= 0) return;
 
         float hpRatio = (float)playerStatManager.instance.HP / playerStatManager.instance.HPMax;

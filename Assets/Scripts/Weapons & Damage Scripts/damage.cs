@@ -12,6 +12,11 @@ public class damage : MonoBehaviour
 
     public bool playerProjectile;
 
+    [Header("Sound Settings")]
+    [SerializeField] private AudioClip[] damageHitSounds;
+    //[SerializeField] private float damageHitVolume; // Volume of the sound
+    private AudioSource audioSource;
+
     float damageTimer;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -26,6 +31,18 @@ public class damage : MonoBehaviour
                 rb.linearVelocity = Camera.main.transform.forward * speed;
             }
             Destroy(gameObject, destroyTime);
+        }
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            Debug.LogError("AudioSource not found on " + gameObject.name);
+        }
+
+        // Ensure damageHitSounds has at least one sound
+        if (damageHitSounds.Length == 0 || damageHitSounds[0] == null)
+        {
+            Debug.LogError("No AudioClips assigned to damageHitSounds on " + gameObject.name);
         }
     }
 
@@ -48,6 +65,7 @@ public class damage : MonoBehaviour
             if (dmg != null)
             {
                 dmg.takeDamage(damageAmount);
+                PlayDamageSound(); // Play sound when damage is applied
             }
         }
     }
@@ -63,6 +81,7 @@ public class damage : MonoBehaviour
             if (dmg != null)
             {
                 dmg.takeDamage(damageAmount);
+                PlayDamageSound(); // Play sound when damage is applied
             }
 
             if (type == damageType.moving)
@@ -70,5 +89,26 @@ public class damage : MonoBehaviour
                 Destroy(gameObject);
             }
         }
+    }
+
+    // Method to play the damage sound
+    private void PlayDamageSound()
+    {
+        if (audioSource == null)
+        {
+            Debug.LogWarning("AudioSource is missing on " + gameObject.name);
+            return;
+        }
+
+        if (damageHitSounds.Length == 0 || damageHitSounds[0] == null)
+        {
+            Debug.LogWarning("No AudioClips assigned to damageHitSounds on " + gameObject.name);
+            return;
+        }
+
+        // Play a random sound from the damageHitSounds array
+        AudioClip soundToPlay = damageHitSounds[Random.Range(0, damageHitSounds.Length)];
+        Debug.Log("Playing sound: " + soundToPlay.name);
+        audioSource.PlayOneShot(soundToPlay);
     }
 }
