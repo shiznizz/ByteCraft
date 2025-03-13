@@ -202,8 +202,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void FixedUpdate()
     {
-        //if (!gameManager.instance.isPaused)
+        if (!gameManager.instance.isPaused)
+        { 
             movePlayer();
+            applyGravity();
+        }
     }
 
     void playerInput()
