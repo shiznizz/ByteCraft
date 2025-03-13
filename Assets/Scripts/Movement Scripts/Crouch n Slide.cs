@@ -29,42 +29,40 @@ public class CrouchnSlide : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        crouch();
+        if (Input.GetButtonDown("Crouch"))
+            crouch();
     }
 
-     void crouch()
+    void crouch()
     {
-        if (Input.GetButtonDown("Crouch"))
+        // toggles crouch
+        if(pc.isGrounded)
+            pc.isCrouching = !pc.isCrouching;
+
+        // adjusts controller height and orients controller on ground
+        if (pc.isCrouching)
         {
-            // toggles crouch
-            if(pc.isGrounded)
-                pc.isCrouching = !pc.isCrouching;
+            controller.height = playerStatManager.instance.crouchHeight;
+            controller.center = crouchingCenter;
+            playerStatManager.instance.playerHeight = playerStatManager.instance.crouchHeight;
 
-            // adjusts controller height and orients controller on ground
-            if (pc.isCrouching)
+            // changes camera position (lerp was breaking this)
+            cameraTransform.localPosition = crouchCamPos;
+
+            //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
+            // if moving faster than walking - slide
+            if (playerStatManager.instance.currSpeed > playerStatManager.instance.walkSpeed)
             {
-                controller.height = playerStatManager.instance.crouchHeight;
-                controller.center = crouchingCenter;
-                playerStatManager.instance.playerHeight = playerStatManager.instance.crouchHeight;
-
-                // changes camera position (lerp was breaking this)
-                cameraTransform.localPosition = crouchCamPos;
-
-                //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
-                // if moving faster than walking - slide
-                if (playerStatManager.instance.currSpeed > playerStatManager.instance.walkSpeed)
-                {
-                    pc.isSliding = true;
-                    pc.isSprinting = false;
-                    // starts slide timer and sets vector to lock player movement
-                    slideTimer = playerStatManager.instance.maxSlideTime;
-                    forwardDir = transform.forward;
-                }
+                pc.isSliding = true;
+                pc.isSprinting = false;
+                // starts slide timer and sets vector to lock player movement
+                slideTimer = playerStatManager.instance.maxSlideTime;
+                forwardDir = transform.forward;
             }
-            else
-            {
-                exitCrouch();
-            }
+        }
+        else
+        {
+            exitCrouch();
         }
     }
 
