@@ -19,6 +19,7 @@ public class QuestPoint : MonoBehaviour
 
     private void Awake()
     {
+        // model.enabled = false;
         questId = questInfoForPoint.id;
 
     }
@@ -26,7 +27,7 @@ public class QuestPoint : MonoBehaviour
     private void Update()
     {
         SubmitPressed();
-        if (Input.GetButtonDown("Marker"))
+        if (Input.GetButtonDown("Marker") && currentQuestState.Equals(QuestState.IN_PROGRESS))
             model.enabled = true;
         else if (Input.GetButtonUp("Marker"))
             model.enabled = false;

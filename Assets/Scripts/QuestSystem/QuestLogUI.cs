@@ -39,15 +39,8 @@ public class QuestLogUI : MonoBehaviour
         }
     }
 
-    /*    public void UpdateQuestLogUI(Quest quest)
-        {
-            currentQuest = quest;  // Track the currently selected quest
-            SetQuestDetails(quest);
-        }*/
-
     private void QuestStateChange(Quest quest)
     {
-        Debug.Log("Running QuestStateChange");
         // add the button to the scrolling list if not already added
         QuestLogButton questLogButton = scrollingList.CreateButtonIfNotExists(quest, () => {
             SetQuestLogInfo(quest);
@@ -83,26 +76,4 @@ public class QuestLogUI : MonoBehaviour
         // rewards
         experienceRewardsText.text = quest.info.experienceReward + " XP";
     }
-
-/*    private string GetQuestStepName(string name)
-    {
-        string stepName = "";
-
-        switch (name)
-        {
-            case "VisitFirstLocationQuestStep":
-                stepName = "Visit Location 1";
-                break;
-            case "VisitSecondLocationQuestStep":
-                stepName = "Visit Location 2";
-                break;
-            case "CollectKeysQuestStep":
-                stepName = "Collect 5 keys";
-                break;
-            default:
-                break;
-        }
-
-        return stepName;
-    }*/
 }
