@@ -158,7 +158,7 @@ public class gameManager : MonoBehaviour
         }
     }
 
-    public void updateAmmo(gunStats gun)
+    public void updateAmmo(weaponStats gun)
     {
         ammoCurText.text = gun.ammoCur.ToString("D3");
         ammoMaxText.text = gun.ammoMax.ToString("D3");

@@ -142,6 +142,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private float horizontalInput;
     private float verticalInput;
 
+    private playerAttack playAtk;
+
     // variable for player input action map
     #endregion Variables
 
@@ -153,6 +155,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void Start()
     {
+        playAtk = GetComponent<playerAttack>();
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
@@ -180,7 +183,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             // not grappling 
             case movementState.grappleNormal:
                 if (!gameManager.instance.isPaused)
-                    //movement();
+                    playAtk.weaponHandler();
 
                 if (Input.GetButtonDown("Open")) // for opening loot chests
                     openChest();
@@ -326,23 +329,23 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         playerStatManager.instance.attackTimer += Time.deltaTime;
         grappleCooldownTimer += Time.deltaTime;
 
-        if (Input.GetButton("Fire1") && inventoryManager.instance.weaponList.Count > 0 && playerStatManager.instance.attackTimer >= playerStatManager.instance.attackCooldown)   //Want button input to be the first condition for performance - other evaluations wont occur unless button is pressed
-        {
-            //if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun && inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur > 0)
-            //{
-                shoot();
-            //}
-            //else if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Melee)
-            //{
-            //    meleeAttack();
-            //}
-            //else if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Magic)
-            //{
-            //    shootMagicProjectile();
-            //}
-        }
-        selectWeapon();
-        gunReload();
+        //if (Input.GetButton("Fire1") && inventoryManager.instance.weaponList.Count > 0 && playerStatManager.instance.attackTimer >= playerStatManager.instance.attackCooldown)   //Want button input to be the first condition for performance - other evaluations wont occur unless button is pressed
+        //{
+        //    //if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun && inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur > 0)
+        //    //{
+        //        shoot();
+        //    //}
+        //    //else if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Melee)
+        //    //{
+        //    //    meleeAttack();
+        //    //}
+        //    //else if (inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Magic)
+        //    //{
+        //    //    shootMagicProjectile();
+        //    //}
+        //}
+        //selectWeapon();
+        //gunReload();
     }
 
     void applyGravity()
@@ -811,233 +814,233 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #endregion Movement
 
     #region Weapons
-    void shoot()
-    {
-        playerStatManager.instance.attackTimer = 0;
-        inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur--;
-        updatePlayerUI();
+    //void shoot()
+    //{
+    //    playerStatManager.instance.attackTimer = 0;
+    //    inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur--;
+    //    updatePlayerUI();
 
-        StartCoroutine(flashMuzzle());
-        audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].gun.shootSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].gun.shootSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].gun.shootVolume);
+    //    StartCoroutine(flashMuzzle());
+    //    audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].gun.shootSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].gun.shootSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].gun.shootVolume);
 
-        RaycastHit hit;
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, playerStatManager.instance.attackDistance, ~ignoreLayer))
-        {
+    //    RaycastHit hit;
+    //    if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, playerStatManager.instance.attackDistance, ~ignoreLayer))
+    //    {
             
-            Instantiate(inventoryManager.instance.weaponList[weaponListPos].gun.hitEffect, hit.point, Quaternion.identity);
+    //        Instantiate(inventoryManager.instance.weaponList[weaponListPos].gun.hitEffect, hit.point, Quaternion.identity);
 
-            //Check if the hit object is a trap
-            traps hitTrap = hit.collider.GetComponent<traps> ();
-            if (hitTrap != null)
-            {
-                //Call a method in the trap script to trigger its effect
-                hitTrap.TriggerTrapEffect();
-            }
+    //        //Check if the hit object is a trap
+    //        traps hitTrap = hit.collider.GetComponent<traps> ();
+    //        if (hitTrap != null)
+    //        {
+    //            //Call a method in the trap script to trigger its effect
+    //            hitTrap.TriggerTrapEffect();
+    //        }
 
-        }
+    //    }
 
-        IDamage damage = hit.collider.GetComponent<IDamage>();
+    //    IDamage damage = hit.collider.GetComponent<IDamage>();
 
-        damage?.takeDamage(playerStatManager.instance.attackDamage);
-    }
+    //    damage?.takeDamage(playerStatManager.instance.attackDamage);
+    //}
 
 
-    public void getWeaponStats()
-    {
-        inventoryManager.instance.changeWeaponPOS(); // Selects the newly added weapon
-        changeWeapon();
+    //public void getWeaponStats()
+    //{
+    //    inventoryManager.instance.changeWeaponPOS(); // Selects the newly added weapon
+    //    changeWeapon();
 
-       // isGunPOSSet = true;
-    }
+    //   // isGunPOSSet = true;
+    //}
 
-    public void removeWeaponUI()
-    {
+    //public void removeWeaponUI()
+    //{
 
-        playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-            Debug.Log("if gun 1");
+    //    playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+    //        Debug.Log("if gun 1");
         
-    }
+    //}
 
-    void changeWeapon()
-    {
-        switch (inventoryManager.instance.weaponList[weaponListPos].type)
-        {
-            case weaponStats.weaponType.primary:
-                changeGun();
-                break;
-            case weaponStats.weaponType.secondary:
-                changeGun();
-                break;
-            case weaponStats.weaponType.special:
-                changeGun();
-                break;
-        }
-    }
+    //void changeWeapon()
+    //{
+    //    switch (inventoryManager.instance.weaponList[weaponListPos].type)
+    //    {
+    //        case weaponStats.weaponType.primary:
+    //            changeGun();
+    //            break;
+    //        case weaponStats.weaponType.secondary:
+    //            changeGun();
+    //            break;
+    //        case weaponStats.weaponType.special:
+    //            changeGun();
+    //            break;
+    //    }
+    //}
     
-    public void changeGun()
-    {
-        playerStatManager.instance.attackDamage = inventoryManager.instance.weaponList[weaponListPos].gun.shootDamage;
-        playerStatManager.instance.attackDistance = inventoryManager.instance.weaponList[weaponListPos].gun.shootRange;
-        playerStatManager.instance.attackCooldown = inventoryManager.instance.weaponList[weaponListPos].gun.shootRate;
-        playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashX, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashY, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashZ), playerStatManager.instance.muzzleFlash.rotation);
+    //public void changeGun()
+    //{
+    //    playerStatManager.instance.attackDamage = inventoryManager.instance.weaponList[weaponListPos].gun.shootDamage;
+    //    playerStatManager.instance.attackDistance = inventoryManager.instance.weaponList[weaponListPos].gun.shootRange;
+    //    playerStatManager.instance.attackCooldown = inventoryManager.instance.weaponList[weaponListPos].gun.shootRate;
+    //    playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashX, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashY, inventoryManager.instance.weaponList[weaponListPos].gun.moveFlashZ), playerStatManager.instance.muzzleFlash.rotation);
 
-        playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
-        playerStatManager.instance.gunModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;
+    //    playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshFilter>().sharedMesh;
+    //    playerStatManager.instance.gunModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].gun.model.GetComponent<MeshRenderer>().sharedMaterial;
     
-        //turnOffWeaponModels();
-    }
+    //    //turnOffWeaponModels();
+    //}
     
-    void changeMeleeWep()
-    {
-        playerStatManager.instance.attackDamage = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDamage;
-        playerStatManager.instance.attackRange = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDistance;
+    //void changeMeleeWep()
+    //{
+    //    playerStatManager.instance.attackDamage = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDamage;
+    //    playerStatManager.instance.attackRange = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeDistance;
 
-        playerStatManager.instance.attackCooldown = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeCooldown;
+    //    playerStatManager.instance.attackCooldown = inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeCooldown;
 
-        playerStatManager.instance.meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshFilter>().sharedMesh;
-        playerStatManager.instance.meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshRenderer>().sharedMaterial;
+    //    playerStatManager.instance.meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshFilter>().sharedMesh;
+    //    playerStatManager.instance.meleeWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].meleeWep.model.GetComponent<MeshRenderer>().sharedMaterial;
     
-        turnOffWeaponModels();
-    }
+    //    turnOffWeaponModels();
+    //}
     
-    void changeMagicWep()
-    {
-        playerStatManager.instance.attackDamage = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDamage;
-        playerStatManager.instance.attackRange = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDitance;
+    //void changeMagicWep()
+    //{
+    //    playerStatManager.instance.attackDamage = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDamage;
+    //    playerStatManager.instance.attackRange = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicDitance;
 
-        playerStatManager.instance.attackCooldown = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicCooldown;
+    //    playerStatManager.instance.attackCooldown = inventoryManager.instance.weaponList[weaponListPos].magicWep.magicCooldown;
 
-        playerStatManager.instance.magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshFilter>().sharedMesh;
-        playerStatManager.instance.magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshRenderer>().sharedMaterial;
+    //    playerStatManager.instance.magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshFilter>().sharedMesh;
+    //    playerStatManager.instance.magicWeaponModel.GetComponent<MeshRenderer>().sharedMaterial = inventoryManager.instance.weaponList[weaponListPos].magicWep.model.GetComponent<MeshRenderer>().sharedMaterial;
     
-        turnOffWeaponModels();
-    }
+    //    turnOffWeaponModels();
+    //}
     
-    void turnOffWeaponModels()
-    {
-        //if (meleeWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Melee)
-        //    meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
+    //void turnOffWeaponModels()
+    //{
+    //    //if (meleeWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Melee)
+    //    //    meleeWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
 
-        //if (magicWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Magic)
-        //    magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
+    //    //if (magicWeaponModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.Magic)
+    //    //    magicWeaponModel.GetComponent<MeshFilter>().sharedMesh = null;
 
-        if (playerStatManager.instance.gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.primary)
-            playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+    //    if (playerStatManager.instance.gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.primary)
+    //        playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
 
-        else if (playerStatManager.instance.gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.secondary)
-            playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+    //    else if (playerStatManager.instance.gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.secondary)
+    //        playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
 
-        else if (playerStatManager.instance.gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.special)
-            playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-    }
+    //    else if (playerStatManager.instance.gunModel != null && inventoryManager.instance.weaponList[weaponListPos].type != weaponStats.weaponType.special)
+    //        playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+    //}
 
-    //&& inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun
-    void gunReload()
-    {
-        if (Input.GetButtonDown("Reload") && inventoryManager.instance.weaponList.Count > 0 )
-        {
-            if (inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve > inventoryManager.instance.weaponList[weaponListPos].gun.ammoMax)          //Check if the player can reload a full clip
-            {
-                inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve -= (inventoryManager.instance.weaponList[weaponListPos].gun.ammoMax - inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur);
-                inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur = inventoryManager.instance.weaponList[weaponListPos].gun.ammoMax;
-                audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].gun.reloadSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].gun.reloadSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].gun.reloadVolume);
-            }
-            else if (inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve > 0)                               //If there is ammo in reserve but not a full clip reload remaining ammo
-            {
-                inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur = inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve;
-                inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve = 0;
-                audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].gun.reloadSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].gun.reloadSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].gun.reloadVolume);
-            }
+    ////&& inventoryManager.instance.weaponList[weaponListPos].type == weaponStats.weaponType.Gun
+    //void gunReload()
+    //{
+    //    if (Input.GetButtonDown("Reload") && inventoryManager.instance.weaponList.Count > 0 )
+    //    {
+    //        if (inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve > inventoryManager.instance.weaponList[weaponListPos].gun.ammoMax)          //Check if the player can reload a full clip
+    //        {
+    //            inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve -= (inventoryManager.instance.weaponList[weaponListPos].gun.ammoMax - inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur);
+    //            inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur = inventoryManager.instance.weaponList[weaponListPos].gun.ammoMax;
+    //            audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].gun.reloadSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].gun.reloadSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].gun.reloadVolume);
+    //        }
+    //        else if (inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve > 0)                               //If there is ammo in reserve but not a full clip reload remaining ammo
+    //        {
+    //            inventoryManager.instance.weaponList[weaponListPos].gun.ammoCur = inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve;
+    //            inventoryManager.instance.weaponList[weaponListPos].gun.ammoReserve = 0;
+    //            audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].gun.reloadSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].gun.reloadSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].gun.reloadVolume);
+    //        }
     
-            updatePlayerUI();
-        }
-    }
+    //        updatePlayerUI();
+    //    }
+    //}
     
     
-    void meleeAttack()
-    {
-        playerStatManager.instance.attackTimer = 0; // Will Reset the cooldown timer
+    //void meleeAttack()
+    //{
+    //    playerStatManager.instance.attackTimer = 0; // Will Reset the cooldown timer
     
-        if (playerStatManager.instance.playerAnimator != null)
-        {
-            playerStatManager.instance.playerAnimator.SetTrigger("MeleeAttack");
-        }
+    //    if (playerStatManager.instance.playerAnimator != null)
+    //    {
+    //        playerStatManager.instance.playerAnimator.SetTrigger("MeleeAttack");
+    //    }
 
-        //StartCoroutine(toggleWepCol());
-        audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeVolume);
+    //    //StartCoroutine(toggleWepCol());
+    //    audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].meleeWep.meleeVolume);
 
 
-        //Activate melee weapon
-        if (playerStatManager.instance.meleeWeaponModel != null)
-        {
-            playerStatManager.instance.meleeWeaponModel.SetActive(true); // Shows the melee weapon during the attack
-        }
+    //    //Activate melee weapon
+    //    if (playerStatManager.instance.meleeWeaponModel != null)
+    //    {
+    //        playerStatManager.instance.meleeWeaponModel.SetActive(true); // Shows the melee weapon during the attack
+    //    }
 
-        //Raycast to detect enemies in melee range
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, playerStatManager.instance.attackRange, ~ignoreLayer))
-        {
-            Debug.Log("Melee hit; " + hit.collider.name);
+    //    //Raycast to detect enemies in melee range
+    //    RaycastHit hit;
+    //    if (Physics.Raycast(transform.position, transform.forward, out hit, playerStatManager.instance.attackRange, ~ignoreLayer))
+    //    {
+    //        Debug.Log("Melee hit; " + hit.collider.name);
 
-            //Apply damage if the object hit implements IDamage
-            IDamage damageable = hit.collider.GetComponent<IDamage>();
-            damageable.takeDamage(playerStatManager.instance.attackDamage);
-        }
+    //        //Apply damage if the object hit implements IDamage
+    //        IDamage damageable = hit.collider.GetComponent<IDamage>();
+    //        damageable.takeDamage(playerStatManager.instance.attackDamage);
+    //    }
 
-    }
+    //}
 
-    void shootMagicProjectile()
-    {
-        playerStatManager.instance.attackTimer = 0;
+    //void shootMagicProjectile()
+    //{
+    //    playerStatManager.instance.attackTimer = 0;
     
-        Instantiate(playerStatManager.instance.magicProjectile, playerStatManager.instance.magicPosition.position, transform.rotation);
-        audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].magicWep.magicSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].magicWep.magicSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].magicWep.magicVolume);
-    }
+    //    Instantiate(playerStatManager.instance.magicProjectile, playerStatManager.instance.magicPosition.position, transform.rotation);
+    //    audioSource.PlayOneShot(inventoryManager.instance.weaponList[weaponListPos].magicWep.magicSounds[Random.Range(0, inventoryManager.instance.weaponList[weaponListPos].magicWep.magicSounds.Length)], inventoryManager.instance.weaponList[weaponListPos].magicWep.magicVolume);
+    //}
     
-    IEnumerator flashMuzzle()
-    {
-        playerStatManager.instance.muzzleFlash.localEulerAngles = new Vector3(0, 0, Random.Range(0, 360));
-        playerStatManager.instance.muzzleFlash.gameObject.SetActive(true);
-        yield return new WaitForSeconds(0.05f);
-        playerStatManager.instance.muzzleFlash.gameObject.SetActive(false);
-    }
+    //IEnumerator flashMuzzle()
+    //{
+    //    playerStatManager.instance.muzzleFlash.localEulerAngles = new Vector3(0, 0, Random.Range(0, 360));
+    //    playerStatManager.instance.muzzleFlash.gameObject.SetActive(true);
+    //    yield return new WaitForSeconds(0.05f);
+    //    playerStatManager.instance.muzzleFlash.gameObject.SetActive(false);
+    //}
     
-    //Switches between weapon types using a mouse scroll wheel
-    void selectWeapon()
-    {
-        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if (scrollInput > 0 && inventoryManager.instance.weaponList.Count > 0)
-        {
-            //weaponListPos++;
-            if (weaponListPos == inventoryManager.instance.weaponList.Count - 1)
-            {
-                weaponListPos = 0;
-            }
-            else
-            {
-                weaponListPos++;
-            }
+    ////Switches between weapon types using a mouse scroll wheel
+    //void selectWeapon()
+    //{
+    //    float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+    //    if (scrollInput > 0 && inventoryManager.instance.weaponList.Count > 0)
+    //    {
+    //        //weaponListPos++;
+    //        if (weaponListPos == inventoryManager.instance.weaponList.Count - 1)
+    //        {
+    //            weaponListPos = 0;
+    //        }
+    //        else
+    //        {
+    //            weaponListPos++;
+    //        }
             
-            inventoryManager.instance.currentEquippedWeapon();
-            changeWeapon();
-            //&& weaponListPos < inventoryManager.instance.weaponList.Count - 1
-        }
-        else if (scrollInput < 0 && inventoryManager.instance.weaponList.Count > 0)
-        {
-            if (weaponListPos == 0)
-            {
-                weaponListPos = inventoryManager.instance.weaponList.Count - 1;
-            }
-            else
-            {
-                weaponListPos--;
-            }
+    //        inventoryManager.instance.currentEquippedWeapon();
+    //        changeWeapon();
+    //        //&& weaponListPos < inventoryManager.instance.weaponList.Count - 1
+    //    }
+    //    else if (scrollInput < 0 && inventoryManager.instance.weaponList.Count > 0)
+    //    {
+    //        if (weaponListPos == 0)
+    //        {
+    //            weaponListPos = inventoryManager.instance.weaponList.Count - 1;
+    //        }
+    //        else
+    //        {
+    //            weaponListPos--;
+    //        }
             
           
-            changeWeapon();
-            inventoryManager.instance.currentEquippedWeapon();
-        }
-    }
+    //        changeWeapon();
+    //        inventoryManager.instance.currentEquippedWeapon();
+    //    }
+    //}
     #endregion Weapons
     
     #region Everything Else
