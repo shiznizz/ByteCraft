@@ -65,7 +65,7 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
         weapon = item.GetWeapon();
         inventoryManager.instance.weaponList.Add(weapon);
 
-        gameManager.instance.player.GetComponent<playerController>().getWeaponStats();
+        gameManager.instance.player.GetComponent<playerAttack>().getWeaponStats();
 
         
         inventoryManager.instance.removeItem(item);
@@ -84,7 +84,7 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
             if (item == inventoryManager.instance.equippedWeapon)
             {
                 // remove current weapons UI and Visual
-                gameManager.instance.player.GetComponent<playerController>().removeWeaponUI();
+                gameManager.instance.player.GetComponent<playerAttack>().removeWeaponUI();
             }
             // remove weapon then change weapon POS to make sure we dont go out of bounds
             inventoryManager.instance.weaponList.Remove(weapon);

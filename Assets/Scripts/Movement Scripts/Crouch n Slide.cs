@@ -29,12 +29,12 @@ public class CrouchnSlide : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        crouch();
     }
 
      void crouch()
     {
-        if (Input.GetButtonDown("Crouch") && !playerStatManager.instance.isPlayerInStartingLevel)
+        if (Input.GetButtonDown("Crouch"))
         {
             // toggles crouch
             if(pc.isGrounded)
