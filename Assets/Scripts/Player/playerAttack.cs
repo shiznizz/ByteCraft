@@ -17,6 +17,8 @@ public class playerAttack : MonoBehaviour
     [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
 
+    private bool isMeleeAttacking = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -27,6 +29,8 @@ public class playerAttack : MonoBehaviour
 
     public void weaponHandler()
     {
+        if (isMeleeAttacking) return;
+
         playerStatManager.instance.attackTimer += Time.deltaTime;
 
         if (Input.GetButton("Fire1") && inventoryManager.instance.weaponList.Count > 0 && playerStatManager.instance.attackTimer >= playerStatManager.instance.attackCooldown)
@@ -64,7 +68,7 @@ public class playerAttack : MonoBehaviour
     void shootRayCast()
     {
         inv.returnCurrentWeapon().ammoCur--;
-        
+
 
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, playerStatManager.instance.attackDistance, ~ignoreLayer))
@@ -85,12 +89,12 @@ public class playerAttack : MonoBehaviour
             damage?.takeDamage(playerStatManager.instance.attackDamage);
         }
 
-        
+
     }
 
     void shootProjectile()
     {
-        Instantiate(inv.returnCurrentWeapon().bulletObj,inv.returnCurrentWeapon().bulletPos, transform.rotation);
+        Instantiate(inv.returnCurrentWeapon().bulletObj, playerStatManager.instance.muzzleFlash.position, transform.rotation);
     }
 
     void shootContinuous()
@@ -220,5 +224,17 @@ public class playerAttack : MonoBehaviour
     void playShootSound()
     {
         audioSource.PlayOneShot(inv.returnCurrentWeapon().shootSounds[Random.Range(0, inv.returnCurrentWeapon().shootSounds.Length)], inv.returnCurrentWeapon().shootVolume);
+    }
+
+    // Call this method to temporarily disable the player's weapons
+    public void DisableWeapons()
+    {
+        isMeleeAttacking = true;
+    }
+
+    // Call this method to re-enable the player's weapons
+    public void EnableWeapons()
+    {
+        isMeleeAttacking = false;
     }
 }
