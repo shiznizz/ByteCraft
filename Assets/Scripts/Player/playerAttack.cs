@@ -94,7 +94,7 @@ public class playerAttack : MonoBehaviour
 
     void shootProjectile()
     {
-        Instantiate(inv.returnCurrentWeapon().bulletObj, playerStatManager.instance.muzzleFlash.position, transform.rotation);
+        Instantiate(inv.returnCurrentWeapon().bulletObj, playerStatManager.instance.muzzleFlash.position, Camera.main.transform.rotation);
     }
 
     void shootContinuous()
