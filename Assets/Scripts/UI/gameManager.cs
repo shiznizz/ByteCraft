@@ -158,7 +158,7 @@ public class gameManager : MonoBehaviour
         }
     }
 
-    public void updateAmmo(gunStats gun)
+    public void updateAmmo(weaponStats gun)
     {
         ammoCurText.text = gun.ammoCur.ToString("D3");
         ammoMaxText.text = gun.ammoMax.ToString("D3");
@@ -187,26 +187,24 @@ public class gameManager : MonoBehaviour
 
     private void CheckLowHealth()
     {
-        // make sure that we don't accidentally divide by 0 if HPMax is 0 or not set
-        if (playerStatManager.instance.playerHPMax <= 0) return;
+        // Check if playerStatManager or lowHealthIndicator is null to avoid NullReferenceException
+        if (playerStatManager.instance == null || lowHealthIndicator == null) return;
 
-        // calculatee current hp ratio
-        float hpRatio = (float)playerStatManager.instance.playerHP / playerStatManager.instance.playerHPMax;
+        if (playerStatManager.instance.HPMax <= 0) return;
 
-        // if below threshold do heartbeat fade in
+        float hpRatio = (float)playerStatManager.instance.HP / playerStatManager.instance.HPMax;
+
         if (hpRatio <= lowHealthThreshold)
         {
             float alpha = baseAlpha + Mathf.Sin(Time.time * heartbeatSpeed) * heartbeatMagnitude;
-            alpha = Mathf.Clamp01(alpha); // clamp so it never goes below 0 or above 1
+            alpha = Mathf.Clamp01(alpha);
 
-            // apply to alpha to indicator image
             Color c = lowHealthIndicator.color;
             c.a = alpha;
             lowHealthIndicator.color = c;  
         }
         else
         {
-            // fade out if HP is above threshold
             Color c = lowHealthIndicator.color;
             c.a = Mathf.MoveTowards(c.a, 0f, Time.deltaTime);
             lowHealthIndicator.color = c;

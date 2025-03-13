@@ -15,6 +15,7 @@ public class inventoryManager : MonoBehaviour
     public List<itemSO> inventory = new List<itemSO>();
 
     public List<weaponStats> weaponList = new List<weaponStats>();
+    public int weaponListPos;
 
     public weaponStats equippedWeapon;
 
@@ -27,6 +28,7 @@ public class inventoryManager : MonoBehaviour
     {
         instance = this;
     }
+
     // adds item to inventory
     public void addItem(itemSO item)
     {
@@ -35,17 +37,17 @@ public class inventoryManager : MonoBehaviour
             weapon = item.GetWeapon();
         }
 
-        if (weapon.type == weaponStats.weaponType.primary && !inventorySlot.GetComponent<SlotBoss>().primaryWeapon.isFull)
+        if (weapon.wepType == weaponStats.weaponType.primary && !inventorySlot.GetComponent<SlotBoss>().primaryWeapon.isFull)
         {
             Debug.Log("7");
             inventorySlot.GetComponent<SlotBoss>().equipGear(item);
         }
-        else if (weapon.type == weaponStats.weaponType.secondary && !inventorySlot.GetComponent<SlotBoss>().secondaryWeapon.isFull)
+        else if (weapon.wepType == weaponStats.weaponType.secondary && !inventorySlot.GetComponent<SlotBoss>().secondaryWeapon.isFull)
         {
             Debug.Log("8");
             inventorySlot.GetComponent<SlotBoss>().equipGear(item);
         }
-        else if(weapon.type == weaponStats.weaponType.special && !inventorySlot.GetComponent<SlotBoss>().specialWeapon.isFull)
+        else if(weapon.wepType == weaponStats.weaponType.special && !inventorySlot.GetComponent<SlotBoss>().specialWeapon.isFull)
         {
             Debug.Log("9");
             inventorySlot.GetComponent<SlotBoss>().equipGear(item);
@@ -69,8 +71,8 @@ public class inventoryManager : MonoBehaviour
     {
         try
         {
-            equippedWeapon = weaponList[gameManager.instance.player.GetComponent<playerController>().weaponListPos];
-            gameManager.instance.player.GetComponent<playerController>().changeGun();
+            equippedWeapon = weaponList[weaponListPos];
+            gameManager.instance.player.GetComponent<playerAttack>().changeGun();
         }
         catch
         {
@@ -81,15 +83,20 @@ public class inventoryManager : MonoBehaviour
     // change weapon POS
     public void changeWeaponPOS()
     {
-            if (gameManager.instance.player.GetComponent<playerController>().weaponListPos - 1 < 0)
+            if (weaponListPos - 1 < 0)
             {
-                gameManager.instance.player.GetComponent<playerController>().weaponListPos = 0;
+                weaponListPos = 0;
             }
             else
             {
-                gameManager.instance.player.GetComponent<playerController>().weaponListPos--;
+                weaponListPos--;
             }
         currentEquippedWeapon();
+    }
+
+    public weaponStats returnCurrentWeapon()
+    {
+        return weaponList[weaponListPos];
     }
 }
 
