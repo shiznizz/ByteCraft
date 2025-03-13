@@ -79,19 +79,19 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
             legSlot.isFull = true;
         }
 
-        else if (gear.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.primary && !primaryWeapon.isFull) 
+        else if (gear.itemTypye == itemSO.itemType.Weapon && weapon.wepType == weaponStats.weaponType.primary && !primaryWeapon.isFull) 
         {
             primaryWeapon.equipGear(gear);
             primaryWeapon.isFull = true;
         }
 
-        else if (gear.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.secondary && !secondaryWeapon.isFull)
+        else if (gear.itemTypye == itemSO.itemType.Weapon && weapon.wepType == weaponStats.weaponType.secondary && !secondaryWeapon.isFull)
         {
             secondaryWeapon.equipGear(gear);
             secondaryWeapon.isFull = true;
         }
 
-        else if (gear.itemTypye == itemSO.itemType.Weapon && weapon.type == weaponStats.weaponType.special && !specialWeapon.isFull)
+        else if (gear.itemTypye == itemSO.itemType.Weapon && weapon.wepType == weaponStats.weaponType.special && !specialWeapon.isFull)
         {
             specialWeapon.equipGear(gear);
             specialWeapon.isFull = true;

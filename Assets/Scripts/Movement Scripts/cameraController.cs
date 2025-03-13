@@ -33,7 +33,7 @@ public class cameraController : MonoBehaviour
             rotX += mouseY;
         else
             rotX -= mouseY;
-            
+
 
         rotX = Mathf.Clamp(rotX, lockVertMin, lockVertMax);
 

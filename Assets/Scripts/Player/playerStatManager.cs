@@ -15,6 +15,8 @@ public class playerStatManager : MonoBehaviour
     public float playerHeight;
     public float standingHeight = 2f;
     public float crouchHeight = 0.5f;
+    public int playerHPMax = 100;
+    public int playerHP;
 
     public int upgradeCurrency;
 
@@ -60,8 +62,41 @@ public class playerStatManager : MonoBehaviour
     public float wallJumpUpForce;
     public float wallJumpSideForce;
 
-    [Header("Starting Level bool")]
-    public bool isPlayerInStartingLevel;
+    [Header("Common Weapon Options")]
+    public float attackCooldown;
+    public int attackDamage;
+    public int attackDistance;
+    public int attackRange;
+
+    [Header("Range Options")]
+    public GameObject gunModel;
+    public weaponStats startGun;
+    public Transform muzzleFlash;
+
+    [Header("Melee Options")]
+    public GameObject meleeWeaponModel;
+    public weaponStats startMelee;
+    public Animator playerAnimator;
+    public Collider meleeCol;
+
+    [Header("Magic Options")]
+    public GameObject magicWeaponModel;
+    public weaponStats startMagic;
+    public GameObject magicProjectile; // Projectile Prefab
+    public float magicProjectileSpeed; // Speed of projectile
+    public Transform magicPosition;
+
+    //bool isGunPOSSet;
+
+    public float shootTimer;
+    public float attackTimer;
+
+    //Tracks which weapon is active
+    public enum WeaponType { Gun, Melee, Magic }
+    public WeaponType currentWeapon = WeaponType.Gun;
+    //[Header("Starting Level bool")]
+    //public bool isPlayerInStartingLevel;
+
 
     public void Awake()
     {
