@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
@@ -18,10 +19,13 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] Animator anim;
 
     [Header("Enemy Stats")]
+    [SerializeField] Image hpFillBar;
+    [SerializeField] Canvas hpBar;
     [SerializeField] int HP;
     [SerializeField] int animTransSpeed;
     [SerializeField] int faceTargetSpeed;
     [SerializeField] int FOV; //Field of View
+    private int HPOrginal;
 
     [Header("Ranged Enemy Options")]
     [SerializeField] Transform headPos; //Head position
@@ -71,6 +75,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        HPOrginal = HP;
         colorOrig = model.material.color;
         gameManager.instance.updateGameGoal(1);
         startingPos = transform.position;
@@ -87,6 +92,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     // Update is called once per frame
     void Update()
     {
+       updateEnemyUI();
         if (type != enemyType.stationary)
         {
             float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
@@ -104,6 +110,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             checkRoam();
         else if (!playerInRange)
             checkRoam();
+    }
+
+    void updateEnemyUI()
+    {
+        hpFillBar.fillAmount = (float)HP / HPOrginal;
+        hpBar.transform.LookAt(gameManager.instance.player.transform.position);
     }
 
     #region EnemyMovement
@@ -226,8 +238,18 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     #endregion EnemyMovement
 
     #region EnemyDamage
+    IEnumerator enemyShowHpBar()
+    {
+        hpBar.gameObject.SetActive(true);
+
+        yield return new WaitForSecondsRealtime(5f);
+
+        hpBar.gameObject.SetActive(false);
+    }
     public void takeDamage(int amount)
     {
+        StartCoroutine(enemyShowHpBar());
+
         HP -= amount;
         StartCoroutine(flashRed());
         anim.SetTrigger("damage");
@@ -259,6 +281,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     private void handleDeath()
     {
+        hpBar.gameObject.SetActive(false);
         //Disable the collider
         if (enemyCollider != null)
         {
