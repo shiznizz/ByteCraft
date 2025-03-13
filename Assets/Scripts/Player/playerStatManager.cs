@@ -15,6 +15,8 @@ public class playerStatManager : MonoBehaviour
     public float playerHeight;
     public float standingHeight = 2f;
     public float crouchHeight = 0.5f;
+    public int playerHPMax = 100;
+    public int playerHP;
 
     [Header("Player Base Movement")]
 
