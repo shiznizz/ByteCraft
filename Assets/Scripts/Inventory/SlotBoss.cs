@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -10,14 +11,23 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
     public weaponStats weapon;
     
     public GameObject selectedSlot;
-    
+
+    public itemSO selectedItem;
 
     public bool isSelected;
     public bool isFull;
 
+
     public equipSlot headSlot, chestSlot, legSlot, 
                      gloveSlot, primaryWeapon, secondaryWeapon, specialWeapon;
-    
+
+    public void LateUpdate()
+    {
+        if (selectedItem != null && Input.GetButtonDown("Delete"))
+        {
+            deleteItem();
+        }
+    }
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -26,8 +36,7 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
            if (isSelected)
            {
                 gameManager.instance.deselectSlot();
-            }
-               // gameManager.instance.deselectItem();
+           }
             else if (!isSelected && isFull)
             {
                 if (gameManager.instance.selectedInventorySlot != null || gameManager.instance.selectedEquipSlot != null)
@@ -110,10 +119,48 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
         gameManager.instance.itemDescription.text = item.itemDescription ;
         gameManager.instance.itemName.text = item.itemName;
         gameManager.instance.itemIcon.sprite = item.itemIcon;
+
+        selectedItem = item;
+
     }
 
     public void clearSlot()
     {
         inventoryManager.instance.removeItem(item);
+    }
+
+    public void deleteItem()
+    {
+        gameManager.instance.deselectSlot();
+
+        gameManager.instance.selectedInventorySlot = null;
+
+        isSelected = false;
+        isFull = false;
+        gameManager.instance.displaySlot.SetActive(false);
+
+        gameManager.instance.itemDescription.text = null;
+        gameManager.instance.itemName.text = null;
+        gameManager.instance.itemIcon.sprite = null;
+
+        
+
+        inventoryManager.instance.inventory.Remove(selectedItem);
+
+        StartCoroutine(deletePopUp());
+
+        selectedItem = null;
+
+        gameManager.instance.updateInventory();
+
+        
+    }
+
+    IEnumerator deletePopUp()
+    {
+        Debug.Log(selectedItem.itemName);
+        gameManager.instance.deleteNotifaction.text = selectedItem.itemName + " Deleted";
+        yield return new WaitForSecondsRealtime(1.5f);
+        gameManager.instance.deleteNotifaction.text = " ";
     }
 }

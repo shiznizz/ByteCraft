@@ -15,6 +15,7 @@ public class inventoryManager : MonoBehaviour
     public List<itemSO> inventory = new List<itemSO>();
 
     public List<weaponStats> weaponList = new List<weaponStats>();
+
     public int weaponListPos;
 
     public weaponStats equippedWeapon;
