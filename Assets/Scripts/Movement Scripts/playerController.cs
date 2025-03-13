@@ -181,8 +181,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
         // switches states of grapple
-
-
         //switch (grappleState)
         //{
         //    // not grappling 
@@ -219,7 +217,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void movePlayer()
     {
         moveDir = (horizontalInput * orientation.right) + (verticalInput * orientation.forward);
-        rb.AddForce(moveDir.normalized * playerStatManager.instance.walkSpeed * 10f, ForceMode.Force);
+        rb.AddForce(moveDir.normalized * playerStatManager.instance.currSpeed * 10f, ForceMode.Force);
 
     }
 
@@ -232,6 +230,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             Vector3 limitVelocity = flatVelocity.normalized * playerStatManager.instance.currSpeed;
             rb.linearVelocity = new Vector3(limitVelocity.x, rb.linearVelocity.y, limitVelocity.z);
         }
+    }
+
+    private void setPlayerSpeed()
+    {
+        playerStatManager.instance.currSpeed = isSprinting ? playerStatManager.instance.sprintSpeed : isSliding ? playerStatManager.instance.slideSpeed
+                    : isCrouching ? playerStatManager.instance.crouchSpeed : playerStatManager.instance.walkSpeed;
     }
 
     void move()
@@ -356,7 +360,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void applyGravity()
     {
         // call if not grounded or wall running.
-        // check if needs to be placed in update or fixed update
+        // needs to be placed in fixed update
         rb.AddForce(new Vector3(0, playerStatManager.instance.gravity * Time.deltaTime, 0));
 
         // old gravity code below

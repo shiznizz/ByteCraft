@@ -15,7 +15,8 @@ public class WallRunning : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+       if(!pc.isGrounded)
+            checkWall();
     }
 
     private void FixedUpdate()
