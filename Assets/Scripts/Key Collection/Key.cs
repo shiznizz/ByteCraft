@@ -26,14 +26,7 @@ public class Key : MonoBehaviour
         GameEventsManager.instance.keyEvents.KeyGained(keyGained);
         GameEventsManager.instance.miscEvents.KeyCollected();
         StopAllCoroutines();
-        StartCoroutine(RespawnAfterTime());
-    }
-
-    private IEnumerator RespawnAfterTime()
-    {
-        yield return new WaitForSeconds(respawnTimeSeconds);
-        sphereCollider.enabled = true;
-        visual.gameObject.SetActive(true);
+        Destroy(this.gameObject);
     }
 
     private void OnTriggerEnter(Collider other)
