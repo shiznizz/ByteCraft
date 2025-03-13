@@ -74,6 +74,7 @@ public class Quest
         if (stepIndex < questStepStates.Length)
         {
             questStepStates[stepIndex].state = questStepState.state;
+            questStepStates[stepIndex].status = questStepState.status;
         } else
         {
             Debug.LogWarning("Tried to access quest step data, but stepIndex was out of range: " + "QuestId=" + info.id + ", StepIndex=" + stepIndex);
@@ -85,7 +86,7 @@ public class Quest
         return new QuestData(state, currentQuestStepIndex, questStepStates);
     }
 
-    /*public string GetFullStatusText()
+    public string GetFullStatusText()
     {
         string fullStatus = "";
 
@@ -97,16 +98,16 @@ public class Quest
         {
             fullStatus = "This quest can be started!";
         }
-        else if (state == QuestState.IN_PROGRESS)
+/*        else if (state == QuestState.IN_PROGRESS)
         {
             fullStatus = "This quest is in progress!";
-        }
+        }*/
         else
         {
             // display all previous quests with strikethroughs
             for (int i = 0; i < currentQuestStepIndex; i++)
             {
-                fullStatus += "<s>" + questStepStates[i].status + "</s>";
+                fullStatus += "<s>" + questStepStates[i].status + "</s>" + "\n";
             }
             // display the current step, if it exists
             if (CurrentStepExists())
@@ -125,5 +126,5 @@ public class Quest
         }
 
         return fullStatus;
-    }*/
+    }
 }

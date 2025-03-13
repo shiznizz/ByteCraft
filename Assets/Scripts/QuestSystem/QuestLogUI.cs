@@ -11,7 +11,6 @@ public class QuestLogUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI questStatusText;
     [SerializeField] private TextMeshProUGUI experienceRewardsText;
     [SerializeField] private TextMeshProUGUI questRequirementsText;
-    [SerializeField] private TextMeshProUGUI questStepsText;
 
     public bool isShowing;
 
@@ -72,14 +71,7 @@ public class QuestLogUI : MonoBehaviour
         questDisplayNameText.text = quest.info.displayName;
 
         // status
-        //questStatusText.text = quest.GetFullStatusText();
-
-        // steps
-        questStepsText.text = "";
-        foreach (GameObject questStep in quest.info.questStepPrefabs)
-        {
-            questStepsText.text += GetQuestStepName(questStep.name) + "\n";
-        }
+        questStatusText.text = quest.GetFullStatusText();
 
         // requirements
         questRequirementsText.text = "";
@@ -92,7 +84,7 @@ public class QuestLogUI : MonoBehaviour
         experienceRewardsText.text = quest.info.experienceReward + " XP";
     }
 
-    private string GetQuestStepName(string name)
+/*    private string GetQuestStepName(string name)
     {
         string stepName = "";
 
@@ -112,5 +104,5 @@ public class QuestLogUI : MonoBehaviour
         }
 
         return stepName;
-    }
+    }*/
 }

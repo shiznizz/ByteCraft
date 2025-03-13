@@ -6,6 +6,15 @@ using System.Collections.Generic;
 public class VisitLocationQuestStep : QuestStep
 {
 
+    [Header("Config")]
+    [SerializeField] private string locationNumberString = "first";
+
+    public void Start()
+    {
+        string status = "Visit the " + locationNumberString + " location.";
+        ChangeState("", status);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))

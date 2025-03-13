@@ -6,6 +6,11 @@ public class CollectKeysQuestStep : QuestStep
     private int keysCollected = 0;
     private int keysToCollect = 5;
 
+    private void Start()
+    {
+        UpdateState();
+    }
+
     private void OnEnable()
     {
         // TODO - Set up misc events to detect that a key has been collected
@@ -33,7 +38,8 @@ public class CollectKeysQuestStep : QuestStep
     private void UpdateState()
     {
         string state = keysCollected.ToString();
-        ChangeState(state);
+        string status = "Collected " + keysCollected + " / " + keysToCollect + " keys.";
+        ChangeState(state, status);
     }
 
     protected override void SetQuestStepState(string state)
