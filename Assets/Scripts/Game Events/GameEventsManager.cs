@@ -4,9 +4,10 @@ public class GameEventsManager : MonoBehaviour
 {
     public static GameEventsManager instance { get; private set; }
 
+    public KeyEvents keyEvents;
     public MiscEvents miscEvents;
     public QuestEvents questEvents;
-    public KeyEvents keyEvents;
+    public DialogueEvents dialogueEvents;
     private void Awake()
     {
         if (instance != null)
@@ -19,6 +20,7 @@ public class GameEventsManager : MonoBehaviour
         keyEvents = new KeyEvents();
         miscEvents = new MiscEvents();
         questEvents = new QuestEvents();
+        dialogueEvents = new DialogueEvents();
     }
 
 }
