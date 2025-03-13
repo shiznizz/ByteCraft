@@ -49,8 +49,10 @@ public class gameManager : MonoBehaviour
 
     public Image itemIcon;
 
+    public TMP_Text deleteNotifaction;
     public TMP_Text itemDescription;
     public TMP_Text itemName;
+
     public GameObject displaySlot;
 
     [Header("Low Health Screen Indicator")]
@@ -90,7 +92,7 @@ public class gameManager : MonoBehaviour
             switchMenu(menuInventory);
         }
 
-        CheckLowHealth();
+        //CheckLowHealth();
     }
 
     #region Menus
