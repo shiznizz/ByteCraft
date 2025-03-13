@@ -22,5 +22,6 @@ public enum itemType
     Melee,
     Pet,
     Ammo,
-    Fuel
+    Fuel,
+    Key
 }
