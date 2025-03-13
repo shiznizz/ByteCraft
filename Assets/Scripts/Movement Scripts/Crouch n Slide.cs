@@ -29,7 +29,7 @@ public class CrouchnSlide : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        crouch();
     }
 
      void crouch()
