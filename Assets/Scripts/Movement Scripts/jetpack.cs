@@ -22,7 +22,7 @@ public class jetpackScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerStatManager.instance.hasJetpack)
+        if (Input.GetButtonDown("Jump") && playerStatManager.instance.hasJetpack)
             rigidJump();
 
         handleJetpackFuelRegen();
@@ -30,7 +30,7 @@ public class jetpackScript : MonoBehaviour
 
     void rigidJump()
     {
-        if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
+        if (playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
         {
             playerStatManager.instance.jumpCount++;
 
