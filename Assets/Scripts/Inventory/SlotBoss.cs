@@ -158,7 +158,7 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
 
     IEnumerator deletePopUp()
     {
-        Debug.Log(selectedItem.itemName);
+        
         gameManager.instance.deleteNotifaction.text = selectedItem.itemName + " Deleted";
         yield return new WaitForSecondsRealtime(1.5f);
         gameManager.instance.deleteNotifaction.text = " ";
