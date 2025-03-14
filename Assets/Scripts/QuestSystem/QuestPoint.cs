@@ -29,13 +29,13 @@ public class QuestPoint : MonoBehaviour
 
     private void Update()
     {
-        SubmitPressed();
+        //SubmitPressed();
         if (Input.GetButtonDown("Marker") && currentQuestState.Equals(QuestState.IN_PROGRESS))
             model.enabled = true;
         else if (Input.GetButtonUp("Marker"))
             model.enabled = false;
 
-        //if (Input.GetButtonDown("Accept")) SubmitPressed();
+        if (Input.GetButtonDown("Accept")) SubmitPressed();
     }
 
     private void OnEnable()

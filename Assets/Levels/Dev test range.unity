@@ -1040,6 +1040,17 @@ MonoBehaviour:
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
+--- !u!114 &986202830 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6924025230929544033, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 2054596180}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c5bdf9593743f84f8c2f144892991c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1006676100
 GameObject:
   m_ObjectHideFlags: 0
@@ -1220,7 +1231,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a32fa44d7d0944ab65c4cfa2281499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogueKnotName: npc
+  dialogueKnotName: collectKeysStart
   questInfoForPoint: {fileID: 11400000, guid: 4991af779a473ae4694be43a90ce5a12, type: 2}
   startPoint: 1
   endPoint: 1
@@ -1389,6 +1400,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0158366864f8edb418e608d60ac07830, type: 3}
+--- !u!114 &1310354103 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7295971439331231601, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 2054596180}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c5bdf9593743f84f8c2f144892991c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!120 &1381159915 stripped
 LineRenderer:
   m_CorrespondingSourceObject: {fileID: 7902225201289031933, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
@@ -1474,6 +1496,17 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1817004603}
   m_SourcePrefab: {fileID: 100100000, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
+--- !u!114 &1511208721 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6987140391114476013, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 2054596180}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c5bdf9593743f84f8c2f144892991c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1513874384
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2077,6 +2110,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: KeyQuestPoint
       objectReference: {fileID: 0}
+    - target: {fileID: 3475095941940134294, guid: 8cc4cca0693d9514780a53af9475828f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3498037950326443333, guid: 8cc4cca0693d9514780a53af9475828f, type: 3}
+      propertyPath: dialogueKnotName
+      value: collectKeysStart
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2313,6 +2354,10 @@ PrefabInstance:
     - target: {fileID: 312602805060143382, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 380242708766698074, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 629847988652594019, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_AnchorMax.y
@@ -2674,6 +2719,26 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5355341655730626381, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: choiceButtons.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5355341655730626381, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: 'choiceButtons.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1579345470544591663}
+    - target: {fileID: 5355341655730626381, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: 'choiceButtons.Array.data[1]'
+      value: 
+      objectReference: {fileID: 986202830}
+    - target: {fileID: 5355341655730626381, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: 'choiceButtons.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1310354103}
+    - target: {fileID: 5355341655730626381, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: 'choiceButtons.Array.data[3]'
+      value: 
+      objectReference: {fileID: 1511208721}
     - target: {fileID: 5387130209838567358, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -3180,6 +3245,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 89909af6d78d4364583225bec4840a15, type: 3}
+--- !u!114 &1579345470544591663 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3175484923847877053, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 2054596180}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c5bdf9593743f84f8c2f144892991c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2363083836727812053
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using Ink.Runtime;
 
 public class DialogueEvents
 {
@@ -23,9 +24,15 @@ public class DialogueEvents
         onDialogueFinished?.Invoke();
     }
 
-    public event Action<string> onDisplayDialogue;
-    public void DisplayDialogue(string dialogueLine)
+    public event Action<string, List<Choice>> onDisplayDialogue;
+    public void DisplayDialogue(string dialogueLine, List<Choice> dialogueChoices)
     {
-        onDisplayDialogue?.Invoke(dialogueLine);
+        onDisplayDialogue?.Invoke(dialogueLine, dialogueChoices);
+    }
+
+    public event Action<int> onUpdateChoiceIndex;
+    public void UpdateChoiceIndex(int choiceIndex)
+    {
+        onUpdateChoiceIndex?.Invoke(choiceIndex);
     }
 }

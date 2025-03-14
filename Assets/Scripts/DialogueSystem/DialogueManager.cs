@@ -8,6 +8,7 @@ public class DialogueManager : MonoBehaviour
     [Header("Ink Story")]
     [SerializeField] private TextAsset inkJson;
     private Story story;
+    private int currentChoiceIndex = -1;
 
     private bool dialoguePlaying = false;
 
@@ -33,17 +34,28 @@ public class DialogueManager : MonoBehaviour
     private void OnEnable()
     {
         GameEventsManager.instance.dialogueEvents.onEnterDialogue += EnterDialogue;
+        GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex += UpdateChoiceIndex;
     }
 
     private void OnDisable()
     {
         GameEventsManager.instance.dialogueEvents.onEnterDialogue -= EnterDialogue;
+        GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex -= UpdateChoiceIndex;
+    }
+
+    private void UpdateChoiceIndex(int choiceInex)
+    {
+        this.currentChoiceIndex = choiceInex;
     }
 
     private void EnterDialogue(string knotName)
     {
-        Debug.Log("Entering dialogue.");
-        if (dialoguePlaying) return; // don't enter dialogue if we've already entered
+        if (dialoguePlaying)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+            return; // don't enter dialogue if we've already entered
+        }
 
         dialoguePlaying = true;
 
@@ -67,12 +79,20 @@ public class DialogueManager : MonoBehaviour
 
     private void ContinueOrExitStory()
     {
+        // make a choice, if applicable
+        if (story.currentChoices.Count > 0 && currentChoiceIndex != -1)
+        {
+            story.ChooseChoiceIndex(currentChoiceIndex);
+            // reset choice index for next time
+            currentChoiceIndex = -1;
+        }
+
         if (story.canContinue)
         {
             string dialogueLine = story.Continue();
-            GameEventsManager.instance.dialogueEvents.DisplayDialogue(dialogueLine);
+            GameEventsManager.instance.dialogueEvents.DisplayDialogue(dialogueLine, story.currentChoices);
         }
-        else
+        else if (story.currentChoices.Count == 0)
         {
             StartCoroutine(ExitDialogue());
         }

@@ -1,13 +1,9 @@
-=== npc ===
-Hey there!
-Are you looking for a quest?
--> END
+-> collectCoinsStart
 
-=== collectKeysStart ===
+=== collectCoinsStart ===
 Will you collect 5 keys and bring them to my friend over there?
 * [Yes]
     Great!
-    -> END
 * [No]
     Oh, ok then. Come back if you change your mind.
-    -> END
+- -> END
