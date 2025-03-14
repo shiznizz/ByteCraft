@@ -29,13 +29,13 @@ public class QuestPoint : MonoBehaviour
 
     private void Update()
     {
-/*        SubmitPressed();*/
+        SubmitPressed();
         if (Input.GetButtonDown("Marker") && currentQuestState.Equals(QuestState.IN_PROGRESS))
             model.enabled = true;
         else if (Input.GetButtonUp("Marker"))
             model.enabled = false;
 
-        if (Input.GetButtonDown("Accept")) SubmitPressed();
+        //if (Input.GetButtonDown("Accept")) SubmitPressed();
     }
 
     private void OnEnable()
@@ -58,7 +58,9 @@ public class QuestPoint : MonoBehaviour
         // if we have a knot name defined, try to start dialogue with it
         if (!dialogueKnotName.Equals(""))
         {
+            Debug.Log("Correctly accessing dialogue knot name.");
             GameEventsManager.instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+            Debug.Log("Fired off enter dialogue event");
         }
         // otherwise, start or finish the quest immediately without dialogue
         else

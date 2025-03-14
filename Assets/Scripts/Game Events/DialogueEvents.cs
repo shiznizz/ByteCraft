@@ -8,9 +8,24 @@ public class DialogueEvents
     public event Action<string> onEnterDialogue;
     public void EnterDialogue(string knotName)
     {
-        if (onEnterDialogue != null)
-        {
-            onEnterDialogue?.Invoke(knotName);
-        }
+        onEnterDialogue?.Invoke(knotName);
+    }
+
+    public event Action onDialogueStarted;
+    public void DialogueStarted()
+    {
+        onDialogueStarted?.Invoke();
+    }
+
+    public event Action onDialogueFinished;
+    public void DialogueFinished()
+    {
+        onDialogueFinished?.Invoke();
+    }
+
+    public event Action<string> onDisplayDialogue;
+    public void DisplayDialogue(string dialogueLine)
+    {
+        onDisplayDialogue?.Invoke(dialogueLine);
     }
 }
