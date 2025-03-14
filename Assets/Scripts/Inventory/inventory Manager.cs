@@ -41,25 +41,25 @@ public class inventoryManager : MonoBehaviour
 
         if (weapon.wepType == weaponStats.weaponType.primary && !inventorySlot.GetComponent<SlotBoss>().primaryWeapon.isFull)
         {
-            Debug.Log("7");
+            //Debug.Log("7");
             inventorySlot.GetComponent<SlotBoss>().equipGear(item);
         }
         else if (weapon.wepType == weaponStats.weaponType.secondary && !inventorySlot.GetComponent<SlotBoss>().secondaryWeapon.isFull)
         {
-            Debug.Log("8");
+            //Debug.Log("8");
             inventorySlot.GetComponent<SlotBoss>().equipGear(item);
         }
         else if(weapon.wepType == weaponStats.weaponType.special && !inventorySlot.GetComponent<SlotBoss>().specialWeapon.isFull)
         {
-            Debug.Log("9");
+            //Debug.Log("9");
             inventorySlot.GetComponent<SlotBoss>().equipGear(item);
         }
         else
         {
-            Debug.Log("2");
+            //Debug.Log("2");
             inventory.Add(item);
         }
-        Debug.Log("3");
+        //Debug.Log("3");
         gameManager.instance.updateInventory();
     }
     // removes item from inventory

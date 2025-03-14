@@ -108,29 +108,32 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void Update()
     {
-        playerInput();
-        SpeedControl();
-        checkGround();
-        
-        updatePlayerUI();
-        playAtk.weaponHandler();
-
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
-        //switches states of grapple
-        switch (grappleState)
+        if (!gameManager.instance.isPaused)
         {
-            // not grappling 
-            case movementState.grappleNormal:
-                if (!gameManager.instance.isPaused)
-                    //movement();
+            playerInput();
+            SpeedControl();
+            checkGround();
 
-                    if (Input.GetButtonDown("Open")) // for opening loot chests
-                        openChest();
-                break;
-            // is grappling
-            case movementState.grappleMoving:
-                grappleMovement();
-                break;
+            updatePlayerUI();
+            playAtk.weaponHandler();
+
+            Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
+            //switches states of grapple
+            switch (grappleState)
+            {
+                // not grappling 
+                case movementState.grappleNormal:
+                    if (!gameManager.instance.isPaused)
+                        //movement();
+
+                        if (Input.GetButtonDown("Open")) // for opening loot chests
+                            openChest();
+                    break;
+                // is grappling
+                case movementState.grappleMoving:
+                    grappleMovement();
+                    break;
+            }
         }
     }
 

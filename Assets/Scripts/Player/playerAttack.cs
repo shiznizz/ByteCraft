@@ -52,7 +52,7 @@ public class playerAttack : MonoBehaviour
 
         if (inv.returnCurrentWeapon().attackType == weaponStats.bulletType.RayCast)
         {
-            Debug.Log("Ray");
+            //Debug.Log("Ray");
             shootRayCast();
         }
         else if (inv.returnCurrentWeapon().attackType == weaponStats.bulletType.Projectile)
@@ -71,7 +71,7 @@ public class playerAttack : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, playerStatManager.instance.attackDistance, ~ignoreLayer))
         {
-            Debug.Log(hit.collider.name);
+            //Debug.Log(hit.collider.name);
             if (inv.returnCurrentWeapon().hitEffect != null)
                 Instantiate(inv.returnCurrentWeapon().hitEffect, hit.point, Quaternion.identity);
 

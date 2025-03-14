@@ -62,7 +62,7 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
     public void equipGear(itemSO gear)
     {
         weapon = gear.GetWeapon();
-        Debug.Log(weapon);
+        //Debug.Log(weapon);
 
         if (gear.itemTypye == itemSO.itemType.Head && !headSlot.isFull)
         { 
