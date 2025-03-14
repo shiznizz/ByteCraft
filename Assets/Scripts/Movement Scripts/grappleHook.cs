@@ -62,7 +62,7 @@ public class grappleHook : MonoBehaviour
         // apply momentum
         playerVelocity += playerMomentum;
 
-
+        pc.applyGravity();
         // grapple code
         if (playerMomentum.magnitude >= 0f)
         {
@@ -82,12 +82,6 @@ public class grappleHook : MonoBehaviour
 
         playerStatManager.instance.attackTimer += Time.deltaTime;
         grappleCooldownTimer += Time.deltaTime;
-    }
-
-    void applyGravity()
-    {
-        // adds a continous downwards force to the rigidbody
-        rb.AddForce(Vector3.down * playerStatManager.instance.gravity);
     }
 
     // handles where the grapple is hitting

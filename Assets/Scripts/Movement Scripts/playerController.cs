@@ -114,7 +114,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
             if (Input.GetButtonDown("Open")) // for opening loot chests
                 openChest();
-
+            #region stale
             ////switches states of grapple
             //switch (grappleState)
             //{
@@ -128,6 +128,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             //        grappleMovement();
             //        break;
             //}
+            #endregion stale
         }
     }
 
@@ -284,7 +285,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     //    grappleCooldownTimer += Time.deltaTime;
     //}
 
-    void applyGravity()
+    public void applyGravity()
     {
         // adds a continous downwards force to the rigidbody
         rb.AddForce(Vector3.down * playerStatManager.instance.gravity);

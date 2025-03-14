@@ -63,7 +63,6 @@ public class jetpackScript : MonoBehaviour
                 StopCoroutine(jetpackCoroutine);
                 jetpackCoroutine = null;
             }
-
             pc.isJetpacking = false;
         }
     }
@@ -94,11 +93,9 @@ public class jetpackScript : MonoBehaviour
                 playerStatManager.instance.jetpackFuel = Mathf.Clamp(playerStatManager.instance.jetpackFuel, 0, playerStatManager.instance.jetpackFuelMax); // Clamp fuel between 0 and max
             }
         }
+        // Reset the regen timer if fuel is full
         else
-        {
-            // Reset the regen timer if fuel is full
             jetpackFuelRegenTimer = 0f;
-        }
     }
 
     IEnumerator jetpackWait()

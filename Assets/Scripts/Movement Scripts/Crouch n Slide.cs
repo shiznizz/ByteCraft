@@ -45,6 +45,9 @@ public class CrouchnSlide : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // because gravity wasn't working when crouching or sliding
+        if ((!pc.isWallRunning || !pc.isGrounded) && (pc.isCrouching || pc.isSliding)) 
+            pc.applyGravity();
         if (pc.isSliding && pc.isGrounded)
             slideMovement();
     }
