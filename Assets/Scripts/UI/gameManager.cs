@@ -10,16 +10,19 @@ public class gameManager : MonoBehaviour
 {
     public static gameManager instance;
 
-    [Header("UI Elements to Toggle Visibility")]
+    [Header("Menus")]
     [SerializeField] GameObject menuInventory;
     public GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
-    [SerializeField] GameObject menuLose;
+    [SerializeField] GameObject menuDeath;
+    [SerializeField] GameObject menuObjectiveFail;
+    [SerializeField] TMP_Text objectiveText;
 
+
+    [Header("UI Elements to Toggle Visibility")]
     [SerializeField] GameObject ammoHUD;
     [SerializeField] GameObject jetpackHUD;
-
     public Image playerHPBar;
     public Image JPFuelGauge;
     public Image grappleGauge;
@@ -138,7 +141,13 @@ public class gameManager : MonoBehaviour
 
     public void youLose()
     {
-        switchMenu(menuLose);
+        switchMenu(menuDeath);
+    }
+
+    public void objectiveFailed(string failedObj)
+    {
+        switchMenu(menuObjectiveFail);
+        objectiveText.SetText(failedObj);
     }
 
     public void youWin()
