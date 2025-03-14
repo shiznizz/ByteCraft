@@ -36,6 +36,7 @@ public class inventoryManager : MonoBehaviour
         if (item.itemTypye == itemSO.itemType.Weapon)
         {
             weapon = item.GetWeapon();
+            weapon.RefreshAmmo();
         }
 
         if (weapon.wepType == weaponStats.weaponType.primary && !inventorySlot.GetComponent<SlotBoss>().primaryWeapon.isFull)

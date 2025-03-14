@@ -21,6 +21,7 @@ public class damage : MonoBehaviour
     [Header("Seeking Projectile Parameters")]
     [SerializeField] int targetingDistance;
     [SerializeField] float turnSpeed;
+    [SerializeField] LayerMask ignoreLayer;
 
     
     private IDamage target;
@@ -39,10 +40,18 @@ public class damage : MonoBehaviour
             {
                 if (type == damageType.seeking)
                 {
-                    if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, targetingDistance))      
+                    if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, targetingDistance,~ignoreLayer))      
                         target = hit.collider.GetComponent<IDamage>();
                 }
-                rb.linearVelocity = Camera.main.transform.forward * speed;
+
+                if (target != null)
+                {
+                    SeekEnemy();
+                }
+                else
+                {
+                    rb.linearVelocity = Camera.main.transform.forward * speed;
+                }
             }
 
             Destroy(gameObject, destroyTime);

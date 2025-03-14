@@ -33,6 +33,7 @@ public class playerStatManager : MonoBehaviour
     [Header("Player Base Physics/gravity")]
 
     public float groundDrag;
+    public float airDrag;
     public float drag;
     public float gravity;
 
@@ -74,6 +75,7 @@ public class playerStatManager : MonoBehaviour
     public Transform muzzleFlash;
 
     [Header("Melee Options")]
+    public Transform meleePos;
     public GameObject meleeWeaponModel;
     public weaponStats startMelee;
     public Animator playerAnimator;

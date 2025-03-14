@@ -9,19 +9,29 @@ public class MeleeAttack : MonoBehaviour
     private float nextMeleeTime = 0f; // Cooldown tracking
 
     [SerializeField] private LayerMask damageLayer; // The layer to detect damageable targets
-    [SerializeField] private float attackRange = 2f;
-    [SerializeField] private float attackRadius = 0.5f;
     [SerializeField] private Transform attackPoint;
+    [SerializeField] private Collider meleeCollider;
+
     [SerializeField] private Transform orientation;
+    [SerializeField] private Transform cameraTransform;
+
+    [SerializeField] private GameObject weaponModel;
 
     private playerAttack playerAttackScript; // Reference to the playerAttack script
-    private Camera playerCamera;
 
     void Start()
     {
         animator = GetComponent<Animator>(); // Get the animator component
         playerAttackScript = GetComponent<playerAttack>(); // Get reference to playerAttack script
-        playerCamera = Camera.main;
+
+        //Ensures the melee state is NOT locked at the start
+        isMeleeAttacking = false;
+
+        // Automatically find the camera if not set in the Inspector
+        //if (cameraTransform == null)
+        //{
+        //    cameraTransform = Camera.main.transform;
+        //}
     }
 
     void Update()
@@ -46,39 +56,68 @@ public class MeleeAttack : MonoBehaviour
     {
         isMeleeAttacking = true; // Set attacking to true
 
-        // Disable guns during melee attack
-        playerAttackScript.DisableWeapons();
+        //Hide the gun when melee starts
+        if (weaponModel != null)
+        {
+            weaponModel.SetActive(false);
+        }
 
         // Trigger the melee attack animation
         animator.SetTrigger("MeleeAttack");
 
-        // Detect melee hit
-        PerformMeleeHitDetection();
+        // Enable melee collider
+        turnOnCol();
 
         // Wait for the animation to finish (adjust the time based on animation length)
-        yield return new WaitForSeconds(0.5f);
+        yield return null;
+
+        // Disable melee collider after attack
+        turnOffCol();
 
         isMeleeAttacking = false; // Attack is finished
 
-        // Re-enable guns after melee attack
-        playerAttackScript.EnableWeapons();
+        // Show the gun again after melee finishes
+        if (weaponModel != null)
+            weaponModel.SetActive(true);
     }
 
-    // Perform melee hit detection
-    void PerformMeleeHitDetection()
+    // Turn on melee collider (allowing attacks to hit enemies)
+    public void turnOnCol()
     {
-        RaycastHit hit;
+        meleeCollider.enabled = true;
+        Debug.Log("Melee Collider Enabled");
+    }
 
-        Vector3 attackOrigin = attackPoint != null ? attackPoint.position : transform.position;
-        Vector3 attackDirection = orientation.forward;
+    // Turn off melee collider (to prevent constant damage)
+    public void turnOffCol()
+    {
+        meleeCollider.enabled = false;
+        Debug.Log("Melee Collider Disabled");
+    }
 
-        if (Physics.Raycast(attackOrigin, attackDirection, out hit, 2f, damageLayer)) // Adjust range if needed
+    //Detect the melee hits when an enemy enters teh trigger collider
+    private void OnTriggerEnter(Collider other)
+    {
+        // Check if we are currently attacking
+        if (!isMeleeAttacking) return;
+
+        // Check if the object is on the Enemy layer using the damageLayer mask
+        if (((1 << other.gameObject.layer) & damageLayer) != 0)
         {
-            IDamage damageable = hit.collider.GetComponent<IDamage>();
+            IDamage damageable = other.GetComponent<IDamage>();
             if (damageable != null)
             {
                 damageable.takeDamage(playerStatManager.instance.attackDamage); // Apply damage
+                Debug.Log($"Hit {other.gameObject.name} for {playerStatManager.instance.attackDamage} damage.");
             }
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (cameraTransform != null)
+        {
+            transform.rotation = cameraTransform.rotation;
         }
     }
 }

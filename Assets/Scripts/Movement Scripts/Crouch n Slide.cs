@@ -24,51 +24,57 @@ public class CrouchnSlide : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         pc = GetComponent<playerController>();
+        normalCamPos = cameraTransform.localPosition;
     }
 
     // Update is called once per frame
     void Update()
     {
         crouch();
+
+        if (pc.isSprinting && pc.isCrouching)
+            exitCrouch();
     }
 
-     void crouch()
+    void crouch()
     {
         if (Input.GetButtonDown("Crouch"))
-        {
-            // toggles crouch
-            if(pc.isGrounded)
+        {// toggles crouch 
+            if (pc.isGrounded)
                 pc.isCrouching = !pc.isCrouching;
+        }
 
-            // adjusts controller height and orients controller on ground
-            if (pc.isCrouching)
+        if (Input.GetButtonDown("Jump") && pc.isCrouching)
+            pc.isCrouching = false;
+        
+        // adjusts controller height and orients controller on ground
+        if (pc.isCrouching)
+        {
+            controller.height = playerStatManager.instance.crouchHeight;
+            controller.center = crouchingCenter;
+            playerStatManager.instance.playerHeight = playerStatManager.instance.crouchHeight;
+
+            // changes camera position (lerp was breaking this)
+            cameraTransform.localPosition = crouchCamPos;
+
+            //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
+            // if moving faster than walking - slide
+            if (playerStatManager.instance.currSpeed > playerStatManager.instance.walkSpeed)
             {
-                controller.height = playerStatManager.instance.crouchHeight;
-                controller.center = crouchingCenter;
-                playerStatManager.instance.playerHeight = playerStatManager.instance.crouchHeight;
-
-                // changes camera position (lerp was breaking this)
-                cameraTransform.localPosition = crouchCamPos;
-
-                //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
-                // if moving faster than walking - slide
-                if (playerStatManager.instance.currSpeed > playerStatManager.instance.walkSpeed)
-                {
-                    pc.isSliding = true;
-                    pc.isSprinting = false;
-                    // starts slide timer and sets vector to lock player movement
-                    slideTimer = playerStatManager.instance.maxSlideTime;
-                    forwardDir = transform.forward;
-                }
+                pc.isSliding = true;
+                pc.isSprinting = false;
+                // starts slide timer and sets vector to lock player movement
+                slideTimer = playerStatManager.instance.maxSlideTime;
+                forwardDir = transform.forward;
             }
-            else
-            {
-                exitCrouch();
-            }
+        }
+        else
+        {
+            exitCrouch();
         }
     }
 
-    void exitCrouch()
+    public void exitCrouch()
     {
         // readjusts controller and camera height
         controller.height = playerStatManager.instance.standingHeight;
@@ -77,7 +83,6 @@ public class CrouchnSlide : MonoBehaviour
         pc.isCrouching = false;
         pc.isSliding = false;
         cameraTransform.localPosition = normalCamPos;
-        //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, normalCamPos, cameraChangeTime);
         Debug.Log("exit crouch");
     }
 
