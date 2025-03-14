@@ -67,6 +67,18 @@ public class playerStatManager : MonoBehaviour
     public float wallJumpUpForce;
     public float wallJumpSideForce;
 
+    [Header("Grapple Options")]
+    public int grappleDistance;
+    public int grappleLift;
+    public float grappleSpeedMultiplier;
+    public float grappleSpeedMin;
+    public float grappleSpeedMax;
+    public float grappleCooldown;
+
+    [Header("Grapple Gun")]
+    public Transform grappleShootPos;
+    public LineRenderer grappleRope;
+
     [Header("Common Weapon Options")]
     public float attackCooldown;
     public int attackDamage;
