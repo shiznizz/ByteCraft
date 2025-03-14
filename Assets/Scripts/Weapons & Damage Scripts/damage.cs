@@ -164,7 +164,7 @@ public class damage : MonoBehaviour
 
         // Play a random sound from the damageHitSounds array
         AudioClip soundToPlay = damageHitSounds[Random.Range(0, damageHitSounds.Length)];
-        Debug.Log("Playing sound: " + soundToPlay.name);
+        //Debug.Log("Playing sound: " + soundToPlay.name);
         audioSource.PlayOneShot(soundToPlay);
     }
 }

@@ -85,14 +85,14 @@ public class MeleeAttack : MonoBehaviour
     public void turnOnCol()
     {
         meleeCollider.enabled = true;
-        Debug.Log("Melee Collider Enabled");
+        //Debug.Log("Melee Collider Enabled");
     }
 
     // Turn off melee collider (to prevent constant damage)
     public void turnOffCol()
     {
         meleeCollider.enabled = false;
-        Debug.Log("Melee Collider Disabled");
+        //Debug.Log("Melee Collider Disabled");
     }
 
     //Detect the melee hits when an enemy enters teh trigger collider

@@ -55,7 +55,7 @@ public class traps : MonoBehaviour
     {
         if (!isTriggered && other.CompareTag("Player"))
         {
-            Debug.Log("Player entered the laser trigger area!");
+            //Debug.Log("Player entered the laser trigger area!");
             isTriggered = true;
             ApplyDamage(other.gameObject);
             TriggerTrapEffect();
@@ -66,7 +66,7 @@ public class traps : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player is inside the laser trigger area");
+            //Debug.Log("Player is inside the laser trigger area");
             ApplyDamage(other.gameObject);
         }
     }

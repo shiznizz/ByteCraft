@@ -83,7 +83,7 @@ public class CrouchnSlide : MonoBehaviour
         pc.isCrouching = false;
         pc.isSliding = false;
         cameraTransform.localPosition = normalCamPos;
-        Debug.Log("exit crouch");
+        //Debug.Log("exit crouch");
     }
 
     void slideMovement()
