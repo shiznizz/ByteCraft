@@ -28,10 +28,10 @@ public class MeleeAttack : MonoBehaviour
         isMeleeAttacking = false;
 
         // Automatically find the camera if not set in the Inspector
-        if (cameraTransform == null)
-        {
-            cameraTransform = Camera.main.transform;
-        }
+        //if (cameraTransform == null)
+        //{
+        //    cameraTransform = Camera.main.transform;
+        //}
     }
 
     void Update()

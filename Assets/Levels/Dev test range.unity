@@ -847,15 +847,15 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 89909af6d78d4364583225bec4840a15, type: 3}
+--- !u!4 &634571448 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2478293035290175263, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+  m_PrefabInstance: {fileID: 1800636375}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &672449466 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3635251353404866446, guid: 1d4d10d4b5db1eb40a47729d04e7b5c4, type: 3}
   m_PrefabInstance: {fileID: 378701483}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &706213930 stripped
-BoxCollider:
-  m_CorrespondingSourceObject: {fileID: 6021225789836096864, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
-  m_PrefabInstance: {fileID: 1800636375}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &732000782 stripped
 Transform:
@@ -1482,14 +1482,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: NewPlayer
       objectReference: {fileID: 0}
-    - target: {fileID: 475057330815734872, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4263542785864728171, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -1.1
-      objectReference: {fileID: 0}
+    - target: {fileID: 4708629593051710519, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: controller
+      value: 
+      objectReference: {fileID: 2136364934}
+    - target: {fileID: 4708629593051710519, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: cameraTransform
+      value: 
+      objectReference: {fileID: 634571448}
     - target: {fileID: 5043751963829147083, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.28437054
@@ -1531,25 +1531,25 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6068349625053569077, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
-      propertyPath: airDrag
-      value: 0.1
+      propertyPath: jumpMax
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6068349625053569077, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
-      propertyPath: gravity
-      value: 19.6
+      propertyPath: jetpackSpeed
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6068349625053569077, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
-      propertyPath: jumpForce
-      value: 10
+      propertyPath: jetpackFuelUse
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 6068349625053569077, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
-      propertyPath: groundDrag
-      value: 0.4
+      propertyPath: jetpackFuelRegen
+      value: 50
       objectReference: {fileID: 0}
-    - target: {fileID: 7066487906901695622, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
-      propertyPath: meleeCollider
-      value: 
-      objectReference: {fileID: 706213930}
+    - target: {fileID: 6068349625053569077, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: jetpackFuelRegenDelay
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7288472048335276681, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
       propertyPath: inventorySlot
       value: 
@@ -2003,6 +2003,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 89909af6d78d4364583225bec4840a15, type: 3}
+--- !u!143 &2136364934 stripped
+CharacterController:
+  m_CorrespondingSourceObject: {fileID: 1836007201147824209, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+  m_PrefabInstance: {fileID: 1800636375}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2709798315101852275
 PrefabInstance:
   m_ObjectHideFlags: 0

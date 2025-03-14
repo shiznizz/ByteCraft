@@ -24,21 +24,29 @@ public class CrouchnSlide : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         pc = GetComponent<playerController>();
+        normalCamPos = cameraTransform.localPosition;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Crouch"))
-            crouch();
+        crouch();
+
+        if (pc.isSprinting && pc.isCrouching)
+            exitCrouch();
     }
 
     void crouch()
     {
-        // toggles crouch
-        if(pc.isGrounded)
-            pc.isCrouching = !pc.isCrouching;
+        if (Input.GetButtonDown("Crouch"))
+        {// toggles crouch 
+            if (pc.isGrounded)
+                pc.isCrouching = !pc.isCrouching;
+        }
 
+        if (Input.GetButtonDown("Jump") && pc.isCrouching)
+            pc.isCrouching = false;
+        
         // adjusts controller height and orients controller on ground
         if (pc.isCrouching)
         {
@@ -66,7 +74,7 @@ public class CrouchnSlide : MonoBehaviour
         }
     }
 
-    void exitCrouch()
+    public void exitCrouch()
     {
         // readjusts controller and camera height
         controller.height = playerStatManager.instance.standingHeight;
@@ -75,7 +83,6 @@ public class CrouchnSlide : MonoBehaviour
         pc.isCrouching = false;
         pc.isSliding = false;
         cameraTransform.localPosition = normalCamPos;
-        //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, normalCamPos, cameraChangeTime);
         Debug.Log("exit crouch");
     }
 
