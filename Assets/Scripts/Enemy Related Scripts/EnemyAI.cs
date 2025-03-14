@@ -64,6 +64,10 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     float angleToPlayer;
 
     Color colorOrig;
+    private bool isAlerted = false;
+    private float alertTimer;
+    private bool playerInDroneRange = false;
+    private float alertCooldown = 5f;
 
     #endregion Variables
 
@@ -87,6 +91,17 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     // Update is called once per frame
     void Update()
     {
+        if (isAlerted && !playerInRange)
+        {
+            if (alertTimer < alertCooldown)
+            {
+                alertTimer += Time.deltaTime;
+            } else if (alertTimer >= alertCooldown)
+            {
+                alertTimer = 0;
+                isAlerted = false;
+            }
+        }
         if (type != enemyType.stationary)
         {
             float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
@@ -424,4 +439,19 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     }
 
     #endregion EnemyAttack
+
+    public void SetAlerted(bool state)
+    {
+        isAlerted = state;
+        if (isAlerted)
+        {
+            alertTimer = 0f;
+            
+        }
+    }
+
+    public void SetPlayerInDroneRange(bool state)
+    {
+        playerInDroneRange = state;
+    }
 }
