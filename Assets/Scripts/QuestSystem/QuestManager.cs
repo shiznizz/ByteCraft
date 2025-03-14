@@ -173,9 +173,6 @@ public class QuestManager : MonoBehaviour
         {
             SaveQuest(quest);
             QuestData questData = quest.GetQuestData();
-            Debug.Log(quest.info.id);
-            Debug.Log("state = " + questData.state);
-            Debug.Log("index = " + questData.questStepIndex);
 
             foreach (QuestStepState stepState in questData.questStepStates)
             {
@@ -191,8 +188,6 @@ public class QuestManager : MonoBehaviour
             QuestData questData = quest.GetQuestData();
             string serializedData = JsonUtility.ToJson(questData);
             PlayerPrefs.SetString(quest.info.id, serializedData);
-
-            Debug.Log(serializedData);
         } 
         catch (System.Exception e) 
         {

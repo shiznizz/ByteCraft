@@ -8,7 +8,6 @@ public abstract class QuestStep : MonoBehaviour
 
     public void InitializeQuestStep(string questId, int stepIndex, string questStepState)
     {
-        Debug.Log("Initializing quest step");
         this.questId = questId;
         this.stepIndex = stepIndex;
         if (questStepState != null && questStepState != "")

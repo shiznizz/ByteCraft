@@ -58,9 +58,7 @@ public class QuestPoint : MonoBehaviour
         // if we have a knot name defined, try to start dialogue with it
         if (!dialogueKnotName.Equals(""))
         {
-            Debug.Log("Correctly accessing dialogue knot name.");
             GameEventsManager.instance.dialogueEvents.EnterDialogue(dialogueKnotName);
-            Debug.Log("Fired off enter dialogue event");
         }
         // otherwise, start or finish the quest immediately without dialogue
         else
@@ -68,7 +66,6 @@ public class QuestPoint : MonoBehaviour
 
             if (currentQuestState.Equals(QuestState.CAN_START) && startPoint)
             {
-                Debug.Log("CAN START");
                 GameEventsManager.instance.questEvents.StartQuest(questId);
             } 
             else if (currentQuestState.Equals(QuestState.CAN_FINISH) && endPoint)
@@ -82,7 +79,6 @@ public class QuestPoint : MonoBehaviour
 
     private void QuestStateChange(Quest quest)
     {
-        Debug.Log("Inside QuestStateChange");
         // only update the quest state if this point has the corresponding quest
         if (quest.info.id.Equals(questId))
         {

@@ -93,7 +93,6 @@ public class DialogueManager : MonoBehaviour
         if (!knotName.Equals(""))
         {
             story.ChoosePathString(knotName);
-            Debug.Log("Knot name: " + knotName);
         }
         else
         {

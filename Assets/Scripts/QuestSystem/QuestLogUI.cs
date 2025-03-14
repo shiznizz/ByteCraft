@@ -59,7 +59,6 @@ public class QuestLogUI : MonoBehaviour
 
     public void SetQuestLogInfo(Quest quest)
     {
-        Debug.Log("Setting quest log info");
         // quest name
         questDisplayNameText.text = quest.info.displayName;
 
