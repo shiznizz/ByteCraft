@@ -826,6 +826,7 @@ GameObject:
   - component: {fileID: 7288472048335276681}
   - component: {fileID: 3527069170420853430}
   - component: {fileID: 7066487906901695622}
+  - component: {fileID: 8374321675424855894}
   - component: {fileID: 1836007201147824209}
   - component: {fileID: 5864598671350012223}
   - component: {fileID: 6531325392150728171}
@@ -923,10 +924,10 @@ MonoBehaviour:
   hasJetpack: 1
   jetpackFuelMax: 100
   jetpackFuel: 0
-  jetpackFuelUse: 15
-  jetpackFuelRegen: 100
-  jetpackFuelRegenDelay: 0
-  jetpackSpeed: 10
+  jetpackFuelUse: 60
+  jetpackFuelRegen: 50
+  jetpackFuelRegenDelay: 2
+  jetpackSpeed: 30
   jetpackHoldTimer: 0.01
   maxSlideTime: 0
   wallRunForce: 0
@@ -1034,8 +1035,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c84df8cebcaecf409abab75fd517c8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
-  cameraTransform: {fileID: 0}
+  controller: {fileID: 1836007201147824209}
+  cameraTransform: {fileID: 2478293035290175263}
 --- !u!114 &880456227251678012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1111,6 +1112,33 @@ MonoBehaviour:
   orientation: {fileID: 1040981787988272564}
   cameraTransform: {fileID: 0}
   weaponModel: {fileID: 1445263466456431272}
+--- !u!114 &8374321675424855894
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6683225297028311546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e22a3f98536a9cc45a6dc1bf94ac6957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lr: {fileID: 6947207261321354804}
+  gunTip: {fileID: 5798197359762240505}
+  cam: {fileID: 3146933043063798755}
+  player: {fileID: 766754491863903372}
+  maskGrappable:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  maxDistFromGrapple: 0.8
+  minDistFromGrapple: 0.25
+  jointSpring: 4.5
+  jointDamper: 7
+  jointMassScale: 4.5
+  maxGrappleDistance: 25
+  grappleKey: 113
+  jumpKey: 32
 --- !u!143 &1836007201147824209
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1489,7 +1517,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7367560889514357925, guid: f5cdeea7a0438284da67bfe709519c14, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1499,6 +1527,11 @@ PrefabInstance:
 --- !u!4 &5798197359762240505 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5174161406858139000, guid: f5cdeea7a0438284da67bfe709519c14, type: 3}
+  m_PrefabInstance: {fileID: 1709403743892334209}
+  m_PrefabAsset: {fileID: 0}
+--- !u!120 &6947207261321354804 stripped
+LineRenderer:
+  m_CorrespondingSourceObject: {fileID: 8633529780097923253, guid: f5cdeea7a0438284da67bfe709519c14, type: 3}
   m_PrefabInstance: {fileID: 1709403743892334209}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2146261887979927306
