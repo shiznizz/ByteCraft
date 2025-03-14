@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class CrouchnSlide : MonoBehaviour
 {
+    [SerializeField] Transform orientation;
     [SerializeField] CharacterController controller;
 
     private playerController pc;
@@ -19,12 +20,16 @@ public class CrouchnSlide : MonoBehaviour
     Vector3 normalCamPos;
     Vector3 crouchCamPos;
 
+    //horizontalInput = Input.GetAxisRaw("Horizontal");
+    //    verticalInput = Input.GetAxisRaw("Vertical");
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         pc = GetComponent<playerController>();
         normalCamPos = cameraTransform.localPosition;
+        playerStatManager.instance.playerHeight = playerStatManager.instance.standingHeight;
     }
 
     // Update is called once per frame
@@ -34,6 +39,14 @@ public class CrouchnSlide : MonoBehaviour
 
         if (pc.isSprinting && pc.isCrouching)
             exitCrouch();
+        //if (pc.isSliding && pc.isGrounded)
+        //    slideCountdown();
+    }
+
+    private void FixedUpdate()
+    {
+        if (pc.isSliding && pc.isGrounded)
+            slideMovement();
     }
 
     void crouch()
@@ -44,8 +57,9 @@ public class CrouchnSlide : MonoBehaviour
                 pc.isCrouching = !pc.isCrouching;
         }
 
-        if (Input.GetButtonDown("Jump") && pc.isCrouching)
+        if ((Input.GetButtonDown("Jump") || Input.GetButtonDown("Sprint")) && pc.isCrouching)
             pc.isCrouching = false;
+     
         
         // adjusts controller height and orients controller on ground
         if (pc.isCrouching)
@@ -56,16 +70,16 @@ public class CrouchnSlide : MonoBehaviour
 
             // changes camera position (lerp was breaking this)
             cameraTransform.localPosition = crouchCamPos;
-
-            //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
+              
             // if moving faster than walking - slide
-            if (playerStatManager.instance.currSpeed > playerStatManager.instance.walkSpeed)
+            if (playerStatManager.instance.currSpeed > playerStatManager.instance.walkSpeed && !pc.isSliding)
             {
                 pc.isSliding = true;
                 pc.isSprinting = false;
+                playerStatManager.instance.slideSpeed = playerStatManager.instance.slideSpeedMax;
                 // starts slide timer and sets vector to lock player movement
                 slideTimer = playerStatManager.instance.maxSlideTime;
-                forwardDir = transform.forward;
+                forwardDir = orientation.forward;
             }
         }
         else
@@ -83,22 +97,23 @@ public class CrouchnSlide : MonoBehaviour
         pc.isCrouching = false;
         pc.isSliding = false;
         cameraTransform.localPosition = normalCamPos;
-        //Debug.Log("exit crouch");
     }
 
     void slideMovement()
-    {    
-        // costs jp fuel to slide while not moving
-        //if (moveDir == Vector3.zero)
-        //    jetpackFuel += -(jetpackFuelMax * .25f);
-        
-        // slide countdown and force player to move one direction
+    {
         slideTimer -= Time.deltaTime;
-        controller.Move(forwardDir * playerStatManager.instance.slideSpeed * Time.deltaTime);
+        rb.AddForce(forwardDir.normalized * playerStatManager.instance.currSpeed * 10f, ForceMode.Force);
+        playerStatManager.instance.slideSpeed -= Time.deltaTime * playerStatManager.instance.slideFriction;
         if (slideTimer <= 0)
-        {
+            pc.isSliding = false;
+            //exitCrouch();
+    }
+
+    void slideCountdown()
+    {
+        //Debug.Log("slide timer = " + slideTimer);
+        slideTimer -= Time.deltaTime;
+        if (slideTimer <= 0)
             exitCrouch();
-        }
-        
     }
 }

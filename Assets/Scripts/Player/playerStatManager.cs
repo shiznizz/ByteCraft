@@ -27,8 +27,8 @@ public class playerStatManager : MonoBehaviour
     public float walkSpeed;
     public float sprintSpeed;
     public float crouchSpeed;
-    public float slideSpeed;
-    public float wallRunSpeed;
+    public float airSpeedMod;
+    public float jetpackAirMod;
 
     [Header("Player Base Physics/gravity")]
 
@@ -55,8 +55,12 @@ public class playerStatManager : MonoBehaviour
 
     [Header("Slide Stats")]
     public float maxSlideTime;
+    public float slideSpeed;
+    public float slideSpeedMax;
+    public float slideFriction;
 
     [Header("Wall Run Stats")]
+    public float wallRunSpeed;
     public float wallRunForce;
     public float maxWallRunTime;
     public float exitWallTime;

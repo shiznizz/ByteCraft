@@ -97,13 +97,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         rb.freezeRotation = true;
 
         HPOrig = playerStatManager.instance.HPMax;
-        playerStatManager.instance.jetpackFuel = playerStatManager.instance.jetpackFuelMax;
-        
-        playerStatManager.instance.playerHeight = playerStatManager.instance.standingHeight;
 
         spawnPlayer();
-
-        //jetpackFuelRegenTimer = 0f;
     }
 
     private void Update()
@@ -172,7 +167,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             return;
         }
 
-        rb.AddForce(moveDir.normalized * playerStatManager.instance.currSpeed * 10f, ForceMode.Force);
+        if (isGrounded)
+            rb.AddForce(moveDir.normalized * playerStatManager.instance.currSpeed * 10f, ForceMode.Force);
+        else if (isJetpacking)
+            rb.AddForce(moveDir.normalized * playerStatManager.instance.currSpeed * playerStatManager.instance.jetpackAirMod * 10f, ForceMode.Force);
+        else if (!isGrounded)
+            rb.AddForce(moveDir.normalized * playerStatManager.instance.currSpeed * playerStatManager.instance.airSpeedMod * 10f, ForceMode.Force);
     }
 
     private void SpeedControl()
@@ -233,31 +233,30 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void movement()
     {
-        // check wall will now be placed in update in wall running script
-        // should conciously add audio to new movement functions
-        if (!isGrounded)
-        {
-            //checkWall();
-            //wallRun();
-        }
-        else
-        {
-            if (moveDir.magnitude > 0 && !isPlayingSteps)
-            {
-                StartCoroutine(PlaySteps());
-            }
-        }
+        //// check wall will now be placed in update in wall running script
+        //// should conciously add audio to new movement functions
+        //if (!isGrounded)
+        //{
+        //    //checkWall();
+        //    //wallRun();
+        //}
+        //else
+        //{
+        //    if (moveDir.magnitude > 0 && !isPlayingSteps)
+        //    {
+        //        StartCoroutine(PlaySteps());
+        //    }
+        //}
 
-        // create new movement functions for sprinting, and jump
-        sprint();
-        // crouch should be called in update in crouch script
-        // crouch();
-        // update playerMoveHandler() then call in update.
-        playerMoveHandler();
-        // move jump to update and create conditions for if hasJetpack
-        jump();
+        //// create new movement functions for sprinting, and jump
+        //sprint();
+        //// crouch should be called in update in crouch script
+        //// crouch();
+        //// update playerMoveHandler() then call in update.
+        //playerMoveHandler();
+        //// move jump to update and create conditions for if hasJetpack
+        //jump();
 
-        // wont touch grapple code.
         // apply momentum
         playerVelocity += playerMomentum;
 
@@ -304,7 +303,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             rb.linearDamping = playerStatManager.instance.groundDrag;
             
             // if you are grounded and moving play step sounds.
-            if (moveDir.magnitude > 0 && !isPlayingSteps)
+            if (moveDir.magnitude > 0 && !isPlayingSteps && !isSliding)
             {
                 StartCoroutine(PlaySteps());
             }

@@ -16,6 +16,8 @@ public class jetpackScript : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         pc = GetComponent<playerController>();
 
+        playerStatManager.instance.jetpackFuel = playerStatManager.instance.jetpackFuelMax;
+        
         jetpackFuelRegenTimer = 0f;
     }
 
@@ -23,9 +25,10 @@ public class jetpackScript : MonoBehaviour
     void Update()
     {
         if (playerStatManager.instance.hasJetpack)
+        {    
             rigidJump();
-
-        handleJetpackFuelRegen();
+            handleJetpackFuelRegen();
+        }
     }
 
     void FixedUpdate()
@@ -52,44 +55,6 @@ public class jetpackScript : MonoBehaviour
             jetpackCoroutine = StartCoroutine(jetpackWait());
         }
 
-        if (Input.GetButtonUp("Jump"))
-        {
-            // stop coroutine and disable jetpack
-            if (jetpackCoroutine != null)
-            {
-                StopCoroutine(jetpackCoroutine);
-                jetpackCoroutine = null;
-            }
-
-            pc.isJetpacking = false;
-        }
-    }
-
-    void jump()
-    {
-        if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
-        {
-            //    playerStatManager.instance.jumpCount++;
-            //    playerVelocity.y = playerStatManager.instance.jumpForce;
-
-            //if (pc.isCrouching || pc.isSliding)
-                ////exitCrouch();
-            //if (pc.isWallRunning)
-                ////wallJump();
-        }
-        else if (Input.GetButtonDown("Jump") && !pc.isJetpacking && !pc.isGrounded && playerStatManager.instance.hasJetpack)
-        {
-            // if existing jetpackCoroutine stop routine
-            if (jetpackCoroutine != null)
-                StopCoroutine(jetpackCoroutine);
-            // start jetpack wait timer and enable jetpack
-            jetpackCoroutine = StartCoroutine(jetpackWait());
-        }
-
-        if (pc.isJetpacking)
-            jetpack();
-
-        // stop jetpack and jetpack coroutine
         if (Input.GetButtonUp("Jump"))
         {
             // stop coroutine and disable jetpack
