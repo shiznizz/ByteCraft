@@ -28,14 +28,40 @@ public class jetpackScript : MonoBehaviour
         handleJetpackFuelRegen();
     }
 
+    void FixedUpdate()
+    {
+        if (pc.isJetpacking)
+            jetpack();
+    }
+
     void rigidJump()
     {
         if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
         {
-            playerStatManager.instance.jumpCount++;
-
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
             rb.AddForce(transform.up * playerStatManager.instance.jumpForce, ForceMode.Impulse);
+
+            playerStatManager.instance.jumpCount++;
+        }
+        else if (Input.GetButtonDown("Jump") && !pc.isJetpacking && !pc.isGrounded && playerStatManager.instance.hasJetpack)
+        {
+            // if existing jetpackCoroutine stop routine
+            if (jetpackCoroutine != null)
+                StopCoroutine(jetpackCoroutine);
+            // start jetpack wait timer and enable jetpack
+            jetpackCoroutine = StartCoroutine(jetpackWait());
+        }
+
+        if (Input.GetButtonUp("Jump"))
+        {
+            // stop coroutine and disable jetpack
+            if (jetpackCoroutine != null)
+            {
+                StopCoroutine(jetpackCoroutine);
+                jetpackCoroutine = null;
+            }
+
+            pc.isJetpacking = false;
         }
     }
 
@@ -82,8 +108,8 @@ public class jetpackScript : MonoBehaviour
         if (playerStatManager.instance.jetpackFuel > 0)
         {
             playerStatManager.instance.jetpackFuel -= playerStatManager.instance.jetpackFuelUse * Time.deltaTime;
-
-            //playerVelocity.y = playerStatManager.instance.jetpackSpeed;
+            
+            rb.AddForce(Vector3.up * playerStatManager.instance.jetpackSpeed);
 
             jetpackFuelRegenTimer = playerStatManager.instance.jetpackFuelRegenDelay;
         }
@@ -116,11 +142,7 @@ public class jetpackScript : MonoBehaviour
         yield return new WaitForSeconds(playerStatManager.instance.jetpackHoldTimer);
 
         pc.isJetpacking = true;
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
         jetpackCoroutine = null;
     }
-
-    //public void refillFuel(int amount)
-    //{
-    //    playerStatManager.instance.jetpackFuel = Mathf.Min(playerStatManager.instance.jetpackFuel + amount, playerStatManager.instance.jetpackFuelMax);
-    //}
 }

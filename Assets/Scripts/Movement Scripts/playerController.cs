@@ -10,9 +10,7 @@ using UnityEngine.Rendering;
 public class playerController : MonoBehaviour, IDamage, IPickup
 {
     #region Variables
-    // please dont move this variable :)
     [SerializeField] Transform orientation;
-
     [SerializeField] CharacterController controller;
     [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
@@ -78,7 +76,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private Vector3 playerMomentum;
     private Vector3 grapplePostion;
 
-
     private float horizontalInput;
     private float verticalInput;
 
@@ -119,32 +116,28 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         playAtk.weaponHandler();
 
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
-        // switches states of grapple
-        //switch (grappleState)
-        //{
-        //    // not grappling 
-        //    case movementState.grappleNormal:
-        //        if (!gameManager.instance.isPaused)
-        //            //movement();
+        //switches states of grapple
+        switch (grappleState)
+        {
+            // not grappling 
+            case movementState.grappleNormal:
+                if (!gameManager.instance.isPaused)
+                    //movement();
 
-        //        if (Input.GetButtonDown("Open")) // for opening loot chests
-        //            openChest();
-        //        break;
-        //    // is grappling
-        //    case movementState.grappleMoving:
-        //        grappleMovement();
-        //        break;
-        //}
-        //handleJetpackFuelRegen();
-        //cameraChange();
+                    if (Input.GetButtonDown("Open")) // for opening loot chests
+                        openChest();
+                break;
+            // is grappling
+            case movementState.grappleMoving:
+                grappleMovement();
+                break;
+        }
     }
 
     private void FixedUpdate()
     {
         if (!gameManager.instance.isPaused)
             movePlayer();
-        { 
-        }
     }
 
     void playerInput()
@@ -169,6 +162,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (!isGrounded && !isWallRunning)
             applyGravity();
 
+        // no more penquin mode. Stops player when they stop pressing keys unless airborn
         if (moveDir == Vector3.zero)
         {
             if (isGrounded) rb.linearVelocity = rb.linearVelocity * 0.6f;
@@ -180,11 +174,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void SpeedControl()
     {
-        Vector3 flatVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        Vector3 horizontalVel = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 
-        if(flatVelocity.magnitude > playerStatManager.instance.currSpeed)
+        if(horizontalVel.magnitude > playerStatManager.instance.currSpeed)
         {
-            Vector3 limitVelocity = flatVelocity.normalized * playerStatManager.instance.currSpeed;
+            Vector3 limitVelocity = horizontalVel.normalized * playerStatManager.instance.currSpeed;
             rb.linearVelocity = new Vector3(limitVelocity.x, rb.linearVelocity.y, limitVelocity.z);
         }
     }
@@ -354,18 +348,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         // toggle sprint on if moving forward and sprint button is pressed
         if (Input.GetButtonDown("Sprint") && Input.GetKey(KeyCode.W))
-        {
-            if(!isSprinting)
-            {
-                isSprinting = true;
-
-                //if (isCrouching)
-                //   exitCrouch();
-            }
-            // turn sprint off if pressed again
-            else
-                isSprinting = false;
-        }
+            isSprinting = !isSprinting;
 
         // toggle sprint off if not moving forward
         if (Input.GetKeyUp(KeyCode.W))
@@ -378,10 +361,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         {
             if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
             {
-                playerStatManager.instance.jumpCount++;
-
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
                 rb.AddForce(transform.up * playerStatManager.instance.jumpForce, ForceMode.Impulse);
+
+                playerStatManager.instance.jumpCount++;
             }
         }
     }
