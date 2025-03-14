@@ -4,6 +4,7 @@ public class CrouchnSlide : MonoBehaviour
 {
     [SerializeField] Transform orientation;
     [SerializeField] CharacterController controller;
+    [SerializeField] CapsuleCollider collider;
 
     private playerController pc;
     private Rigidbody rb;
@@ -63,45 +64,61 @@ public class CrouchnSlide : MonoBehaviour
         if ((Input.GetButtonDown("Jump") || Input.GetButtonDown("Sprint")) && pc.isCrouching)
             pc.isCrouching = false;
      
-        
         // adjusts controller height and orients controller on ground
         if (pc.isCrouching)
         {
-            controller.height = playerStatManager.instance.crouchHeight;
-            controller.center = crouchingCenter;
-            playerStatManager.instance.playerHeight = playerStatManager.instance.crouchHeight;
+            startCrouch();
 
-            // changes camera position (lerp was breaking this)
-            cameraTransform.localPosition = crouchCamPos;
-              
             // if moving faster than walking - slide
             if (playerStatManager.instance.currSpeed > playerStatManager.instance.walkSpeed && !pc.isSliding)
-            {
-                pc.isSliding = true;
-                pc.isSprinting = false;
-                playerStatManager.instance.slideSpeed = playerStatManager.instance.slideSpeedMax;
-                // starts slide timer and sets vector to lock player movement
-                slideTimer = playerStatManager.instance.maxSlideTime;
-                forwardDir = orientation.forward;
-            }
+                startSlide();
         }
         else
-        {
             exitCrouch();
-        }
+    }
+
+    void startCrouch()
+    {
+        // adjusts controller height and center for crouching
+        controller.height = playerStatManager.instance.crouchHeight;
+        controller.center = crouchingCenter;
+
+        // adjusts collider height and center for crouching
+        collider.height = playerStatManager.instance.crouchHeight;
+        collider.center = crouchingCenter;
+
+        playerStatManager.instance.playerHeight = playerStatManager.instance.crouchHeight;
+
+        // changes camera position (lerp was breaking this)
+        cameraTransform.localPosition = crouchCamPos;
     }
 
     public void exitCrouch()
     {
-        // readjusts controller and camera height
+        // readjusts controller and camera height for standing
         controller.height = playerStatManager.instance.standingHeight;
         controller.center = standingCenter;
+
+        // readjusts collider height and center for standing
+        collider.height = playerStatManager.instance.standingHeight;
+        collider.center = standingCenter;
+
         playerStatManager.instance.playerHeight = playerStatManager.instance.standingHeight;
+
         pc.isCrouching = false;
         pc.isSliding = false;
+
         cameraTransform.localPosition = normalCamPos;
     }
-
+    void startSlide()
+    {
+        pc.isSliding = true;
+        pc.isSprinting = false;
+        playerStatManager.instance.slideSpeed = playerStatManager.instance.slideSpeedMax;
+        // starts slide timer and sets vector to lock player movement
+        slideTimer = playerStatManager.instance.maxSlideTime;
+        forwardDir = orientation.forward;
+    }
     void slideMovement()
     {
         slideTimer -= Time.deltaTime;

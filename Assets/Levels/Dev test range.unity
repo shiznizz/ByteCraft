@@ -1560,6 +1560,10 @@ PrefabInstance:
       value: NewPlayer
       objectReference: {fileID: 0}
     - target: {fileID: 4708629593051710519, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: collider
+      value: 
+      objectReference: {fileID: 2136364940}
+    - target: {fileID: 4708629593051710519, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
       propertyPath: controller
       value: 
       objectReference: {fileID: 2136364934}
@@ -1606,6 +1610,10 @@ PrefabInstance:
     - target: {fileID: 5043751963829147083, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5864598671350012223, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6068349625053569077, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
       propertyPath: jumpMax
@@ -2169,6 +2177,11 @@ PrefabInstance:
 --- !u!143 &2136364934 stripped
 CharacterController:
   m_CorrespondingSourceObject: {fileID: 1836007201147824209, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+  m_PrefabInstance: {fileID: 1800636375}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &2136364940 stripped
+CapsuleCollider:
+  m_CorrespondingSourceObject: {fileID: 5864598671350012223, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
   m_PrefabInstance: {fileID: 1800636375}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2709798315101852275
