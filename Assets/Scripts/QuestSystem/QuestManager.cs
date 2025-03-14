@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using System.Collections;
 
 public class QuestManager : MonoBehaviour
 {
@@ -7,12 +9,16 @@ public class QuestManager : MonoBehaviour
     [SerializeField] private bool loadQuestState = true;
     private Dictionary<string, Quest> questMap;
     [SerializeField] private QuestLogUI questLogUI;
+    [SerializeField] private GameObject questUpdateDisplay;
+    [SerializeField] private TextMeshProUGUI questUpdatePopupText;
 
     [SerializeField] private QuestLogScrollingList questLogScrollingList;
 
     private void Awake()
     {
         questMap = CreateQuestMap();
+        questUpdateDisplay.gameObject.SetActive(false);
+        questUpdatePopupText.text = "";
     }
 
     private void OnEnable()
@@ -91,6 +97,8 @@ public class QuestManager : MonoBehaviour
     {
         Quest quest = GetQuestById(id);
         quest.InstantiateCurrentQuestStep(this.transform);
+        //questUpdatePopupText.text = "Quest started: " + quest.info.displayName;
+        StartCoroutine(flashUpdatePopup("Quest Started: ", quest));
         ChangeQuestState(quest.info.id, QuestState.IN_PROGRESS);
     }
 
@@ -105,6 +113,7 @@ public class QuestManager : MonoBehaviour
         } else
         {
             ChangeQuestState(quest.info.id, QuestState.CAN_FINISH);
+            StartCoroutine(flashUpdatePopup("Quest is ready to turn in: ", quest));
         }
     }
 
@@ -113,6 +122,7 @@ public class QuestManager : MonoBehaviour
         Quest quest = GetQuestById(id);
         ClaimRewards(quest);
         ChangeQuestState(quest.info.id, QuestState.FINISHED);
+        StartCoroutine(flashUpdatePopup("Quest finished: ", quest));
     }
 
     private void ClaimRewards(Quest quest)
@@ -215,5 +225,19 @@ public class QuestManager : MonoBehaviour
             Debug.LogError("Failed to load quest with id " + quest.info.id + ": " + e);
         }
         return quest;
+    }
+
+    private IEnumerator flashUpdatePopup(string opener, Quest quest)
+    {
+        questUpdatePopupText.text = opener + quest.info.displayName;
+        questUpdateDisplay.gameObject.SetActive(true);
+        yield return new WaitForSeconds(3);
+        questUpdateDisplay.gameObject.SetActive(false);
+        ResetUpdateText();
+    }
+
+    private void ResetUpdateText()
+    {
+        questUpdatePopupText.text = "";
     }
 }
