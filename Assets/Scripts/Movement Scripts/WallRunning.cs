@@ -6,26 +6,8 @@ public class WallRunning : MonoBehaviour
     private playerController pc;
     private Rigidbody rb;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-        pc = GetComponent<playerController>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-       if(!pc.isGrounded)
-            checkWall();
-    }
-
-    private void FixedUpdate()
-    {
-        
-    }
 
     private Vector3 moveDir;
-    private Vector3 playerVelocity;
     private Vector3 forwardDir;
 
     [Header("Wallrunning")]
@@ -36,7 +18,6 @@ public class WallRunning : MonoBehaviour
     private float verticalInput;
 
     [Header("Detection")]
-    public float wallCheckDistance = 1f;
     private RaycastHit rightWallHit;
     private RaycastHit leftWallHit;
     private bool wallRight;
@@ -52,18 +33,36 @@ public class WallRunning : MonoBehaviour
 
     public float wallRunAcceleration = 10f;
     //public float maxWallRunSpeed = 10f;
-    public float wallRunTime = 1.5f;
-    public float wallJumpForce = 12f;
+    //public float wallRunTime = 1.5f;
+    //public float wallJumpForce = 12f;
 
    float wallRunTimer;
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        pc = GetComponent<playerController>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+       if(!pc.isGrounded)
+            checkWall();
+    }
+
+    private void FixedUpdate()
+    {
+        if (pc.isWallRunning)
+            WallRunMovement();
+    }
 
     private void checkWall()
     {
         RaycastHit hit;
 
         // checks if player is next to a left or right wall then enters or exits wall running state accordingly
-        wallRight = Physics.Raycast(transform.position, orientation.right, out hit, wallCheckDistance, wallLayer);
-        wallLeft = Physics.Raycast(transform.position, -orientation.right, out hit, wallCheckDistance, wallLayer);
+        wallRight = Physics.Raycast(transform.position, orientation.right, out hit, playerStatManager.instance.wallCheckDistance, wallLayer);
+        wallLeft = Physics.Raycast(transform.position, -orientation.right, out hit, playerStatManager.instance.wallCheckDistance, wallLayer);
 
         if ((wallRight || wallLeft) && !pc.isWallRunning)
             wallRun();
@@ -76,7 +75,9 @@ public class WallRunning : MonoBehaviour
         // reset jumps, start wallrun, cancel gravity
         playerStatManager.instance.jumpCount = 0;
         StartWallRun();
-        playerVelocity = Vector3.zero;
+
+        // turn gravity off
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 
         // checks wall normal and sets wall normal to left or right wall normal then updates the forwareDir
         wallNormal = wallLeft ? leftWallHit.normal : rightWallHit.normal;
@@ -112,7 +113,7 @@ public class WallRunning : MonoBehaviour
         }
 
         // allows for seamless movement off the wall left or right during wallrunning
-        moveDir.x += horizontalInput * wallJumpForce;
+        //moveDir.x += horizontalInput * wallJumpForce;
         // clamp movement vector to current speed (wall run) 
         moveDir = Vector3.ClampMagnitude(moveDir, playerStatManager.instance.currSpeed);
     }
@@ -124,8 +125,8 @@ public class WallRunning : MonoBehaviour
         jumpDirection.Normalize(); // Normalize to keep a consistent jump force
 
         // Apply jump force
-        playerVelocity = jumpDirection * wallJumpForce;
-        moveDir.x = wallNormal.x * wallJumpForce;
+        //playerVelocity = jumpDirection * wallJumpForce;
+        //moveDir.x = wallNormal.x * wallJumpForce;
 
         stopWallRun();
     }

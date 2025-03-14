@@ -160,12 +160,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3306132972609129468}
-  - component: {fileID: 282998536651172498}
   - component: {fileID: 5854301291154588913}
   - component: {fileID: 3110242448587319818}
   - component: {fileID: 2141940491606174221}
   - component: {fileID: 3536051905170217835}
   - component: {fileID: 3860120411415694631}
+  - component: {fileID: 5923950590258303104}
   m_Layer: 7
   m_Name: LazerTower
   m_TagString: Untagged
@@ -190,44 +190,6 @@ Transform:
   - {fileID: 6935418942575080505}
   m_Father: {fileID: 8473330861215891959}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &282998536651172498
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7128251116068872260}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d2b8d82904df72646b79a14ca14edc71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 2
-  movement: 0
-  model: {fileID: 2141940491606174221}
-  agent: {fileID: 5854301291154588913}
-  anim: {fileID: 0}
-  hpFillBar: {fileID: 8402094990419358478}
-  hpBar: {fileID: 1219597138482355002}
-  HP: 5
-  animTransSpeed: 0
-  faceTargetSpeed: 10
-  FOV: 90
-  headPos: {fileID: 279754090894260489}
-  shootAngle: 5
-  bullet: {fileID: 8404054753871229023, guid: c05e6c2c64e7aa9419ec43daad5b199f, type: 3}
-  shootPos: {fileID: 279754090894260489}
-  shootRate: 2
-  meleeCol: {fileID: 0}
-  meleeDistance: 0
-  dropsLoot: 0
-  lootTable: []
-  dropPos: {fileID: 0}
-  roamPauseTime: 0
-  pathPositions: []
-  roamDist: 0
-  bodyFadeTime: 5
-  fadeDuration: 2
 --- !u!195 &5854301291154588913
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -348,6 +310,38 @@ CapsuleCollider:
   m_Height: 0.48045585
   m_Direction: 1
   m_Center: {x: 0.0011537224, y: 0.33808357, z: -0.018984288}
+--- !u!114 &5923950590258303104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7128251116068872260}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f3749933b9c15848a226d68aac0e346, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 0
+  model: {fileID: 2141940491606174221}
+  anim: {fileID: 0}
+  hpFillBar: {fileID: 8402094990419358478}
+  hpBar: {fileID: 1219597138482355002}
+  HP: 10
+  animTransSpeed: 0
+  faceTargetSpeed: 3
+  FOV: 90
+  headPos: {fileID: 279754090894260489}
+  shootAngle: 5
+  bullet: {fileID: 8404054753871229023, guid: c05e6c2c64e7aa9419ec43daad5b199f, type: 3}
+  shootPos: {fileID: 279754090894260489}
+  shootRate: 1
+  turnTimeAfterDmg: 1
+  dropsLoot: 0
+  lootTable: []
+  dropPos: {fileID: 3306132972609129468}
+  bodyFadeTime: 5
+  fadeDuration: 2
 --- !u!1001 &4961887221825358410
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -418,7 +412,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2658149538342157939, guid: 4cea93e028c6d22429a7e300cd998925, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -14.795656
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2658149538342157939, guid: 4cea93e028c6d22429a7e300cd998925, type: 3}
       propertyPath: m_LocalRotation.w
@@ -438,11 +432,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2658149538342157939, guid: 4cea93e028c6d22429a7e300cd998925, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -19.686527
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2658149538342157939, guid: 4cea93e028c6d22429a7e300cd998925, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 3.1609364
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2658149538342157939, guid: 4cea93e028c6d22429a7e300cd998925, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

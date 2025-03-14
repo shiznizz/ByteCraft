@@ -43,25 +43,26 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public int weaponListPos;
 
-    [Header("Grapple Options")]
-    [SerializeField] int grappleDistance;
-    [SerializeField] int grappleLift;
-    [SerializeField] float grappleSpeedMultiplier;
-    [SerializeField] float grappleSpeedMin;
-    [SerializeField] float grappleSpeedMax;
-    [SerializeField] float grappleCooldown;
+    //[Header("Grapple Options")]
+    //[SerializeField] int grappleDistance;
+    //[SerializeField] int grappleLift;
+    //[SerializeField] float grappleSpeedMultiplier;
+    //[SerializeField] float grappleSpeedMin;
+    //[SerializeField] float grappleSpeedMax;
+    //[SerializeField] float grappleCooldown;
 
+    // leaving available until justin wants to move it
     [Header("Grapple Gun")]
     [SerializeField] Transform grappleShootPos;
     [SerializeField] LineRenderer grappleRope;
 
     // holds state of the grapple 
-    private movementState grappleState;
-    public enum movementState
-    {
-        grappleNormal, // did not shoot grapple
-        grappleMoving, // grapple succesful now moving player
-    }
+    //private movementState grappleState;
+    //public enum movementState
+    //{
+    //    grappleNormal, // did not shoot grapple
+    //    grappleMoving, // grapple succesful now moving player
+    //}
     float grappleCooldownTimer;
 
     Rigidbody rb;
@@ -72,9 +73,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private float slideSpeedDecrease;
 
     private Vector3 moveDir;
-    private Vector3 playerVelocity;
-    private Vector3 playerMomentum;
-    private Vector3 grapplePostion;
 
     private float horizontalInput;
     private float verticalInput;
@@ -84,11 +82,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     // variable for player input action map
     #endregion Variables
 
-    private void Awake()
-    {
-        // sets state of the grapple
-        grappleState = movementState.grappleNormal;
-    }
+    //private void Awake()
+    //{
+    //    // sets state of the grapple
+    //    grappleState = movementState.grappleNormal;
+    //}
 
     void Start()
     {
@@ -97,13 +95,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         rb.freezeRotation = true;
 
         HPOrig = playerStatManager.instance.HPMax;
-        playerStatManager.instance.jetpackFuel = playerStatManager.instance.jetpackFuelMax;
-        
-        playerStatManager.instance.playerHeight = playerStatManager.instance.standingHeight;
 
         spawnPlayer();
-
-        //jetpackFuelRegenTimer = 0f;
     }
 
     private void Update()
@@ -118,22 +111,24 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             playAtk.weaponHandler();
 
             Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
-            //switches states of grapple
-            switch (grappleState)
-            {
-                // not grappling 
-                case movementState.grappleNormal:
-                    if (!gameManager.instance.isPaused)
-                        //movement();
 
-                        if (Input.GetButtonDown("Open")) // for opening loot chests
-                            openChest();
-                    break;
-                // is grappling
-                case movementState.grappleMoving:
-                    grappleMovement();
-                    break;
-            }
+            if (Input.GetButtonDown("Open")) // for opening loot chests
+                openChest();
+            #region stale
+            ////switches states of grapple
+            //switch (grappleState)
+            //{
+            //    // not grappling 
+            //    case movementState.grappleNormal:
+            //        if (!gameManager.instance.isPaused)
+            //            //movement();
+            //        break;
+            //    // is grappling
+            //    case movementState.grappleMoving:
+            //        grappleMovement();
+            //        break;
+            //}
+            #endregion stale
         }
     }
 
@@ -172,7 +167,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             return;
         }
 
-        rb.AddForce(moveDir.normalized * playerStatManager.instance.currSpeed * 10f, ForceMode.Force);
+        if (isGrounded)
+            rb.AddForce(moveDir.normalized * playerStatManager.instance.currSpeed * 10f, ForceMode.Force);
+        else if (isJetpacking)
+            rb.AddForce(moveDir.normalized * playerStatManager.instance.currSpeed * playerStatManager.instance.jetpackAirMod * 10f, ForceMode.Force);
+        else if (!isGrounded)
+            rb.AddForce(moveDir.normalized * playerStatManager.instance.currSpeed * playerStatManager.instance.airSpeedMod * 10f, ForceMode.Force);
     }
 
     private void SpeedControl()
@@ -231,62 +231,61 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
 
-    void movement()
-    {
-        // check wall will now be placed in update in wall running script
-        // should conciously add audio to new movement functions
-        if (!isGrounded)
-        {
-            //checkWall();
-            //wallRun();
-        }
-        else
-        {
-            if (moveDir.magnitude > 0 && !isPlayingSteps)
-            {
-                StartCoroutine(PlaySteps());
-            }
-        }
+    //void movement()
+    //{
+    //    // check wall will now be placed in update in wall running script
+    //    // should conciously add audio to new movement functions
+    //    if (!isGrounded)
+    //    {
+    //        //checkWall();
+    //        //wallRun();
+    //    }
+    //    else
+    //    {
+    //        if (moveDir.magnitude > 0 && !isPlayingSteps)
+    //        {
+    //            StartCoroutine(PlaySteps());
+    //        }
+    //    }
 
-        // create new movement functions for sprinting, and jump
-        sprint();
-        // crouch should be called in update in crouch script
-        // crouch();
-        // update playerMoveHandler() then call in update.
-        playerMoveHandler();
-        // move jump to update and create conditions for if hasJetpack
-        jump();
+    //    // create new movement functions for sprinting, and jump
+    //    sprint();
+    //    // crouch should be called in update in crouch script
+    //    // crouch();
+    //    // update playerMoveHandler() then call in update.
+    //    playerMoveHandler();
+    //    // move jump to update and create conditions for if hasJetpack
+    //    jump();
 
-        // wont touch grapple code.
-        // apply momentum
-        playerVelocity += playerMomentum;
+    //    // apply momentum
+    //    playerVelocity += playerMomentum;
 
-        // apply gravity if not wall running or grounded
-        if (!isWallRunning)
-            applyGravity();
+    //    // apply gravity if not wall running or grounded
+    //    if (!isWallRunning)
+    //        applyGravity();
 
-        // grapple code
-        if (playerMomentum.magnitude >= 0f)
-        {
-            playerMomentum -= playerMomentum * playerStatManager.instance.drag * Time.deltaTime;
-            if (playerMomentum.magnitude <= .0f)
-            {
-                playerMomentum = Vector3.zero;
-            }
-        }
+    //    // grapple code
+    //    if (playerMomentum.magnitude >= 0f)
+    //    {
+    //        playerMomentum -= playerMomentum * playerStatManager.instance.drag * Time.deltaTime;
+    //        if (playerMomentum.magnitude <= .0f)
+    //        {
+    //            playerMomentum = Vector3.zero;
+    //        }
+    //    }
 
-        // checks if clicking mouse 2 (right click)
-        if (testGrappleKeyPressed())
-            shootGrapple();
+    //    // checks if clicking mouse 2 (right click)
+    //    if (testGrappleKeyPressed())
+    //        shootGrapple();
 
-        // replacing this code in speed control
-        moveDir = Vector3.ClampMagnitude(moveDir, playerStatManager.instance.currSpeed);
+    //    // replacing this code in speed control
+    //    moveDir = Vector3.ClampMagnitude(moveDir, playerStatManager.instance.currSpeed);
 
-        playerStatManager.instance.attackTimer += Time.deltaTime;
-        grappleCooldownTimer += Time.deltaTime;
-    }
+    //    playerStatManager.instance.attackTimer += Time.deltaTime;
+    //    grappleCooldownTimer += Time.deltaTime;
+    //}
 
-    void applyGravity()
+    public void applyGravity()
     {
         // adds a continous downwards force to the rigidbody
         rb.AddForce(Vector3.down * playerStatManager.instance.gravity);
@@ -304,7 +303,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             rb.linearDamping = playerStatManager.instance.groundDrag;
             
             // if you are grounded and moving play step sounds.
-            if (moveDir.magnitude > 0 && !isPlayingSteps)
+            if (moveDir.magnitude > 0 && !isPlayingSteps && !isSliding)
             {
                 StartCoroutine(PlaySteps());
             }
@@ -389,89 +388,89 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         playerStatManager.instance.currSpeed = desiredSpeed;
     }
 
-    #region GrappleHook
-    // handles where the grapple is hitting
-    void shootGrapple()
-    {
-        // resets cooldown
-        grappleCooldownTimer = 0;
-        // chcks if the grapple hits a collider or not
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, grappleDistance, ~ignoreLayer))
-        {
+    //#region GrappleHook
+    //// handles where the grapple is hitting
+    //void shootGrapple()
+    //{
+    //    // resets cooldown
+    //    grappleCooldownTimer = 0;
+    //    // chcks if the grapple hits a collider or not
+    //    if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, grappleDistance, ~ignoreLayer))
+    //    {
 
-            Debug.Log(hit.collider.name);
+    //        Debug.Log(hit.collider.name);
 
-            isGrappling = true;
-            grapplePostion = hit.point;
+    //        isGrappling = true;
+    //        grapplePostion = hit.point;
 
-            grappleRope.enabled = true;
-            grappleRope.SetPosition(1, grapplePostion);
+    //        grappleRope.enabled = true;
+    //        grappleRope.SetPosition(1, grapplePostion);
 
-            grappleState = movementState.grappleMoving;
-        }
-    }
-    private void LateUpdate()
-    {
-        if (isGrappling)
-            grappleRope.SetPosition(0, grappleShootPos.position);
-    }
-    // handles the grapple moving the character
-    void grappleMovement()
-    {
-        // sets min and max speed for grapple movement
-        float grappleSpeed = Mathf.Clamp(Vector3.Distance(transform.position, grapplePostion), grappleSpeedMin, grappleSpeedMax);
-        // direction the player will move
-        Vector3 grappleDir = (grapplePostion - transform.position).normalized;
-        // moving the player
-        controller.Move(grappleSpeed * grappleSpeedMultiplier * Time.deltaTime * grappleDir);
+    //        grappleState = movementState.grappleMoving;
+    //    }
+    //}
+    //private void LateUpdate()
+    //{
+    //    if (isGrappling)
+    //        grappleRope.SetPosition(0, grappleShootPos.position);
+    //}
+    //// handles the grapple moving the character
+    //void grappleMovement()
+    //{
+    //    // sets min and max speed for grapple movement
+    //    float grappleSpeed = Mathf.Clamp(Vector3.Distance(transform.position, grapplePostion), grappleSpeedMin, grappleSpeedMax);
+    //    // direction the player will move
+    //    Vector3 grappleDir = (grapplePostion - transform.position).normalized;
+    //    // moving the player
+    //    controller.Move(grappleSpeed * grappleSpeedMultiplier * Time.deltaTime * grappleDir);
 
-        // checks if reached end of grapple
-        float grapleDistanceMove = 1f;
-        if (Vector3.Distance(transform.position, grapplePostion) < grapleDistanceMove)
-        {
-            grappleState = movementState.grappleNormal;
-            playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
-            StopGrapple();
-        }
+    //    // checks if reached end of grapple
+    //    float grapleDistanceMove = 1f;
+    //    if (Vector3.Distance(transform.position, grapplePostion) < grapleDistanceMove)
+    //    {
+    //        grappleState = movementState.grappleNormal;
+    //        playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
+    //        StopGrapple();
+    //    }
 
-        // if use the jump key it will stop grappling 
-        else if (testJumpKeyPressed())
-        {
-            playerMomentum = grappleSpeed * grappleDir;
-            playerMomentum += Vector3.up * grappleLift;
-            grappleState = movementState.grappleNormal;
-            playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
-            StopGrapple();
-        }
+    //    // if use the jump key it will stop grappling 
+    //    else if (testJumpKeyPressed())
+    //    {
+    //        playerMomentum = grappleSpeed * grappleDir;
+    //        playerMomentum += Vector3.up * grappleLift;
+    //        grappleState = movementState.grappleNormal;
+    //        playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
+    //        StopGrapple();
+    //    }
 
-    }
+    //}
 
-    // tests if the grapple key is pressed and returns a bool
-    bool testGrappleKeyPressed()
-    {
-        if (Input.GetButton("Fire2") && grappleCooldownTimer >= grappleCooldown)
-            return true;
+    //// tests if the grapple key is pressed and returns a bool
+    //bool testGrappleKeyPressed()
+    //{
+    //    if (Input.GetButton("Fire2") && grappleCooldownTimer >= grappleCooldown)
+    //        return true;
 
-        else
-            return false;
+    //    else
+    //        return false;
 
-    }
+    //}
 
-    // tests if the jump key is pressed and returns a bool
-    bool testJumpKeyPressed()
-    {
-        if (Input.GetButton("Jump"))
-            return true;
-        else
-            return false;
-    }
+    //// tests if the jump key is pressed and returns a bool
+    //bool testJumpKeyPressed()
+    //{
+    //    if (Input.GetButton("Jump"))
+    //        return true;
+    //    else
+    //        return false;
+    //}
 
-    public void StopGrapple()
-    {
-        isGrappling = false;
-        grappleRope.enabled = false;
-    }
-    #endregion GrappleHook
+    //public void StopGrapple()
+    //{
+    //    isGrappling = false;
+    //    grappleRope.enabled = false;
+    //}
+    //#endregion GrappleHook
     #endregion Movement
 
     #region Everything Else
@@ -519,10 +518,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             gameManager.instance.hideJetpack();
 
         //Grapple recharge UI
-        if (grappleCooldownTimer <= grappleCooldown)
+        if (grappleCooldownTimer <= playerStatManager.instance.grappleCooldown)
         {
             gameManager.instance.grappleGauge.enabled = true;
-            gameManager.instance.grappleGauge.fillAmount = (float)grappleCooldownTimer / grappleCooldown;
+            gameManager.instance.grappleGauge.fillAmount = (float)grappleCooldownTimer / playerStatManager.instance.grappleCooldown;
         }
         else if (gameManager.instance.grappleGauge.enabled)
             gameManager.instance.grappleGauge.enabled = false;

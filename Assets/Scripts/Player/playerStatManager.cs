@@ -27,8 +27,8 @@ public class playerStatManager : MonoBehaviour
     public float walkSpeed;
     public float sprintSpeed;
     public float crouchSpeed;
-    public float slideSpeed;
-    public float wallRunSpeed;
+    public float airSpeedMod;
+    public float jetpackAirMod;
 
     [Header("Player Base Physics/gravity")]
 
@@ -55,13 +55,30 @@ public class playerStatManager : MonoBehaviour
 
     [Header("Slide Stats")]
     public float maxSlideTime;
+    public float slideSpeed;
+    public float slideSpeedMax;
+    public float slideFriction;
 
     [Header("Wall Run Stats")]
+    public float wallRunSpeed;
     public float wallRunForce;
-    public float maxWallRunTime;
-    public float exitWallTime;
     public float wallJumpUpForce;
     public float wallJumpSideForce;
+    public float maxWallRunTime;
+    public float exitWallTime;
+    public float wallCheckDistance = 1f;
+
+    [Header("Grapple Options")]
+    public int grappleDistance;
+    public int grappleLift;
+    public float grappleSpeedMultiplier;
+    public float grappleSpeedMin;
+    public float grappleSpeedMax;
+    public float grappleCooldown;
+
+    [Header("Grapple Gun")]
+    public Transform grappleShootPos;
+    public LineRenderer grappleRope;
 
     [Header("Common Weapon Options")]
     public float attackCooldown;
