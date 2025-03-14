@@ -12,12 +12,14 @@ public class DialogueManager : MonoBehaviour
 
     private bool dialoguePlaying = false;
     private InkExternalFunctions inkExternalFunctions;
+    private InkDialogueVariables inkDialogueVariables;
 
     private void Awake()
     {
         story = new Story(inkJson.text);
         inkExternalFunctions = new InkExternalFunctions();
         inkExternalFunctions.Bind(story);
+        inkDialogueVariables = new InkDialogueVariables(story);
     }
 
     private void OnDestroy()
@@ -43,12 +45,29 @@ public class DialogueManager : MonoBehaviour
     {
         GameEventsManager.instance.dialogueEvents.onEnterDialogue += EnterDialogue;
         GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex += UpdateChoiceIndex;
+        GameEventsManager.instance.dialogueEvents.onUpdateInkDialogueVariable += UpdateInkDialogueVariable;
+        GameEventsManager.instance.questEvents.onQuestStateChange += QuestStateChange;
     }
 
     private void OnDisable()
     {
         GameEventsManager.instance.dialogueEvents.onEnterDialogue -= EnterDialogue;
         GameEventsManager.instance.dialogueEvents.onUpdateChoiceIndex -= UpdateChoiceIndex;
+        GameEventsManager.instance.dialogueEvents.onUpdateInkDialogueVariable -= UpdateInkDialogueVariable;
+        GameEventsManager.instance.questEvents.onQuestStateChange -= QuestStateChange;
+    }
+
+    private void QuestStateChange(Quest quest)
+    {
+        GameEventsManager.instance.dialogueEvents.UpdateInkDialogueVariable(
+            quest.info.id + "State",
+            new StringValue(quest.state.ToString())
+        );
+    }
+
+    private void UpdateInkDialogueVariable(string name, Ink.Runtime.Object value)
+    {
+        inkDialogueVariables.UpdateVariableState(name, value);
     }
 
     private void UpdateChoiceIndex(int choiceInex)
@@ -80,6 +99,9 @@ public class DialogueManager : MonoBehaviour
         {
             Debug.LogWarning("Knot name was the empty string when entering dialogue.");
         }
+
+        // start listening for variables
+        inkDialogueVariables.SyncVariablesAndStartListening(story);
 
         // kick off the story
         ContinueOrExitStory();
@@ -127,14 +149,15 @@ public class DialogueManager : MonoBehaviour
 
         yield return null;
 
-        Debug.Log("Exiting Dialogue");
-
         dialoguePlaying = false;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
 
         // inform other parts of system that we've finished dialogue
         GameEventsManager.instance.dialogueEvents.DialogueFinished();
+
+        // stop listening for dialogue variables
+        inkDialogueVariables.StopListening(story);
 
         story.ResetState(); // reset story state
     }
