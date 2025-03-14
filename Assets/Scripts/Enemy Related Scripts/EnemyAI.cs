@@ -248,34 +248,38 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     }
     public void takeDamage(int amount)
     {
-        StartCoroutine(enemyShowHpBar());
-
-        HP -= amount;
-        StartCoroutine(flashRed());
-        anim.SetTrigger("damage");
-
-
-        if (type != enemyType.stationary)
+        if (HP > 0)
         {
-            agent.SetDestination(gameManager.instance.player.transform.position);
-        }
-        else
-        {
-            faceTarget();
-        }
+            StartCoroutine(enemyShowHpBar());
 
-        if (meleeCol != null)
-            turnOffCol();
+            HP -= amount;
+            StartCoroutine(flashRed());
+            if (anim != null)
+                anim.SetTrigger("damage");
 
-        if (HP <= 0 && !isDead)
-        {
-            isDead = true;
-            gameManager.instance.updateGameGoal(-1);
-            if (dropsLoot)
-                dropLoot();
 
-            handleDeath();
-            //Destroy(gameObject);
+            if (type != enemyType.stationary)
+            {
+                agent.SetDestination(gameManager.instance.player.transform.position);
+            }
+            else
+            {
+                faceTarget();
+            }
+
+            if (meleeCol != null)
+                turnOffCol();
+
+            if (HP <= 0 && !isDead)
+            {
+                isDead = true;
+                gameManager.instance.updateGameGoal(-1);
+                if (dropsLoot)
+                    dropLoot();
+
+                handleDeath();
+                //Destroy(gameObject);
+            }
         }
     }
 
@@ -300,7 +304,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             agent.isStopped = true; // Stops movement
         }
 
-        anim.SetTrigger("Death"); // Trigger death animation
+        if (anim != null)
+            anim.SetTrigger("Death"); // Trigger death animation
 
         //Starts fade out process
         StartCoroutine(fadeOutBody());

@@ -3,7 +3,7 @@ using UnityEngine.Rendering;
 
 public class damage : MonoBehaviour
 {
-    enum damageType { moving, stationary, seeking}
+    enum damageType { moving, stationary, seeking, forward}
 
     [Header("General Projectile Settings")]
     [SerializeField] damageType type;
@@ -35,7 +35,10 @@ public class damage : MonoBehaviour
         if(type != damageType.stationary)
         {
             if (!playerProjectile)
-                rb.linearVelocity = (gameManager.instance.player.transform.position - transform.position).normalized * speed;
+                if (type == damageType.forward)
+                    rb.linearVelocity = transform.forward * speed;
+                else 
+                    rb.linearVelocity = (gameManager.instance.player.transform.position - transform.position).normalized * speed;
             else 
             {
                 if (type == damageType.seeking)
