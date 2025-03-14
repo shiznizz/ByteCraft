@@ -1049,6 +1049,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1064820857 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1445263466456431272, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+  m_PrefabInstance: {fileID: 1800636375}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1104601597 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1655198856165112636, guid: dffa4c53f99723c42bf6d52cad3914d1, type: 3}
@@ -1392,6 +1397,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 672449466}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1522459907 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6186495461256234512, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+  m_PrefabInstance: {fileID: 1800636375}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1687593701
 GameObject:
   m_ObjectHideFlags: 0
@@ -1486,6 +1496,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1921020688410758496, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4263542785864728171, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
       propertyPath: m_LocalPosition.z
       value: -1.1
@@ -1539,6 +1553,10 @@ PrefabInstance:
       value: 19.6
       objectReference: {fileID: 0}
     - target: {fileID: 6068349625053569077, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: meleePos
+      value: 
+      objectReference: {fileID: 1522459907}
+    - target: {fileID: 6068349625053569077, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
       propertyPath: jumpForce
       value: 10
       objectReference: {fileID: 0}
@@ -1546,6 +1564,22 @@ PrefabInstance:
       propertyPath: groundDrag
       value: 0.4
       objectReference: {fileID: 0}
+    - target: {fileID: 6068349625053569077, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: playerAnimator
+      value: 
+      objectReference: {fileID: 2136364930}
+    - target: {fileID: 6068349625053569077, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: meleeWeaponModel
+      value: 
+      objectReference: {fileID: 1064820857}
+    - target: {fileID: 7066487906901695622, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7066487906901695622, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: weaponModel
+      value: 
+      objectReference: {fileID: 1064820857}
     - target: {fileID: 7066487906901695622, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
       propertyPath: meleeCollider
       value: 
@@ -1554,8 +1588,20 @@ PrefabInstance:
       propertyPath: inventorySlot
       value: 
       objectReference: {fileID: 824103229}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    - target: {fileID: 7438968554801749307, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: m_Name
+      value: MeleePos
+      objectReference: {fileID: 0}
+    - target: {fileID: 8842881231418193611, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 5046911677100889417, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+    - {fileID: 5326225082771598426, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+    - {fileID: 3977498281863795141, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+    m_RemovedGameObjects:
+    - {fileID: 1948585965528069942, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
@@ -2003,6 +2049,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 89909af6d78d4364583225bec4840a15, type: 3}
+--- !u!95 &2136364930 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 329725358130494944, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+  m_PrefabInstance: {fileID: 1800636375}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2709798315101852275
 PrefabInstance:
   m_ObjectHideFlags: 0

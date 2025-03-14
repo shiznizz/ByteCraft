@@ -66,7 +66,7 @@ public class CrouchnSlide : MonoBehaviour
         }
     }
 
-    void exitCrouch()
+    public void exitCrouch()
     {
         // readjusts controller and camera height
         controller.height = playerStatManager.instance.standingHeight;

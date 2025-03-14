@@ -75,6 +75,7 @@ public class playerStatManager : MonoBehaviour
     public Transform muzzleFlash;
 
     [Header("Melee Options")]
+    public Transform meleePos;
     public GameObject meleeWeaponModel;
     public weaponStats startMelee;
     public Animator playerAnimator;
