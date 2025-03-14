@@ -52,12 +52,12 @@ public class DialogueManager : MonoBehaviour
     {
         if (dialoguePlaying)
         {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
             return; // don't enter dialogue if we've already entered
         }
 
         dialoguePlaying = true;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
 
         // inform other parts of system that we've started dialogue
         GameEventsManager.instance.dialogueEvents.DialogueStarted();
@@ -90,7 +90,23 @@ public class DialogueManager : MonoBehaviour
         if (story.canContinue)
         {
             string dialogueLine = story.Continue();
-            GameEventsManager.instance.dialogueEvents.DisplayDialogue(dialogueLine, story.currentChoices);
+
+            // handle the case where there's an empty line of dialogue
+            // by continuing until we get a line with content
+            while (IsLineBlank(dialogueLine) && story.canContinue)
+            {
+                dialogueLine = story.Continue();
+            }
+            // handle the case where the last line of dialogue is blank
+            // (empty choice, external function, etc...)
+            if (IsLineBlank(dialogueLine) && !story.canContinue)
+            {
+                ExitDialogue();
+            }
+            else
+            {
+                GameEventsManager.instance.dialogueEvents.DisplayDialogue(dialogueLine, story.currentChoices);
+            }
         }
         else if (story.currentChoices.Count == 0)
         {
@@ -106,10 +122,17 @@ public class DialogueManager : MonoBehaviour
         Debug.Log("Exiting Dialogue");
 
         dialoguePlaying = false;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
 
         // inform other parts of system that we've finished dialogue
         GameEventsManager.instance.dialogueEvents.DialogueFinished();
 
         story.ResetState(); // reset story state
+    }
+
+    private bool IsLineBlank(string dialogueLine)
+    {
+        return dialogueLine.Trim().Equals("") || dialogueLine.Trim().Equals("\n");
     }
 }
