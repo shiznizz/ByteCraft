@@ -16,8 +16,8 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuDeath;
-    [SerializeField] GameObject menuObjectiveFail;
-    [SerializeField] TextMeshProUGUI objectiveText;
+    [SerializeField] public GameObject menuObjectiveFail;
+    [SerializeField] public TextMeshProUGUI objectiveText;
 
 
     [Header("UI Elements to Toggle Visibility")]
@@ -32,7 +32,7 @@ public class gameManager : MonoBehaviour
     public GameObject checkpointPopup;
 
     [Header("Text Fields to Update")]
-    [SerializeField] public TMP_Text goalCountText;
+    //[SerializeField] public TMP_Text goalCountText;
     [SerializeField] public TMP_Text ammoCurText;
     [SerializeField] public TMP_Text ammoMaxText;
     [SerializeField] public TMP_Text ammoReserveText;
@@ -68,7 +68,8 @@ public class gameManager : MonoBehaviour
     [SerializeField] float heartbeatMagnitude = 0.2f;
     [SerializeField] float baseAlpha = 0.3f;
 
-    public string currentObjective;
+    //public string currentObjective;
+    public bool inventoryOpen = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -77,7 +78,7 @@ public class gameManager : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<playerController>();
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
-        currentObjective = "";
+        //currentObjective = "";
     }
 
     private void Start()
@@ -94,9 +95,11 @@ public class gameManager : MonoBehaviour
                 switchMenu(menuPause);
             else
                 stateUnpause();
+            inventoryOpen = false;
         }
         if (Input.GetButtonDown("Inventory"))
         {
+            inventoryOpen = true;
             switchMenu(menuInventory);
         }
 
@@ -149,12 +152,12 @@ public class gameManager : MonoBehaviour
         switchMenu(menuDeath);
     }
 
-    public void objectiveFailed(string failedObj)
+/*    public void objectiveFailed(string failedObj)
     {
-        
+
         switchMenu(menuObjectiveFail);
         objectiveText.SetText(currentObjective);
-    }
+    }*/
 
     public void youWin()
     {
@@ -164,7 +167,7 @@ public class gameManager : MonoBehaviour
     #endregion Menus
 
     #region UI Element Updates
-    public void updateGameGoal(int amount)
+/*    public void updateGameGoal(int amount)
     {
         goalCount += amount;
         goalCountText.text = goalCount.ToString("F0");
@@ -173,7 +176,7 @@ public class gameManager : MonoBehaviour
         {
             youWin();
         }
-    }
+    }*/
 
     public void updateAmmo()
     {
@@ -285,9 +288,9 @@ public class gameManager : MonoBehaviour
     }
     #endregion Inventory
 
-    public void SetObjectiveText(string objective)
+/*    public void SetObjectiveText(string objective)
     {
         currentObjective = objective;
         objectiveText.SetText(currentObjective);
-    }
+    }*/
 }
