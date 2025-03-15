@@ -907,7 +907,6 @@ MonoBehaviour:
   playerHP: 0
   upgradeCurrency: 0
   currSpeed: 7
-  speedLimit: 0
   walkSpeed: 7
   sprintSpeed: 10
   crouchSpeed: 4
@@ -933,11 +932,21 @@ MonoBehaviour:
   slideSpeedMax: 14
   slideFriction: 10
   wallRunSpeed: 14
-  wallRunForce: 10
-  maxWallRunTime: 3
-  exitWallTime: 0.5
+  wallJumpForce: 0
   wallJumpUpForce: 8
   wallJumpSideForce: 14
+  maxWallRunTime: 3
+  exitWallTime: 0.5
+  wallCheckDistance: 1
+  minimumWallAngleDifference: 15
+  grappleDistance: 0
+  grappleLift: 0
+  grappleSpeedMultiplier: 0
+  grappleSpeedMin: 0
+  grappleSpeedMax: 0
+  grappleCooldown: 0
+  grappleShootPos: {fileID: 0}
+  grappleRope: {fileID: 0}
   attackCooldown: 0
   attackDamage: 0
   attackDistance: 0
@@ -987,6 +996,7 @@ MonoBehaviour:
   isCrouching: 0
   isWallRunning: 0
   isJetpacking: 0
+  wallRan: 0
   cameraChangeTime: 0
   wallRunTilt: 0
   tilt: 0
@@ -1006,12 +1016,6 @@ MonoBehaviour:
   runSoundInterval: 0.2
   HPOrig: 0
   weaponListPos: 0
-  grappleDistance: 40
-  grappleLift: 7
-  grappleSpeedMultiplier: 2
-  grappleSpeedMin: 8
-  grappleSpeedMax: 12
-  grappleCooldown: 1
   grappleShootPos: {fileID: 0}
   grappleRope: {fileID: 0}
 --- !u!114 &8067939329775525885
@@ -1040,6 +1044,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orientation: {fileID: 1040981787988272564}
   controller: {fileID: 1836007201147824209}
+  capsuleCollider: {fileID: 5864598671350012223}
   cameraTransform: {fileID: 2478293035290175263}
 --- !u!114 &880456227251678012
 MonoBehaviour:
@@ -1056,11 +1061,8 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 0
-  wallCheckDistance: 1
   orientation: {fileID: 1040981787988272564}
   wallRunAcceleration: 10
-  wallRunTime: 1.5
-  wallJumpForce: 12
 --- !u!114 &7288472048335276681
 MonoBehaviour:
   m_ObjectHideFlags: 0

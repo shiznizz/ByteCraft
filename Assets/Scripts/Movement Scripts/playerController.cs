@@ -25,6 +25,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isCrouching;
     public bool isWallRunning;
     public bool isJetpacking;
+    public bool wallRan;
 
     [Header("Camera Options")]
     public float cameraChangeTime;
@@ -43,26 +44,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public int weaponListPos;
 
-    //[Header("Grapple Options")]
-    //[SerializeField] int grappleDistance;
-    //[SerializeField] int grappleLift;
-    //[SerializeField] float grappleSpeedMultiplier;
-    //[SerializeField] float grappleSpeedMin;
-    //[SerializeField] float grappleSpeedMax;
-    //[SerializeField] float grappleCooldown;
-
     // leaving available until justin wants to move it
     [Header("Grapple Gun")]
     [SerializeField] Transform grappleShootPos;
     [SerializeField] LineRenderer grappleRope;
 
-    // holds state of the grapple 
-    //private movementState grappleState;
-    //public enum movementState
-    //{
-    //    grappleNormal, // did not shoot grapple
-    //    grappleMoving, // grapple succesful now moving player
-    //}
     float grappleCooldownTimer;
 
     Rigidbody rb;
@@ -157,7 +143,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Movement
     void movePlayer()
     {
-        if (!isGrounded && !isWallRunning)
+        if (isWallRunning) return;
+
+        if (!isGrounded)
             applyGravity();
 
         // no more penquin mode. Stops player when they stop pressing keys unless airborn
@@ -192,99 +180,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
                     : isCrouching ? playerStatManager.instance.crouchSpeed : playerStatManager.instance.walkSpeed;
     }
 
-    void move()
-    {
-        moveDir = (Input.GetAxis("Horizontal") * orientation.right) +
-                      (Input.GetAxis("Vertical") * orientation.forward);
-
-        if (isSliding) return;
-        if(isWallRunning) return;
-
-        if (moveDir == Vector3.zero)
-        { 
-            if (isGrounded) rb.linearVelocity = rb.linearVelocity * 0.6f;
-            return;
-        }
-
-        float horizontalSpeed = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude;
-        float speedToApply = Mathf.Max(playerStatManager.instance.speedLimit, horizontalSpeed);
-
-        if (!isGrounded)
-            speedToApply = playerStatManager.instance.currSpeed;
-
-        if (speedToApply >= playerStatManager.instance.speedLimit)
-            speedToApply *= isGrounded ? 0.985f : 0.99f;
-
-        Vector3 newVelocity = moveDir.normalized * speedToApply;
-        newVelocity.y = rb.linearVelocity.y;
-
-        if(isGrounded) 
-            rb.linearVelocity = newVelocity;
-        else
-            rb.AddForce(moveDir.normalized * speedToApply, ForceMode.Force);
-
-        if (!isGrounded && horizontalSpeed > playerStatManager.instance.speedLimit)
-        {
-            Vector3 newHorizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-            newHorizontalVelocity *= 0.98f;
-            rb.linearVelocity = new Vector3(newHorizontalVelocity.x, rb.linearVelocity.y, newHorizontalVelocity.z);
-        }
-    }
-
-    //void movement()
-    //{
-    //    // check wall will now be placed in update in wall running script
-    //    // should conciously add audio to new movement functions
-    //    if (!isGrounded)
-    //    {
-    //        //checkWall();
-    //        //wallRun();
-    //    }
-    //    else
-    //    {
-    //        if (moveDir.magnitude > 0 && !isPlayingSteps)
-    //        {
-    //            StartCoroutine(PlaySteps());
-    //        }
-    //    }
-
-    //    // create new movement functions for sprinting, and jump
-    //    sprint();
-    //    // crouch should be called in update in crouch script
-    //    // crouch();
-    //    // update playerMoveHandler() then call in update.
-    //    playerMoveHandler();
-    //    // move jump to update and create conditions for if hasJetpack
-    //    jump();
-
-    //    // apply momentum
-    //    playerVelocity += playerMomentum;
-
-    //    // apply gravity if not wall running or grounded
-    //    if (!isWallRunning)
-    //        applyGravity();
-
-    //    // grapple code
-    //    if (playerMomentum.magnitude >= 0f)
-    //    {
-    //        playerMomentum -= playerMomentum * playerStatManager.instance.drag * Time.deltaTime;
-    //        if (playerMomentum.magnitude <= .0f)
-    //        {
-    //            playerMomentum = Vector3.zero;
-    //        }
-    //    }
-
-    //    // checks if clicking mouse 2 (right click)
-    //    if (testGrappleKeyPressed())
-    //        shootGrapple();
-
-    //    // replacing this code in speed control
-    //    moveDir = Vector3.ClampMagnitude(moveDir, playerStatManager.instance.currSpeed);
-
-    //    playerStatManager.instance.attackTimer += Time.deltaTime;
-    //    grappleCooldownTimer += Time.deltaTime;
-    //}
-
     public void applyGravity()
     {
         // adds a continous downwards force to the rigidbody
@@ -310,40 +205,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
         else
             rb.linearDamping = playerStatManager.instance.airDrag;
-    }
-
-    private void playerMoveHandler()
-    {
-        // gut this then take what you need. this is the old playerInput
-        // wall running and sliding should just boot the player out.
-        // then apply proper speed.
-        // call in update.
-
-        // in different method move the player based on input obtained here.
-        if (isWallRunning)
-        {
-            // apply wallRunSpeed then start wall run
-            playerStatManager.instance.currSpeed = playerStatManager.instance.wallRunSpeed;
-            //WallRunMovement();
-        }
-        // essentially an if else statment that checks movement state and applies the proper speed
-        else
-            playerStatManager.instance.currSpeed = isSprinting ? playerStatManager.instance.sprintSpeed : isSliding ? playerStatManager.instance.slideSpeed 
-                    : isCrouching ? playerStatManager.instance.crouchSpeed : playerStatManager.instance.walkSpeed;
-
-        if (isGrounded && isSliding)
-        {
-            //slideMovement();
-        }
-        else
-        {
-            moveDir = (Input.GetAxis("Horizontal") * transform.right) +
-                      (Input.GetAxis("Vertical") * transform.forward);
-            if(moveDir != Vector3.zero)
-            {
-                controller.Move(moveDir * playerStatManager.instance.currSpeed * Time.deltaTime);
-            }
-        }
     }
 
     void sprint()
@@ -387,90 +248,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         playerStatManager.instance.currSpeed = desiredSpeed;
     }
-
-    //#region GrappleHook
-    //// handles where the grapple is hitting
-    //void shootGrapple()
-    //{
-    //    // resets cooldown
-    //    grappleCooldownTimer = 0;
-    //    // chcks if the grapple hits a collider or not
-    //    if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, grappleDistance, ~ignoreLayer))
-    //    {
-
-    //        Debug.Log(hit.collider.name);
-
-    //        isGrappling = true;
-    //        grapplePostion = hit.point;
-
-    //        grappleRope.enabled = true;
-    //        grappleRope.SetPosition(1, grapplePostion);
-
-    //        grappleState = movementState.grappleMoving;
-    //    }
-    //}
-    //private void LateUpdate()
-    //{
-    //    if (isGrappling)
-    //        grappleRope.SetPosition(0, grappleShootPos.position);
-    //}
-    //// handles the grapple moving the character
-    //void grappleMovement()
-    //{
-    //    // sets min and max speed for grapple movement
-    //    float grappleSpeed = Mathf.Clamp(Vector3.Distance(transform.position, grapplePostion), grappleSpeedMin, grappleSpeedMax);
-    //    // direction the player will move
-    //    Vector3 grappleDir = (grapplePostion - transform.position).normalized;
-    //    // moving the player
-    //    controller.Move(grappleSpeed * grappleSpeedMultiplier * Time.deltaTime * grappleDir);
-
-    //    // checks if reached end of grapple
-    //    float grapleDistanceMove = 1f;
-    //    if (Vector3.Distance(transform.position, grapplePostion) < grapleDistanceMove)
-    //    {
-    //        grappleState = movementState.grappleNormal;
-    //        playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
-    //        StopGrapple();
-    //    }
-
-    //    // if use the jump key it will stop grappling 
-    //    else if (testJumpKeyPressed())
-    //    {
-    //        playerMomentum = grappleSpeed * grappleDir;
-    //        playerMomentum += Vector3.up * grappleLift;
-    //        grappleState = movementState.grappleNormal;
-    //        playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
-    //        StopGrapple();
-    //    }
-
-    //}
-
-    //// tests if the grapple key is pressed and returns a bool
-    //bool testGrappleKeyPressed()
-    //{
-    //    if (Input.GetButton("Fire2") && grappleCooldownTimer >= grappleCooldown)
-    //        return true;
-
-    //    else
-    //        return false;
-
-    //}
-
-    //// tests if the jump key is pressed and returns a bool
-    //bool testJumpKeyPressed()
-    //{
-    //    if (Input.GetButton("Jump"))
-    //        return true;
-    //    else
-    //        return false;
-    //}
-
-    //public void StopGrapple()
-    //{
-    //    isGrappling = false;
-    //    grappleRope.enabled = false;
-    //}
-    //#endregion GrappleHook
     #endregion Movement
 
     #region Everything Else

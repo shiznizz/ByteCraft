@@ -23,7 +23,6 @@ public class playerStatManager : MonoBehaviour
     [Header("Player Base Movement")]
 
     public float currSpeed;
-    public float speedLimit;
     public float walkSpeed;
     public float sprintSpeed;
     public float crouchSpeed;
@@ -61,12 +60,13 @@ public class playerStatManager : MonoBehaviour
 
     [Header("Wall Run Stats")]
     public float wallRunSpeed;
-    public float wallRunForce;
+    public float wallJumpForce;
     public float wallJumpUpForce;
     public float wallJumpSideForce;
     public float maxWallRunTime;
     public float exitWallTime;
     public float wallCheckDistance = 1f;
+    public float minimumWallAngleDifference;
 
     [Header("Grapple Options")]
     public int grappleDistance;
