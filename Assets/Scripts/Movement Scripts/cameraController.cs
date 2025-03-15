@@ -29,18 +29,16 @@ public class cameraController : MonoBehaviour
 
         rotY += mouseX;
 
+        // setting that can be used to invert cameras up and down rotations
         if (invertY)
             rotX += mouseY;
         else
             rotX -= mouseY;
 
-
         rotX = Mathf.Clamp(rotX, lockVertMin, lockVertMax);
-
+        // rotates camera left right up and down
         transform.localRotation = Quaternion.Euler(rotX, rotY, 0);
+        // rotates the player left and right
         orientation.rotation = Quaternion.Euler(0, rotY, 0);
-
-        // can no longer use due to rigidbody preventing use of parented camera
-        //transform.parent.Rotate(Vector3.up * mouseX);
     }
 }

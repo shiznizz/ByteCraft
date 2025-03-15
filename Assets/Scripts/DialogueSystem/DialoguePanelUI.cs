@@ -54,12 +54,6 @@ public class DialoguePanelUI : MonoBehaviour
                 + choiceButtons.Length + ").");
         }
 
-/*        if (dialogueChoices.Count != 0)
-        {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.Confined;
-        }*/
-
         // start with all of the choice buttons hidden
         foreach (DialogueChoiceButton choiceButton in choiceButtons)
         {

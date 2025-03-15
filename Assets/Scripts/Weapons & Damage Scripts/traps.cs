@@ -1,8 +1,6 @@
 using UnityEngine;
 using System.Collections;
 using static UnityEngine.GraphicsBuffer;
-using System.Net;
-using System.Security.Cryptography;
 
 public class traps : MonoBehaviour
 {
@@ -25,10 +23,6 @@ public class traps : MonoBehaviour
     [SerializeField] Transform startPoint;
     [SerializeField] Transform endPoint;
     public float moveSpeed = 5;
-
-    //[Header("Laser Sound Settings")]
-    //[SerializeField] private AudioClip laserHitSound;
-    //private AudioSource audioSource;
 
     private bool isTriggered = false;
     private bool movingToEnd = false;
@@ -61,7 +55,7 @@ public class traps : MonoBehaviour
     {
         if (!isTriggered && other.CompareTag("Player"))
         {
-            Debug.Log("Player entered the laser trigger area!");
+            //Debug.Log("Player entered the laser trigger area!");
             isTriggered = true;
             ApplyDamage(other.gameObject);
             TriggerTrapEffect();
@@ -72,7 +66,7 @@ public class traps : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player is inside the laser trigger area");
+            //Debug.Log("Player is inside the laser trigger area");
             ApplyDamage(other.gameObject);
         }
     }
@@ -218,23 +212,8 @@ public class traps : MonoBehaviour
         }
     }
 
-    //private void PlayLaserHitSound()
-    //{
-    //    if (audioSource != null && laserHitSound != null)
-    //    {
-    //        audioSource.PlayOneShot(laserHitSound);
-    //    }
-    //}
-
     void OnDrawGizmos()
     {
-        //if (laserCollider != null)
-        //{
-        //    // Visualize the laser collider
-        //    Gizmos.color = Color.red; // Color the collider red for debugging
-        //    Gizmos.DrawCube(laserCollider.transform.position + laserCollider.center, laserCollider.size);
-        //}
-
         if (lineRenderer != null)
         {
             Gizmos.color = Color.blue; // Color the line blue
