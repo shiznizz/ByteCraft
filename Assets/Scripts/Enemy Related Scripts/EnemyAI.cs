@@ -97,7 +97,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void Update()
     {
        updateEnemyUI();
-        if (isAlerted && !playerInRange)
+        if (isAlerted && !playerInRange) // specific to drone bot alerts
         {
             if (alertTimer < alertCooldown)
             {
@@ -469,7 +469,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     #endregion EnemyAttack
 
-    #region DroneEnemyAlerts
+    #region DroneBotResponse
 
     public void SetAlerted(bool state)
     {
