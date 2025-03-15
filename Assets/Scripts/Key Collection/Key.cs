@@ -7,7 +7,6 @@ using System.Collections.Generic;
 public class Key : MonoBehaviour
 {
     [Header("Config")]
-    [SerializeField] private float respawnTimeSeconds = 0;
     [SerializeField] private int keyGained = 1;
 
     [Header("Audio")]
