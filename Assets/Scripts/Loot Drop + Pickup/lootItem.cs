@@ -22,5 +22,14 @@ public enum itemType
     Melee,
     Pet,
     Ammo,
-    Fuel
+    Fuel,
+    Key,
+    Upgrade
+}
+
+public enum upgradeType
+{
+    Armor,
+    Sprint,
+    Damage
 }
