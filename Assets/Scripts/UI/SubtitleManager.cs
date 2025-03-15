@@ -14,6 +14,7 @@ public class SubtitleManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Awake()
     {
+        // singleton pattern for global access
         if (instance != null)
         {
             instance = this;
@@ -22,14 +23,17 @@ public class SubtitleManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        // ensure subtitle text is initially hidden
         if (subtitleText != null) 
         {
             subtitleText.gameObject.SetActive(false);
         }
     }
 
+    // use to display subtitle line for a set duration
     public void ShowSubtitle(string text, float duration)
     {
+        // if another subtitle is showing, stop it so we can show new one immediately
         if (currentSubtitleRoutine != null) 
         {
             StopCoroutine(currentSubtitleRoutine);
@@ -40,11 +44,14 @@ public class SubtitleManager : MonoBehaviour
 
     private IEnumerator ShowSubtitleRoutine(string text, float duration)
     {
+        // show text
         subtitleText.text = text;
         subtitleText.gameObject.SetActive(true);
 
+        // wait for duration
         yield return new WaitForSeconds(duration);
 
+        // hide text
         subtitleText.gameObject.SetActive(false);
     }
 

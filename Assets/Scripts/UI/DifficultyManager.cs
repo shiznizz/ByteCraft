@@ -7,8 +7,10 @@ public class DifficultyManager : MonoBehaviour
 {
     public static DifficultyManager instance;
 
+    // difficulty is Normal
     public GameDifficulty currentDifficulty = GameDifficulty.Normal;
 
+    // multipliers for scaling enemy stats
     public float enemyHealthMultiplier = 1f;
     public float enemyDamageMultiplier = 1f;
 
@@ -36,6 +38,7 @@ public class DifficultyManager : MonoBehaviour
 
     private void UpdateDifficultyMultipliers()
     {
+        // adjust multipliers based on selected difficulty
         switch (currentDifficulty)
         { 
             case GameDifficulty.Easy:
