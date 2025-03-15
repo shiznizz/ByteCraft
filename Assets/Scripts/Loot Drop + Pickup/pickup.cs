@@ -5,7 +5,7 @@ public class pickup : MonoBehaviour
 {
     [SerializeField] itemSO item;
 
-    public enum LootType {Health, Weapon, armor, Ammo, Fuel}
+    public enum LootType {Health, Weapon, armor, Ammo, Fuel, Upgrade}
     public LootType lootType;
     public int amount; // how much value the loot gives to player
 
@@ -32,6 +32,8 @@ public class pickup : MonoBehaviour
                         break;
                     case pickup.LootType.Ammo:
                         player.addInventory(item);
+                        break;
+                    case pickup.LootType.Upgrade:
                         break;
                 }
                 Destroy(gameObject); // remove loot from scene
