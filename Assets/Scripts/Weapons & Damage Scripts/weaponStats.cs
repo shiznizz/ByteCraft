@@ -22,7 +22,6 @@ public class weaponStats : itemSO
     public float shootRate;
     public int ammoCur, ammoMax, ammoReserve, ammoReserveMax;
     public GameObject bulletObj;
-    [SerializeField] public Vector3 bulletPos;
 
     [Header("Visuals and Sounds")]
     public ParticleSystem hitEffect;

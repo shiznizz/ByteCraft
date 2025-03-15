@@ -10,17 +10,22 @@ public class gameManager : MonoBehaviour
 {
     public static gameManager instance;
 
-    [Header("UI Elements to Toggle Visibility")]
+    [Header("Menus")]
     [SerializeField] GameObject menuInventory;
     public GameObject menuActive;
     [SerializeField] GameObject menuPause;
     [SerializeField] GameObject menuWin;
-    [SerializeField] GameObject menuLose;
+    [SerializeField] GameObject menuDeath;
+    [SerializeField] GameObject menuObjectiveFail;
+    [SerializeField] TMP_Text objectiveText;
 
+
+    [Header("UI Elements to Toggle Visibility")]
     [SerializeField] GameObject ammoHUD;
     [SerializeField] GameObject jetpackHUD;
-
+    [SerializeField] GameObject enemyHealthbar;
     public Image playerHPBar;
+    public Image enemyHPBar;
     public Image JPFuelGauge;
     public Image grappleGauge;
     public GameObject playerDamageScreen;
@@ -49,8 +54,10 @@ public class gameManager : MonoBehaviour
 
     public Image itemIcon;
 
+    public TMP_Text deleteNotifaction;
     public TMP_Text itemDescription;
     public TMP_Text itemName;
+
     public GameObject displaySlot;
 
     [Header("Low Health Screen Indicator")]
@@ -90,7 +97,7 @@ public class gameManager : MonoBehaviour
             switchMenu(menuInventory);
         }
 
-        CheckLowHealth();
+        //CheckLowHealth();
     }
 
     #region Menus
@@ -136,7 +143,13 @@ public class gameManager : MonoBehaviour
 
     public void youLose()
     {
-        switchMenu(menuLose);
+        switchMenu(menuDeath);
+    }
+
+    public void objectiveFailed(string failedObj)
+    {
+        switchMenu(menuObjectiveFail);
+        objectiveText.SetText(failedObj);
     }
 
     public void youWin()
@@ -158,8 +171,9 @@ public class gameManager : MonoBehaviour
         }
     }
 
-    public void updateAmmo(weaponStats gun)
+    public void updateAmmo()
     {
+        weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
         ammoCurText.text = gun.ammoCur.ToString("D3");
         ammoMaxText.text = gun.ammoMax.ToString("D3");
         ammoReserveText.text = gun.ammoReserve.ToString("D3");

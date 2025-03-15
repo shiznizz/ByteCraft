@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
@@ -18,10 +19,13 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] Animator anim;
 
     [Header("Enemy Stats")]
+    [SerializeField] Image hpFillBar;
+    [SerializeField] Canvas hpBar;
     [SerializeField] int HP;
     [SerializeField] int animTransSpeed;
     [SerializeField] int faceTargetSpeed;
     [SerializeField] int FOV; //Field of View
+    private int HPOrginal;
 
     [Header("Ranged Enemy Options")]
     [SerializeField] Transform headPos; //Head position
@@ -75,6 +79,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        HPOrginal = HP;
         colorOrig = model.material.color;
         gameManager.instance.updateGameGoal(1);
         startingPos = transform.position;
@@ -91,12 +96,14 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     // Update is called once per frame
     void Update()
     {
+       updateEnemyUI();
         if (isAlerted && !playerInRange)
         {
             if (alertTimer < alertCooldown)
             {
                 alertTimer += Time.deltaTime;
-            } else if (alertTimer >= alertCooldown)
+            }
+            else if (alertTimer >= alertCooldown)
             {
                 alertTimer = 0;
                 isAlerted = false;
@@ -119,6 +126,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             checkRoam();
         else if (!playerInRange)
             checkRoam();
+    }
+
+    void updateEnemyUI()
+    {
+        hpFillBar.fillAmount = (float)HP / HPOrginal;
+        hpBar.transform.LookAt(gameManager.instance.player.transform.position);
     }
 
     #region EnemyMovement
@@ -241,39 +254,54 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     #endregion EnemyMovement
 
     #region EnemyDamage
+    IEnumerator enemyShowHpBar()
+    {
+        hpBar.gameObject.SetActive(true);
+
+        yield return new WaitForSecondsRealtime(5f);
+
+        hpBar.gameObject.SetActive(false);
+    }
     public void takeDamage(int amount)
     {
-        HP -= amount;
-        StartCoroutine(flashRed());
-        anim.SetTrigger("damage");
-
-
-        if (type != enemyType.stationary)
+        if (HP > 0)
         {
-            agent.SetDestination(gameManager.instance.player.transform.position);
-        }
-        else
-        {
-            faceTarget();
-        }
+            StartCoroutine(enemyShowHpBar());
 
-        if (meleeCol != null)
-            turnOffCol();
+            HP -= amount;
+            StartCoroutine(flashRed());
+            if (anim != null)
+                anim.SetTrigger("damage");
 
-        if (HP <= 0 && !isDead)
-        {
-            isDead = true;
-            gameManager.instance.updateGameGoal(-1);
-            if (dropsLoot)
-                dropLoot();
 
-            handleDeath();
-            //Destroy(gameObject);
+            if (type != enemyType.stationary)
+            {
+                agent.SetDestination(gameManager.instance.player.transform.position);
+            }
+            else
+            {
+                faceTarget();
+            }
+
+            if (meleeCol != null)
+                turnOffCol();
+
+            if (HP <= 0 && !isDead)
+            {
+                isDead = true;
+                gameManager.instance.updateGameGoal(-1);
+                if (dropsLoot)
+                    dropLoot();
+
+                handleDeath();
+                //Destroy(gameObject);
+            }
         }
     }
 
     private void handleDeath()
     {
+        hpBar.gameObject.SetActive(false);
         //Disable the collider
         if (enemyCollider != null)
         {
@@ -292,7 +320,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             agent.isStopped = true; // Stops movement
         }
 
-        anim.SetTrigger("Death"); // Trigger death animation
+        if (anim != null)
+            anim.SetTrigger("Death"); // Trigger death animation
 
         //Starts fade out process
         StartCoroutine(fadeOutBody());
@@ -440,13 +469,16 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     #endregion EnemyAttack
 
+    #region DroneEnemyAlerts
+
     public void SetAlerted(bool state)
     {
         isAlerted = state;
         if (isAlerted)
         {
+            Debug.Log($"{gameObject.name} is now alerted!");
             alertTimer = 0f;
-            
+
         }
     }
 
@@ -454,4 +486,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     {
         playerInDroneRange = state;
     }
+
+    #endregion
 }

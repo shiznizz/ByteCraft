@@ -8,11 +8,11 @@ public class PortalTrigger : MonoBehaviour
     public GameObject portal;  // Drag the portal GameObject here in the inspector
     public float delayTime = 1f;  // Delay in seconds before the portal appears
 
-    [Header("Portal Name Settings")]
-    [SerializeField] TextMeshPro portalOneNameText;
-    [SerializeField] TextMeshPro portalTwoNameText;
-    [SerializeField] TextMeshPro portalThreeNameText;
-    [SerializeField] TextMeshPro portalFourNameText;
+   // [Header("Portal Name Settings")]
+    //[SerializeField] TextMeshPro portalOneNameText;
+    //[SerializeField] TextMeshPro portalTwoNameText;
+    //[SerializeField] TextMeshPro portalThreeNameText;
+    //[SerializeField] TextMeshPro portalFourNameText;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -33,10 +33,10 @@ public class PortalTrigger : MonoBehaviour
         if (portal != null)
         {
             portal.SetActive(true);  // Activate the portal here
-            portalOneNameText.gameObject.SetActive(true);
-            portalTwoNameText.gameObject.SetActive(true);
-            portalThreeNameText.gameObject.SetActive(true);
-            portalFourNameText.gameObject.SetActive(true);
+        //    portalOneNameText.gameObject.SetActive(true);
+        //    portalTwoNameText.gameObject.SetActive(true);
+        //    portalThreeNameText.gameObject.SetActive(true);
+        //    portalFourNameText.gameObject.SetActive(true);
         }
     }
 }
