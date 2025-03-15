@@ -64,8 +64,9 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
         
         weapon = item.GetWeapon();
         inventoryManager.instance.weaponList.Add(weapon);
+        inventoryManager.instance.weaponListPos = inventoryManager.instance.weaponList.Count - 1;
 
-        gameManager.instance.player.GetComponent<playerAttack>().getWeaponStats();
+        gameManager.instance.player.GetComponent<playerAttack>().changeWeapon();
 
         
         inventoryManager.instance.removeItem(item);
