@@ -61,4 +61,13 @@ public class mainMenu : MonoBehaviour
             optionsPanel.SetActive(!isActive);  // Toggle the panel's visibility
         }
     }
+
+    public void SetDifficulty(int difficultyIndex)
+    {
+        // cast int to GameDifficulty enum
+        if (DifficultyManager.instance != null)
+        {
+            DifficultyManager.instance.SetDifficulty((GameDifficulty)difficultyIndex);
+        }
+    }
 }
