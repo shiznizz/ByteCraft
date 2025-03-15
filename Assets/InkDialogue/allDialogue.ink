@@ -25,7 +25,7 @@ Come back once you've leveled up a bit more.
 -> END
 
 = canStart
-Will you collect 5 keys and bring them to my friend over there?
+Will you collect 5 keys?
 * [Yes]
     Great!
     ~ StartQuest("CollectKeysQuest")
@@ -41,6 +41,7 @@ How is collecting those keys going?
 
 = canFinish
 Oh? You collected the keys? Good job!
+~ FinishQuest("CollectKeysQuest")
 -> END
 
 = finished
