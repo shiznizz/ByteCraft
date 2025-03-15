@@ -39,6 +39,7 @@ public class Key : MonoBehaviour
 
     IEnumerator playClip()
     {
+        audClip = audSource.resource as AudioClip;
         audSource.PlayOneShot(audClip, audVol);
         yield return new WaitForSeconds(0.1f);
     }
