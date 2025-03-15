@@ -17,7 +17,7 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject menuWin;
     [SerializeField] GameObject menuDeath;
     [SerializeField] GameObject menuObjectiveFail;
-    [SerializeField] TMP_Text objectiveText;
+    [SerializeField] TextMeshProUGUI objectiveText;
 
 
     [Header("UI Elements to Toggle Visibility")]
@@ -68,6 +68,8 @@ public class gameManager : MonoBehaviour
     [SerializeField] float heartbeatMagnitude = 0.2f;
     [SerializeField] float baseAlpha = 0.3f;
 
+    public string currentObjective;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -75,6 +77,7 @@ public class gameManager : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<playerController>();
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
+        currentObjective = "";
     }
 
     private void Start()
@@ -148,8 +151,9 @@ public class gameManager : MonoBehaviour
 
     public void objectiveFailed(string failedObj)
     {
+        
         switchMenu(menuObjectiveFail);
-        objectiveText.SetText(failedObj);
+        objectiveText.SetText(currentObjective);
     }
 
     public void youWin()
@@ -280,4 +284,10 @@ public class gameManager : MonoBehaviour
         displaySlot.SetActive(false);
     }
     #endregion Inventory
+
+    public void SetObjectiveText(string objective)
+    {
+        currentObjective = objective;
+        objectiveText.SetText(currentObjective);
+    }
 }
