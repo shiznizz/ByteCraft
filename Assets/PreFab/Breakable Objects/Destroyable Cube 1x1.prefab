@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8576182139960856235}
   m_Layer: 0
   m_Name: Destroyable Cube 1x1
-  m_TagString: Untagged
+  m_TagString: Target
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -46,10 +46,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2aa2f58ee3271741a2cdc8a3b81ab96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectHP: 1
+  objectHP: 4
   wholeObject: {fileID: 3066929963219370122}
-  fracturedObject: {fileID: 5512271496314546584}
-  seperationForce: 1
+  fracturedObject: {fileID: 6029339959234334258, guid: 08d8a2ea097c8c440b22d0f0179bbc29, type: 3}
+  seperationForce: 200
   removeFromWorldTime: 3
 --- !u!65 &8576182139960856235
 BoxCollider:
@@ -124,6 +124,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 7f4ff057efa234740842b9442ebc75e6, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: de6410fcb1ff6f04ba22f3762b5bce78, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

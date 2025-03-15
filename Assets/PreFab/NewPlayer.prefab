@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 782463298014959462}
   m_Layer: 0
   m_Name: NewPlayer
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -819,7 +819,7 @@ GameObject:
   - component: {fileID: 766754491863903372}
   - component: {fileID: 9064561540285527499}
   - component: {fileID: 6068349625053569077}
-  - component: {fileID: 675308445104662257}
+  - component: {fileID: 5227924056507523457}
   - component: {fileID: 8067939329775525885}
   - component: {fileID: 4708629593051710519}
   - component: {fileID: 880456227251678012}
@@ -831,9 +831,9 @@ GameObject:
   - component: {fileID: 1056466831797773187}
   - component: {fileID: 4434567090822296454}
   - component: {fileID: 329725358130494944}
-  - component: {fileID: 2395466275709666383}
-  - component: {fileID: 2584749434757106190}
-  - component: {fileID: 5063644781792244386}
+  - component: {fileID: 1486064597785730943}
+  - component: {fileID: 8244904287834974881}
+  - component: {fileID: 6626980476747503879}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -969,7 +969,7 @@ MonoBehaviour:
   shootTimer: 0
   attackTimer: 0
   currentWeapon: 0
---- !u!114 &675308445104662257
+--- !u!114 &5227924056507523457
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -982,8 +982,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orientation: {fileID: 1040981787988272564}
-  controller: {fileID: 2584749434757106190}
-  audioSource: {fileID: 0}
+  controller: {fileID: 8244904287834974881}
+  audioSource: {fileID: 6531325392150728171}
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -1044,8 +1044,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   orientation: {fileID: 1040981787988272564}
-  controller: {fileID: 0}
-  collider: {fileID: 0}
+  controller: {fileID: 8244904287834974881}
+  collider: {fileID: 5864598671350012223}
   cameraTransform: {fileID: 2478293035290175263}
 --- !u!114 &880456227251678012
 MonoBehaviour:
@@ -1314,7 +1314,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &2395466275709666383
+--- !u!114 &1486064597785730943
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1332,7 +1332,7 @@ MonoBehaviour:
   equippedWeapon: {fileID: 0}
   inventorySlot: {fileID: 0}
   slotBossScript: {fileID: 0}
---- !u!143 &2584749434757106190
+--- !u!143 &8244904287834974881
 CharacterController:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1357,7 +1357,7 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!82 &5063644781792244386
+--- !u!82 &6626980476747503879
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
