@@ -26,22 +26,12 @@ public class Key : MonoBehaviour
 
     private void CollectKey()
     {
-/*        audSource.enabled = true;
-        audSource.PlayOneShot(audClip, audVol);*/
+        audSource.PlayOneShot(audClip, audVol);
         sphereCollider.enabled = false;
         visual.gameObject.SetActive(false);
         GameEventsManager.instance.keyEvents.KeyGained(keyGained);
         GameEventsManager.instance.miscEvents.KeyCollected();
-        StopAllCoroutines();
-        StartCoroutine(playClip());
-        //Destroy(this.gameObject);
-    }
-
-    IEnumerator playClip()
-    {
-        audClip = audSource.resource as AudioClip;
-        audSource.PlayOneShot(audClip, audVol);
-        yield return new WaitForSeconds(0.1f);
+        Destroy(this.gameObject);
     }
 
     private void OnTriggerEnter(Collider other)
