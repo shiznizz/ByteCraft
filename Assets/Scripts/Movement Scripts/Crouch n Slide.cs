@@ -2,7 +2,9 @@ using UnityEngine;
 
 public class CrouchnSlide : MonoBehaviour
 {
+    [SerializeField] Transform orientation;
     [SerializeField] CharacterController controller;
+    [SerializeField] CapsuleCollider collider;
 
     private playerController pc;
     private Rigidbody rb;
@@ -19,81 +21,119 @@ public class CrouchnSlide : MonoBehaviour
     Vector3 normalCamPos;
     Vector3 crouchCamPos;
 
+    //horizontalInput = Input.GetAxisRaw("Horizontal");
+    //    verticalInput = Input.GetAxisRaw("Vertical");
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         pc = GetComponent<playerController>();
+        normalCamPos = cameraTransform.localPosition;
+        playerStatManager.instance.playerHeight = playerStatManager.instance.standingHeight;
     }
 
     // Update is called once per frame
     void Update()
     {
         crouch();
+
+        if (pc.isSprinting && pc.isCrouching)
+            exitCrouch();
+        //if (pc.isSliding && pc.isGrounded)
+        //    slideCountdown();
     }
 
-     void crouch()
+    private void FixedUpdate()
+    {
+        // because gravity wasn't working when crouching or sliding
+        if ((!pc.isWallRunning || !pc.isGrounded) && (pc.isCrouching || pc.isSliding)) 
+            pc.applyGravity();
+        if (pc.isSliding && pc.isGrounded)
+            slideMovement();
+    }
+
+    void crouch()
     {
         if (Input.GetButtonDown("Crouch"))
-        {
-            // toggles crouch
-            if(pc.isGrounded)
+        {// toggles crouch 
+            if (pc.isGrounded)
                 pc.isCrouching = !pc.isCrouching;
-
-            // adjusts controller height and orients controller on ground
-            if (pc.isCrouching)
-            {
-                controller.height = playerStatManager.instance.crouchHeight;
-                controller.center = crouchingCenter;
-                playerStatManager.instance.playerHeight = playerStatManager.instance.crouchHeight;
-
-                // changes camera position (lerp was breaking this)
-                cameraTransform.localPosition = crouchCamPos;
-
-                //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, crouchCamPos, cameraChangeTime);               
-                // if moving faster than walking - slide
-                if (playerStatManager.instance.currSpeed > playerStatManager.instance.walkSpeed)
-                {
-                    pc.isSliding = true;
-                    pc.isSprinting = false;
-                    // starts slide timer and sets vector to lock player movement
-                    slideTimer = playerStatManager.instance.maxSlideTime;
-                    forwardDir = transform.forward;
-                }
-            }
-            else
-            {
-                exitCrouch();
-            }
         }
+
+        if ((Input.GetButtonDown("Jump") || Input.GetButtonDown("Sprint")) && pc.isCrouching)
+            pc.isCrouching = false;
+     
+        // adjusts controller height and orients controller on ground
+        if (pc.isCrouching)
+        {
+            startCrouch();
+
+            // if moving faster than walking - slide
+            if (playerStatManager.instance.currSpeed > playerStatManager.instance.walkSpeed && !pc.isSliding)
+                startSlide();
+        }
+        else
+            exitCrouch();
     }
 
-    void exitCrouch()
+    void startCrouch()
     {
-        // readjusts controller and camera height
+        // adjusts controller height and center for crouching
+        controller.height = playerStatManager.instance.crouchHeight;
+        controller.center = crouchingCenter;
+
+        // adjusts collider height and center for crouching
+        collider.height = playerStatManager.instance.crouchHeight;
+        collider.center = crouchingCenter;
+
+        playerStatManager.instance.playerHeight = playerStatManager.instance.crouchHeight;
+
+        // changes camera position (lerp was breaking this)
+        cameraTransform.localPosition = crouchCamPos;
+    }
+
+    public void exitCrouch()
+    {
+        // readjusts controller and camera height for standing
         controller.height = playerStatManager.instance.standingHeight;
         controller.center = standingCenter;
+
+        // readjusts collider height and center for standing
+        collider.height = playerStatManager.instance.standingHeight;
+        collider.center = standingCenter;
+
         playerStatManager.instance.playerHeight = playerStatManager.instance.standingHeight;
+
         pc.isCrouching = false;
         pc.isSliding = false;
+
         cameraTransform.localPosition = normalCamPos;
-        //cameraTransform.localPosition = Vector3.Lerp(cameraTransform.localPosition, normalCamPos, cameraChangeTime);
-        Debug.Log("exit crouch");
+    }
+    void startSlide()
+    {
+        pc.isSliding = true;
+        pc.isSprinting = false;
+        playerStatManager.instance.slideSpeed = playerStatManager.instance.slideSpeedMax;
+        // starts slide timer and sets vector to lock player movement
+        slideTimer = playerStatManager.instance.maxSlideTime;
+        forwardDir = orientation.forward;
+    }
+    void slideMovement()
+    {
+        slideTimer -= Time.deltaTime;
+        rb.AddForce(forwardDir.normalized * playerStatManager.instance.currSpeed * 10f, ForceMode.Force);
+        playerStatManager.instance.slideSpeed -= Time.deltaTime * playerStatManager.instance.slideFriction;
+        if (slideTimer <= 0)
+            pc.isSliding = false;
+            //exitCrouch();
     }
 
-    void slideMovement()
-    {    
-        // costs jp fuel to slide while not moving
-        //if (moveDir == Vector3.zero)
-        //    jetpackFuel += -(jetpackFuelMax * .25f);
-        
-        // slide countdown and force player to move one direction
+    void slideCountdown()
+    {
+        //Debug.Log("slide timer = " + slideTimer);
         slideTimer -= Time.deltaTime;
-        controller.Move(forwardDir * playerStatManager.instance.slideSpeed * Time.deltaTime);
         if (slideTimer <= 0)
-        {
             exitCrouch();
-        }
-        
     }
 }

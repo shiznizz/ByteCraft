@@ -17,6 +17,8 @@ public class playerAttack : MonoBehaviour
     [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
 
+    private bool isMeleeAttacking = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -27,6 +29,8 @@ public class playerAttack : MonoBehaviour
 
     public void weaponHandler()
     {
+        if (isMeleeAttacking) return;
+
         playerStatManager.instance.attackTimer += Time.deltaTime;
 
         if (Input.GetButton("Fire1") && inventoryManager.instance.weaponList.Count > 0 && playerStatManager.instance.attackTimer >= playerStatManager.instance.attackCooldown)
@@ -42,12 +46,13 @@ public class playerAttack : MonoBehaviour
     {
         playerStatManager.instance.attackTimer = 0;
         StartCoroutine(flashMuzzle());
+        inv.returnCurrentWeapon().ammoCur--;
         if (inv.returnCurrentWeapon().shootSounds.Length != 0)
             playShootSound();
 
         if (inv.returnCurrentWeapon().attackType == weaponStats.bulletType.RayCast)
         {
-            Debug.Log("Ray");
+            //Debug.Log("Ray");
             shootRayCast();
         }
         else if (inv.returnCurrentWeapon().attackType == weaponStats.bulletType.Projectile)
@@ -63,13 +68,10 @@ public class playerAttack : MonoBehaviour
 
     void shootRayCast()
     {
-        inv.returnCurrentWeapon().ammoCur--;
-        
-
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, playerStatManager.instance.attackDistance, ~ignoreLayer))
         {
-            Debug.Log(hit.collider.name);
+            //Debug.Log(hit.collider.name);
             if (inv.returnCurrentWeapon().hitEffect != null)
                 Instantiate(inv.returnCurrentWeapon().hitEffect, hit.point, Quaternion.identity);
 
@@ -85,12 +87,12 @@ public class playerAttack : MonoBehaviour
             damage?.takeDamage(playerStatManager.instance.attackDamage);
         }
 
-        
+
     }
 
     void shootProjectile()
     {
-        Instantiate(inv.returnCurrentWeapon().bulletObj,inv.returnCurrentWeapon().bulletPos, transform.rotation);
+        Instantiate(inv.returnCurrentWeapon().bulletObj, playerStatManager.instance.muzzleFlash.position, Camera.main.transform.rotation);
     }
 
     void shootContinuous()
@@ -161,7 +163,8 @@ public class playerAttack : MonoBehaviour
             {
                 inv.returnCurrentWeapon().ammoReserve -= (inv.returnCurrentWeapon().ammoMax - inv.returnCurrentWeapon().ammoCur);
                 inv.returnCurrentWeapon().ammoCur = inv.returnCurrentWeapon().ammoMax;
-                audioSource.PlayOneShot(inv.returnCurrentWeapon().reloadSounds[Random.Range(0, inv.returnCurrentWeapon().reloadSounds.Length)], inv.returnCurrentWeapon().reloadVolume);
+                if (inv.returnCurrentWeapon().reloadSounds.Length != 0)
+                    audioSource.PlayOneShot(inv.returnCurrentWeapon().reloadSounds[Random.Range(0, inv.returnCurrentWeapon().reloadSounds.Length)], inv.returnCurrentWeapon().reloadVolume);
             }
             else if (inv.returnCurrentWeapon().ammoReserve > 0)                               //If there is ammo in reserve but not a full clip reload remaining ammo
             {
@@ -220,5 +223,17 @@ public class playerAttack : MonoBehaviour
     void playShootSound()
     {
         audioSource.PlayOneShot(inv.returnCurrentWeapon().shootSounds[Random.Range(0, inv.returnCurrentWeapon().shootSounds.Length)], inv.returnCurrentWeapon().shootVolume);
+    }
+
+    // Call this method to temporarily disable the player's weapons
+    public void DisableWeapons()
+    {
+        isMeleeAttacking = true;
+    }
+
+    // Call this method to re-enable the player's weapons
+    public void EnableWeapons()
+    {
+        isMeleeAttacking = false;
     }
 }

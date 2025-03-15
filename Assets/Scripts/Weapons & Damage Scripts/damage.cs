@@ -3,7 +3,7 @@ using UnityEngine.Rendering;
 
 public class damage : MonoBehaviour
 {
-    enum damageType { moving, stationary, seeking}
+    enum damageType { moving, stationary, seeking, forward}
 
     [Header("General Projectile Settings")]
     [SerializeField] damageType type;
@@ -21,6 +21,7 @@ public class damage : MonoBehaviour
     [Header("Seeking Projectile Parameters")]
     [SerializeField] int targetingDistance;
     [SerializeField] float turnSpeed;
+    [SerializeField] LayerMask ignoreLayer;
 
     
     private IDamage target;
@@ -34,15 +35,26 @@ public class damage : MonoBehaviour
         if(type != damageType.stationary)
         {
             if (!playerProjectile)
-                rb.linearVelocity = (gameManager.instance.player.transform.position - transform.position).normalized * speed;
+                if (type == damageType.forward)
+                    rb.linearVelocity = transform.forward * speed;
+                else 
+                    rb.linearVelocity = (gameManager.instance.player.transform.position - transform.position).normalized * speed;
             else 
             {
                 if (type == damageType.seeking)
                 {
-                    if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, targetingDistance))      
+                    if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, targetingDistance,~ignoreLayer))      
                         target = hit.collider.GetComponent<IDamage>();
                 }
-                rb.linearVelocity = Camera.main.transform.forward * speed;
+
+                if (target != null)
+                {
+                    SeekEnemy();
+                }
+                else
+                {
+                    rb.linearVelocity = Camera.main.transform.forward * speed;
+                }
             }
 
             Destroy(gameObject, destroyTime);
@@ -155,7 +167,7 @@ public class damage : MonoBehaviour
 
         // Play a random sound from the damageHitSounds array
         AudioClip soundToPlay = damageHitSounds[Random.Range(0, damageHitSounds.Length)];
-        Debug.Log("Playing sound: " + soundToPlay.name);
+        //Debug.Log("Playing sound: " + soundToPlay.name);
         audioSource.PlayOneShot(soundToPlay);
     }
 }
