@@ -87,6 +87,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         rb = GetComponent<Rigidbody>();
         enemyCollider = GetComponent<Collider>();
         bodyRenderer = model;
+
+        // scale enemy stats based on current difficulty
+        if (DifficultyManager.instance != null)
+        {
+            HP = Mathf.RoundToInt(HP * DifficultyManager.instance.enemyHealthMultiplier);
+        }
     }
 
     // Update is called once per frame
