@@ -35,7 +35,18 @@ public class pickup : MonoBehaviour
                         player.addInventory(item);
                         break;
                     case pickup.LootType.Upgrade:
-                        Debug.Log($"Picked up upgrade item: {lootItem.name} - {lootItem.upgradeType}");
+                        //Debug.Log($"Picked up upgrade item: {lootItem.name} - {lootItem.upgradeType}");
+
+                        if (lootItem.upgradeType == upgradeType.Armor)
+                        {
+                            playerStatManager.instance.Armor += lootItem.restoreAmt;
+                        } else if (lootItem.upgradeType == upgradeType.Damage)
+                        {
+                            playerStatManager.instance.attackDamage += lootItem.restoreAmt;
+                        } else if (lootItem.upgradeType == upgradeType.Sprint)
+                        {
+                            playerStatManager.instance.sprintSpeed += lootItem.restoreAmt;
+                        }
                         break;
                 }
                 Destroy(gameObject); // remove loot from scene
