@@ -14,9 +14,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [Header("General Enemy Settings")]
     [SerializeField] enemyType type;
     [SerializeField] movementType movement;
+    [SerializeField] GameObject target;
     [SerializeField] Renderer model;
     [SerializeField] NavMeshAgent agent;
     [SerializeField] Animator anim;
+    private GameObject originalTarget;
 
     [Header("Enemy Stats")]
     [SerializeField] Image hpFillBar;
@@ -63,9 +65,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     Vector3 startingPos;
     float roamTimer;
     float stoppingDistOrig;
-    Vector3 playerDir;
+    Vector3 targetDir;
     bool playerInRange;
-    float angleToPlayer;
+    float angleToTarget;
 
     Color colorOrig;
     private bool isAlerted = false;
@@ -96,6 +98,15 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (DifficultyManager.instance != null)
         {
             HP = Mathf.RoundToInt(HP * DifficultyManager.instance.enemyHealthMultiplier);
+        }
+
+        if (movement != movementType.seeking)
+        {
+            target = gameManager.instance.player;
+        }
+        else
+        {
+            originalTarget = target;
         }
     }
 
@@ -128,7 +139,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
         shootTimer += Time.deltaTime;
 
-        if (playerInRange && !canSeePlayer())
+        if (movement == movementType.seeking)
+        {
+            SeekTarget();
+        }
+
+        if (playerInRange && !canSeeTarget())
             checkRoam();
         else if (!playerInRange)
             checkRoam();
@@ -137,35 +153,41 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void updateEnemyUI()
     {
         hpFillBar.fillAmount = (float)HP / HPOrginal;
-        hpBar.transform.LookAt(gameManager.instance.player.transform.position);
+        hpBar.transform.LookAt(target.transform.position);
     }
 
     #region EnemyMovement
 
-    bool canSeePlayer()
+    void SeekTarget()
     {
-        playerDir = gameManager.instance.player.transform.position - headPos.position;
-        angleToPlayer = Vector3.Angle(new Vector3(playerDir.x, 0, playerDir.z), transform.forward);
+        if (!canSeeTarget())
+            agent.SetDestination(target.transform.position);
+    }
 
-        Debug.DrawRay(headPos.position, playerDir,Color.cyan);
+    bool canSeeTarget()
+    {
+        targetDir = target.transform.position - headPos.position;
+        angleToTarget = Vector3.Angle(new Vector3(targetDir.x, 0, targetDir.z), transform.forward);
+
+        Debug.DrawRay(headPos.position, targetDir,Color.cyan);
 
         RaycastHit hit;
-        if (Physics.Raycast(headPos.position, playerDir, out hit) && angleToPlayer <= FOV)
+        if (Physics.Raycast(headPos.position, targetDir, out hit) && angleToTarget <= FOV)
         {
-            if (hit.collider.CompareTag("Player") && angleToPlayer <= FOV)
+            if ((hit.collider.CompareTag("Player") || hit.collider.CompareTag("Target")) && angleToTarget <= FOV)
             {
                 if (type != enemyType.stationary)
                 {
-                    agent.SetDestination(gameManager.instance.player.transform.position);
+                    agent.SetDestination(target.transform.position);
                 }
 
                 //Ranged attack
-                if (type != enemyType.melee && shootTimer >= shootRate && angleToPlayer <= shootAngle)
+                if (type != enemyType.melee && shootTimer >= shootRate && angleToTarget <= shootAngle)
                 {
                     shoot();
                 }
                 //Melee attack
-                float distanceToPlayer = Vector3.Distance(transform.position, gameManager.instance.player.transform.position);
+                float distanceToPlayer = Vector3.Distance(transform.position, target.transform.position);
                 if (type == enemyType.melee && shootTimer >= shootRate && distanceToPlayer <= meleeDistance)
                 //if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= meleeDistance) // Ensures attack happens when the shoot timer is ready
                 {
@@ -205,14 +227,15 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
+            target = originalTarget;
         }
         agent.stoppingDistance = 0;
     }
 
     void faceTarget()
     {
-        playerDir = gameManager.instance.player.transform.position - headPos.position;
-        Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, 0, playerDir.z));
+        targetDir = target.transform.position - headPos.position;
+        Quaternion rot = Quaternion.LookRotation(new Vector3(targetDir.x, 0, targetDir.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * faceTargetSpeed);
     }
 
@@ -270,6 +293,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     }
     public void takeDamage(int amount)
     {
+        if (movement == movementType.seeking)
+        {
+            target = gameManager.instance.player;
+        }
+
         if (HP > 0)
         {
             StartCoroutine(enemyShowHpBar());
@@ -282,7 +310,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
             if (type != enemyType.stationary)
             {
-                agent.SetDestination(gameManager.instance.player.transform.position);
+                agent.SetDestination(target.transform.position);
             }
             else
             {
@@ -374,8 +402,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void createProjectile()
     {
         //Creates a projectile at shootPos with the same rotation as the enemy
-        Instantiate(bullet, shootPos.position, transform.rotation);
-
+        GameObject newBullet = Instantiate(bullet, shootPos.position, transform.rotation);
+        newBullet.GetComponent<damage>().updateTarget(target);
     }
 
     void meleeAttack()
@@ -401,11 +429,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
         if (type == enemyType.kamikaze)
         {
-            agent.SetDestination(gameManager.instance.player.transform.position);
+            agent.SetDestination(target.transform.position);
         }
 
         // Check if within melee range to trigger detonation
-        if (Vector3.Distance(transform.position, gameManager.instance.player.transform.position) <= meleeDistance)
+        if (Vector3.Distance(transform.position, target.transform.position) <= meleeDistance)
         {
             // Trigger detonate animation (similar to melee attack)
             anim.SetTrigger("Detonate");
@@ -423,7 +451,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         anim.SetTrigger("Explode");
 
         // Apply explosion damage if the player is close enough
-        if (Vector3.Distance(transform.position, gameManager.instance.player.transform.position) <= meleeDistance)
+        if (Vector3.Distance(transform.position, target.transform.position) <= meleeDistance)
         {
             // scale explosion damage based on difficulty
             int baseDamage = 25;

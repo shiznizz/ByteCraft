@@ -98,12 +98,6 @@ public class playerAttack : MonoBehaviour
 
     }
 
-    public void getWeaponStats()
-    {
-        inventoryManager.instance.changeWeaponPOS(); // Selects the newly added weapon
-        changeWeapon();
-    }
-
     public void removeWeaponUI()
     {
 
