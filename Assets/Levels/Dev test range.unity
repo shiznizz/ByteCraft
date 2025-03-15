@@ -119,11 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!4 &16619866 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1040981787988272564, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
-  m_PrefabInstance: {fileID: 1800636375}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &89150748 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8740128988450226819, guid: 835a9675f79f6374a882b77bf4ffdd21, type: 3}
@@ -406,56 +401,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6683225297028311546, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
   m_PrefabInstance: {fileID: 1800636375}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &341741072
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 341741065}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adb7d3a06dc56fe4a821613f25c92e9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  orientation: {fileID: 16619866}
-  controller: {fileID: 341741073}
-  audioSource: {fileID: 1817004611}
-  ignoreLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 33792
-  trap: {fileID: 0}
-  isGrounded: 0
-  isSprinting: 0
-  isGrappling: 0
-  isSliding: 0
-  isCrouching: 0
-  isWallRunning: 0
-  isJetpacking: 0
-  cameraChangeTime: 0
-  wallRunTilt: 0
-  tilt: 0
-  stepSounds:
-  - {fileID: 8300000, guid: 05a08dd4ee0c046a6b56466d5c9aa9b8, type: 3}
-  - {fileID: 8300000, guid: bc1c11a60c94e439d84d64c56fdd354f, type: 3}
-  - {fileID: 8300000, guid: 64049f336db3d403dabd0425eb159922, type: 3}
-  - {fileID: 8300000, guid: aa9d74433c06a41a9b25cc9175d3f3ae, type: 3}
-  - {fileID: 8300000, guid: f7bff2a24d7d64eb296a8133060bd3e9, type: 3}
-  - {fileID: 8300000, guid: f626dafe2c3e045cd852e86532182f70, type: 3}
-  - {fileID: 8300000, guid: 27f4d8a727d874633b0292b089ec9b7c, type: 3}
-  - {fileID: 8300000, guid: c1eac1c698fc84605adb7e1074fd7d34, type: 3}
-  - {fileID: 8300000, guid: f54a7e8aabfc8436b965149db8156132, type: 3}
-  - {fileID: 8300000, guid: 3a06a27039e144e5c853a93d408fd63a, type: 3}
-  stepVolume: 0.1
-  walkSoundInterval: 0.5
-  runSoundInterval: 0.2
-  HPOrig: 0
-  weaponListPos: 0
-  grappleShootPos: {fileID: 1381159919}
-  grappleRope: {fileID: 1381159915}
 --- !u!143 &341741073
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1142,16 +1087,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c5bdf9593743f84f8c2f144892991c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!120 &1381159915 stripped
-LineRenderer:
-  m_CorrespondingSourceObject: {fileID: 7902225201289031933, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
-  m_PrefabInstance: {fileID: 1405854270}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1381159919 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6752147115320171824, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
-  m_PrefabInstance: {fileID: 1405854270}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1405854270
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1469,6 +1404,10 @@ PrefabInstance:
       propertyPath: controller
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4708629593051710519, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: controller
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5043751963829147083, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13
@@ -1521,9 +1460,6 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6683225297028311546, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
-      insertIndex: 4
-      addedObject: {fileID: 341741072}
     - targetCorrespondingSourceObject: {fileID: 6683225297028311546, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 341741074}
@@ -1652,11 +1588,6 @@ Rigidbody:
 --- !u!4 &1817004610 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3400437105452468489, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
-  m_PrefabInstance: {fileID: 1405854270}
-  m_PrefabAsset: {fileID: 0}
---- !u!82 &1817004611 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 2571937706506311179, guid: 74248d8b62dadc24ea9c61ade6f7bfdd, type: 3}
   m_PrefabInstance: {fileID: 1405854270}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1857227983
@@ -2309,7 +2240,7 @@ PrefabInstance:
     - target: {fileID: 5809270350288258848, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: playerScript
       value: 
-      objectReference: {fileID: 341741072}
+      objectReference: {fileID: 0}
     - target: {fileID: 5809270350288258848, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: playerSpawnPos
       value: 
