@@ -409,6 +409,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         // Apply explosion damage if the player is close enough
         if (Vector3.Distance(transform.position, gameManager.instance.player.transform.position) <= meleeDistance)
         {
+            // scale explosion damage based on difficulty
+            int baseDamage = 25;
+            int explosionDamage = (DifficultyManager.instance != null)
+                ? Mathf.RoundToInt(baseDamage * DifficultyManager.instance.enemyDamageMultiplier)
+                : baseDamage;
             gameManager.instance.playerScript.takeDamage(25); // Adjust explosion damage as needed
         }
 
