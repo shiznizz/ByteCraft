@@ -519,6 +519,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 33792
   trap: {fileID: 0}
+  isGrounded: 0
+  isSprinting: 0
+  isGrappling: 0
+  isSliding: 0
+  isCrouching: 0
+  isWallRunning: 0
+  isJetpacking: 0
   cameraChangeTime: 0
   wallRunTilt: 0
   tilt: 0
@@ -538,21 +545,8 @@ MonoBehaviour:
   runSoundInterval: 0.2
   HPOrig: 0
   weaponListPos: 0
-  grappleDistance: 40
-  grappleLift: 7
-  grappleSpeedMultiplier: 2
-  grappleSpeedMin: 8
-  grappleSpeedMax: 12
-  grappleCooldown: 1
   grappleShootPos: {fileID: 1381159919}
   grappleRope: {fileID: 1381159915}
-  isGrounded: 0
-  isSprinting: 0
-  isGrappling: 0
-  isSliding: 0
-  isCrouching: 0
-  isWallRunning: 0
-  isJetpacking: 0
 --- !u!143 &341741073
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1748,6 +1742,9 @@ MonoBehaviour:
   damageHitSounds: []
   targetingDistance: 0
   turnSpeed: 0
+  ignoreLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!135 &1687593705
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2047,15 +2044,18 @@ MonoBehaviour:
   playerHeight: 0
   standingHeight: 2
   crouchHeight: 0.5
+  playerHPMax: 100
+  playerHP: 0
   upgradeCurrency: 10
   currSpeed: 0
   speedLimit: 2000
   walkSpeed: 7
   sprintSpeed: 10
   crouchSpeed: 4
-  slideSpeed: 14
-  wallRunSpeed: 14
+  airSpeedMod: 0
+  jetpackAirMod: 0
   groundDrag: 0
+  airDrag: 0
   drag: 0
   gravity: 0
   jumpForce: 12
@@ -2070,11 +2070,24 @@ MonoBehaviour:
   jetpackSpeed: 10
   jetpackHoldTimer: 0.01
   maxSlideTime: 0
+  slideSpeed: 14
+  slideSpeedMax: 0
+  slideFriction: 0
+  wallRunSpeed: 14
   wallRunForce: 0
-  maxWallRunTime: 0
-  exitWallTime: 0
   wallJumpUpForce: 0
   wallJumpSideForce: 0
+  maxWallRunTime: 0
+  exitWallTime: 0
+  wallCheckDistance: 1
+  grappleDistance: 0
+  grappleLift: 0
+  grappleSpeedMultiplier: 0
+  grappleSpeedMin: 0
+  grappleSpeedMax: 0
+  grappleCooldown: 0
+  grappleShootPos: {fileID: 0}
+  grappleRope: {fileID: 0}
   attackCooldown: 0
   attackDamage: 0
   attackDistance: 0
@@ -2082,6 +2095,7 @@ MonoBehaviour:
   gunModel: {fileID: 0}
   startGun: {fileID: 0}
   muzzleFlash: {fileID: 0}
+  meleePos: {fileID: 0}
   meleeWeaponModel: {fileID: 0}
   startMelee: {fileID: 0}
   playerAnimator: {fileID: 0}
@@ -3414,6 +3428,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AlarmDrone
       objectReference: {fileID: 0}
+    - target: {fileID: 8040879700233506624, guid: 459df50d9c672354c99e70e869d17475, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4623,6 +4641,8 @@ MonoBehaviour:
   model: {fileID: 8042179658492016047}
   agent: {fileID: 8042179658497461694}
   anim: {fileID: 8042179658487838775}
+  hpFillBar: {fileID: 0}
+  hpBar: {fileID: 0}
   HP: 2
   animTransSpeed: 8
   faceTargetSpeed: 32
