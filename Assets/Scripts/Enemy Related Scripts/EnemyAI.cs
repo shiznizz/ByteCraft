@@ -68,6 +68,10 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     float angleToPlayer;
 
     Color colorOrig;
+    private bool isAlerted = false;
+    private float alertTimer;
+    private bool playerInDroneRange = false;
+    private float alertCooldown = 5f;
 
     #endregion Variables
 
@@ -87,12 +91,30 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         rb = GetComponent<Rigidbody>();
         enemyCollider = GetComponent<Collider>();
         bodyRenderer = model;
+
+        // scale enemy stats based on current difficulty
+        if (DifficultyManager.instance != null)
+        {
+            HP = Mathf.RoundToInt(HP * DifficultyManager.instance.enemyHealthMultiplier);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
        updateEnemyUI();
+        if (isAlerted && !playerInRange) // specific to drone bot alerts
+        {
+            if (alertTimer < alertCooldown)
+            {
+                alertTimer += Time.deltaTime;
+            }
+            else if (alertTimer >= alertCooldown)
+            {
+                alertTimer = 0;
+                isAlerted = false;
+            }
+        }
         if (type != enemyType.stationary)
         {
             float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
@@ -403,6 +425,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         // Apply explosion damage if the player is close enough
         if (Vector3.Distance(transform.position, gameManager.instance.player.transform.position) <= meleeDistance)
         {
+            // scale explosion damage based on difficulty
+            int baseDamage = 25;
+            int explosionDamage = (DifficultyManager.instance != null)
+                ? Mathf.RoundToInt(baseDamage * DifficultyManager.instance.enemyDamageMultiplier)
+                : baseDamage;
             gameManager.instance.playerScript.takeDamage(25); // Adjust explosion damage as needed
         }
 
@@ -452,4 +479,24 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     }
 
     #endregion EnemyAttack
+
+    #region DroneBotResponse
+
+    public void SetAlerted(bool state)
+    {
+        isAlerted = state;
+        if (isAlerted)
+        {
+            Debug.Log($"{gameObject.name} is now alerted!");
+            alertTimer = 0f;
+
+        }
+    }
+
+    public void SetPlayerInDroneRange(bool state)
+    {
+        playerInDroneRange = state;
+    }
+
+    #endregion
 }
