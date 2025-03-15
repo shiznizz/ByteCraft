@@ -12,7 +12,6 @@ public class playerAttack : MonoBehaviour
 {
     public playerAttack instance;
     private playerController pc;
-    private inventoryManager inv;
 
     [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
@@ -23,7 +22,6 @@ public class playerAttack : MonoBehaviour
     void Start()
     {
         pc = GetComponent<playerController>();
-        inv = GetComponent<inventoryManager>();
         instance = this;
     }
 
@@ -46,20 +44,20 @@ public class playerAttack : MonoBehaviour
     {
         playerStatManager.instance.attackTimer = 0;
         StartCoroutine(flashMuzzle());
-        inv.returnCurrentWeapon().ammoCur--;
-        if (inv.returnCurrentWeapon().shootSounds.Length != 0)
+        inventoryManager.instance.returnCurrentWeapon().ammoCur--;
+        if (inventoryManager.instance.returnCurrentWeapon().shootSounds.Length != 0)
             playShootSound();
 
-        if (inv.returnCurrentWeapon().attackType == weaponStats.bulletType.RayCast)
+        if (inventoryManager.instance.returnCurrentWeapon().attackType == weaponStats.bulletType.RayCast)
         {
             //Debug.Log("Ray");
             shootRayCast();
         }
-        else if (inv.returnCurrentWeapon().attackType == weaponStats.bulletType.Projectile)
+        else if (inventoryManager.instance.returnCurrentWeapon().attackType == weaponStats.bulletType.Projectile)
         {
             shootProjectile();
         }
-        else if (inv.returnCurrentWeapon().attackType == weaponStats.bulletType.Continuous)
+        else if (inventoryManager.instance.returnCurrentWeapon().attackType == weaponStats.bulletType.Continuous)
         {
             shootContinuous();
         }
@@ -72,8 +70,8 @@ public class playerAttack : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, playerStatManager.instance.attackDistance, ~ignoreLayer))
         {
             //Debug.Log(hit.collider.name);
-            if (inv.returnCurrentWeapon().hitEffect != null)
-                Instantiate(inv.returnCurrentWeapon().hitEffect, hit.point, Quaternion.identity);
+            if (inventoryManager.instance.returnCurrentWeapon().hitEffect != null)
+                Instantiate(inventoryManager.instance.returnCurrentWeapon().hitEffect, hit.point, Quaternion.identity);
 
             //Check if the hit object is a trap
             traps hitTrap = hit.collider.GetComponent<traps>();
@@ -92,7 +90,7 @@ public class playerAttack : MonoBehaviour
 
     void shootProjectile()
     {
-        Instantiate(inv.returnCurrentWeapon().bulletObj, playerStatManager.instance.muzzleFlash.position, Camera.main.transform.rotation);
+        Instantiate(inventoryManager.instance.returnCurrentWeapon().bulletObj, playerStatManager.instance.muzzleFlash.position, Camera.main.transform.rotation);
     }
 
     void shootContinuous()
@@ -102,7 +100,7 @@ public class playerAttack : MonoBehaviour
 
     public void getWeaponStats()
     {
-        inv.changeWeaponPOS(); // Selects the newly added weapon
+        inventoryManager.instance.changeWeaponPOS(); // Selects the newly added weapon
         changeWeapon();
     }
 
@@ -114,7 +112,7 @@ public class playerAttack : MonoBehaviour
 
     }
 
-    void changeWeapon()
+    public void changeWeapon()
     {
         switch (inventoryManager.instance.weaponList[pc.weaponListPos].wepType)
         {
@@ -132,45 +130,37 @@ public class playerAttack : MonoBehaviour
 
     public void changeGun()
     {
-        playerStatManager.instance.attackDamage = inv.returnCurrentWeapon().shootDamage;
-        playerStatManager.instance.attackDistance = inv.returnCurrentWeapon().shootRange;
-        playerStatManager.instance.attackCooldown = inv.returnCurrentWeapon().shootRate;
-        playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(inv.returnCurrentWeapon().moveFlashX, inv.returnCurrentWeapon().moveFlashY, inv.returnCurrentWeapon().moveFlashZ), playerStatManager.instance.muzzleFlash.rotation);
+        weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
+        playerStatManager.instance.attackDamage = gun.shootDamage;
+        playerStatManager.instance.attackDistance = gun.shootRange;
+        playerStatManager.instance.attackCooldown = gun.shootRate;
+        playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(gun.moveFlashX, gun.moveFlashY, gun.moveFlashZ), playerStatManager.instance.muzzleFlash.rotation);
 
-        playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = inv.returnCurrentWeapon().model.GetComponent<MeshFilter>().sharedMesh;
-        playerStatManager.instance.gunModel.GetComponent<MeshRenderer>().sharedMaterial = inv.returnCurrentWeapon().model.GetComponent<MeshRenderer>().sharedMaterial;
+        playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = gun.model.GetComponent<MeshFilter>().sharedMesh;
+        playerStatManager.instance.gunModel.GetComponent<MeshRenderer>().sharedMaterial = gun.model.GetComponent<MeshRenderer>().sharedMaterial;
 
         //turnOffWeaponModels();
     }
 
-    void turnOffWeaponModels()
-    {
-        if (playerStatManager.instance.gunModel != null && inv.returnCurrentWeapon().wepType != weaponStats.weaponType.primary)
-            playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-
-        else if (playerStatManager.instance.gunModel != null && inv.returnCurrentWeapon().wepType != weaponStats.weaponType.secondary)
-            playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-
-        else if (playerStatManager.instance.gunModel != null && inv.returnCurrentWeapon().wepType != weaponStats.weaponType.special)
-            playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-    }
-
     void gunReload()
     {
+        
         if (Input.GetButtonDown("Reload") && inventoryManager.instance.weaponList.Count > 0)
         {
-            if (inv.returnCurrentWeapon().ammoReserve > inv.returnCurrentWeapon().ammoMax)          //Check if the player can reload a full clip
+            weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
+
+            if (gun.ammoReserve > gun.ammoMax)          //Check if the player can reload a full clip
             {
-                inv.returnCurrentWeapon().ammoReserve -= (inv.returnCurrentWeapon().ammoMax - inv.returnCurrentWeapon().ammoCur);
-                inv.returnCurrentWeapon().ammoCur = inv.returnCurrentWeapon().ammoMax;
-                if (inv.returnCurrentWeapon().reloadSounds.Length != 0)
-                    audioSource.PlayOneShot(inv.returnCurrentWeapon().reloadSounds[Random.Range(0, inv.returnCurrentWeapon().reloadSounds.Length)], inv.returnCurrentWeapon().reloadVolume);
+                gun.ammoReserve -= (gun.ammoMax - gun.ammoCur);
+                gun.ammoCur = gun.ammoMax;
+                if (gun.reloadSounds.Length != 0)
+                    audioSource.PlayOneShot(gun.reloadSounds[Random.Range(0, gun.reloadSounds.Length)], gun.reloadVolume);
             }
-            else if (inv.returnCurrentWeapon().ammoReserve > 0)                               //If there is ammo in reserve but not a full clip reload remaining ammo
+            else if (gun.ammoReserve > 0)                               //If there is ammo in reserve but not a full clip reload remaining ammo
             {
-                inv.returnCurrentWeapon().ammoCur = inv.returnCurrentWeapon().ammoReserve;
-                inv.returnCurrentWeapon().ammoReserve = 0;
-                audioSource.PlayOneShot(inv.returnCurrentWeapon().reloadSounds[Random.Range(0, inv.returnCurrentWeapon().reloadSounds.Length)], inv.returnCurrentWeapon().reloadVolume);
+                gun.ammoCur = gun.ammoReserve;
+                gun.ammoReserve = 0;
+                audioSource.PlayOneShot(gun.reloadSounds[Random.Range(0, gun.reloadSounds.Length)], gun.reloadVolume);
             }
 
             //updatePlayerUI();
@@ -189,40 +179,40 @@ public class playerAttack : MonoBehaviour
     void selectWeapon()
     {
         float scrollInput = Input.GetAxis("Mouse ScrollWheel");
-        if (scrollInput > 0 && inv.weaponList.Count > 0)
+        if (scrollInput > 0 && inventoryManager.instance.weaponList.Count > 0)
         {
             //weaponListPos++;
-            if (inv.weaponListPos == inv.weaponList.Count - 1)
+            if (inventoryManager.instance.weaponListPos == inventoryManager.instance.weaponList.Count - 1)
             {
-                inv.weaponListPos = 0;
+                inventoryManager.instance.weaponListPos = 0;
             }
             else
             {
-                inv.weaponListPos++;
+                inventoryManager.instance.weaponListPos++;
             }
 
-            inv.currentEquippedWeapon();
+            inventoryManager.instance.currentEquippedWeapon();
             changeWeapon();
         }
-        else if (scrollInput < 0 && inv.weaponList.Count > 0)
+        else if (scrollInput < 0 && inventoryManager.instance.weaponList.Count > 0)
         {
-            if (inv.weaponListPos == 0)
+            if (inventoryManager.instance.weaponListPos == 0)
             {
-                inv.weaponListPos = inv.weaponList.Count - 1;
+                inventoryManager.instance.weaponListPos = inventoryManager.instance.weaponList.Count - 1;
             }
             else
             {
-                inv.weaponListPos--;
+                inventoryManager.instance.weaponListPos--;
             }
 
             changeWeapon();
-            inv.currentEquippedWeapon();
+            inventoryManager.instance.currentEquippedWeapon();
         }
     }
 
     void playShootSound()
     {
-        audioSource.PlayOneShot(inv.returnCurrentWeapon().shootSounds[Random.Range(0, inv.returnCurrentWeapon().shootSounds.Length)], inv.returnCurrentWeapon().shootVolume);
+        audioSource.PlayOneShot(inventoryManager.instance.returnCurrentWeapon().shootSounds[Random.Range(0, inventoryManager.instance.returnCurrentWeapon().shootSounds.Length)], inventoryManager.instance.returnCurrentWeapon().shootVolume);
     }
 
     // Call this method to temporarily disable the player's weapons
