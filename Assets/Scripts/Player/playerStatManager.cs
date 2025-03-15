@@ -62,10 +62,23 @@ public class playerStatManager : MonoBehaviour
     [Header("Wall Run Stats")]
     public float wallRunSpeed;
     public float wallRunForce;
-    public float maxWallRunTime;
-    public float exitWallTime;
     public float wallJumpUpForce;
     public float wallJumpSideForce;
+    public float maxWallRunTime;
+    public float exitWallTime;
+    public float wallCheckDistance = 1f;
+
+    [Header("Grapple Options")]
+    public int grappleDistance;
+    public int grappleLift;
+    public float grappleSpeedMultiplier;
+    public float grappleSpeedMin;
+    public float grappleSpeedMax;
+    public float grappleCooldown;
+
+    [Header("Grapple Gun")]
+    public Transform grappleShootPos;
+    public LineRenderer grappleRope;
 
     [Header("Common Weapon Options")]
     public float attackCooldown;
