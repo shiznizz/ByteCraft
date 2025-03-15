@@ -81,7 +81,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     {
         HPOrginal = HP;
         colorOrig = model.material.color;
-        gameManager.instance.updateGameGoal(1);
+        GoalManager.instance.updateGameGoal(1);
         startingPos = transform.position;
         if (type != enemyType.stationary)
         {
@@ -289,7 +289,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             if (HP <= 0 && !isDead)
             {
                 isDead = true;
-                gameManager.instance.updateGameGoal(-1);
+                GoalManager.instance.updateGameGoal(-1);
                 if (dropsLoot)
                     dropLoot();
 
