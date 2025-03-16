@@ -631,4 +631,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
         isAirborne = airborne;
     }
+
+    public void MoveController(Transform destination)
+    {
+        controller.transform.position = destination.position;
+    }
 }
