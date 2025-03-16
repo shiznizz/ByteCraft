@@ -62,6 +62,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private playerAttack playAtk;
 
+    bool shieldBreak;
+
     // variable for player input action map
     #endregion Variables
 
@@ -79,6 +81,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         HPOrig = playerStatManager.instance.HPMax;
         playerStatManager.instance.shield = playerStatManager.instance.shieldMax;
+        shieldBreak = false;
 
         spawnPlayer();
     }
@@ -262,10 +265,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         shieldGenTimer = playerStatManager.instance.shieldRegenDelay;
 
         if (playerStatManager.instance.shield <= 0)
+            shieldBreak = true;
+
+        if(shieldBreak)
             playerStatManager.instance.HP -= damage;
+
         StartCoroutine(flashDamageScreen());
         updatePlayerUI();
-    
+        
+        Debug.Log("player HP: " +  playerStatManager.instance.HP);
+
         if (playerStatManager.instance.HP <= 0)
         {
             gameManager.instance.youLose();
@@ -387,16 +396,20 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void handleShieldRegen()
     {
-        if (playerStatManager.instance.shield > playerStatManager.instance.shieldMax)
+        if (playerStatManager.instance.shield < playerStatManager.instance.shieldMax)
         {
             // Decrease the regen timer over time
             shieldGenTimer -= Time.deltaTime;
+            // Debug.Log("Shield Regen Time: " +  shieldGenTimer);
 
             // Regenerate only after the delay has passed
             if (shieldGenTimer <= 0)
             {
                 playerStatManager.instance.shield += playerStatManager.instance.shieldRegen * Time.deltaTime;
                 playerStatManager.instance.shield = Mathf.Clamp(playerStatManager.instance.shield, 0, playerStatManager.instance.shieldMax); // Clamp fuel between 0 and max
+
+                if (playerStatManager.instance.shield > 0)
+                    shieldBreak = false;
             }
         }
         // Reset the regen timer if shield is full
