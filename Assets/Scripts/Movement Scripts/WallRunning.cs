@@ -1,13 +1,13 @@
 using UnityEngine;
+using UnityEngine.XR;
 
 public class WallRunning : MonoBehaviour
 {
-
+    public Transform orientation;
     private playerController pc;
     private Rigidbody rb;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
-    private Vector3 moveDir;
     private Vector3 forwardDir;
 
     [Header("Wallrunning")]
@@ -23,20 +23,20 @@ public class WallRunning : MonoBehaviour
     private bool wallRight;
     private bool wallLeft;
     private Vector3 wallNormal;
+    private Vector3 prevWallNormal;
+    private bool hasRunOnWall;
+    private bool startingWR;
 
     [Header("Exiting")]
-    private bool isExitingWall;
+    private bool isExitingWall = false;
     private float exitWallTimer;
 
     [Header("References")]
-    public Transform orientation;
-
     public float wallRunAcceleration = 10f;
-    //public float maxWallRunSpeed = 10f;
-    //public float wallRunTime = 1.5f;
-    //public float wallJumpForce = 12f;
 
-   float wallRunTimer;
+    float wallRunTimer;
+    float wallRerunTimer;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -46,88 +46,170 @@ public class WallRunning : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       if(!pc.isGrounded)
+        if (!pc.isGrounded)
             checkWall();
+
+        wallRunTimers();
     }
 
     private void FixedUpdate()
     {
-        if (pc.isWallRunning)
+        if (pc.isWallRunning && verticalInput > 0)
             WallRunMovement();
+        else
+            stopWallRun();
     }
 
     private void checkWall()
     {
-        RaycastHit hit;
-
         // checks if player is next to a left or right wall then enters or exits wall running state accordingly
-        wallRight = Physics.Raycast(transform.position, orientation.right, out hit, playerStatManager.instance.wallCheckDistance, wallLayer);
-        wallLeft = Physics.Raycast(transform.position, -orientation.right, out hit, playerStatManager.instance.wallCheckDistance, wallLayer);
+        wallRight = Physics.Raycast(transform.position, orientation.right, out rightWallHit, playerStatManager.instance.wallCheckDistance, wallLayer);
+        wallLeft = Physics.Raycast(transform.position, -orientation.right, out leftWallHit, playerStatManager.instance.wallCheckDistance, wallLayer);
 
-        if ((wallRight || wallLeft) && !pc.isWallRunning)
-            wallRun();
-        if ((!wallRight && !wallLeft) && pc.isWallRunning)
+        wallRunHandler();
+    }
+
+    void wallRunHandler()
+    {
+        if (Input.GetButtonDown("Jump") && pc.isWallRunning)
+            wallJump();
+
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput = Input.GetAxisRaw("Vertical");
+
+        if ((wallRight || wallLeft) && !pc.isWallRunning && verticalInput > 0)
+            testWall();
+        if ((!wallRight && !wallLeft) && pc.isWallRunning || verticalInput < 0)
             stopWallRun();
     }
 
-    private void wallRun()
+    private void WallRunMovement()
     {
-        // reset jumps, start wallrun, cancel gravity
+        // reset jumps, start wallrun
         playerStatManager.instance.jumpCount = 0;
-        StartWallRun();
 
-        // turn gravity off
+        // cancel any y velocity
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 
-        // checks wall normal and sets wall normal to left or right wall normal then updates the forwareDir
-        wallNormal = wallLeft ? leftWallHit.normal : rightWallHit.normal;
+        // determines the forward direction of the wall
         forwardDir = Vector3.Cross(wallNormal, Vector3.up);
 
-        // if on left wall go backwards
-        if (Vector3.Dot(forwardDir, leftWallHit.normal) < 0)
+        // check which direction is closer to where the player is facing. (forwards or backwards)
+        if ((orientation.forward - forwardDir).magnitude > (orientation.forward - -forwardDir).magnitude)
             forwardDir = -forwardDir;
+
+        // add a one time push to help player get up to wall running speed
+        if (startingWR)
+        {
+            startingWR = false;
+            rb.AddForce(forwardDir * playerStatManager.instance.wallRunSpeed * 0.9f, ForceMode.Impulse);
+        }
+        // apply force to player to move them along the wall
+        rb.AddForce(forwardDir * playerStatManager.instance.wallRunSpeed, ForceMode.Force);
+
+        // first if allows for gently moving away from the wall (based on wall normal and a or d press)
+        // else if forces player to the wall if they are pressing either no key or the key that is opposite of the wall normal
+        if ((wallLeft && horizontalInput > 0) || (wallRight && horizontalInput < 0))
+            rb.AddForce(wallNormal * playerStatManager.instance.currSpeed * 2, ForceMode.Force);
+        else if (!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput < 0))
+            rb.AddForce(-wallNormal * playerStatManager.instance.wallAdhesiveForce, ForceMode.Force);
+    }
+
+    void testWall()
+    {
+        // checks wall normal and sets wall normal to left or right wall normal
+        getWallNorm();
+
+        // code to prevent running on the same wall twice.
+        // commented out because it is taking too long to get it to work the way I want it to.
+
+        //if (hasRunOnWall)
+        //{
+        //    //Debug.Log("Wall norm: " + wallNormal + " Prev norm: " +  prevWallNormal);
+        //    float wallAngle = Vector3.Angle(wallNormal, prevWallNormal);
+
+        //    Debug.Log("Wall Angle: " + wallAngle);
+        //    if (wallAngle > playerStatManager.instance.minimumWallAngleDifference)
+        //    {
+        //        Debug.Log("you wall ran, and should run again");
+        //        StartWallRun();
+        //    }
+        //}
+        //else
+        //{
+              StartWallRun();
+        //    hasRunOnWall = true;
+        //}
+    }
+
+
+    private void wallJump()
+    {
+        getWallNorm();
+
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+
+        Vector3 jumpUp = transform.up * playerStatManager.instance.wallJumpUpForce;
+        Vector3 jumpSide = wallNormal * playerStatManager.instance.wallJumpSideForce;
+        Vector3 jumpDirection = transform.up * playerStatManager.instance.wallJumpUpForce + wallNormal * playerStatManager.instance.wallJumpSideForce;
+        jumpUp.Normalize(); // Normalize to keep a consistent jump force
+
+        //rb.AddForce(jumpUp, ForceMode.Impulse);
+        //rb.AddForce(jumpSide, ForceMode.Impulse);
+        rb.AddForce(jumpDirection, ForceMode.Impulse);
+
+        stopWallRun();
+    }
+
+    void getWallNorm()
+    {
+        wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
+        Debug.Log("wallNorm: " + wallNormal);
     }
 
     private void StartWallRun()
     {
+        if (pc.isJetpacking)
+            pc.isJetpacking = false;
+
         pc.isWallRunning = true;
+        startingWR = true;
+
         wallRunTimer = playerStatManager.instance.maxWallRunTime;
     }
 
     private void stopWallRun()
     {
         pc.isWallRunning = false;
-    }
+        prevWallNormal = wallNormal;
 
-    private void WallRunMovement()
-    {
-        horizontalInput = Input.GetAxis("Horizontal");
-        // checks angle of normal vector to make sure you're going forward within 90 degree angle
-        if (moveDir.z > (forwardDir.z - wallRunAcceleration) && moveDir.z < (forwardDir.z + wallRunAcceleration))
-            moveDir += forwardDir;
-        else if (moveDir.z < (forwardDir.z - wallRunAcceleration) && moveDir.z > (forwardDir.z + wallRunAcceleration))
+        // prevent wall running for a time after wall run
+        if (!isExitingWall)
         {
-            // if not cancel wall run and stop movement vector
-            moveDir = Vector3.zero;
-            stopWallRun();
+            isExitingWall = true;
+            exitWallTimer = playerStatManager.instance.exitWallTime;
         }
-
-        // allows for seamless movement off the wall left or right during wallrunning
-        //moveDir.x += horizontalInput * wallJumpForce;
-        // clamp movement vector to current speed (wall run) 
-        moveDir = Vector3.ClampMagnitude(moveDir, playerStatManager.instance.currSpeed);
     }
 
-    private void wallJump()
+    private void wallRunTimers()
     {
-        // 
-        Vector3 jumpDirection = wallNormal + Vector3.up;
-        jumpDirection.Normalize(); // Normalize to keep a consistent jump force
+        if (wallRunTimer > 0)
+            wallRunTimer -= Time.deltaTime;
+        if (wallRunTimer <= 0)
+            stopWallRun();
+        Debug.Log("Wall time: " + wallRunTimer);
 
-        // Apply jump force
-        //playerVelocity = jumpDirection * wallJumpForce;
-        //moveDir.x = wallNormal.x * wallJumpForce;
+        if (isExitingWall)
+            exitWallTimer -= Time.deltaTime;
+        if (exitWallTimer <= 0)
+            isExitingWall = false;
 
-        stopWallRun();
+        //if (!pc.isWallRunning)
+        //    wallRerunTimer = playerStatManager.instance.wallRerunTime;
+        //if (!pc.isWallRunning && wallRerunTimer > 0)
+        //    wallRerunTimer -= Time.deltaTime;
+        //if (wallRerunTimer < 0 || pc.isGrounded)
+        //    hasRunOnWall = false;
+
     }
 }
