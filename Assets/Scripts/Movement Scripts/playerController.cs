@@ -10,13 +10,6 @@ using UnityEngine.Rendering;
 public class playerController : MonoBehaviour, IDamage, IPickup
 {
     #region Variables
-    [Header("Audio")]
-    [SerializeField] AudioSource audioSource;
-    [SerializeField] private ModulatedSoundBank footStepSounds;
-    [SerializeField] private ModulatedSoundBank jumpSounds;
-    [SerializeField] private ModulatedSoundBank hurtSounds;
-
-
     [SerializeField] Transform orientation;
     [SerializeField] CharacterController controller;
     [SerializeField] LayerMask ignoreLayer;
@@ -38,16 +31,22 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public float tilt;
 
     [Header("Audio Options")]
-    [SerializeField] AudioClip[] stepSounds;
-    [Range(0, 1)][SerializeField] float stepVolume;
+    [SerializeField][Range(0, 1)] float stepVolume;
     [SerializeField] float walkSoundInterval;
     [SerializeField] float runSoundInterval;
     bool isPlayingSteps;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] private ModulatedSoundBank footStepSounds;
+    [SerializeField] private ModulatedSoundBank jumpSounds;
+    [SerializeField] private ModulatedSoundBank hurtSounds;
+    [SerializeField] private ModulatedSoundBank landingSounds;
+    [SerializeField] private ModulatedSoundBank deathSounds;
 
     [Header("Player Stat Options")]
     public int HPOrig; // will move after enemy AI is not in use
 
     public int weaponListPos;
+    public bool isAirborne;
 
     //[Header("Grapple Options")]
     //[SerializeField] int grappleDistance;
@@ -112,6 +111,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             playerInput();
             SpeedControl();
             checkGround();
+            SetIsAirborne(!isGrounded);
 
             updatePlayerUI();
             playAtk.weaponHandler();
@@ -365,13 +365,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void jump()
     {
+        if (isGrounded && Input.GetButtonDown("Jump"))
+        {
+            jumpSounds.PlayRandomSound();
+        }
         if (!playerStatManager.instance.hasJetpack)
         {
             if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
             {
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
                 rb.AddForce(transform.up * playerStatManager.instance.jumpForce, ForceMode.Impulse);
-                jumpSounds.PlayRandomSound();
 
                 playerStatManager.instance.jumpCount++;
             }
@@ -510,6 +513,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
         if (playerStatManager.instance.HP <= 0)
         {
+            deathSounds.PlayRandomSound();
             gameManager.instance.youLose();
         }
     }
@@ -615,4 +619,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     }
 
     #endregion Everything Else
+
+    private void SetIsAirborne(bool airborne)
+    {
+        if (isAirborne)
+        {
+            if (!airborne)
+            {
+                landingSounds.PlaySpecificSound(0);
+            }
+        }
+        isAirborne = airborne;
+    }
 }

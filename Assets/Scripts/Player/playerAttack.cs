@@ -15,6 +15,7 @@ public class playerAttack : MonoBehaviour
 
     [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
+    [SerializeField] AudioClip gunEmptyClip;
 
     private bool isMeleeAttacking = false;
 
