@@ -9,9 +9,6 @@ public class playerStatManager : MonoBehaviour
     public int HP;
     public int HPMax;
 
-    public int Armor;
-    public int ArmorMax;
-
     public float playerHeight;
     public float standingHeight = 2f;
     public float crouchHeight = 0.5f;
@@ -20,10 +17,17 @@ public class playerStatManager : MonoBehaviour
 
     public int upgradeCurrency;
 
+    [Header("Player Shield Stat")]
+    public float shield;
+    public float shieldMax;
+    public float shieldOverChargeMax;
+    public float shieldRegen;
+    public float shieldRegenDelay;
+
+
     [Header("Player Base Movement")]
 
     public float currSpeed;
-    public float speedLimit;
     public float walkSpeed;
     public float sprintSpeed;
     public float crouchSpeed;
@@ -45,6 +49,7 @@ public class playerStatManager : MonoBehaviour
 
     [Header("JetPack Stats")]
     public bool hasJetpack;
+    public bool hasGroundCheck = false;
     public int jetpackFuelMax;
     public float jetpackFuel;
     public float jetpackFuelUse;
@@ -61,12 +66,14 @@ public class playerStatManager : MonoBehaviour
 
     [Header("Wall Run Stats")]
     public float wallRunSpeed;
-    public float wallRunForce;
+    public float wallAdhesiveForce;
     public float wallJumpUpForce;
     public float wallJumpSideForce;
     public float maxWallRunTime;
     public float exitWallTime;
-    public float wallCheckDistance = 1f;
+    public float wallRerunTime;
+    public float wallCheckDistance;
+    public float minimumWallAngleDifference;
 
     [Header("Grapple Options")]
     public int grappleDistance;
