@@ -277,7 +277,18 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         gameManager.instance.playerHPBar.fillAmount = (float)playerStatManager.instance.HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)playerStatManager.instance.jetpackFuel / playerStatManager.instance.jetpackFuelMax;
         gameManager.instance.shieldBar.fillAmount = (float)playerStatManager.instance.shield / playerStatManager.instance.shieldMax;
-        gameManager.instance.overShieldBar.fillAmount = (float)playerStatManager.instance.shieldMax / playerStatManager.instance.shieldOverChargeMax;
+
+        if (playerStatManager.instance.shield > playerStatManager.instance.shieldMax)
+        {
+            gameManager.instance.showOverShield();
+            gameManager.instance.overShieldBar.fillAmount = (float)playerStatManager.instance.shield / playerStatManager.instance.shieldOverChargeMax;
+        }
+        else
+        {
+            gameManager.instance.hideOverShield();
+            gameManager.instance.overShieldBar.fillAmount = 0;
+        }
+
 
         //Toggle jetpack recharge UI
         if (playerStatManager.instance.hasJetpack)

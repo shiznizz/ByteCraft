@@ -897,16 +897,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2adfaa679c5a92144b4b9a57bedbe925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HP: 100
-  HPMax: 100
-  Armor: 0
-  ArmorMax: 0
+  HP: 0
+  HPMax: 10
   playerHeight: 0
   standingHeight: 2
   crouchHeight: 0.5
   playerHPMax: 100
   playerHP: 0
   upgradeCurrency: 0
+  shield: 0
+  shieldMax: 100
+  shieldOverChargeMax: 150
+  shieldRegen: 30
+  shieldRegenDelay: 3
   currSpeed: 7
   walkSpeed: 7
   sprintSpeed: 10
@@ -921,6 +924,7 @@ MonoBehaviour:
   jumpMax: 1
   jumpCount: 0
   hasJetpack: 1
+  hasGroundCheck: 0
   jetpackFuelMax: 100
   jetpackFuel: 0
   jetpackFuelUse: 60
@@ -933,13 +937,14 @@ MonoBehaviour:
   slideSpeedMax: 14
   slideFriction: 10
   wallRunSpeed: 14
-  wallJumpForce: 0
+  wallAdhesiveForce: 0
   wallJumpUpForce: 8
-  wallJumpSideForce: 14
-  maxWallRunTime: 3
+  wallJumpSideForce: 20
+  maxWallRunTime: 1.5
   exitWallTime: 0.5
-  wallCheckDistance: 1
-  minimumWallAngleDifference: 0
+  wallRerunTime: 3
+  wallCheckDistance: 0.7
+  minimumWallAngleDifference: 15
   grappleDistance: 0
   grappleLift: 0
   grappleSpeedMultiplier: 0
@@ -997,7 +1002,6 @@ MonoBehaviour:
   isCrouching: 0
   isWallRunning: 0
   isJetpacking: 0
-  wallRan: 0
   cameraChangeTime: 0
   wallRunTilt: 0
   tilt: 0
@@ -1059,10 +1063,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26cf37f22f420bf44976987577b50776, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  orientation: {fileID: 1040981787988272564}
   wallLayer:
     serializedVersion: 2
-    m_Bits: 0
-  orientation: {fileID: 1040981787988272564}
+    m_Bits: 65536
   wallRunAcceleration: 10
 --- !u!114 &7288472048335276681
 MonoBehaviour:

@@ -39,7 +39,7 @@ public class pickup : MonoBehaviour
 
                         if (lootItem.upgradeType == upgradeType.Armor)
                         {
-                            playerStatManager.instance.Armor += lootItem.restoreAmt;
+                            playerStatManager.instance.shield += lootItem.restoreAmt;
                         } else if (lootItem.upgradeType == upgradeType.Damage)
                         {
                             playerStatManager.instance.attackDamage += lootItem.restoreAmt;

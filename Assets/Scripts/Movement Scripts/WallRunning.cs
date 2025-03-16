@@ -25,6 +25,7 @@ public class WallRunning : MonoBehaviour
     private Vector3 wallNormal;
     private Vector3 prevWallNormal;
     private bool hasRunOnWall;
+    private bool startingWR;
 
     [Header("Exiting")]
     private bool isExitingWall = false;
@@ -97,6 +98,12 @@ public class WallRunning : MonoBehaviour
         if ((orientation.forward - forwardDir).magnitude > (orientation.forward - -forwardDir).magnitude)
             forwardDir = -forwardDir;
 
+        // add a one time push to help player get up to wall running speed
+        if (startingWR)
+        {
+            startingWR = false;
+            rb.AddForce(forwardDir * playerStatManager.instance.wallRunSpeed * 0.9f, ForceMode.Impulse);
+        }
         // apply force to player to move them along the wall
         rb.AddForce(forwardDir * playerStatManager.instance.wallRunSpeed, ForceMode.Force);
 
@@ -166,6 +173,7 @@ public class WallRunning : MonoBehaviour
             pc.isJetpacking = false;
 
         pc.isWallRunning = true;
+        startingWR = true;
 
         wallRunTimer = playerStatManager.instance.maxWallRunTime;
     }
