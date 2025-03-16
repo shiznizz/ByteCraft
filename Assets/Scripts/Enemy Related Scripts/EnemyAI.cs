@@ -16,14 +16,14 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] movementType movement;
     [SerializeField] GameObject target;
     [SerializeField] Renderer model;
-    [SerializeField] NavMeshAgent agent;
+    [SerializeField] public NavMeshAgent agent;
     [SerializeField] Animator anim;
     private GameObject originalTarget;
 
     [Header("Enemy Stats")]
     [SerializeField] Image hpFillBar;
     [SerializeField] Canvas hpBar;
-    [SerializeField] int HP;
+    [SerializeField] public int HP;
     [SerializeField] int animTransSpeed;
     [SerializeField] int faceTargetSpeed;
     [SerializeField] int FOV; //Field of View
@@ -526,5 +526,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         playerInDroneRange = state;
     }
 
+    #endregion
+
+    #region AOESupport
+    public void SetHP(int newHP)
+    {
+        this.HP = newHP;
+    }
     #endregion
 }
