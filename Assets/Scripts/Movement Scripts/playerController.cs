@@ -10,9 +10,15 @@ using UnityEngine.Rendering;
 public class playerController : MonoBehaviour, IDamage, IPickup
 {
     #region Variables
+    [Header("Audio")]
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] private ModulatedSoundBank footStepSounds;
+    [SerializeField] private ModulatedSoundBank jumpSounds;
+    [SerializeField] private ModulatedSoundBank hurtSounds;
+
+
     [SerializeField] Transform orientation;
     [SerializeField] CharacterController controller;
-    [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] LayerMask groundLayer;
     // is this variable going to be used here? 
@@ -365,6 +371,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             {
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
                 rb.AddForce(transform.up * playerStatManager.instance.jumpForce, ForceMode.Impulse);
+                jumpSounds.PlayRandomSound();
 
                 playerStatManager.instance.jumpCount++;
             }
@@ -478,7 +485,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     IEnumerator PlaySteps()
     {
         isPlayingSteps = true;
-        audioSource.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Length)], stepVolume);
+        footStepSounds.PlayRandomSound();
         if (!isSprinting)
             yield return new WaitForSeconds(walkSoundInterval);
         else
@@ -497,6 +504,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public void takeDamage(int damage)
     {
         playerStatManager.instance.HP -= damage;
+        hurtSounds.PlayRandomSound();
         StartCoroutine(flashDamageScreen());
         updatePlayerUI();
     
