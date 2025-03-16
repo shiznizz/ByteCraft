@@ -33,7 +33,8 @@ public class playerAttack : MonoBehaviour
 
         if (Input.GetButton("Fire1") && inventoryManager.instance.weaponList.Count > 0 && playerStatManager.instance.attackTimer >= playerStatManager.instance.attackCooldown)
         {
-            shoot();
+            if (inventoryManager.instance.weaponList[inventoryManager.instance.weaponListPos].ammoCur > 0)
+                shoot();
         }
 
         selectWeapon();
