@@ -12,7 +12,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Variables
     [SerializeField] Transform orientation;
     [SerializeField] CharacterController controller;
-    [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] LayerMask groundLayer;
     // is this variable going to be used here? 
@@ -32,17 +31,23 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public float tilt;
 
     [Header("Audio Options")]
-    [SerializeField] AudioClip[] stepSounds;
-    [Range(0, 1)][SerializeField] float stepVolume;
+    [SerializeField][Range(0, 1)] float stepVolume;
     [SerializeField] float walkSoundInterval;
     [SerializeField] float runSoundInterval;
     bool isPlayingSteps;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] private ModulatedSoundBank footStepSounds;
+    [SerializeField] private ModulatedSoundBank jumpSounds;
+    [SerializeField] private ModulatedSoundBank hurtSounds;
+    [SerializeField] private ModulatedSoundBank landingSounds;
+    [SerializeField] private ModulatedSoundBank deathSounds;
 
     [Header("Player Stat Options")]
     public int HPOrig; // will move after enemy AI is not in use
     float shieldGenTimer;
 
     public int weaponListPos;
+    public bool isAirborne;
 
     // leaving available until justin wants to move it
     [Header("Grapple Gun")]
@@ -94,6 +99,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             SpeedControl();
             checkGround();
             handleShieldRegen();
+            SetIsAirborne(!isGrounded);
+
             updatePlayerUI();
             playAtk.weaponHandler();
 
@@ -206,6 +213,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void jump()
     {
+        if (isGrounded && Input.GetButtonDown("Jump"))
+        {
+            jumpSounds.PlayRandomSound();
+        }
         if (!playerStatManager.instance.hasJetpack)
         {
             if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax /*&& isGrounded*/)
@@ -243,7 +254,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     IEnumerator PlaySteps()
     {
         isPlayingSteps = true;
-        audioSource.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Length)], stepVolume);
+        footStepSounds.PlayRandomSound();
         if (!isSprinting)
             yield return new WaitForSeconds(walkSoundInterval);
         else
@@ -270,6 +281,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if(shieldBreak)
             playerStatManager.instance.HP -= damage;
 
+        playerStatManager.instance.HP -= damage;
+        hurtSounds.PlayRandomSound();
         StartCoroutine(flashDamageScreen());
         updatePlayerUI();
         
@@ -277,6 +290,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         if (playerStatManager.instance.HP <= 0)
         {
+            deathSounds.PlayRandomSound();
             gameManager.instance.youLose();
         }
     }
@@ -418,4 +432,21 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     }
 
     #endregion Everything Else
+
+    private void SetIsAirborne(bool airborne)
+    {
+        if (isAirborne)
+        {
+            if (!airborne)
+            {
+                landingSounds.PlaySpecificSound(0);
+            }
+        }
+        isAirborne = airborne;
+    }
+
+    public void MoveController(Transform destination)
+    {
+        controller.transform.position = destination.position;
+    }
 }
