@@ -273,8 +273,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         StartCoroutine(flashDamageScreen());
         updatePlayerUI();
         
-        Debug.Log("player HP: " +  playerStatManager.instance.HP);
-
         if (playerStatManager.instance.HP <= 0)
         {
             gameManager.instance.youLose();
@@ -338,6 +336,18 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     }
 
     void openChest()
+    {
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
+        {
+            lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
+
+            if (dropsLoot != null)
+            {
+                dropsLoot.dropLoot();
+            }
+        }
+
+    }void buttonInteract()
     {
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
         {
