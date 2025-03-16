@@ -23,8 +23,8 @@ public class damage : MonoBehaviour
     [SerializeField] float turnSpeed;
     [SerializeField] LayerMask ignoreLayer;
 
-    
-    private IDamage target;
+    private GameObject target;
+    private IDamage seekTarget;
     private RaycastHit hit;
 
     float damageTimer;
@@ -34,20 +34,25 @@ public class damage : MonoBehaviour
     {
         if(type != damageType.stationary)
         {
+            if (target == null)
+                target = gameManager.instance.player;
+
             if (!playerProjectile)
                 if (type == damageType.forward)
                     rb.linearVelocity = transform.forward * speed;
-                else 
-                    rb.linearVelocity = (gameManager.instance.player.transform.position - transform.position).normalized * speed;
-            else 
+                else
+                {
+                    rb.linearVelocity = (target.transform.position - transform.position).normalized * speed;
+                }
+            else
             {
                 if (type == damageType.seeking)
                 {
-                    if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, targetingDistance,~ignoreLayer))      
-                        target = hit.collider.GetComponent<IDamage>();
+                    if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, targetingDistance, ~ignoreLayer))
+                        seekTarget = hit.collider.GetComponent<IDamage>();
                 }
 
-                if (target != null)
+                if (seekTarget != null)
                 {
                     SeekEnemy();
                 }
@@ -88,14 +93,14 @@ public class damage : MonoBehaviour
         }
         else
         {
-            SeekPlayer();
+            SeekTargetObject();
         }
     }
 
-    private void SeekPlayer()
+    private void SeekTargetObject()
     {
-        Vector3 playerDir = gameManager.instance.player.transform.position - transform.position;
-        Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, 0, playerDir.z));
+        Vector3 targetDir = target.transform.position - transform.position;
+        Quaternion rot = Quaternion.LookRotation(new Vector3(targetDir.x, 0, targetDir.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * turnSpeed);
         
         rb.linearVelocity = transform.forward * speed;
@@ -169,5 +174,12 @@ public class damage : MonoBehaviour
         AudioClip soundToPlay = damageHitSounds[Random.Range(0, damageHitSounds.Length)];
         //Debug.Log("Playing sound: " + soundToPlay.name);
         audioSource.PlayOneShot(soundToPlay);
+    }
+
+    public void updateTarget(GameObject newTarget)
+    {
+        
+        target = newTarget;
+        Debug.Log("Target Updated: " + target.name);
     }
 }

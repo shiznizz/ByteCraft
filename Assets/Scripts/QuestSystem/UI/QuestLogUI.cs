@@ -31,7 +31,10 @@ public class QuestLogUI : MonoBehaviour
     {
         if (gameManager.instance.isPaused)
         {
-            contentParent.SetActive(true);
+            if (!gameManager.instance.inventoryOpen)
+            {
+                contentParent.SetActive(true);
+            }
         }
         else
         {
