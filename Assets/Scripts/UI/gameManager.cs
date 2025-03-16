@@ -42,9 +42,12 @@ public class gameManager : MonoBehaviour
 
     [Header("State Monitoring Values")]
     public bool isPaused;
-    public GameObject player;
+    [SerializeField] public GameObject player;
     public playerController playerScript;
     public GameObject playerSpawnPos;
+
+    public GameObject holderPlayer;
+    public GameObject holderUI;
 
     int goalCount;
 
@@ -77,12 +80,17 @@ public class gameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        instance = this;
-        player = GameObject.FindWithTag("Player");
+       
+            instance = this;
+
+          
+
+        //player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<playerController>();
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
         //currentObjective = "";
     }
+    
 
     private void Start()
     {
