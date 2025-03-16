@@ -70,7 +70,7 @@ public class enemyTurret : MonoBehaviour, IDamage
 
         HPOrginal = HP;
         colorOrig = model.material.color;
-        gameManager.instance.updateGameGoal(1);
+        GoalManager.instance.updateGameGoal(1);
         rb = GetComponent<Rigidbody>();
         enemyCollider = GetComponent<Collider>();
     }
@@ -201,7 +201,7 @@ public class enemyTurret : MonoBehaviour, IDamage
             if (HP <= 0 && !isDead)
             {
                 isDead = true;
-                gameManager.instance.updateGameGoal(-1);
+                GoalManager.instance.updateGameGoal(-1);
                 if (dropsLoot)
                     dropLoot();
 

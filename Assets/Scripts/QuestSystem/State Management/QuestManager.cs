@@ -96,6 +96,7 @@ public class QuestManager : MonoBehaviour
     private void StartQuest(string id)
     {
         Quest quest = GetQuestById(id);
+        GoalManager.instance.SetObjectiveText(quest.info.displayName);
         quest.InstantiateCurrentQuestStep(this.transform);
         //questUpdatePopupText.text = "Quest started: " + quest.info.displayName;
         StartCoroutine(flashUpdatePopup("Quest Started: ", quest));
@@ -105,6 +106,7 @@ public class QuestManager : MonoBehaviour
     private void AdvanceQuest(string id)
     {
         Quest quest = GetQuestById(id);
+        GoalManager.instance.SetObjectiveText(quest.info.displayName);
         quest.MoveToNextStep();
 
         if (quest.CurrentStepExists())
@@ -119,6 +121,7 @@ public class QuestManager : MonoBehaviour
 
     private void FinishQuest(string id)
     {
+        GoalManager.instance.SetObjectiveText("");
         Quest quest = GetQuestById(id);
         ClaimRewards(quest);
         ChangeQuestState(quest.info.id, QuestState.FINISHED);

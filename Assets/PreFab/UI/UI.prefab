@@ -1442,6 +1442,55 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1275774448423353794
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4855098191841296463}
+  - component: {fileID: 3522160851348235345}
+  m_Layer: 0
+  m_Name: GoalManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4855098191841296463
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275774448423353794}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -949.5, y: -569.8, z: 57.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5765591904923474434}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3522160851348235345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275774448423353794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 586a6300ea6b05c4494e0f1d650c4e3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goalCount: 0
+  goalCountText: {fileID: 3904870871401247399}
+  currentObjective: 
+  objectiveText: {fileID: 1828755209730328721}
+  menuObjectiveFail: {fileID: 1984564119887566600}
 --- !u!1 &1338157749552558929
 GameObject:
   m_ObjectHideFlags: 0
@@ -2071,7 +2120,6 @@ MonoBehaviour:
   grappleGauge: {fileID: 582280709890986120}
   playerDamageScreen: {fileID: 2709850921556784385}
   checkpointPopup: {fileID: 6188392099927108575}
-  goalCountText: {fileID: 3904870871401247399}
   ammoCurText: {fileID: 4326650193440878971}
   ammoMaxText: {fileID: 4098135529894282186}
   ammoReserveText: {fileID: 827792541126559988}
@@ -2108,6 +2156,7 @@ MonoBehaviour:
   heartbeatSpeed: 2
   heartbeatMagnitude: 0.2
   baseAlpha: 0.3
+  inventoryOpen: 0
 --- !u!1 &1836674764239873269
 GameObject:
   m_ObjectHideFlags: 0
@@ -5004,6 +5053,7 @@ RectTransform:
   - {fileID: 1613552119239943100}
   - {fileID: 4075381648155769909}
   - {fileID: 6197801854689167255}
+  - {fileID: 4855098191841296463}
   m_Father: {fileID: 8386706001582953583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
