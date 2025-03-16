@@ -81,13 +81,13 @@ public class gameManager : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<playerController>();
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
-        //currentObjective = "";
     }
 
     private void Start()
     {
-        updateInventory();
+        updateInventory();      
     }
+
 
     // Update is called once per frame
     void Update()
