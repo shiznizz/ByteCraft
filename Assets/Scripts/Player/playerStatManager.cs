@@ -98,28 +98,52 @@ public class playerStatManager : MonoBehaviour
     public Animator playerAnimator;
     public Collider meleeCol;
 
-    [Header("Magic Options")]
-    public GameObject magicWeaponModel;
-    public weaponStats startMagic;
-    public GameObject magicProjectile; // Projectile Prefab
-    public float magicProjectileSpeed; // Speed of projectile
-    public Transform magicPosition;
-
     //bool isGunPOSSet;
 
     public float shootTimer;
     public float attackTimer;
 
-    //Tracks which weapon is active
-    public enum WeaponType { Gun, Melee, Magic }
-    public WeaponType currentWeapon = WeaponType.Gun;
-    //[Header("Starting Level bool")]
-    //public bool isPlayerInStartingLevel;
+    //variables for upgrade tracking
+    private float origSprintSpeed;
+    private int curSprintMod;
+    private float origJetpackRegen;
+    private int curJetpackRegenMod;
+    private int origHPMax;
+    private int curHPMaxMod;
+    private int origArmorMax;
+    private int curArmorMaxMod;
 
 
     public void Awake()
     {
         instance = this;
+        origHPMax = HPMax;
+        origArmorMax = ArmorMax;
+        origSprintSpeed = sprintSpeed;
+        origJetpackRegen = jetpackFuelRegen;
     }
 
+    public void increaseSprintSpeed(int percentToIncrease)
+    {
+        sprintSpeed = origSprintSpeed * (100 + curSprintMod + percentToIncrease) / 100;
+        curSprintMod += percentToIncrease;
+    }
+
+    public void increaseJetpackRegen(int percentToIncrease)
+    {
+        jetpackFuelRegen = origJetpackRegen * (100 + curJetpackRegenMod + percentToIncrease) / 100;
+        curJetpackRegenMod += percentToIncrease;
+    }
+
+    public void increaseMaxHealth(int percentToIncrease)
+    {
+        playerHPMax = origHPMax * (100 + curHPMaxMod + percentToIncrease) / 100;
+        curHPMaxMod += percentToIncrease;
+    }
+
+    public void increaseMaxArmor(int percentToIncrease)
+    {
+        Armor = origArmorMax * (100 + curArmorMaxMod + percentToIncrease) / 100;
+        curArmorMaxMod += percentToIncrease;
+    }
 }
