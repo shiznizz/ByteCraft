@@ -25,7 +25,7 @@ public class pickup : MonoBehaviour
                         player.heal(amount);
                         break;
                     case pickup.LootType.Weapon:
-                        //playerAudSource.PlayOneShot(gunPickupSound);
+                        playerAudSource.PlayOneShot(gunPickupSound);
                         player.addInventory(item);
                         break;
                     case pickup.LootType.armor:
@@ -38,8 +38,6 @@ public class pickup : MonoBehaviour
                         player.addInventory(item);
                         break;
                     case pickup.LootType.Upgrade:
-                        //Debug.Log($"Picked up upgrade item: {lootItem.name} - {lootItem.upgradeType}");
-
                         if (lootItem.upgradeType == upgradeType.Armor)
                         {
                             playerStatManager.instance.Armor += lootItem.restoreAmt;
@@ -52,7 +50,7 @@ public class pickup : MonoBehaviour
                         }
                         break;
                 }
-                Destroy(gameObject); // remove loot from scene
+                Destroy(this.gameObject); // remove loot from scene
             }
         }
     }
