@@ -104,10 +104,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         {
             target = gameManager.instance.player;
         }
-        else
-        {
-            originalTarget = target;
-        }
+
+        originalTarget = target;
     }
 
     // Update is called once per frame
