@@ -117,17 +117,17 @@ public class playerStatManager : MonoBehaviour
     private int curJetpackRegenMod;
     private int origHPMax;
     private int curHPMaxMod;
-    private int origArmorMax;
-    private int curArmorMaxMod;
+    private float origShieldMax;
+    private int curShieldMaxMod;
 
 
     public void Awake()
     {
         instance = this;
-        origHPMax = HPMax;
-        origArmorMax = ArmorMax;
+        origHPMax = playerHPMax;
+        origShieldMax = shieldMax;
         origSprintSpeed = sprintSpeed;
-        origJetpackRegen = jetpackFuelRegen;
+        origJetpackRegen = jetpackFuelRegenDelay;
     }
 
     public void increaseSprintSpeed(int percentToIncrease)
@@ -138,7 +138,7 @@ public class playerStatManager : MonoBehaviour
 
     public void increaseJetpackRegen(int percentToIncrease)
     {
-        jetpackFuelRegen = origJetpackRegen * (100 + curJetpackRegenMod + percentToIncrease) / 100;
+        jetpackFuelRegenDelay = origJetpackRegen * (100 + curJetpackRegenMod + percentToIncrease) / 100;
         curJetpackRegenMod += percentToIncrease;
     }
 
@@ -148,9 +148,9 @@ public class playerStatManager : MonoBehaviour
         curHPMaxMod += percentToIncrease;
     }
 
-    public void increaseMaxArmor(int percentToIncrease)
+    public void increaseMaxShield(int percentToIncrease)
     {
-        Armor = origArmorMax * (100 + curArmorMaxMod + percentToIncrease) / 100;
-        curArmorMaxMod += percentToIncrease;
+        shieldMax = origShieldMax * (100 + curShieldMaxMod + percentToIncrease) / 100;
+        curShieldMaxMod += percentToIncrease;
     }
 }
