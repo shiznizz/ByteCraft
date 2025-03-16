@@ -25,7 +25,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isCrouching;
     public bool isWallRunning;
     public bool isJetpacking;
-    public bool wallRan;
 
     [Header("Camera Options")]
     public float cameraChangeTime;
@@ -41,6 +40,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     [Header("Player Stat Options")]
     public int HPOrig; // will move after enemy AI is not in use
+    float shieldGenTimer;
 
     public int weaponListPos;
 
@@ -54,9 +54,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     Rigidbody rb;
 
     private float desiredSpeed;
-    private float prevDesiredSpeed;
-    private float slideSpeedIncrease;
-    private float slideSpeedDecrease;
 
     private Vector3 moveDir;
 
@@ -81,6 +78,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         rb.freezeRotation = true;
 
         HPOrig = playerStatManager.instance.HPMax;
+        playerStatManager.instance.shield = playerStatManager.instance.shieldMax;
 
         spawnPlayer();
     }
@@ -92,7 +90,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             playerInput();
             SpeedControl();
             checkGround();
-
+            handleShieldRegen();
             updatePlayerUI();
             playAtk.weaponHandler();
 
@@ -100,21 +98,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
             if (Input.GetButtonDown("Open")) // for opening loot chests
                 openChest();
-            #region stale
-            ////switches states of grapple
-            //switch (grappleState)
-            //{
-            //    // not grappling 
-            //    case movementState.grappleNormal:
-            //        if (!gameManager.instance.isPaused)
-            //            //movement();
-            //        break;
-            //    // is grappling
-            //    case movementState.grappleMoving:
-            //        grappleMovement();
-            //        break;
-            //}
-            #endregion stale
         }
     }
 
@@ -222,13 +205,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         if (!playerStatManager.instance.hasJetpack)
         {
-            if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
+            if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax /*&& isGrounded*/)
             {
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
                 rb.AddForce(transform.up * playerStatManager.instance.jumpForce, ForceMode.Impulse);
-
                 playerStatManager.instance.jumpCount++;
             }
+
+            //if(Input.GetButtonUp("Jump") && !isWallRunning)
+            //    playerStatManager.instance.jumpCount++;
         }
     }
 
@@ -273,7 +258,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
     public void takeDamage(int damage)
     {
-        playerStatManager.instance.HP -= damage;
+        playerStatManager.instance.shield -= damage;
+        shieldGenTimer = playerStatManager.instance.shieldRegenDelay;
+
+        if (playerStatManager.instance.shield <= 0)
+            playerStatManager.instance.HP -= damage;
         StartCoroutine(flashDamageScreen());
         updatePlayerUI();
     
@@ -287,6 +276,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         gameManager.instance.playerHPBar.fillAmount = (float)playerStatManager.instance.HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)playerStatManager.instance.jetpackFuel / playerStatManager.instance.jetpackFuelMax;
+        gameManager.instance.shieldBar.fillAmount = (float)playerStatManager.instance.shield / playerStatManager.instance.shieldMax;
+        gameManager.instance.overShieldBar.fillAmount = (float)playerStatManager.instance.shieldMax / playerStatManager.instance.shieldOverChargeMax;
 
         //Toggle jetpack recharge UI
         if (playerStatManager.instance.hasJetpack)
@@ -360,7 +351,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void getArmor(int amount)
     {
-        playerStatManager.instance.Armor = Mathf.Min(playerStatManager.instance.Armor + amount, playerStatManager.instance.ArmorMax);
+        playerStatManager.instance.shield = Mathf.Min(playerStatManager.instance.shield + amount, playerStatManager.instance.shieldOverChargeMax);
         //gameManager.instance.updateArmorUI(armor);  will be implemented at a alatter time
     }
 
@@ -381,6 +372,25 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         playerStatManager.instance.jetpackFuel = Mathf.Min(playerStatManager.instance.jetpackFuel + amount, playerStatManager.instance.jetpackFuelMax);
         updatePlayerUI();
+    }
+
+    void handleShieldRegen()
+    {
+        if (playerStatManager.instance.shield > playerStatManager.instance.shieldMax)
+        {
+            // Decrease the regen timer over time
+            shieldGenTimer -= Time.deltaTime;
+
+            // Regenerate only after the delay has passed
+            if (shieldGenTimer <= 0)
+            {
+                playerStatManager.instance.shield += playerStatManager.instance.shieldRegen * Time.deltaTime;
+                playerStatManager.instance.shield = Mathf.Clamp(playerStatManager.instance.shield, 0, playerStatManager.instance.shieldMax); // Clamp fuel between 0 and max
+            }
+        }
+        // Reset the regen timer if shield is full
+        else
+            shieldGenTimer = 0f;
     }
 
     #endregion Everything Else
