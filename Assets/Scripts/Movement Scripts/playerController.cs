@@ -78,7 +78,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         rb.freezeRotation = true;
 
         HPOrig = playerStatManager.instance.HPMax;
-        playerStatManager.instance.shield = playerStatManager.instance.shieldMax;
 
         spawnPlayer();
     }
@@ -252,7 +251,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
 
-        playerStatManager.instance.HP = HPOrig;
+        
         updatePlayerUI();
     }
     
@@ -387,7 +386,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void handleShieldRegen()
     {
-        if (playerStatManager.instance.shield > playerStatManager.instance.shieldMax)
+        if (playerStatManager.instance.shield < playerStatManager.instance.shieldMax)
         {
             // Decrease the regen timer over time
             shieldGenTimer -= Time.deltaTime;

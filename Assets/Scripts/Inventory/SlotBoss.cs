@@ -58,6 +58,8 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    
+
 
     public void equipGear(itemSO gear)
     {

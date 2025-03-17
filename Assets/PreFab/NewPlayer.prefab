@@ -40,10 +40,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5043751963829147083}
-  - component: {fileID: 782463298014959462}
   m_Layer: 0
   m_Name: NewPlayer
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -65,18 +64,6 @@ Transform:
   - {fileID: 766754491863903372}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &782463298014959462
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 475057330815734872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd30ff5261789534eb3682630ccaeca8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1027724952196986558
 GameObject:
   m_ObjectHideFlags: 0
@@ -897,15 +884,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2adfaa679c5a92144b4b9a57bedbe925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HP: 0
-  HPMax: 10
+  HP: 30
+  HPMax: 30
   playerHeight: 0
   standingHeight: 2
   crouchHeight: 0.5
-  playerHPMax: 100
-  playerHP: 0
   upgradeCurrency: 0
-  shield: 0
+  shield: 100
   shieldMax: 100
   shieldOverChargeMax: 150
   shieldRegen: 30
@@ -965,14 +950,8 @@ MonoBehaviour:
   startMelee: {fileID: 0}
   playerAnimator: {fileID: 329725358130494944}
   meleeCol: {fileID: 0}
-  magicWeaponModel: {fileID: 0}
-  startMagic: {fileID: 0}
-  magicProjectile: {fileID: 0}
-  magicProjectileSpeed: 0
-  magicPosition: {fileID: 0}
   shootTimer: 0
   attackTimer: 0
-  currentWeapon: 0
 --- !u!114 &5227924056507523457
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1098,7 +1077,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e48f02fe9d006cf40b5d9ab13a0c4b2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instance: {fileID: 3527069170420853430}
   audioSource: {fileID: 6531325392150728171}
   ignoreLayer:
     serializedVersion: 2

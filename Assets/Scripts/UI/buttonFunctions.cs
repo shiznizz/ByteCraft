@@ -18,7 +18,7 @@ public class buttonFunctions : MonoBehaviour
     public void backToMainMenu()
     {
         SceneManager.LoadScene(0);
-        gameManager.instance.stateUnpause();
+        gameManager.instance.mainMenu();
     }
 
     public void quit()

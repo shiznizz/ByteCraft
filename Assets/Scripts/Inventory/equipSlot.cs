@@ -60,16 +60,22 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
         this.item = item;
         itemIcon.sprite = item.itemIcon;
         equippedSlot.SetActive(true);
-
         
         weapon = item.GetWeapon();
         inventoryManager.instance.weaponList.Add(weapon);
         inventoryManager.instance.weaponListPos = inventoryManager.instance.weaponList.Count - 1;
 
         gameManager.instance.player.GetComponent<playerAttack>().changeWeapon();
-
         
         inventoryManager.instance.removeItem(item);
+    }
+
+    public void onLoad(weaponStats weapon)
+    {
+        this.item = weapon.GetItem();
+        itemIcon.sprite = item.itemIcon;
+        equippedSlot.SetActive(true);
+
     }
 
     public void unequipGear(itemSO item)

@@ -197,8 +197,7 @@ public class WallRunning : MonoBehaviour
             wallRunTimer -= Time.deltaTime;
         if (wallRunTimer <= 0)
             stopWallRun();
-        Debug.Log("Wall time: " + wallRunTimer);
-
+        
         if (isExitingWall)
             exitWallTimer -= Time.deltaTime;
         if (exitWallTimer <= 0)

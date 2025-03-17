@@ -10,7 +10,8 @@ using System.Linq;
 
 public class playerAttack : MonoBehaviour
 {
-    public playerAttack instance;
+    public static playerAttack instance;
+
     private playerController pc;
 
     [SerializeField] AudioSource audioSource;
@@ -18,11 +19,15 @@ public class playerAttack : MonoBehaviour
 
     private bool isMeleeAttacking = false;
 
+    private void Awake()
+    {
+        instance = this;
+    }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         pc = GetComponent<playerController>();
-        instance = this;
+        
     }
 
     public void weaponHandler()
@@ -50,7 +55,6 @@ public class playerAttack : MonoBehaviour
 
         if (inventoryManager.instance.returnCurrentWeapon().attackType == weaponStats.bulletType.RayCast)
         {
-            //Debug.Log("Ray");
             shootRayCast();
         }
         else if (inventoryManager.instance.returnCurrentWeapon().attackType == weaponStats.bulletType.Projectile)
@@ -100,10 +104,7 @@ public class playerAttack : MonoBehaviour
 
     public void removeWeaponUI()
     {
-
         playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
-        Debug.Log("if gun 1");
-
     }
 
     public void changeWeapon()
@@ -125,6 +126,7 @@ public class playerAttack : MonoBehaviour
     public void changeGun()
     {
         weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
+
         playerStatManager.instance.attackDamage = gun.shootDamage;
         playerStatManager.instance.attackDistance = gun.shootRange;
         playerStatManager.instance.attackCooldown = gun.shootRate;
