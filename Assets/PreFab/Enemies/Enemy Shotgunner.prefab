@@ -489,7 +489,9 @@ MonoBehaviour:
   roamDist: 5
   bodyFadeTime: 5
   fadeDuration: 2
+  isDead: 0
   floatingDamageTextPrefab: {fileID: 0}
+  floatingTextDelay: 0
 --- !u!195 &5709111648268748456
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1310,15 +1312,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2658149538342157939, guid: 4cea93e028c6d22429a7e300cd998925, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2658149538342157939, guid: 4cea93e028c6d22429a7e300cd998925, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2658149538342157939, guid: 4cea93e028c6d22429a7e300cd998925, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2658149538342157939, guid: 4cea93e028c6d22429a7e300cd998925, type: 3}
       propertyPath: m_LocalPosition.x
