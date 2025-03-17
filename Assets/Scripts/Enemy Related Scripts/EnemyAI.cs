@@ -75,6 +75,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private bool playerInDroneRange = false;
     private float alertCooldown = 5f;
 
+    [SerializeField] private GameObject floatingDamageTextPrefab;
+
     #endregion Variables
 
 
@@ -303,6 +305,20 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             StartCoroutine(enemyShowHpBar());
 
             HP -= amount;
+
+            // instantiate the floating damage text prefab
+            if (floatingDamageTextPrefab != null)
+            {
+                // offset the spawn position upward for visibility
+                Vector3 spawnPos = transform.position + Vector3.up;
+                GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity);
+                FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
+                if (fdt != null)
+                {
+                    fdt.SetText(amount.ToString());
+                }
+            }
+
             StartCoroutine(flashRed());
             if (anim != null)
                 anim.SetTrigger("damage");
