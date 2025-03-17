@@ -40,7 +40,6 @@ public class gameManager : MonoBehaviour
     public GameObject checkpointPopup;
 
     [Header("Text Fields to Update")]
-    //[SerializeField] public TMP_Text goalCountText;
     [SerializeField] public TMP_Text ammoCurText;
     [SerializeField] public TMP_Text ammoMaxText;
     [SerializeField] public TMP_Text ammoReserveText;
@@ -50,9 +49,6 @@ public class gameManager : MonoBehaviour
     public GameObject player;
     public playerController playerScript;
     public GameObject playerSpawnPos;
-
-    public GameObject holderPlayer;
-    public GameObject holderUI;
 
     int goalCount;
 
@@ -194,16 +190,6 @@ public class gameManager : MonoBehaviour
     #endregion Menus
 
     #region UI Element Updates
-/*    public void updateGameGoal(int amount)
-    {
-        goalCount += amount;
-        goalCountText.text = goalCount.ToString("F0");
-
-        if (goalCount <= 0)
-        {
-            youWin();
-        }
-    }*/
 
     public void updateAmmo()
     {
@@ -343,11 +329,4 @@ public class gameManager : MonoBehaviour
             }
         }
     }
-
-    /*    public void SetObjectiveText(string objective)
-        {
-            currentObjective = objective;
-            objectiveText.SetText(currentObjective);
-        }*/
-
 }

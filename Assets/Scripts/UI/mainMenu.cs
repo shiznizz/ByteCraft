@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class mainMenu : MonoBehaviour
 {
-    //public AudioClip menuMusic;
     public AudioMixer mixer;
     private AudioSource audioSource;
 
@@ -21,13 +20,6 @@ public class mainMenu : MonoBehaviour
         {
             audioSource= gameObject.AddComponent<AudioSource>();
         }
-
-        //if (menuMusic != null)
-        //{
-        //    audioSource.clip = menuMusic;
-        //    audioSource.loop = true;
-        //    audioSource.Play();
-        //}
     }
 
     public void newGame()
