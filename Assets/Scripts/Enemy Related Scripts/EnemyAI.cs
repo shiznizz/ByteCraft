@@ -313,11 +313,27 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             // debig log to confirm dmg is taken
             Debug.Log("Enemy took: " + amount + " damage");
 
-            // start coroutine to repeatedly spawn floating text 
-            if (damageTextCoroutine == null)
+            // instantiate the floating damage text only once when damage is taken.
+            if (floatingDamageTextPrefab != null)
             {
-                damageTextCoroutine = StartCoroutine(DamageTextLoop(amount));
+                // set spawn position closer to the enemy 
+                Vector3 spawnPos = headPos.transform.position + Vector3.up * 0.5f;
+                // parent the floating text to the enemy so it moves with the enemy.
+                GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
+                Debug.Log("Instantiated floating text!");
+
+                FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
+                if (fdt != null)
+                {
+                    fdt.SetText(amount.ToString());
+                }
             }
+
+            // start coroutine to repeatedly spawn floating text 
+            //if (damageTextCoroutine == null)
+            //{
+            //    damageTextCoroutine = StartCoroutine(DamageTextLoop(amount));
+            //}
 
             StartCoroutine(flashRed());
             if (anim != null)
@@ -355,35 +371,35 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         }
     }
 
-    // coroutine that spawns text until enemy dies
-    private IEnumerator DamageTextLoop(int damage)
-    {
-        // loop until HP reaches 0
-        while (HP > 0)
-        {
-            if (floatingDamageTextPrefab != null)
-            {
-                // set spawn location near enemy 
-                Vector3 spawnPos = transform.position + Vector3.up * 1f;
+    //// coroutine that spawns text until enemy dies
+    //private IEnumerator DamageTextLoop(int damage)
+    //{
+    //    // loop until HP reaches 0
+    //    while (HP > 0)
+    //    {
+    //        if (floatingDamageTextPrefab != null)
+    //        {
+    //            // set spawn location near enemy 
+    //            Vector3 spawnPos = transform.position + Vector3.up * 1f;
 
-                // instantiate prefab and set parent to enemy so it follows enemy
-                GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
+    //            // instantiate prefab and set parent to enemy so it follows enemy
+    //            GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
 
-                // debug log to confirm instantiation
-                Debug.Log("Instantiated looping floating text!");
+    //            // debug log to confirm instantiation
+    //            Debug.Log("Instantiated looping floating text!");
 
-                // set dmg amount text
-                FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
-                if (fdt != null)
-                {
-                    fdt.SetText(damage.ToString());
-                }
-            }
-            // wait for set interval before spawning next text
-            yield return new WaitForSeconds(1f);
-        }
-        damageTextCoroutine = null; // clear the reference
-    }
+    //            // set dmg amount text
+    //            FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
+    //            if (fdt != null)
+    //            {
+    //                fdt.SetText(damage.ToString());
+    //            }
+    //        }
+    //        // wait for set interval before spawning next text
+    //        yield return new WaitForSeconds(1f);
+    //    }
+    //    damageTextCoroutine = null; // clear the reference
+    //}
 
     private void handleDeath()
     {
