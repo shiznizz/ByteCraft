@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class DialoguePanelUI : MonoBehaviour
 {
     [Header("Components")]
-    [SerializeField] private GameObject contentParent;
+    [SerializeField] public GameObject contentParent;
     [SerializeField] private TextMeshProUGUI dialogueText;
     [SerializeField] private DialogueChoiceButton[] choiceButtons;
 

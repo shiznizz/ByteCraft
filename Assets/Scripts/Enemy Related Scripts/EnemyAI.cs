@@ -75,6 +75,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private bool playerInDroneRange = false;
     private float alertCooldown = 5f;
 
+    [SerializeField] private GameObject floatingDamageTextPrefab;
+
     #endregion Variables
 
 
@@ -291,6 +293,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     }
     public void takeDamage(int amount)
     {
+        if (isDead) return;
+
         if (movement == movementType.seeking)
         {
             target = gameManager.instance.player;
@@ -301,6 +305,20 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             StartCoroutine(enemyShowHpBar());
 
             HP -= amount;
+
+            // instantiate the floating damage text prefab
+            if (floatingDamageTextPrefab != null)
+            {
+                // offset the spawn position upward for visibility
+                Vector3 spawnPos = transform.position + Vector3.up;
+                GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity);
+                FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
+                if (fdt != null)
+                {
+                    fdt.SetText(amount.ToString());
+                }
+            }
+
             StartCoroutine(flashRed());
             if (anim != null)
                 anim.SetTrigger("damage");
@@ -334,6 +352,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private void handleDeath()
     {
         hpBar.gameObject.SetActive(false);
+
         //Disable the collider
         if (enemyCollider != null)
         {
@@ -344,7 +363,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (rb != null)
         {
             rb.isKinematic = false; // Enable physics
-            rb.useGravity = false; // Allow gravity to affect the body
+            rb.useGravity = true; // Allow gravity to affect the body
 
         }
         if (agent != null)
@@ -406,6 +425,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     void meleeAttack()
     {
+        if (isDead) return;
+
         shootTimer = 0;
         anim.SetTrigger("Melee Attack");
         //shootTimer = 0; // Reset the shoot timer for the cooldown between melee attacks
