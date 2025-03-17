@@ -261,8 +261,8 @@ public class BossFightManager : MonoBehaviour, IDamage
 
             if (playerStatManager.instance != null)
             {
-                playerStatManager.instance.playerHP -= 50;
-                Debug.Log($"Player HP after AOE: {playerStatManager.instance.playerHP}");
+                playerStatManager.instance.shield -= 50;
+                Debug.Log($"Player HP after AOE: {playerStatManager.instance.HP}");
             }
         }
 
