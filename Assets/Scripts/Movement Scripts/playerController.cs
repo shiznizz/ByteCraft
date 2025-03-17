@@ -213,7 +213,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         // call in update.
         Debug.DrawRay(transform.position, Vector3.up, Color.red, playerStatManager.instance.playerHeight * 0.5f + 0.1f);
         hasHeadSpace = Physics.SphereCast(transform.position, 2f, Vector3.up, out RaycastHit hit, playerStatManager.instance.playerHeight + 0.1f/*,~ignoreLayer*/);
-        Debug.Log("ray" + hit);
+        //Debug.Log("ray" + hit);
     }
 
     void sprint()
