@@ -7,11 +7,11 @@ public class VisitLocationQuestStep : QuestStep
 {
 
     [Header("Config")]
-    [SerializeField] private string locationNumberString = "first";
+    [SerializeField] private string locationString;
 
     public void Start()
     {
-        string status = "Visit the " + locationNumberString + " location.";
+        string status = "Reach the " + locationString;
         ChangeState("", status);
     }
 
