@@ -6,6 +6,7 @@ public class KillEnemyQuestStep : QuestStep
     [SerializeField] GameObject enemy;
     [SerializeField] private string enemyName;
     private bool enemyKilled = false;
+    private bool isCompleted = false;
     private enemyAI enemyScript;
     public void Start()
     {
@@ -15,11 +16,18 @@ public class KillEnemyQuestStep : QuestStep
         Debug.Log($"Quest step status: {status}");
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void Update()
     {
-        if (other.CompareTag("Player"))
+        if (!enemyKilled)
         {
-            FinishQuestStep();
+            enemyKilled = enemyScript.isDead;
+        } else
+        {
+            if (!isCompleted)
+            {
+                FinishQuestStep();
+                isCompleted = true;
+            }
         }
     }
 

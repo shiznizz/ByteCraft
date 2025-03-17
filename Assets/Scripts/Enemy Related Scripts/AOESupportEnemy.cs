@@ -15,7 +15,6 @@ public class AOESupportEnemy : MonoBehaviour
     [Header("Buff Settings")]
     [SerializeField] private float buffDuration = 2f; // How often to refresh buff
     [SerializeField] private float hpBuffMultiplier = 5f;
-    [SerializeField] private float damageBuffMultiplier = 1.15f;
     [SerializeField] private float speedBuffMultiplier = 1.25f;
 
     private Dictionary<enemyAI, Coroutine> buffedEnemies = new Dictionary<enemyAI, Coroutine>();
