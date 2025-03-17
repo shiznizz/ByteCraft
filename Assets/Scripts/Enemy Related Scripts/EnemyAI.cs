@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
     enum enemyType { range, melee, stationary, kamikaze }
-    enum movementType { random, setPath, seeking}
+    enum movementType { random, setPath, seeking, drone }
 
     #region Variables
     [Header("General Enemy Settings")]
@@ -28,6 +28,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] int faceTargetSpeed;
     [SerializeField] int FOV; //Field of View
     private int HPOrginal;
+    [SerializeField] private int armor = 0;
+    [SerializeField] private float speed = 0;
 
     [Header("Ranged Enemy Options")]
     [SerializeField] Transform headPos; //Head position
@@ -56,7 +58,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [Header("Death Settings")]
     [SerializeField] private float bodyFadeTime = 5f;
     [SerializeField] private float fadeDuration = 2f;
-    private bool isDead = false;
+    public bool isDead = false;
     private Rigidbody rb;
     private Collider enemyCollider;
     private Renderer bodyRenderer;
@@ -88,6 +90,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         colorOrig = model.material.color;
         GoalManager.instance.updateGameGoal(1);
         startingPos = transform.position;
+        if (speed != 0) agent.speed = speed;
         if (type != enemyType.stationary)
         {
             stoppingDistOrig = agent.stoppingDistance;
@@ -304,8 +307,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (HP > 0)
         {
             StartCoroutine(enemyShowHpBar());
-
-            HP -= amount;
+            int effectiveDamage = Mathf.Max(0, amount - armor);
+            HP -= effectiveDamage;
 
             // debig log to confirm dmg is taken
             Debug.Log("Enemy took: " + amount + " damage");
@@ -567,7 +570,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         isAlerted = state;
         if (isAlerted)
         {
-            Debug.Log($"{gameObject.name} is now alerted!");
             alertTimer = 0f;
 
         }

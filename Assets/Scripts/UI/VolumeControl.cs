@@ -22,6 +22,7 @@ public class VolumeControl : MonoBehaviour
     {
         PlayerPrefs.SetFloat(volumeParameter, slider.value);
         PlayerPrefs.SetFloat(volumeParameter + "lastVolume", lastVolume);
+        PlayerPrefs.Save();
     }
 
     private void SliderValueChanged(float value)

@@ -31,9 +31,6 @@ public class WallRunning : MonoBehaviour
     private bool isExitingWall = false;
     private float exitWallTimer;
 
-    [Header("References")]
-    public float wallRunAcceleration = 10f;
-
     float wallRunTimer;
     float wallRerunTimer;
 
@@ -164,7 +161,7 @@ public class WallRunning : MonoBehaviour
     void getWallNorm()
     {
         wallNormal = wallRight ? rightWallHit.normal : leftWallHit.normal;
-        Debug.Log("wallNorm: " + wallNormal);
+        //Debug.Log("wallNorm: " + wallNormal);
     }
 
     private void StartWallRun()
@@ -197,7 +194,7 @@ public class WallRunning : MonoBehaviour
             wallRunTimer -= Time.deltaTime;
         if (wallRunTimer <= 0)
             stopWallRun();
-        Debug.Log("Wall time: " + wallRunTimer);
+        //Debug.Log("Wall time: " + wallRunTimer);
 
         if (isExitingWall)
             exitWallTimer -= Time.deltaTime;
