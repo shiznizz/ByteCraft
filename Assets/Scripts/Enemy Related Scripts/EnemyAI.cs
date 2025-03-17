@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
     enum enemyType { range, melee, stationary, kamikaze }
-    enum movementType { random, setPath, seeking}
+    enum movementType { random, setPath, seeking, drone }
 
     #region Variables
     [Header("General Enemy Settings")]
@@ -315,11 +315,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 // offset the spawn position upward for visibility
                 Vector3 spawnPos = transform.position + Vector3.up;
                 GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity);
-                FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
+/*                FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
                 if (fdt != null)
                 {
                     fdt.SetText(amount.ToString());
-                }
+                }*/
             }
 
             StartCoroutine(flashRed());
