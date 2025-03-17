@@ -2494,7 +2494,9 @@ GameObject:
   - component: {fileID: 7446829242640041223}
   - component: {fileID: 3488945772560951174}
   - component: {fileID: 2469038211168955105}
+
   - component: {fileID: 6681174953516829141}
+
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -2560,7 +2562,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15831ead5bb0c47479aa7bdc53d7349a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+
 --- !u!114 &6681174953516829141
+
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2778,6 +2782,8 @@ MonoBehaviour:
   player: {fileID: 0}
   playerScript: {fileID: 0}
   playerSpawnPos: {fileID: 0}
+  holderPlayer: {fileID: 0}
+  holderUI: {fileID: 3354133548953732252}
   inventorySlot: {fileID: 450530380493165477}
   selectedEquipSlot: {fileID: 0}
   selectedInventorySlot: {fileID: 0}
@@ -5271,8 +5277,10 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
+
     m_Bits: 4294967295
 --- !u!114 &571137239354263537
+
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5281,10 +5289,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 3354133548953732252}
   m_Enabled: 1
   m_EditorHideFlags: 0
+
   m_Script: {fileID: 11500000, guid: cd30ff5261789534eb3682630ccaeca8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &3375600317503433449
+
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6413,11 +6423,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2656593790585495990}
         m_TargetAssemblyTypeName: buttonFunctions, Assembly-CSharp
-        m_MethodName: switchMenu
-        m_Mode: 2
+        m_MethodName: backToMainMenu
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 

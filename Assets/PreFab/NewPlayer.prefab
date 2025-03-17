@@ -40,10 +40,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5043751963829147083}
-  - component: {fileID: 782463298014959462}
   m_Layer: 0
   m_Name: NewPlayer
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -66,18 +65,6 @@ Transform:
   - {fileID: 7483367086632517591}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &782463298014959462
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 475057330815734872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd30ff5261789534eb3682630ccaeca8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1027724952196986558
 GameObject:
   m_ObjectHideFlags: 0
@@ -175,7 +162,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4263542785864728171
 Transform:
   m_ObjectHideFlags: 0
@@ -897,15 +884,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2adfaa679c5a92144b4b9a57bedbe925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HP: 0
-  HPMax: 10
+  HP: 30
+  HPMax: 30
   playerHeight: 0
   standingHeight: 2
   crouchHeight: 0.5
-  playerHPMax: 100
-  playerHP: 0
   upgradeCurrency: 0
-  shield: 0
+  shield: 100
   shieldMax: 100
   shieldOverChargeMax: 150
   shieldRegen: 30
@@ -995,6 +980,7 @@ MonoBehaviour:
   isCrouching: 0
   isWallRunning: 0
   isJetpacking: 0
+  hasHeadSpace: 0
   cameraChangeTime: 0
   wallRunTilt: 0
   tilt: 0
@@ -1012,6 +998,8 @@ MonoBehaviour:
   isAirborne: 0
   grappleShootPos: {fileID: 0}
   grappleRope: {fileID: 0}
+  interactionDistance: 2
+  interactKey: 101
 --- !u!114 &8067939329775525885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1056,7 +1044,6 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 65536
-  wallRunAcceleration: 10
 --- !u!114 &7288472048335276681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1089,6 +1076,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   instance: {fileID: 3527069170420853430}
   audioSource: {fileID: 6626980476747503879}
+
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 72
