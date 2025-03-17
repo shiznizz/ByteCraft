@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -80,6 +81,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] private GameObject floatingDamageTextPrefab;
     private Coroutine damageTextCoroutine;
 
+    public bool isStunned = false;
+
     #endregion Variables
 
 
@@ -118,6 +121,13 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void Update()
     {
        updateEnemyUI();
+        // if stunned, nav mesh will stop and skip rest of AI's logic
+        if (isStunned)
+        {
+            agent.isStopped = true;
+            return;
+        }
+
         if (isAlerted && !playerInRange) // specific to drone bot alerts
         {
             if (alertTimer < alertCooldown)
