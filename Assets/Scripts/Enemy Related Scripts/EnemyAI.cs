@@ -542,7 +542,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void dropLoot()
     {
         playerController player = gameManager.instance.playerScript;
-        float healthRatio = playerStatManager.instance.HP / (float)player.HPOrig;
+        float healthRatio = playerStatManager.instance.HP / (float)playerStatManager.instance.HPMax;
         float currAmmo = float.Parse(gameManager.instance.ammoCurText.text);
         float reserveAmmo = float.Parse(gameManager.instance.ammoReserveText.text);
         float maxAmmo = float.Parse(gameManager.instance.ammoMaxText.text);
