@@ -27,9 +27,15 @@ public class mainMenu : MonoBehaviour
         }
     }
 
+    public void newGame()
+    {
+        dataManager.instance.NewGame();
+    }
+
     public void Play()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        newGame();
     }
 
     public void Quit()
