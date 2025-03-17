@@ -439,7 +439,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         {
             if (!airborne)
             {
-                //landingSounds.PlaySpecificSound(0);
+                landingSounds.PlaySpecificSound(0);
             }
         }
         isAirborne = airborne;
