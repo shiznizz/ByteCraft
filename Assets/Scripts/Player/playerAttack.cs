@@ -15,8 +15,10 @@ public class playerAttack : MonoBehaviour
 
     [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
+    [SerializeField] AudioClip gunEmptyClip;
 
     private bool isMeleeAttacking = false;
+    private bool isReloading = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -43,6 +45,11 @@ public class playerAttack : MonoBehaviour
 
     void shoot()
     {
+        if (isReloading) return;
+        if (inventoryManager.instance.returnCurrentWeapon().ammoCur == 0)
+        {
+            audioSource.PlayOneShot(gunEmptyClip);
+        }
         playerStatManager.instance.attackTimer = 0;
         StartCoroutine(flashMuzzle());
         inventoryManager.instance.returnCurrentWeapon().ammoCur--;
@@ -142,6 +149,7 @@ public class playerAttack : MonoBehaviour
         
         if (Input.GetButtonDown("Reload") && inventoryManager.instance.weaponList.Count > 0)
         {
+            isReloading = true;
             weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
 
             if (gun.ammoReserve > gun.ammoMax)          //Check if the player can reload a full clip
@@ -157,8 +165,9 @@ public class playerAttack : MonoBehaviour
                 gun.ammoReserve = 0;
                 audioSource.PlayOneShot(gun.reloadSounds[Random.Range(0, gun.reloadSounds.Length)], gun.reloadVolume);
             }
-
+            
             //updatePlayerUI();
+            StartCoroutine(ResetIsReloading());
         }
     }
 
@@ -220,5 +229,11 @@ public class playerAttack : MonoBehaviour
     public void EnableWeapons()
     {
         isMeleeAttacking = false;
+    }
+
+    public IEnumerator ResetIsReloading()
+    {
+        yield return new WaitForSeconds(0.5f);
+        isReloading = false;
     }
 }

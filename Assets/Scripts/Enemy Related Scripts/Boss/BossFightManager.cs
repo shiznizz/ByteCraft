@@ -1,28 +1,38 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class BossFightManager : MonoBehaviour
 {
+    [Header("References")]
     public BossSummon bossSummon; // Reference to the BossSummon script
     public PhaseTimer phaseTimer; // Reference to the PhaseTimer Script
     public BossInvulnerability bossInvulnerability; // Reference to the BossInvulnerability script
     public AudioSource bossAudioSource;  // Reference to the AudioSource component for the boss
+    public Transform player; // Reference to the player transform
+    public NavMeshAgent bossAgent; // NavMeshAgent component for movement
+    public Animator anim; // Boss animator component
+
+    [Header("Audio Clips")]
     public AudioClip[] bossVoiceLines;  // Array of audio clips for the boss' voice lines
+    public AudioClip[] phaseTwoMechanicDialogue; // Array for phase two dialogue
+    public AudioClip bossDeathDialogue; // Dialogue when the boss dies
+
+    [Header("Settings")]
     public float bossTalkDuration = 3f; // Duration of the boss talking (in seconds)
+    public float chaseSpeed = 3.5f; // Movement Speed
+    public float attackRange = 3f; // Range to trigger AOE attack
+    [SerializeField] private int bossHP = 200; // Boss HP (currently set to 200hp for phase two)
+    [SerializeField] private float phaseTwoTimer = 30f; // Time between random mechanics is 30 seconds
+
+    [Header("Animation Settings")]
+    public float animTransSpeed = 5f; // Speed of animation transition
 
     private bool fightStarted = false;
     private bool isInPhaseOne = false; // Tracks if boss is in phase one
     private bool hasPlayedPhaseOneVoiceLine = false; // Tracks if the phase one voice line as been played
-    private int bossHP = 200; // Boss HP (currently set to 200hp for phase two)
-    private float phaseTwoTimer = 30f; // Time between random mechanics is 30 seconds
-
-    //Flags for phase two mechanics
     private bool isShieldActive = false;
     private bool isInPhaseTwo = false;
-
-    //Additional dialogue for phase two
-    public AudioClip[] phaseTwoMechanicDialogue; // Array for phase two dialogue
-    public AudioClip bossDeathDialogue; // Dialogue when the boss dies
 
     private void OnTriggerEnter(Collider other)
     {
@@ -37,7 +47,7 @@ public class BossFightManager : MonoBehaviour
     {
         fightStarted = true;
 
-        //Trigger the boss talk animation/sequence here (this is optional)
+        //Trigger the boss talk animation/sequence here
 
         // Start the boss dialogue (you can adjust when it starts depending on your desired flow)
         PlayVoiceLine(0);  // Play first boss voice line when the fight starts
@@ -58,7 +68,7 @@ public class BossFightManager : MonoBehaviour
             PlayVoiceLine(1);  // Play a different voice line for Phase 1 start
             hasPlayedPhaseOneVoiceLine = true; // Mark as played
 
-            //Start summoning enemeies for 3 minutes
+            //Start summoning enemeies set time
             // Enable the boss summoning and phase timer
             if (bossSummon != null) bossSummon.enabled = true;
             if (phaseTimer != null) phaseTimer.enabled = true;
@@ -71,7 +81,7 @@ public class BossFightManager : MonoBehaviour
 
     IEnumerator EndPhaseOneAfterTime()
     {
-        // Wait for the 3 minutes (180 seconds) and then stop summoning enemies
+        // Wait for the set time and then stop summoning enemies
         yield return new WaitForSeconds(phaseTimer.phaseDuration);
 
         // Check if the voice line for Phase One end is already played
@@ -90,16 +100,10 @@ public class BossFightManager : MonoBehaviour
     void EndPhaseOne()
     {
         // Disable the summoning script after Phase One ends
-        if (bossSummon != null)
-        {
-            bossSummon.enabled = false;
-        }
+        if (bossSummon) bossSummon.enabled = false;
 
         // Disable invulnerability and prepare for Phase Two
-        if (bossInvulnerability != null)
-        {
-            bossInvulnerability.EndInvulnerability();
-        }
+        if (bossInvulnerability) bossInvulnerability.EndInvulnerability();
 
         // Log Phase One end (for debugging)
         Debug.Log("Phase One ended, transitioning to Phase Two.");
@@ -111,7 +115,34 @@ public class BossFightManager : MonoBehaviour
         bossHP = 200; // Resets boss HP for phase two
         phaseTwoTimer = 30f; // Resets phase mechanic timer
 
+        if (bossAgent != null)
+        {
+            bossAgent.isStopped = false;
+            bossAgent.speed = chaseSpeed;
+        }
+
         StartCoroutine(PhaseTwoMechanicsCycle());
+    }
+
+    private void Update()
+    {
+        if (isInPhaseTwo && bossHP > 0 && player)
+        {
+            bossAgent.SetDestination(player.position);
+            UpdateMovementAnimation();
+        }
+    }
+
+    private void UpdateMovementAnimation()
+    {
+        if (anim != null && bossAgent != null)
+        {
+            float agentSpeed = bossAgent.velocity.magnitude; // Convert velocity to a float speed
+            float animatorCurSpeed = anim.GetFloat("Speed");
+
+            // Smoothly transition animation speed
+            anim.SetFloat("Speed", Mathf.MoveTowards(animatorCurSpeed, agentSpeed, Time.deltaTime * animTransSpeed));
+        }
     }
 
     IEnumerator PhaseTwoMechanicsCycle()
@@ -141,6 +172,9 @@ public class BossFightManager : MonoBehaviour
                     PlayMechanicDialogue(3); // Dialogue for Tracking Projectiles
                     break;
             }
+
+            if (bossAgent && player)
+                bossAgent.SetDestination(player.position);
 
             // Reset the timer for the next mechanic
             phaseTwoTimer = 30f;
@@ -198,6 +232,19 @@ public class BossFightManager : MonoBehaviour
         yield return new WaitForSeconds(1f); // Delay before next mechanic
     }
 
+    public void TakeDamage(int damage)
+    {
+        if (!isInPhaseTwo || bossHP <= 0 || bossInvulnerability.isInvulnerable) return;
+
+        bossHP -= damage;
+        Debug.Log($"Boss took {damage} damage, remaining HP: {bossHP}");
+
+        if (bossHP <= 0 && isInPhaseTwo)
+        {
+            EndBossFight();
+        }
+    }
+
     void EndBossFight()
     {
         Debug.Log("Boss has been defeated.");
@@ -205,19 +252,7 @@ public class BossFightManager : MonoBehaviour
 
         PlayVoiceLine(bossVoiceLines.Length - 1); // Play the final dialogue in array for death
         isInPhaseTwo = false;
-    }
-
-    public void TakeDamage(int damage)
-    {
-        if (!isInPhaseTwo || bossHP <= 0) return;
-
-        bossHP -= damage;
-        Debug.Log($"Boss took {damage} damage, remaining HP: {bossHP}");
-
-        if (bossHP <= 0)
-        {
-            EndBossFight();
-        }
+        bossAgent.isStopped = true; // Stop boss movement
     }
 
     // Function to play a specific voice line based on index
