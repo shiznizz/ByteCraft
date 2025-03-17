@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CrabMonster 1 Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 5792744366562842766, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 5794526363542072584, guid: 4e7afdf31c20ebf419ea38bf1d358719, type: 3}
       propertyPath: m_LocalPosition.x
       value: 57.976128
@@ -130,6 +134,12 @@ MonoBehaviour:
   speed: 0
   destroyTime: 0
   playerProjectile: 0
+  damageHitSounds: []
+  targetingDistance: 0
+  turnSpeed: 0
+  ignoreLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!135 &7391637136945108204
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -169,27 +179,36 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  movement: 0
+  target: {fileID: 0}
   model: {fileID: 1220057282981061265}
   agent: {fileID: 8573114166066744710}
   anim: {fileID: 1179212026617153553}
-  headPos: {fileID: 1227170283895354183}
+  hpFillBar: {fileID: 0}
+  hpBar: {fileID: 0}
   HP: 20
   animTransSpeed: 4
   faceTargetSpeed: 5
   FOV: 180
+  armor: 0
+  speed: 0
+  headPos: {fileID: 1227170283895354183}
   shootAngle: 5
   bullet: {fileID: 1229310425171102399}
   shootPos: {fileID: 1226905049197040701}
-  meleeCol: {fileID: 7391637136945108204}
   shootRate: 1
+  meleeCol: {fileID: 7391637136945108204}
   meleeDistance: 5
   dropsLoot: 1
-  weaponCol: {fileID: 0}
   lootTable:
   - {fileID: 11400000, guid: d2fac76925cf74040b68765fd8297372, type: 2}
   dropPos: {fileID: 7495249159418410618}
   roamPauseTime: 2
+  pathPositions: []
   roamDist: 5
+  bodyFadeTime: 5
+  fadeDuration: 2
+  floatingDamageTextPrefab: {fileID: 0}
 --- !u!195 &8573114166066744710
 NavMeshAgent:
   m_ObjectHideFlags: 0
