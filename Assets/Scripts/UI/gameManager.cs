@@ -47,7 +47,7 @@ public class gameManager : MonoBehaviour
 
     [Header("State Monitoring Values")]
     public bool isPaused;
-    [SerializeField] public GameObject player;
+    public GameObject player;
     public playerController playerScript;
     public GameObject playerSpawnPos;
 
@@ -80,8 +80,6 @@ public class gameManager : MonoBehaviour
     [SerializeField] float baseAlpha = 0.3f;
 
     [SerializeField] AudioMixer mixer;
-
-    //public string currentObjective;
     public bool inventoryOpen = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -89,7 +87,7 @@ public class gameManager : MonoBehaviour
     {
         instance = this;
 
-        //player = GameObject.FindWithTag("Player");
+        player = GameObject.FindWithTag("Player");
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
 
         
@@ -177,12 +175,12 @@ public class gameManager : MonoBehaviour
         switchMenu(menuDeath);
     }
 
-/*    public void objectiveFailed(string failedObj)
+    public void objectiveFailed(string failedObj)
     {
 
         switchMenu(menuObjectiveFail);
-        objectiveText.SetText(currentObjective);
-    }*/
+        objectiveText.SetText(failedObj);
+    }
 
     public void youWin()
     {

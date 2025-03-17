@@ -8,6 +8,8 @@ public class BreakableObject : MonoBehaviour, IDamage
     [SerializeField] GameObject fracturedObject;
     [SerializeField] float seperationForce;
     [SerializeField] float removeFromWorldTime;
+    [SerializeField] bool isMainObjective;
+    [SerializeField] string failedText;
 
     private Color originalColor;
 
@@ -24,6 +26,8 @@ public class BreakableObject : MonoBehaviour, IDamage
         if (objectHP <= 0)
         {
             BreakObject();
+            if (isMainObjective)
+                gameManager.instance.objectiveFailed(failedText);
         }
         else
         {
