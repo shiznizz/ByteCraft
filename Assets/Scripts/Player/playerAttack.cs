@@ -113,6 +113,8 @@ public class playerAttack : MonoBehaviour
     public void removeWeaponUI()
     {
         playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+        playerStatManager.instance.gunModel.GetComponent<MeshRenderer>().sharedMaterial = null;
+        gameManager.instance.hideAmmo();
     }
 
     public void changeWeapon()
@@ -143,7 +145,6 @@ public class playerAttack : MonoBehaviour
         playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = gun.model.GetComponent<MeshFilter>().sharedMesh;
         playerStatManager.instance.gunModel.GetComponent<MeshRenderer>().sharedMaterial = gun.model.GetComponent<MeshRenderer>().sharedMaterial;
 
-        //turnOffWeaponModels();
     }
 
     void gunReload()

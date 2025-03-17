@@ -81,6 +81,7 @@ public class gameManager : MonoBehaviour
 
     [SerializeField] AudioMixer mixer;
     public bool inventoryOpen = false;
+    private bool keepMenu;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -107,7 +108,7 @@ public class gameManager : MonoBehaviour
         {
             if (menuActive == null)
                 switchMenu(menuPause);
-            else
+            else if (!keepMenu)
                 stateUnpause();
             inventoryOpen = false;
         }
@@ -137,6 +138,7 @@ public class gameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         menuActive.SetActive(false);
         menuActive = null;
+        keepMenu = false;
     }
 
     public void mainMenu()
@@ -173,17 +175,19 @@ public class gameManager : MonoBehaviour
     public void youLose()
     {
         switchMenu(menuDeath);
+        keepMenu = true;
     }
 
     public void objectiveFailed(string failedObj)
     {
-
+        keepMenu = true;
         switchMenu(menuObjectiveFail);
         objectiveText.SetText(failedObj);
     }
 
     public void youWin()
     {
+        keepMenu = true;
         switchMenu(menuWin);
     }
 
