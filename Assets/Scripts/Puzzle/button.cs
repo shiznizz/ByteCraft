@@ -16,8 +16,8 @@ public class buttons : MonoBehaviour
     [SerializeField] GameObject objectToActivate;
     [SerializeField] float activationRange;
     [SerializeField] float holdDuration;
-    public bool playerInRange;
     public bool isHoldButton;
+    public bool playerInRange;
     public bool isActivated;
     public bool isHolding;
     public float holdTime;
@@ -61,6 +61,7 @@ public class buttons : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             holdTime = 0;
+            playerInRange = true;
         }
     }
 
@@ -70,6 +71,7 @@ public class buttons : MonoBehaviour
         {
             holdTime = 0;
             isHolding = false;
+            playerInRange = false;
         }
     }
 
