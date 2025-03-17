@@ -274,7 +274,7 @@ GameObject:
   - component: {fileID: 5251323147203830899}
   m_Layer: 7
   m_Name: Enemy Sniper
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -309,29 +309,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
+  movement: 0
+  target: {fileID: 0}
   model: {fileID: 4042841209656051847}
   agent: {fileID: 4485123469095904880}
   anim: {fileID: 8409516741212779639}
-  headPos: {fileID: 4219340709348526681}
+  hpFillBar: {fileID: 0}
+  hpBar: {fileID: 0}
   HP: 10
   animTransSpeed: 8
   faceTargetSpeed: 32
   FOV: 150
+  armor: 0
+  speed: 0
+  headPos: {fileID: 4219340709348526681}
   shootAngle: 5
   bullet: {fileID: 8404054753871229023, guid: ae1db21d834ba7b40bbea42884b4b1ad, type: 3}
   shootPos: {fileID: 4493974835936402486}
-  meleeCol: {fileID: 0}
   shootRate: 4
+  meleeCol: {fileID: 0}
   meleeDistance: 0
   dropsLoot: 0
-  weaponCol: {fileID: 0}
   lootTable:
   - {fileID: 11400000, guid: d2fac76925cf74040b68765fd8297372, type: 2}
   - {fileID: 11400000, guid: 52b1930380fd3f047a5f600e5c7dd893, type: 2}
   - {fileID: 11400000, guid: b562ead0228d8aa49ad1a9758a9519fc, type: 2}
   dropPos: {fileID: 1492004183115593990}
   roamPauseTime: 1
+  pathPositions: []
   roamDist: 15
+  bodyFadeTime: 5
+  fadeDuration: 2
+  floatingDamageTextPrefab: {fileID: 0}
 --- !u!195 &4485123469095904880
 NavMeshAgent:
   m_ObjectHideFlags: 0

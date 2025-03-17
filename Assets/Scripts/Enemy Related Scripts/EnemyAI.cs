@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
     enum enemyType { range, melee, stationary, kamikaze }
-    enum movementType { random, setPath, seeking}
+    enum movementType { random, setPath, seeking, drone }
 
     #region Variables
     [Header("General Enemy Settings")]
@@ -28,6 +28,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] int faceTargetSpeed;
     [SerializeField] int FOV; //Field of View
     private int HPOrginal;
+    [SerializeField] private int armor = 0;
+    [SerializeField] private float speed = 0;
 
     [Header("Ranged Enemy Options")]
     [SerializeField] Transform headPos; //Head position
@@ -75,6 +77,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private bool playerInDroneRange = false;
     private float alertCooldown = 5f;
 
+    [SerializeField] private GameObject floatingDamageTextPrefab;
+
     #endregion Variables
 
 
@@ -85,6 +89,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         colorOrig = model.material.color;
         GoalManager.instance.updateGameGoal(1);
         startingPos = transform.position;
+        if (speed != 0) agent.speed = speed;
         if (type != enemyType.stationary)
         {
             stoppingDistOrig = agent.stoppingDistance;
@@ -301,8 +306,22 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (HP > 0)
         {
             StartCoroutine(enemyShowHpBar());
+            int effectiveDamage = Mathf.Max(0, amount - armor);
+            HP -= effectiveDamage;
 
-            HP -= amount;
+            // instantiate the floating damage text prefab
+            if (floatingDamageTextPrefab != null)
+            {
+                // offset the spawn position upward for visibility
+                Vector3 spawnPos = transform.position + Vector3.up;
+                GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity);
+                FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
+                if (fdt != null)
+                {
+                    fdt.SetText(amount.ToString());
+                }
+            }
+
             StartCoroutine(flashRed());
             if (anim != null)
                 anim.SetTrigger("damage");
@@ -518,7 +537,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         isAlerted = state;
         if (isAlerted)
         {
-            Debug.Log($"{gameObject.name} is now alerted!");
             alertTimer = 0f;
 
         }

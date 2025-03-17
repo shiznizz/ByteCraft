@@ -190,14 +190,20 @@ MonoBehaviour:
   - {fileID: 4195813036044438607}
   speed: 4
   detectionRange: 8
-  nearbyEnemies:
-  - {fileID: 0}
+  nearbyEnemies: []
   coll: {fileID: 2521674844652503083}
   audioSource: {fileID: 6450292127438520226}
   alertClip: {fileID: 8300000, guid: 921553898e3fd704baa8d89b74a6e7d2, type: 3}
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 32768
   roamPauseTime: 2
   isPaused: 0
   isAlerted: 0
+  isDead: 0
 --- !u!82 &6450292127438520226
 AudioSource:
   m_ObjectHideFlags: 0
