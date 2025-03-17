@@ -9,12 +9,14 @@ public class pickup : MonoBehaviour
     public LootType lootType;
     public int amount; // how much value the loot gives to player
     public LootItem lootItem;
+    [SerializeField] AudioClip gunPickupSound;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player")) // check if player touches loot
         {
             IPickup player = other.GetComponent<IPickup>();
+            AudioSource playerAudSource = other.GetComponent<AudioSource>();
             if (player != null) 
             {
                 switch (lootType)
@@ -23,6 +25,7 @@ public class pickup : MonoBehaviour
                         player.heal(amount);
                         break;
                     case pickup.LootType.Weapon:
+                        playerAudSource.PlayOneShot(gunPickupSound);
                         player.addInventory(item);
                         break;
                     case pickup.LootType.armor:
@@ -35,11 +38,9 @@ public class pickup : MonoBehaviour
                         player.addInventory(item);
                         break;
                     case pickup.LootType.Upgrade:
-                        //Debug.Log($"Picked up upgrade item: {lootItem.name} - {lootItem.upgradeType}");
-
                         if (lootItem.upgradeType == upgradeType.Armor)
                         {
-                            playerStatManager.instance.Armor += lootItem.restoreAmt;
+                            playerStatManager.instance.shield += lootItem.restoreAmt;
                         } else if (lootItem.upgradeType == upgradeType.Damage)
                         {
                             playerStatManager.instance.attackDamage += lootItem.restoreAmt;
@@ -49,7 +50,7 @@ public class pickup : MonoBehaviour
                         }
                         break;
                 }
-                Destroy(gameObject); // remove loot from scene
+                Destroy(this.gameObject); // remove loot from scene
             }
         }
     }

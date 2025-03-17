@@ -4,7 +4,7 @@ public class CrouchnSlide : MonoBehaviour
 {
     [SerializeField] Transform orientation;
     [SerializeField] CharacterController controller;
-    [SerializeField] CapsuleCollider collider;
+    [SerializeField] CapsuleCollider capsuleCollider;
 
     private playerController pc;
     private Rigidbody rb;
@@ -84,8 +84,8 @@ public class CrouchnSlide : MonoBehaviour
         controller.center = crouchingCenter;
 
         // adjusts collider height and center for crouching
-        collider.height = playerStatManager.instance.crouchHeight;
-        collider.center = crouchingCenter;
+        capsuleCollider.height = playerStatManager.instance.crouchHeight;
+        capsuleCollider.center = crouchingCenter;
 
         playerStatManager.instance.playerHeight = playerStatManager.instance.crouchHeight;
 
@@ -100,8 +100,8 @@ public class CrouchnSlide : MonoBehaviour
         controller.center = standingCenter;
 
         // readjusts collider height and center for standing
-        collider.height = playerStatManager.instance.standingHeight;
-        collider.center = standingCenter;
+        capsuleCollider.height = playerStatManager.instance.standingHeight;
+        capsuleCollider.center = standingCenter;
 
         playerStatManager.instance.playerHeight = playerStatManager.instance.standingHeight;
 
@@ -123,8 +123,12 @@ public class CrouchnSlide : MonoBehaviour
     {
         slideTimer -= Time.deltaTime;
         rb.AddForce(forwardDir.normalized * playerStatManager.instance.currSpeed * 10f, ForceMode.Force);
+
+        //reduce slide speed over time
         playerStatManager.instance.slideSpeed -= Time.deltaTime * playerStatManager.instance.slideFriction;
-        if (slideTimer <= 0)
+
+        // stop sliding if you run out of time or speed
+        if (slideTimer <= 0 || playerStatManager.instance.slideSpeed < playerStatManager.instance.crouchSpeed)
             pc.isSliding = false;
             //exitCrouch();
     }

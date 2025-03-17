@@ -24,10 +24,13 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject ammoHUD;
     [SerializeField] GameObject jetpackHUD;
     [SerializeField] GameObject enemyHealthbar;
+    [SerializeField] GameObject overShieldHUD;
     public Image playerHPBar;
     public Image enemyHPBar;
     public Image JPFuelGauge;
     public Image grappleGauge;
+    public Image shieldBar;
+    public Image overShieldBar;
     public GameObject playerDamageScreen;
     public GameObject checkpointPopup;
 
@@ -204,6 +207,16 @@ public class gameManager : MonoBehaviour
     public void hideJetpack()
     {
         jetpackHUD.SetActive(false);
+    }
+
+    public void showOverShield()
+    {
+        overShieldHUD.SetActive(true);
+    }
+
+    public void hideOverShield()
+    {
+        overShieldHUD.SetActive(false);
     }
 
     private void CheckLowHealth()

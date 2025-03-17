@@ -6,7 +6,7 @@ public class cameraController : MonoBehaviour
 {
     [SerializeField] Transform orientation;
 
-    [SerializeField] int sens;
+    [SerializeField] public int sens;
     [SerializeField] int lockVertMin, lockVertMax;
     [SerializeField] bool invertY;
 
@@ -40,5 +40,11 @@ public class cameraController : MonoBehaviour
         transform.localRotation = Quaternion.Euler(rotX, rotY, 0);
         // rotates the player left and right
         orientation.rotation = Quaternion.Euler(0, rotY, 0);
+    }
+
+    //Method to change sensitivity dynamically
+    public void SetSensitivity(float newSensitivity)
+    {
+        sens = Mathf.RoundToInt(newSensitivity); // Ensures it remains an integar
     }
 }

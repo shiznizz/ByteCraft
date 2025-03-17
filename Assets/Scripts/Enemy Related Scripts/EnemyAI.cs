@@ -16,14 +16,14 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] movementType movement;
     [SerializeField] GameObject target;
     [SerializeField] Renderer model;
-    [SerializeField] NavMeshAgent agent;
+    [SerializeField] public NavMeshAgent agent;
     [SerializeField] Animator anim;
     private GameObject originalTarget;
 
     [Header("Enemy Stats")]
     [SerializeField] Image hpFillBar;
     [SerializeField] Canvas hpBar;
-    [SerializeField] int HP;
+    [SerializeField] public int HP;
     [SerializeField] int animTransSpeed;
     [SerializeField] int faceTargetSpeed;
     [SerializeField] int FOV; //Field of View
@@ -106,10 +106,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         {
             target = gameManager.instance.player;
         }
-        else
-        {
-            originalTarget = target;
-        }
+
+        originalTarget = target;
     }
 
     // Update is called once per frame
@@ -295,6 +293,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     }
     public void takeDamage(int amount)
     {
+        if (isDead) return;
+
         if (movement == movementType.seeking)
         {
             target = gameManager.instance.player;
@@ -352,6 +352,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private void handleDeath()
     {
         hpBar.gameObject.SetActive(false);
+
         //Disable the collider
         if (enemyCollider != null)
         {
@@ -362,7 +363,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (rb != null)
         {
             rb.isKinematic = false; // Enable physics
-            rb.useGravity = false; // Allow gravity to affect the body
+            rb.useGravity = true; // Allow gravity to affect the body
 
         }
         if (agent != null)
@@ -424,6 +425,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     void meleeAttack()
     {
+        if (isDead) return;
+
         shootTimer = 0;
         anim.SetTrigger("Melee Attack");
         //shootTimer = 0; // Reset the shoot timer for the cooldown between melee attacks
@@ -542,5 +545,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         playerInDroneRange = state;
     }
 
+    #endregion
+
+    #region AOESupport
+    public void SetHP(int newHP)
+    {
+        this.HP = newHP;
+    }
     #endregion
 }
