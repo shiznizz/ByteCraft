@@ -4,6 +4,9 @@ using TMPro;
 using UnityEngine.UI;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using System.Diagnostics.Contracts;
+using UnityEngine.Audio;
+using Unity.VisualScripting;
+using System.Text.RegularExpressions;
 
 
 public class gameManager : MonoBehaviour
@@ -71,6 +74,8 @@ public class gameManager : MonoBehaviour
     [SerializeField] float heartbeatMagnitude = 0.2f;
     [SerializeField] float baseAlpha = 0.3f;
 
+    [SerializeField] AudioMixer mixer;
+
     //public string currentObjective;
     public bool inventoryOpen = false;
 
@@ -81,11 +86,14 @@ public class gameManager : MonoBehaviour
         player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<playerController>();
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
+
+        
     }
 
     private void Start()
     {
-        updateInventory();      
+        updateInventory();
+        getSavedAudioSettings();
     }
 
 
@@ -301,9 +309,24 @@ public class gameManager : MonoBehaviour
     }
     #endregion Inventory
 
-/*    public void SetObjectiveText(string objective)
+    private void getSavedAudioSettings()
     {
-        currentObjective = objective;
-        objectiveText.SetText(currentObjective);
-    }*/
+        float value;
+        Debug.Log("Audio Settings");
+        foreach (AudioMixerGroup group in mixer.FindMatchingGroups(""))
+        {
+            Debug.Log(group.name);
+            value = PlayerPrefs.GetFloat(group.name);
+            Debug.Log(value);
+            if (value == 0)
+            {
+                mixer.SetFloat(group.name, -80);
+            }
+            else
+            {
+                Debug.Log(mixer.SetFloat(group.name, Mathf.Log10(value) * 20));
+                Debug.Log(Mathf.Log10(value) * 20);
+            }
+        }
+    }
 }
