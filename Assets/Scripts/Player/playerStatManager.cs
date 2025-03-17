@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class playerStatManager : MonoBehaviour, IPersistData
+public class playerStatManager : MonoBehaviour
 {
     static public playerStatManager instance;
 
@@ -12,7 +12,9 @@ public class playerStatManager : MonoBehaviour, IPersistData
     public float playerHeight;
     public float standingHeight = 2f;
     public float crouchHeight = 0.5f;
-
+    public int playerHPMax = 100;
+    public int playerHP;
+    public float damageMultiplier = 1f;
 
     public int upgradeCurrency;
 
@@ -123,7 +125,7 @@ public class playerStatManager : MonoBehaviour, IPersistData
     public void Awake()
     {
         instance = this;
-        origHPMax = HPMax;
+        origHPMax = playerHPMax;
         origShieldMax = shieldMax;
         origSprintSpeed = sprintSpeed;
         origJetpackRegen = jetpackFuelRegenDelay;
@@ -143,7 +145,7 @@ public class playerStatManager : MonoBehaviour, IPersistData
 
     public void increaseMaxHealth(int percentToIncrease)
     {
-        HPMax = origHPMax * (100 + curHPMaxMod + percentToIncrease) / 100;
+        playerHPMax = origHPMax * (100 + curHPMaxMod + percentToIncrease) / 100;
         curHPMaxMod += percentToIncrease;
     }
 
@@ -151,17 +153,5 @@ public class playerStatManager : MonoBehaviour, IPersistData
     {
         shieldMax = origShieldMax * (100 + curShieldMaxMod + percentToIncrease) / 100;
         curShieldMaxMod += percentToIncrease;
-    }
-
-    public void LoadData(gameData data)
-    {
-        this.HP = data.playerHP;
-        this.shield = data.playerShield;
-    }
-
-    public void SaveData(ref gameData data)
-    {
-        data.playerHP = this.HP;
-        data.playerShield = this.shield;
     }
 }
