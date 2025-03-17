@@ -58,7 +58,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [Header("Death Settings")]
     [SerializeField] private float bodyFadeTime = 5f;
     [SerializeField] private float fadeDuration = 2f;
-    private bool isDead = false;
+    public bool isDead = false;
     private Rigidbody rb;
     private Collider enemyCollider;
     private Renderer bodyRenderer;
