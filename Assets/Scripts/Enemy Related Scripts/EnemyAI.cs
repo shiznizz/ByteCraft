@@ -28,6 +28,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] int faceTargetSpeed;
     [SerializeField] int FOV; //Field of View
     private int HPOrginal;
+    [SerializeField] private int armor = 0;
+    [SerializeField] private float speed = 0;
 
     [Header("Ranged Enemy Options")]
     [SerializeField] Transform headPos; //Head position
@@ -87,6 +89,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         colorOrig = model.material.color;
         GoalManager.instance.updateGameGoal(1);
         startingPos = transform.position;
+        if (speed != 0) agent.speed = speed;
         if (type != enemyType.stationary)
         {
             stoppingDistOrig = agent.stoppingDistance;
@@ -303,8 +306,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (HP > 0)
         {
             StartCoroutine(enemyShowHpBar());
-
-            HP -= amount;
+            int effectiveDamage = Mathf.Max(0, amount - armor);
+            HP -= effectiveDamage;
 
             // instantiate the floating damage text prefab
             if (floatingDamageTextPrefab != null)
