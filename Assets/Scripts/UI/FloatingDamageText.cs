@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class FloatingDamageText : MonoBehaviour
 {
-    public float lifetime = 2f; // text will disappear after 2 secs
+    public float lifetime = .5f; // text will disappear after 2 secs
     public float riseSpeed = 1f; // how fast the text moves upwards
     public TextMeshPro textMesh; // reference to TMP component
 

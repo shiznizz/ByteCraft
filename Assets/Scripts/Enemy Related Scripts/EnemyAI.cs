@@ -80,8 +80,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] private GameObject floatingDamageTextPrefab;
     private Coroutine damageTextCoroutine;
 
+    [SerializeField] float FDTDeleteDelay = 1;
     #endregion Variables
-
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -320,6 +320,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 Vector3 spawnPos = headPos.transform.position + Vector3.up * 0.5f;
                 // parent the floating text to the enemy so it moves with the enemy.
                 GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
+
+                Destroy(dmgText, FDTDeleteDelay);
+
                 Debug.Log("Instantiated floating text!");
 
                 FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
