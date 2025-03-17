@@ -288,14 +288,14 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
     public void takeDamage(int damage)
     {
+        if (shieldBreak)
+            playerStatManager.instance.HP -= damage;
+
         playerStatManager.instance.shield -= damage;
         shieldGenTimer = playerStatManager.instance.shieldRegenDelay;
 
         if (playerStatManager.instance.shield <= 0)
             shieldBreak = true;
-
-        if(shieldBreak)
-            playerStatManager.instance.HP -= damage;
 
         hurtSounds.PlayRandomSound();
         StartCoroutine(flashDamageScreen());
