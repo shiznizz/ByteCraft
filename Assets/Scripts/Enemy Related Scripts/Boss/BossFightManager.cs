@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BossFightManager : MonoBehaviour
+public class BossFightManager : MonoBehaviour, IDamage
 {
     [Header("References")]
     public BossSummon bossSummon; // Reference to the BossSummon script
@@ -12,6 +12,7 @@ public class BossFightManager : MonoBehaviour
     public Transform player; // Reference to the player transform
     public NavMeshAgent bossAgent; // NavMeshAgent component for movement
     public Animator anim; // Boss animator component
+    public Renderer bossRenderer; // For flashing effect when hit
 
     [Header("Audio Clips")]
     public AudioClip[] bossVoiceLines;  // Array of audio clips for the boss' voice lines
@@ -19,14 +20,24 @@ public class BossFightManager : MonoBehaviour
     public AudioClip bossDeathDialogue; // Dialogue when the boss dies
 
     [Header("Settings")]
+    [SerializeField] private int bossHP = 200; // Boss HP (currently set to 200hp for phase two)
+    public float hitFlashDuration = 0.2f; // Time the boss flashes when hit
     public float bossTalkDuration = 3f; // Duration of the boss talking (in seconds)
     public float chaseSpeed = 3.5f; // Movement Speed
     public float attackRange = 3f; // Range to trigger AOE attack
-    [SerializeField] private int bossHP = 200; // Boss HP (currently set to 200hp for phase two)
     [SerializeField] private float phaseTwoTimer = 30f; // Time between random mechanics is 30 seconds
 
     [Header("Animation Settings")]
     public float animTransSpeed = 5f; // Speed of animation transition
+    public GameObject shieldEffect; // Assign shield effect here
+
+    [Header("Heavy AOE Attack Settings")]
+    public GameObject aoeWarningEffect; // The warning effect that shows where the attack will hit
+    public GameObject aoeExplosionEffect; // The explosion effect
+    public float aoeRadius = 5f; // Radius of the AOE attack
+    public int aoeDamage = 30; // Damage the attack deals
+    public float aoeWarningTime = 2f; // Time before explosion
+    public float aoeAttackCooldown = 10f; // Cooldown before the boss can use the attack again
 
     private bool fightStarted = false;
     private bool isInPhaseOne = false; // Tracks if boss is in phase one
@@ -37,7 +48,7 @@ public class BossFightManager : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // Automatically start the boss fight
-        if (!fightStarted)
+        if (!fightStarted && other.CompareTag("Player")) // Make sure the player has the correct Tag!
         {
             StartCoroutine(StartBossFight());
         }
@@ -119,6 +130,13 @@ public class BossFightManager : MonoBehaviour
         {
             bossAgent.isStopped = false;
             bossAgent.speed = chaseSpeed;
+        }
+
+        // Force boss to be vulnerable at start of phase two
+        if (bossInvulnerability != null)
+        {
+            bossInvulnerability.isInvulnerable = false;
+            Debug.Log("Phase Two started: Boss is now vulnerable!");
         }
 
         StartCoroutine(PhaseTwoMechanicsCycle());
@@ -204,6 +222,10 @@ public class BossFightManager : MonoBehaviour
         {
             isShieldActive = true;
             bossInvulnerability.isInvulnerable = true; // Make the boss invulnerable due to shield
+
+            if (shieldEffect != null)
+                shieldEffect.SetActive(true); // Enable shield effect
+
             StartCoroutine(ShieldDuration());
         }
     }
@@ -213,15 +235,38 @@ public class BossFightManager : MonoBehaviour
         yield return new WaitForSeconds(10f); // Shield stays active for 10 seconds
         isShieldActive = false;
         bossInvulnerability.isInvulnerable = false; // Deactivate shield after time
+
+        if (shieldEffect != null)
+            shieldEffect.SetActive(false); // Disable shield effect
+
         Debug.Log("Boss shield deactivated.");
     }
 
     IEnumerator HeavyAOEAttack()
     {
-        Debug.Log("Boss performs heavy AOE attack.");
-        // Implement the AOE attack effect here
+        Debug.Log("Boss is preparing a Heavy AOE Attack!");
 
-        yield return new WaitForSeconds(1f); // Delay before next mechanic
+        //Show warning effect
+        Instantiate(aoeWarningEffect, transform.position, Quaternion.identity);
+
+        yield return new WaitForSeconds(aoeWarningTime); // Wait before explosion
+
+        //Spawn explosion effect
+        Instantiate(aoeExplosionEffect, transform.position, Quaternion.identity);
+
+        //Deal damage if player is within range
+        if (Vector3.Distance(player.position, transform.position) <= aoeRadius)
+        {
+            Debug.Log("Player hit by AOE! Taking 50 damage.");
+
+            if (playerStatManager.instance != null)
+            {
+                playerStatManager.instance.playerHP -= 50;
+                Debug.Log($"Player HP after AOE: {playerStatManager.instance.playerHP}");
+            }
+        }
+
+        yield return new WaitForSeconds(aoeAttackCooldown); // Cooldown before next attack
     }
 
     IEnumerator LaunchTrackingProjectiles()
@@ -232,17 +277,67 @@ public class BossFightManager : MonoBehaviour
         yield return new WaitForSeconds(1f); // Delay before next mechanic
     }
 
-    public void TakeDamage(int damage)
+    public void takeDamage(int damage)
     {
-        if (!isInPhaseTwo || bossHP <= 0 || bossInvulnerability.isInvulnerable) return;
+        Debug.Log("Boss received damage: " + damage);
+        TakeDamage(damage);  // Calls your existing TakeDamage method
+    }
 
+    void TakeDamage(int damage)
+    {
+        // Ensure boss only takes damage in Phase Two and when not dead
+        if (!isInPhaseTwo || bossHP <= 0) return;
+
+        // Reduce HP
         bossHP -= damage;
-        Debug.Log($"Boss took {damage} damage, remaining HP: {bossHP}");
+        Debug.Log($"Boss took {damage} damage. Remaining HP: {bossHP}");
 
-        if (bossHP <= 0 && isInPhaseTwo)
+        // Flash effect to show hit
+        StartCoroutine(FlashOnHit());
+        if (anim != null)
+            anim.SetTrigger("damage");
+
+        // Check if boss is dead
+        if (bossHP <= 0)
         {
+            StartCoroutine(HandleDeath());
             EndBossFight();
         }
+    }
+
+    private IEnumerator FlashOnHit()
+    {
+        if (bossRenderer == null)
+        {
+            Debug.LogError("Boss Renderer is missing! Assign the Renderer in the Inspector.");
+            yield break; // Stop function if no Renderer exists
+        }
+
+        Debug.Log("Boss hit! Flashing red.");
+        Color originalColor = bossRenderer.material.color;
+        bossRenderer.material.color = Color.red;
+        yield return new WaitForSeconds(hitFlashDuration);
+        bossRenderer.material.color = originalColor;
+    }
+
+    private IEnumerator HandleDeath()
+    {
+        Debug.Log("Boss has been defeated. Initiating death sequence...");
+
+        isInPhaseTwo = false; // Stop Phase Two
+        bossAgent.isStopped = true; // Stop movement
+        if (bossInvulnerability != null) bossInvulnerability.isInvulnerable = true; // Make sure no extra hits register
+
+        if (anim != null)
+        {
+            anim.SetTrigger("Death"); // Trigger death animation
+        }
+
+        //PlayVoiceLine(bossVoiceLines.Length - 1); // Play death dialogue
+
+        yield return new WaitForSeconds(3f); // Adjust based on death animation length
+
+        //StartCoroutine(FadeOutAndDestroy());
     }
 
     void EndBossFight()
