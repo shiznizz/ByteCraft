@@ -90,8 +90,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         rb.freezeRotation = true;
 
         HPOrig = playerStatManager.instance.HPMax;
-        playerStatManager.instance.shield = playerStatManager.instance.shieldMax;
-        shieldBreak = false;
+
+
 
         spawnPlayer();
     }
@@ -213,7 +213,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         // call in update.
         Debug.DrawRay(transform.position, Vector3.up, Color.red, playerStatManager.instance.playerHeight * 0.5f + 0.1f);
         hasHeadSpace = Physics.SphereCast(transform.position, 2f, Vector3.up, out RaycastHit hit, playerStatManager.instance.playerHeight + 0.1f/*,~ignoreLayer*/);
-        Debug.Log("ray" + hit);
+        //Debug.Log("ray" + hit);
     }
 
     void sprint()
@@ -282,20 +282,20 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
 
-        playerStatManager.instance.HP = HPOrig;
+        
         updatePlayerUI();
     }
     
     public void takeDamage(int damage)
     {
+        if (shieldBreak)
+            playerStatManager.instance.HP -= damage;
+
         playerStatManager.instance.shield -= damage;
         shieldGenTimer = playerStatManager.instance.shieldRegenDelay;
 
         if (playerStatManager.instance.shield <= 0)
             shieldBreak = true;
-
-        if(shieldBreak)
-            playerStatManager.instance.HP -= damage;
 
         hurtSounds.PlayRandomSound();
         StartCoroutine(flashDamageScreen());

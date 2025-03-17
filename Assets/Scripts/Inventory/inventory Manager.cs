@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.UI;
 
-public class inventoryManager : MonoBehaviour
+public class inventoryManager : MonoBehaviour, IPersistData
 {
     public static inventoryManager instance;
 
@@ -99,6 +99,52 @@ public class inventoryManager : MonoBehaviour
     public weaponStats returnCurrentWeapon()
     {
         return weaponList[weaponListPos];
+    }
+
+    public void SaveData(ref gameData data)
+    {
+        data.playerWeapons = this.weaponList;
+        data.playerInventory = this.inventory;
+        data.weaponPos = this.weaponListPos;
+    }
+
+    public void LoadData(gameData data)
+    {
+        this.weaponList = data.playerWeapons;
+        this.inventory = data.playerInventory;
+        this.weaponListPos = data.weaponPos;
+        OnLoad();
+        
+    }
+
+    public void OnLoad()
+    {
+        gameManager.instance.updateInventory();
+        if (weaponList.Count > 0)
+        {
+
+        foreach (weaponStats weapon in  weaponList)
+        {
+                switch(weapon.wepType)
+                {
+                    case weaponStats.weaponType.primary:
+                        inventorySlot.GetComponent<SlotBoss>().primaryWeapon.onLoad(weapon);
+                        inventorySlot.GetComponent<SlotBoss>().primaryWeapon.isFull = true;
+                    break;
+
+                    case weaponStats.weaponType.secondary:
+                        inventorySlot.GetComponent<SlotBoss>().secondaryWeapon.onLoad(weapon);
+                        inventorySlot.GetComponent<SlotBoss>().secondaryWeapon.isFull = true;
+                    break;
+
+                    case weaponStats.weaponType.special:
+                        inventorySlot.GetComponent<SlotBoss>().specialWeapon.onLoad(weapon);
+                        inventorySlot.GetComponent<SlotBoss>().specialWeapon.isFull = true;
+                    break;
+                }
+            }
+            playerAttack.instance.changeGun();
+        }
     }
 }
 

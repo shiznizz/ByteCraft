@@ -548,11 +548,23 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7288472048335276681, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: inventorySlot
+      value: 
+      objectReference: {fileID: 2086746652}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 5043751963829147083, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 2086746653}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+--- !u!4 &90605153 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5043751963829147083, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+  m_PrefabInstance: {fileID: 90605152}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &91309697
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1608,22 +1620,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d4d10d4b5db1eb40a47729d04e7b5c4, type: 3}
---- !u!1 &347944814 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6683225297028311546, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
-  m_PrefabInstance: {fileID: 90605152}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &347944827 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5227924056507523457, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
-  m_PrefabInstance: {fileID: 90605152}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 347944814}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: adb7d3a06dc56fe4a821613f25c92e9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &352308492
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5052,11 +5048,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 835a9675f79f6374a882b77bf4ffdd21, type: 3}
---- !u!1 &1313365302 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8740128988450226819, guid: 835a9675f79f6374a882b77bf4ffdd21, type: 3}
-  m_PrefabInstance: {fileID: 1313365301}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1324646959
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7187,6 +7178,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5090639077572853280, guid: 417c6c6a7aa0ff54eb91c3cd70c0258c, type: 3}
+      propertyPath: failedText
+      value: Reactor destroyed
+      objectReference: {fileID: 0}
+    - target: {fileID: 5090639077572853280, guid: 417c6c6a7aa0ff54eb91c3cd70c0258c, type: 3}
+      propertyPath: isMainObjective
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5512271496314546584, guid: 417c6c6a7aa0ff54eb91c3cd70c0258c, type: 3}
       propertyPath: m_Name
       value: Destroyable Cube 1x1
@@ -7461,24 +7460,12 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 90605153}
     m_Modifications:
     - target: {fileID: 3354133548953732252, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
-    - target: {fileID: 5809270350288258848, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 347944814}
-    - target: {fileID: 5809270350288258848, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
-      propertyPath: playerScript
-      value: 
-      objectReference: {fileID: 347944827}
-    - target: {fileID: 5809270350288258848, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
-      propertyPath: playerSpawnPos
-      value: 
-      objectReference: {fileID: 1313365302}
     - target: {fileID: 8386706001582953583, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -7564,6 +7551,16 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+--- !u!1 &2086746652 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6163781131512520446, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 2086746651}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &2086746653 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8386706001582953583, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 2086746651}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2114829351
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7798,5 +7795,4 @@ SceneRoots:
   - {fileID: 1339228933}
   - {fileID: 649154366}
   - {fileID: 1637338506}
-  - {fileID: 2086746651}
   - {fileID: 1313365301}

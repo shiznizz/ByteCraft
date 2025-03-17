@@ -179,7 +179,7 @@ public class QuestManager : MonoBehaviour
 
             foreach (QuestStepState stepState in questData.questStepStates)
             {
-                Debug.Log("step state = " + stepState.state);
+                
             }
         }
     }
