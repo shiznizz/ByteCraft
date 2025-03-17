@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -80,8 +81,10 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] private GameObject floatingDamageTextPrefab;
     private Coroutine damageTextCoroutine;
 
-    [SerializeField] float FDTDeleteDelay = 1;
+    public bool isStunned = false;
+
     #endregion Variables
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -118,6 +121,13 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void Update()
     {
        updateEnemyUI();
+        // if stunned, nav mesh will stop and skip rest of AI's logic
+        if (isStunned)
+        {
+            agent.isStopped = true;
+            return;
+        }
+
         if (isAlerted && !playerInRange) // specific to drone bot alerts
         {
             if (alertTimer < alertCooldown)
@@ -320,9 +330,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 Vector3 spawnPos = headPos.transform.position + Vector3.up * 0.5f;
                 // parent the floating text to the enemy so it moves with the enemy.
                 GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
-
-                Destroy(dmgText, FDTDeleteDelay);
-
                 Debug.Log("Instantiated floating text!");
 
                 FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
