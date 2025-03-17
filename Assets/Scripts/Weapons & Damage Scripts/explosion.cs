@@ -4,13 +4,15 @@ public class explosion : MonoBehaviour
 {
     [Header("Explosion Properties")]
     [SerializeField] GameObject explosiveDevice;
+    [SerializeField] GameObject explosiveContainer;
     [SerializeField] Transform explosionCenter;
-    [SerializeField] SphereCollider sphereCollider;
     [SerializeField] float explosionRadius;
     [SerializeField] int explosionDmg;
     [SerializeField] float explosionForce;
+    [SerializeField] float explosionUpForce;
     [SerializeField] float detonationDelay;
     public bool defaultActiveState;
+    public bool doesBombDestroy = true;
 
     [Header("Explosion Effects")]
     [SerializeField] GameObject explosionEffect;
@@ -24,11 +26,8 @@ public class explosion : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        sphereCollider = GetComponent<SphereCollider>();
-        sphereCollider.radius = explosionRadius;
-
         explosiveDevice.SetActive(defaultActiveState);
-        detonationTimer = detonationDelay;
+        detonationTimer = 0;
 
         hasExploded = false;
     }
@@ -39,16 +38,29 @@ public class explosion : MonoBehaviour
         {
             if(!hasExploded)
             {
-                if(explosiveDevice.activeSelf)
+                if(explosiveDevice.activeSelf && detonationTimer >= detonationDelay)
                      Explode();
                 else
-                     detonationDelay -= Time.deltaTime;
+                     detonationTimer += Time.deltaTime;
 
-                if (detonationDelay <= 0)
+                if (detonationTimer <= 0)
                      explosiveDevice.SetActive(true);
             }
-            else
-                 Destroy(explosiveDevice, destroyDelay);
+            else 
+            {
+                if (doesBombDestroy)
+                {
+                    if (explosiveContainer != null)
+                    Destroy(explosiveContainer, destroyDelay);
+                    Destroy(explosiveDevice, destroyDelay);
+                }
+                else
+                {
+                    hasExploded = false;
+                    explosiveDevice.SetActive(false);
+                }
+            }
+           
         }
     }
 
@@ -62,11 +74,12 @@ public class explosion : MonoBehaviour
 
             if (rb != null)
             {
+                rb.AddForce(transform.up * explosionUpForce, ForceMode.Impulse);
                 rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
             }
             else
             {
-                //hit.
+                // hit
             }
 
             IDamage damage = hit.GetComponent<IDamage>();

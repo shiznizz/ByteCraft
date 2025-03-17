@@ -24,6 +24,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isCrouching;
     public bool isWallRunning;
     public bool isJetpacking;
+    public bool hasHeadSpace;
 
     [Header("Camera Options")]
     public float cameraChangeTime;
@@ -105,6 +106,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             handleShieldRegen();
             SetIsAirborne(!isGrounded);
 
+            if (isCrouching)
+                checkSky();
+
             updatePlayerUI();
             playAtk.weaponHandler();
 
@@ -133,8 +137,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         moveDir = (horizontalInput * orientation.right) + (verticalInput * orientation.forward);
 
-        jump();
-        sprint();
+        if(!isCrouching && !hasHeadSpace)
+            jump();
+            sprint();
     }
 
     #region Movement
@@ -202,6 +207,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
         else
             rb.linearDamping = playerStatManager.instance.airDrag;
+    }
+    void checkSky()
+    {
+        // call in update.
+        Debug.DrawRay(transform.position, Vector3.up, Color.red, playerStatManager.instance.playerHeight * 0.5f + 0.1f);
+        hasHeadSpace = Physics.SphereCast(transform.position, 2f, Vector3.up, out RaycastHit hit, playerStatManager.instance.playerHeight + 0.1f/*,~ignoreLayer*/);
+        Debug.Log("ray" + hit);
     }
 
     void sprint()
