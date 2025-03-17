@@ -312,20 +312,16 @@ public class gameManager : MonoBehaviour
     private void getSavedAudioSettings()
     {
         float value;
-        Debug.Log("Audio Settings");
         foreach (AudioMixerGroup group in mixer.FindMatchingGroups(""))
         {
-            Debug.Log(group.name);
             value = PlayerPrefs.GetFloat(group.name);
-            Debug.Log(value);
             if (value == 0)
             {
                 mixer.SetFloat(group.name, -80);
             }
             else
             {
-                Debug.Log(mixer.SetFloat(group.name, Mathf.Log10(value) * 20));
-                Debug.Log(Mathf.Log10(value) * 20);
+                mixer.SetFloat(group.name, Mathf.Log10(value) * 20);
             }
         }
     }
