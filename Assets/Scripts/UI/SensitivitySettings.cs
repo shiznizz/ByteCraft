@@ -23,25 +23,26 @@ public class SensitivitySettings : MonoBehaviour
     {
         // Save the current sensitivity value and the last sensitivity value when the script is disabled
         PlayerPrefs.SetFloat(sensitivityParameter, sensitivitySlider.value);
-        PlayerPrefs.SetFloat(sensitivityParameter + "lastSensitivity", lastSensitivity);
+        //PlayerPrefs.SetFloat(sensitivityParameter + "lastSensitivity", lastSensitivity);
         PlayerPrefs.Save();
     }
 
     void Start()
     {
-        // Load the last sensitivity value if needed for reset logic
-        lastSensitivity = PlayerPrefs.GetFloat(sensitivityParameter + "lastSensitivity", lastSensitivity);
-
         // Set the slider to the saved value
         sensitivitySlider.value = PlayerPrefs.GetFloat(sensitivityParameter, sensitivitySlider.value);
 
+        // Load the last sensitivity value if needed for reset logic
+        //lastSensitivity = PlayerPrefs.GetFloat(sensitivityParameter + "lastSensitivity", lastSensitivity);
+
         // Update the camera sensitivity to match the loaded value
-        camController.SetSensitivity(lastSensitivity);
+        //camController.SetSensitivity(lastSensitivity);
     }
 
     private void SensitivitySliderValueChanged(float value)
     {
         // Update the camera controller with the new sensitivity value
+        Debug.Log("Boop");
         camController.SetSensitivity(value);
     }
 }
