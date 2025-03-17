@@ -4,6 +4,7 @@ public class QuestPoint : MonoBehaviour
 {
     [Header("Dialogue")]
     [SerializeField] private string dialogueKnotName;
+    [SerializeField] DialoguePanelUI dialoguePanel;
 
     [Header("Quest")]
     [SerializeField] private QuestInfoSO questInfoForPoint;
@@ -29,13 +30,13 @@ public class QuestPoint : MonoBehaviour
 
     private void Update()
     {
-        //SubmitPressed();
+        SubmitPressed();
         if (Input.GetButtonDown("Marker") && currentQuestState.Equals(QuestState.IN_PROGRESS))
             model.enabled = true;
         else if (Input.GetButtonUp("Marker"))
             model.enabled = false;
 
-        if (Input.GetButtonDown("Accept")) SubmitPressed();
+        //if (Input.GetButtonDown("Accept")) SubmitPressed();
     }
 
     private void OnEnable()
@@ -67,10 +68,11 @@ public class QuestPoint : MonoBehaviour
             if (currentQuestState.Equals(QuestState.CAN_START) && startPoint)
             {
                 GameEventsManager.instance.questEvents.StartQuest(questId);
-            } 
-            else if (currentQuestState.Equals(QuestState.CAN_FINISH) && endPoint)
+            }
+            else if (currentQuestState.Equals(QuestState.CAN_FINISH)  && endPoint)
             {
                 GameEventsManager.instance.questEvents.FinishQuest(questId);
+                GoalManager.instance.triggerWin();
             }
 
         }
@@ -91,6 +93,10 @@ public class QuestPoint : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerIsNear = true;
+            if (currentQuestState.Equals(QuestState.IN_PROGRESS) && endPoint)
+            {
+                GameEventsManager.instance.questEvents.AdvanceQuest(questId);
+            }
 
         }
     }
@@ -100,6 +106,7 @@ public class QuestPoint : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerIsNear = false;
+            dialoguePanel.contentParent.SetActive(false);
         }
     }
 }
