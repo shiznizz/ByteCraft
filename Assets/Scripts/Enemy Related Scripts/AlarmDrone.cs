@@ -5,28 +5,47 @@ using System.Collections.Generic;
 
 public class AlarmDrone : MonoBehaviour
 {
+    [Header("Config")]
     [SerializeField] public Transform[] waypoints;
     [SerializeField] public float speed;
     [SerializeField] public float detectionRange;
-    public LayerMask playerLayer;
-    public LayerMask enemyLayer;
+    [SerializeField] GameObject[] nearbyEnemies;
+    [SerializeField] SphereCollider coll;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip alertClip;
 
     [SerializeField] int roamPauseTime; // Pause time at each waypoint
     private float roamTimer;
 
     private int currentWaypoint = 0;
-    private bool isPaused = false;
-    [SerializeField] GameObject[] nearbyEnemies;
+    public bool isPaused = false;
+    public bool isAlerted;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.volume = 0.3f;
+        audioSource.enabled = false;
+        coll.radius = detectionRange;
+        isAlerted = false;
+    }
 
     void Update()
     {
-        if (!isPaused)
+        if (!isAlerted)
         {
-            Patrol();
-        }
-        else
+            if (!isPaused)
+            {
+                Patrol();
+            }
+            else
+            {
+                PauseAtWaypoint();
+            }
+        } 
+        else 
         {
-            PauseAtWaypoint();
+            PlayAlarmAudio();
         }
     }
 
@@ -83,6 +102,8 @@ public class AlarmDrone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            isAlerted = true;
+            coll.radius = detectionRange + 2;
             DetectPlayer();
         }
     }
@@ -91,6 +112,9 @@ public class AlarmDrone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            coll.radius = detectionRange;
+            isAlerted = false;
+            audioSource.enabled = false;
             foreach (GameObject enemy in nearbyEnemies)
             {
                 enemyAI enemyScript = enemy.GetComponent<enemyAI>();
@@ -100,5 +124,11 @@ public class AlarmDrone : MonoBehaviour
                 }
             }
         }
+    }
+
+    void PlayAlarmAudio()
+    {
+        audioSource.enabled = true;
+        audioSource.PlayOneShot(alertClip);
     }
 }
