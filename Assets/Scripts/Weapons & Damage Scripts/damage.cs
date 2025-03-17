@@ -58,17 +58,17 @@ public class damage : MonoBehaviour
             Destroy(gameObject, destroyTime);
         }
 
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            Debug.LogError("AudioSource not found on " + gameObject.name);
-        }
+        //audioSource = GetComponent<AudioSource>();
+        //if (audioSource == null)
+        //{
+        //    Debug.LogError("AudioSource not found on " + gameObject.name);
+        //}
 
-        // Ensure damageHitSounds has at least one sound
-        if (damageHitSounds.Length == 0 || damageHitSounds[0] == null)
-        {
-            Debug.LogError("No AudioClips assigned to damageHitSounds on " + gameObject.name);
-        }
+        //// Ensure damageHitSounds has at least one sound
+        //if (damageHitSounds.Length == 0 || damageHitSounds[0] == null)
+        //{
+        //    Debug.LogError("No AudioClips assigned to damageHitSounds on " + gameObject.name);
+        //}
     }
 
     private void Update()
