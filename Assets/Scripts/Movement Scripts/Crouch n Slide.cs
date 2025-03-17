@@ -36,12 +36,13 @@ public class CrouchnSlide : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        crouch();
+        if (!gameManager.instance.isPaused)
+        {
+            crouch();
 
-        if (pc.isSprinting && pc.isCrouching)
-            exitCrouch();
-        //if (pc.isSliding && pc.isGrounded)
-        //    slideCountdown();
+            if (pc.isSprinting && pc.isCrouching)
+                exitCrouch();
+        }
     }
 
     private void FixedUpdate()
@@ -131,13 +132,5 @@ public class CrouchnSlide : MonoBehaviour
         if (slideTimer <= 0 || playerStatManager.instance.slideSpeed < playerStatManager.instance.crouchSpeed)
             pc.isSliding = false;
             //exitCrouch();
-    }
-
-    void slideCountdown()
-    {
-        //Debug.Log("slide timer = " + slideTimer);
-        slideTimer -= Time.deltaTime;
-        if (slideTimer <= 0)
-            exitCrouch();
     }
 }

@@ -54,6 +54,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] Transform grappleShootPos;
     [SerializeField] LineRenderer grappleRope;
 
+    [Header("Button Options")]
+    [SerializeField] private float interactionDistance = 2f;
+    [SerializeField] private KeyCode interactKey = KeyCode.E;
+
     float grappleCooldownTimer;
 
     Rigidbody rb;
@@ -105,9 +109,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             playAtk.weaponHandler();
 
             Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
-
-            if (Input.GetButtonDown("Open")) // for opening loot chests
-                openChest();
         }
     }
 
@@ -119,6 +120,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void playerInput()
     {
+        openChest(); // for opening loot chests
+        tryToInteract(); // for interacting with buttons and switches
+
         setPlayerSpeed();
 
         if (isWallRunning) return;
@@ -281,7 +285,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if(shieldBreak)
             playerStatManager.instance.HP -= damage;
 
-        playerStatManager.instance.HP -= damage;
         hurtSounds.PlayRandomSound();
         StartCoroutine(flashDamageScreen());
         updatePlayerUI();
@@ -351,28 +354,44 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void openChest()
     {
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
+        if (Input.GetKeyDown(interactKey)) 
         {
-            lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
-
-            if (dropsLoot != null)
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
             {
-                dropsLoot.dropLoot();
+                lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
+
+                if (dropsLoot != null)
+                {
+                    dropsLoot.dropLoot();
+                }
             }
         }
-
-    }void buttonInteract()
-    {
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
+    }
+    
+    void tryToInteract()
+    {  
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, interactionDistance, ~ignoreLayer))
         {
-            lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
+            buttons button = hit.collider.GetComponent<buttons>();
 
-            if (dropsLoot != null)
+            if (button != null)
             {
-                dropsLoot.dropLoot();
+                if (hit.collider.CompareTag("Button"))
+                {
+                    if (Input.GetKeyDown(interactKey))
+                        button.pressButton();
+                 
+                    if (Input.GetKeyUp(interactKey))
+                        button.ReleaseButton();
+                }
+
+                if (hit.collider.CompareTag("Switch"))
+                {
+                    if (Input.GetKeyDown(interactKey))
+                        button.pressButton();
+                }
             }
         }
-
     }
 
     public void heal(int amount)

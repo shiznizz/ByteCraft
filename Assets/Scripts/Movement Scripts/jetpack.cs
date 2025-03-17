@@ -24,17 +24,23 @@ public class jetpackScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerStatManager.instance.hasJetpack && !pc.isWallRunning)
-        {    
-            rigidJump();
-            handleJetpackFuelRegen();
+        if (!gameManager.instance.isPaused)
+        {
+            if (playerStatManager.instance.hasJetpack && !pc.isWallRunning)
+            {
+                rigidJump();
+                handleJetpackFuelRegen();
+            }
         }
     }
 
     void FixedUpdate()
     {
-        if (pc.isJetpacking)
-            jetpack();
+        if (!gameManager.instance.isPaused)
+        {  
+            if (pc.isJetpacking)
+                jetpack();
+        }
     }
 
     void rigidJump()

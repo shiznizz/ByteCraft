@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class switches : MonoBehaviour, IToggle
+public class switches : MonoBehaviour
 {
     // similar to button
     // only ever toggles on or off

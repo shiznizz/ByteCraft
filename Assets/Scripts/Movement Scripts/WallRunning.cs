@@ -31,9 +31,6 @@ public class WallRunning : MonoBehaviour
     private bool isExitingWall = false;
     private float exitWallTimer;
 
-    [Header("References")]
-    public float wallRunAcceleration = 10f;
-
     float wallRunTimer;
     float wallRerunTimer;
 
