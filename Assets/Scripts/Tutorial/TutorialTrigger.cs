@@ -6,6 +6,7 @@ public class TutorialTrigger : MonoBehaviour
     public string hintMessage; // The message to display when this trigger is activated
     public TutorialManager tutorialManager; // Reference to the TutorialManager script
     public bool hintShown = false; // Tracks if the hint was shown already
+    public float hintDisplayTime;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -23,7 +24,7 @@ public class TutorialTrigger : MonoBehaviour
 
     private IEnumerator HideTutorialAfterDelay()
     {
-        yield return new WaitForSeconds(3f);  // Wait for 3 seconds
+        yield return new WaitForSeconds(hintDisplayTime);  // Wait for 3 seconds
         tutorialManager.HideHint();
         hintShown = true;
     }

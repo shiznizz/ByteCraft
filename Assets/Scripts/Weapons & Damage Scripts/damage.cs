@@ -34,14 +34,14 @@ public class damage : MonoBehaviour
     {
         if(type != damageType.stationary)
         {
-            if (target == null)
-                target = gameManager.instance.player;
 
             if (!playerProjectile)
                 if (type == damageType.forward)
                     rb.linearVelocity = transform.forward * speed;
                 else
                 {
+                    if (target == null)
+                        target = gameManager.instance.player;
                     rb.linearVelocity = (target.transform.position - transform.position).normalized * speed;
                 }
             else
@@ -52,30 +52,23 @@ public class damage : MonoBehaviour
                         seekTarget = hit.collider.GetComponent<IDamage>();
                 }
 
-                if (seekTarget != null)
-                {
-                    SeekEnemy();
-                }
-                else
-                {
-                    rb.linearVelocity = Camera.main.transform.forward * speed;
-                }
+                rb.linearVelocity = Camera.main.transform.forward * speed;
             }
 
             Destroy(gameObject, destroyTime);
         }
 
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            Debug.LogError("AudioSource not found on " + gameObject.name);
-        }
+        //audioSource = GetComponent<AudioSource>();
+        //if (audioSource == null)
+        //{
+        //    Debug.LogError("AudioSource not found on " + gameObject.name);
+        //}
 
-        // Ensure damageHitSounds has at least one sound
-        if (damageHitSounds.Length == 0 || damageHitSounds[0] == null)
-        {
-            Debug.LogError("No AudioClips assigned to damageHitSounds on " + gameObject.name);
-        }
+        //// Ensure damageHitSounds has at least one sound
+        //if (damageHitSounds.Length == 0 || damageHitSounds[0] == null)
+        //{
+        //    Debug.LogError("No AudioClips assigned to damageHitSounds on " + gameObject.name);
+        //}
     }
 
     private void Update()
@@ -108,8 +101,9 @@ public class damage : MonoBehaviour
 
     private void SeekEnemy()
     {
-        if (target != null)
+        if (seekTarget != null)
         {
+            Debug.Log(hit);
             Vector3 enemyDir = hit.transform.position - transform.position;
             Quaternion rot = Quaternion.LookRotation(new Vector3(enemyDir.x, 0, enemyDir.z));
             transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * turnSpeed);

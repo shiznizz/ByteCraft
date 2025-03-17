@@ -110,6 +110,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 790011e705d060c47999d8bbb59b3975, type: 3}
   targetingDistance: 0
   turnSpeed: 0
+  ignoreLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!82 &6258886347401869047
 AudioSource:
   m_ObjectHideFlags: 0
@@ -255,7 +258,7 @@ GameObject:
   - component: {fileID: 5941984117221710926}
   m_Layer: 7
   m_Name: Melee_droid
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -292,6 +295,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   movement: 0
+  target: {fileID: 0}
   model: {fileID: 5842897556333300750}
   agent: {fileID: 6884700982941092500}
   anim: {fileID: 1405979274743726800}
@@ -301,6 +305,8 @@ MonoBehaviour:
   animTransSpeed: 8
   faceTargetSpeed: 32
   FOV: 180
+  armor: 0
+  speed: 0
   headPos: {fileID: 1401872926674160057}
   shootAngle: 1
   bullet: {fileID: 0}
@@ -316,6 +322,9 @@ MonoBehaviour:
   roamDist: 5
   bodyFadeTime: 3
   fadeDuration: 2
+  isDead: 0
+  floatingDamageTextPrefab: {fileID: 0}
+  floatingTextDelay: 0.5
 --- !u!195 &6884700982941092500
 NavMeshAgent:
   m_ObjectHideFlags: 0

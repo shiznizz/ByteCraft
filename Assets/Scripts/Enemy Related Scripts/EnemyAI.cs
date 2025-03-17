@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
     enum enemyType { range, melee, stationary, kamikaze }
-    enum movementType { random, setPath, seeking}
+    enum movementType { random, setPath, seeking, drone }
 
     #region Variables
     [Header("General Enemy Settings")]
@@ -16,18 +16,20 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] movementType movement;
     [SerializeField] GameObject target;
     [SerializeField] Renderer model;
-    [SerializeField] NavMeshAgent agent;
+    [SerializeField] public NavMeshAgent agent;
     [SerializeField] Animator anim;
     private GameObject originalTarget;
 
     [Header("Enemy Stats")]
     [SerializeField] Image hpFillBar;
     [SerializeField] Canvas hpBar;
-    [SerializeField] int HP;
+    [SerializeField] public int HP;
     [SerializeField] int animTransSpeed;
     [SerializeField] int faceTargetSpeed;
     [SerializeField] int FOV; //Field of View
     private int HPOrginal;
+    [SerializeField] private int armor = 0;
+    [SerializeField] private float speed = 0;
 
     [Header("Ranged Enemy Options")]
     [SerializeField] Transform headPos; //Head position
@@ -56,7 +58,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [Header("Death Settings")]
     [SerializeField] private float bodyFadeTime = 5f;
     [SerializeField] private float fadeDuration = 2f;
-    private bool isDead = false;
+    public bool isDead = false;
     private Rigidbody rb;
     private Collider enemyCollider;
     private Renderer bodyRenderer;
@@ -75,8 +77,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private bool playerInDroneRange = false;
     private float alertCooldown = 5f;
 
-    #endregion Variables
+    [SerializeField] private GameObject floatingDamageTextPrefab;
+    private Coroutine damageTextCoroutine;
 
+    [SerializeField] float FDTDeleteDelay = 1;
+    #endregion Variables
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -85,6 +90,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         colorOrig = model.material.color;
         GoalManager.instance.updateGameGoal(1);
         startingPos = transform.position;
+        if (speed != 0) agent.speed = speed;
         if (type != enemyType.stationary)
         {
             stoppingDistOrig = agent.stoppingDistance;
@@ -104,10 +110,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         {
             target = gameManager.instance.player;
         }
-        else
-        {
-            originalTarget = target;
-        }
+
+        originalTarget = target;
     }
 
     // Update is called once per frame
@@ -293,6 +297,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     }
     public void takeDamage(int amount)
     {
+        if (isDead) return;
+
         if (movement == movementType.seeking)
         {
             target = gameManager.instance.player;
@@ -301,8 +307,37 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (HP > 0)
         {
             StartCoroutine(enemyShowHpBar());
+            int effectiveDamage = Mathf.Max(0, amount - armor);
+            HP -= effectiveDamage;
 
-            HP -= amount;
+            // debig log to confirm dmg is taken
+            Debug.Log("Enemy took: " + amount + " damage");
+
+            // instantiate the floating damage text only once when damage is taken.
+            if (floatingDamageTextPrefab != null)
+            {
+                // set spawn position closer to the enemy 
+                Vector3 spawnPos = headPos.transform.position + Vector3.up * 0.5f;
+                // parent the floating text to the enemy so it moves with the enemy.
+                GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
+
+                Destroy(dmgText, FDTDeleteDelay);
+
+                Debug.Log("Instantiated floating text!");
+
+                FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
+                if (fdt != null)
+                {
+                    fdt.SetText(amount.ToString());
+                }
+            }
+
+            // start coroutine to repeatedly spawn floating text 
+            //if (damageTextCoroutine == null)
+            //{
+            //    damageTextCoroutine = StartCoroutine(DamageTextLoop(amount));
+            //}
+
             StartCoroutine(flashRed());
             if (anim != null)
                 anim.SetTrigger("damage");
@@ -328,14 +363,51 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                     dropLoot();
 
                 handleDeath();
-                //Destroy(gameObject);
+
+                // stop looping dmg text coroutine since enemy is dead
+                if (damageTextCoroutine != null)
+                {
+                    StopCoroutine(damageTextCoroutine);
+                    damageTextCoroutine = null;
+                }
             }
         }
     }
 
+    //// coroutine that spawns text until enemy dies
+    //private IEnumerator DamageTextLoop(int damage)
+    //{
+    //    // loop until HP reaches 0
+    //    while (HP > 0)
+    //    {
+    //        if (floatingDamageTextPrefab != null)
+    //        {
+    //            // set spawn location near enemy 
+    //            Vector3 spawnPos = transform.position + Vector3.up * 1f;
+
+    //            // instantiate prefab and set parent to enemy so it follows enemy
+    //            GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
+
+    //            // debug log to confirm instantiation
+    //            Debug.Log("Instantiated looping floating text!");
+
+    //            // set dmg amount text
+    //            FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
+    //            if (fdt != null)
+    //            {
+    //                fdt.SetText(damage.ToString());
+    //            }
+    //        }
+    //        // wait for set interval before spawning next text
+    //        yield return new WaitForSeconds(1f);
+    //    }
+    //    damageTextCoroutine = null; // clear the reference
+    //}
+
     private void handleDeath()
     {
         hpBar.gameObject.SetActive(false);
+
         //Disable the collider
         if (enemyCollider != null)
         {
@@ -346,7 +418,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (rb != null)
         {
             rb.isKinematic = false; // Enable physics
-            rb.useGravity = false; // Allow gravity to affect the body
+            rb.useGravity = true; // Allow gravity to affect the body
 
         }
         if (agent != null)
@@ -408,6 +480,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     void meleeAttack()
     {
+        if (isDead) return;
+
         shootTimer = 0;
         anim.SetTrigger("Melee Attack");
         //shootTimer = 0; // Reset the shoot timer for the cooldown between melee attacks
@@ -515,7 +589,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         isAlerted = state;
         if (isAlerted)
         {
-            Debug.Log($"{gameObject.name} is now alerted!");
             alertTimer = 0f;
 
         }
@@ -526,5 +599,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         playerInDroneRange = state;
     }
 
+    #endregion
+
+    #region AOESupport
+    public void SetHP(int newHP)
+    {
+        this.HP = newHP;
+    }
     #endregion
 }

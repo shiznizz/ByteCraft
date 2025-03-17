@@ -12,7 +12,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Variables
     [SerializeField] Transform orientation;
     [SerializeField] CharacterController controller;
-    [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] LayerMask groundLayer;
     // is this variable going to be used here? 
@@ -25,6 +24,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isCrouching;
     public bool isWallRunning;
     public bool isJetpacking;
+    public bool hasHeadSpace;
 
     [Header("Camera Options")]
     public float cameraChangeTime;
@@ -32,22 +32,32 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public float tilt;
 
     [Header("Audio Options")]
-    [SerializeField] AudioClip[] stepSounds;
-    [Range(0, 1)][SerializeField] float stepVolume;
+    [SerializeField][Range(0, 1)] float stepVolume;
     [SerializeField] float walkSoundInterval;
     [SerializeField] float runSoundInterval;
     bool isPlayingSteps;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] private ModulatedSoundBank footStepSounds;
+    [SerializeField] private ModulatedSoundBank jumpSounds;
+    [SerializeField] private ModulatedSoundBank hurtSounds;
+    [SerializeField] private ModulatedSoundBank landingSounds;
+    [SerializeField] private ModulatedSoundBank deathSounds;
 
     [Header("Player Stat Options")]
     public int HPOrig; // will move after enemy AI is not in use
     float shieldGenTimer;
 
     public int weaponListPos;
+    public bool isAirborne;
 
     // leaving available until justin wants to move it
     [Header("Grapple Gun")]
     [SerializeField] Transform grappleShootPos;
     [SerializeField] LineRenderer grappleRope;
+
+    [Header("Button Options")]
+    [SerializeField] private float interactionDistance = 2f;
+    [SerializeField] private KeyCode interactKey = KeyCode.E;
 
     float grappleCooldownTimer;
 
@@ -61,6 +71,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private float verticalInput;
 
     private playerAttack playAtk;
+
+    bool shieldBreak;
 
     // variable for player input action map
     #endregion Variables
@@ -79,6 +91,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         HPOrig = playerStatManager.instance.HPMax;
 
+
+
         spawnPlayer();
     }
 
@@ -90,13 +104,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             SpeedControl();
             checkGround();
             handleShieldRegen();
+            SetIsAirborne(!isGrounded);
+
+            if (isCrouching)
+                checkSky();
+
             updatePlayerUI();
             playAtk.weaponHandler();
 
             Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
-
-            if (Input.GetButtonDown("Open")) // for opening loot chests
-                openChest();
         }
     }
 
@@ -108,6 +124,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void playerInput()
     {
+        openChest(); // for opening loot chests
+        tryToInteract(); // for interacting with buttons and switches
+
         setPlayerSpeed();
 
         if (isWallRunning) return;
@@ -118,8 +137,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         moveDir = (horizontalInput * orientation.right) + (verticalInput * orientation.forward);
 
-        jump();
-        sprint();
+        if(!isCrouching && !hasHeadSpace)
+            jump();
+            sprint();
     }
 
     #region Movement
@@ -188,6 +208,13 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         else
             rb.linearDamping = playerStatManager.instance.airDrag;
     }
+    void checkSky()
+    {
+        // call in update.
+        Debug.DrawRay(transform.position, Vector3.up, Color.red, playerStatManager.instance.playerHeight * 0.5f + 0.1f);
+        hasHeadSpace = Physics.SphereCast(transform.position, 2f, Vector3.up, out RaycastHit hit, playerStatManager.instance.playerHeight + 0.1f/*,~ignoreLayer*/);
+        Debug.Log("ray" + hit);
+    }
 
     void sprint()
     {
@@ -202,6 +229,10 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void jump()
     {
+        if (isGrounded && Input.GetButtonDown("Jump"))
+        {
+            jumpSounds.PlayRandomSound();
+        }
         if (!playerStatManager.instance.hasJetpack)
         {
             if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax /*&& isGrounded*/)
@@ -239,7 +270,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     IEnumerator PlaySteps()
     {
         isPlayingSteps = true;
-        audioSource.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Length)], stepVolume);
+        footStepSounds.PlayRandomSound();
         if (!isSprinting)
             yield return new WaitForSeconds(walkSoundInterval);
         else
@@ -257,16 +288,22 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     
     public void takeDamage(int damage)
     {
+        if (shieldBreak)
+            playerStatManager.instance.HP -= damage;
+
         playerStatManager.instance.shield -= damage;
         shieldGenTimer = playerStatManager.instance.shieldRegenDelay;
 
         if (playerStatManager.instance.shield <= 0)
-            playerStatManager.instance.HP -= damage;
+            shieldBreak = true;
+
+        hurtSounds.PlayRandomSound();
         StartCoroutine(flashDamageScreen());
         updatePlayerUI();
-    
+        
         if (playerStatManager.instance.HP <= 0)
         {
+            deathSounds.PlayRandomSound();
             gameManager.instance.youLose();
         }
     }
@@ -329,16 +366,44 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void openChest()
     {
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
+        if (Input.GetKeyDown(interactKey)) 
         {
-            lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
-
-            if (dropsLoot != null)
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
             {
-                dropsLoot.dropLoot();
+                lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
+
+                if (dropsLoot != null)
+                {
+                    dropsLoot.dropLoot();
+                }
             }
         }
+    }
+    
+    void tryToInteract()
+    {  
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, interactionDistance, ~ignoreLayer))
+        {
+            buttons button = hit.collider.GetComponent<buttons>();
 
+            if (button != null)
+            {
+                if (hit.collider.CompareTag("Button"))
+                {
+                    if (Input.GetKeyDown(interactKey))
+                        button.pressButton();
+                 
+                    if (Input.GetKeyUp(interactKey))
+                        button.ReleaseButton();
+                }
+
+                if (hit.collider.CompareTag("Switch"))
+                {
+                    if (Input.GetKeyDown(interactKey))
+                        button.pressButton();
+                }
+            }
+        }
     }
 
     public void heal(int amount)
@@ -390,12 +455,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         {
             // Decrease the regen timer over time
             shieldGenTimer -= Time.deltaTime;
+            // Debug.Log("Shield Regen Time: " +  shieldGenTimer);
 
             // Regenerate only after the delay has passed
             if (shieldGenTimer <= 0)
             {
                 playerStatManager.instance.shield += playerStatManager.instance.shieldRegen * Time.deltaTime;
                 playerStatManager.instance.shield = Mathf.Clamp(playerStatManager.instance.shield, 0, playerStatManager.instance.shieldMax); // Clamp fuel between 0 and max
+
+                if (playerStatManager.instance.shield > 0)
+                    shieldBreak = false;
             }
         }
         // Reset the regen timer if shield is full
@@ -404,4 +473,21 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     }
 
     #endregion Everything Else
+
+    private void SetIsAirborne(bool airborne)
+    {
+        if (isAirborne)
+        {
+            if (!airborne)
+            {
+                landingSounds.PlaySpecificSound(0);
+            }
+        }
+        isAirborne = airborne;
+    }
+
+    public void MoveController(Transform destination)
+    {
+        controller.transform.position = destination.position;
+    }
 }

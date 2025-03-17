@@ -2,31 +2,55 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
+using System.Collections;
 
 public class AlarmDrone : MonoBehaviour
 {
+    [Header("Config")]
     [SerializeField] public Transform[] waypoints;
     [SerializeField] public float speed;
     [SerializeField] public float detectionRange;
-    public LayerMask playerLayer;
-    public LayerMask enemyLayer;
-
+    [SerializeField] List<enemyAI> nearbyEnemies;
+    [SerializeField] SphereCollider coll;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip alertClip;
+    [SerializeField] private LayerMask playerLayer;
+    [SerializeField] private LayerMask groundLayer;
     [SerializeField] int roamPauseTime; // Pause time at each waypoint
     private float roamTimer;
 
     private int currentWaypoint = 0;
-    private bool isPaused = false;
-    [SerializeField] GameObject[] nearbyEnemies;
+    public bool isPaused = false;
+    public bool isAlerted;
+    public bool isDead = false;
+
+    private void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.volume = 0.3f;
+        audioSource.enabled = false;
+        coll.radius = detectionRange;
+        isAlerted = false;
+    }
 
     void Update()
     {
-        if (!isPaused)
+        if (!isAlerted)
         {
-            Patrol();
+            if (!isPaused)
+            {
+                Patrol();
+            }
+            else
+            {
+                PauseAtWaypoint();
+            }
         }
         else
         {
-            PauseAtWaypoint();
+            PlayAlarmAudio();
         }
     }
 
@@ -62,13 +86,21 @@ public class AlarmDrone : MonoBehaviour
 
     void AlertNearbyEnemies()
     {
-        foreach(GameObject enemy in nearbyEnemies)
+        int excludedLayers = groundLayer | playerLayer;
+        int includedLayers = ~excludedLayers;
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, detectionRange, includedLayers);
+
+        foreach (Collider hitCollider in hitColliders)
         {
-            enemyAI enemyScript = enemy.GetComponent<enemyAI>();
-            if (enemyScript != null)
+            if (hitCollider.CompareTag("Enemy"))
             {
-                enemyScript.SetAlerted(true);
-                enemyScript.SetPlayerInDroneRange(true);
+                enemyAI enemyScript = hitCollider.GetComponent<enemyAI>();
+                if (enemyScript != null)
+                {
+                    nearbyEnemies.Add(enemyScript);
+                    enemyScript.SetAlerted(true);
+                    enemyScript.SetPlayerInDroneRange(true);
+                }
             }
         }
     }
@@ -83,6 +115,8 @@ public class AlarmDrone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            isAlerted = true;
+            coll.radius = detectionRange + 2;
             DetectPlayer();
         }
     }
@@ -91,14 +125,22 @@ public class AlarmDrone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            foreach (GameObject enemy in nearbyEnemies)
+            coll.radius = detectionRange;
+            isAlerted = false;
+            audioSource.enabled = false;
+            foreach (enemyAI enemy in nearbyEnemies)
             {
-                enemyAI enemyScript = enemy.GetComponent<enemyAI>();
-                if (enemyScript != null)
+                if (enemy != null)
                 {
-                    enemyScript.SetPlayerInDroneRange(false);
+                    enemy.SetPlayerInDroneRange(false);
                 }
             }
         }
+    }
+
+    void PlayAlarmAudio()
+    {
+        audioSource.enabled = true;
+        audioSource.PlayOneShot(alertClip);
     }
 }

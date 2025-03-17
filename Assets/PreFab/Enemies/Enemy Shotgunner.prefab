@@ -420,7 +420,7 @@ GameObject:
   - component: {fileID: 1735039592731724162}
   m_Layer: 7
   m_Name: Enemy Shotgunner
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -467,6 +467,8 @@ MonoBehaviour:
   animTransSpeed: 8
   faceTargetSpeed: 32
   FOV: 180
+  armor: 0
+  speed: 0
   headPos: {fileID: 4499014941413763806}
   shootAngle: 5
   bullet: {fileID: 8404054753871229023, guid: 8b8fbf7ee79c8c24a9eed42fbd5599e6, type: 3}
@@ -487,6 +489,9 @@ MonoBehaviour:
   roamDist: 5
   bodyFadeTime: 5
   fadeDuration: 2
+  isDead: 0
+  floatingDamageTextPrefab: {fileID: 0}
+  floatingTextDelay: 0
 --- !u!195 &5709111648268748456
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1307,15 +1312,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2658149538342157939, guid: 4cea93e028c6d22429a7e300cd998925, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2658149538342157939, guid: 4cea93e028c6d22429a7e300cd998925, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.5
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2658149538342157939, guid: 4cea93e028c6d22429a7e300cd998925, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2658149538342157939, guid: 4cea93e028c6d22429a7e300cd998925, type: 3}
       propertyPath: m_LocalPosition.x

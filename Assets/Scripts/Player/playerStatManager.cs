@@ -12,7 +12,7 @@ public class playerStatManager : MonoBehaviour, IPersistData
     public float playerHeight;
     public float standingHeight = 2f;
     public float crouchHeight = 0.5f;
-    
+
 
     public int upgradeCurrency;
 
