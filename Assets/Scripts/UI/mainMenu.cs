@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 public class mainMenu : MonoBehaviour
 {
-    public AudioClip menuMusic;
+    public AudioMixer mixer;
     private AudioSource audioSource;
 
     public GameObject optionsPanel;
@@ -13,23 +14,23 @@ public class mainMenu : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        getSavedAudioSettings();
 
         if (audioSource == null)
         {
             audioSource= gameObject.AddComponent<AudioSource>();
         }
+    }
 
-        if (menuMusic != null)
-        {
-            audioSource.clip = menuMusic;
-            audioSource.loop = true;
-            audioSource.Play();
-        }
+    public void newGame()
+    {
+        dataManager.instance.NewGame();
     }
 
     public void Play()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        newGame();
     }
 
     public void Quit()
@@ -68,6 +69,23 @@ public class mainMenu : MonoBehaviour
         if (DifficultyManager.instance != null)
         {
             DifficultyManager.instance.SetDifficulty((GameDifficulty)difficultyIndex);
+        }
+    }
+
+    private void getSavedAudioSettings()
+    {
+        float value;
+        foreach (AudioMixerGroup group in mixer.FindMatchingGroups(""))
+        {
+            value = PlayerPrefs.GetFloat(group.name);
+            if (value == 0)
+            {
+                mixer.SetFloat(group.name, -80);
+            }
+            else
+            {
+                mixer.SetFloat(group.name, Mathf.Log10(value) * 20);
+            }
         }
     }
 }

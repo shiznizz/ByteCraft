@@ -836,7 +836,7 @@ Transform:
   m_GameObject: {fileID: 6683225297028311546}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.75, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -884,8 +884,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2adfaa679c5a92144b4b9a57bedbe925, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HP: 30
-  HPMax: 30
+  HP: 100
+  HPMax: 100
   playerHeight: 0
   standingHeight: 2
   crouchHeight: 0.5
@@ -1074,13 +1074,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e48f02fe9d006cf40b5d9ab13a0c4b2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  instance: {fileID: 3527069170420853430}
   audioSource: {fileID: 6626980476747503879}
-
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 72
-  gunEmptyClip: {fileID: 8300000, guid: 76a9322b4121e844db0196e0d923db3c, type: 3}
+  gunEmptyClip: {fileID: 0}
 --- !u!114 &7066487906901695622
 MonoBehaviour:
   m_ObjectHideFlags: 0

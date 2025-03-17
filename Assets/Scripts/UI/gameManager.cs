@@ -40,7 +40,6 @@ public class gameManager : MonoBehaviour
     public GameObject checkpointPopup;
 
     [Header("Text Fields to Update")]
-    //[SerializeField] public TMP_Text goalCountText;
     [SerializeField] public TMP_Text ammoCurText;
     [SerializeField] public TMP_Text ammoMaxText;
     [SerializeField] public TMP_Text ammoReserveText;
@@ -50,9 +49,6 @@ public class gameManager : MonoBehaviour
     public GameObject player;
     public playerController playerScript;
     public GameObject playerSpawnPos;
-
-    public GameObject holderPlayer;
-    public GameObject holderUI;
 
     int goalCount;
 
@@ -81,6 +77,7 @@ public class gameManager : MonoBehaviour
 
     [SerializeField] AudioMixer mixer;
     public bool inventoryOpen = false;
+    private bool keepMenu;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -107,7 +104,7 @@ public class gameManager : MonoBehaviour
         {
             if (menuActive == null)
                 switchMenu(menuPause);
-            else
+            else if (!keepMenu)
                 stateUnpause();
             inventoryOpen = false;
         }
@@ -137,6 +134,7 @@ public class gameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         menuActive.SetActive(false);
         menuActive = null;
+        keepMenu = false;
     }
 
     public void mainMenu()
@@ -173,33 +171,25 @@ public class gameManager : MonoBehaviour
     public void youLose()
     {
         switchMenu(menuDeath);
+        keepMenu = true;
     }
 
     public void objectiveFailed(string failedObj)
     {
-
+        keepMenu = true;
         switchMenu(menuObjectiveFail);
         objectiveText.SetText(failedObj);
     }
 
     public void youWin()
     {
+        keepMenu = true;
         switchMenu(menuWin);
     }
 
     #endregion Menus
 
     #region UI Element Updates
-/*    public void updateGameGoal(int amount)
-    {
-        goalCount += amount;
-        goalCountText.text = goalCount.ToString("F0");
-
-        if (goalCount <= 0)
-        {
-            youWin();
-        }
-    }*/
 
     public void updateAmmo()
     {
@@ -339,11 +329,4 @@ public class gameManager : MonoBehaviour
             }
         }
     }
-
-    /*    public void SetObjectiveText(string objective)
-        {
-            currentObjective = objective;
-            objectiveText.SetText(currentObjective);
-        }*/
-
 }
