@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class playerStatManager : MonoBehaviour
+public class playerStatManager : MonoBehaviour, IPersistData
 {
     static public playerStatManager instance;
 
@@ -12,6 +12,7 @@ public class playerStatManager : MonoBehaviour
     public float playerHeight;
     public float standingHeight = 2f;
     public float crouchHeight = 0.5f;
+
 
     public int upgradeCurrency;
 
@@ -150,5 +151,17 @@ public class playerStatManager : MonoBehaviour
     {
         shieldMax = origShieldMax * (100 + curShieldMaxMod + percentToIncrease) / 100;
         curShieldMaxMod += percentToIncrease;
+    }
+
+    public void LoadData(gameData data)
+    {
+        this.HP = data.playerHP;
+        this.shield = data.playerShield;
+    }
+
+    public void SaveData(ref gameData data)
+    {
+        data.playerHP = this.HP;
+        data.playerShield = this.shield;
     }
 }

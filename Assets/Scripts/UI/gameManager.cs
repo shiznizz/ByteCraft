@@ -2,11 +2,13 @@ using UnityEditor;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using System.Diagnostics.Contracts;
 using UnityEngine.Audio;
 using Unity.VisualScripting;
 using System.Text.RegularExpressions;
+
 
 
 public class gameManager : MonoBehaviour
@@ -45,9 +47,12 @@ public class gameManager : MonoBehaviour
 
     [Header("State Monitoring Values")]
     public bool isPaused;
-    public GameObject player;
+    [SerializeField] public GameObject player;
     public playerController playerScript;
     public GameObject playerSpawnPos;
+
+    public GameObject holderPlayer;
+    public GameObject holderUI;
 
     int goalCount;
 
@@ -83,8 +88,8 @@ public class gameManager : MonoBehaviour
     void Awake()
     {
         instance = this;
-        player = GameObject.FindWithTag("Player");
-        playerScript = player.GetComponent<playerController>();
+
+        //player = GameObject.FindWithTag("Player");
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
 
         
@@ -116,7 +121,6 @@ public class gameManager : MonoBehaviour
 
         //CheckLowHealth();
     }
-
     #region Menus
 
     public void statePause()
@@ -133,6 +137,16 @@ public class gameManager : MonoBehaviour
         Time.timeScale = 1;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        menuActive.SetActive(false);
+        menuActive = null;
+    }
+
+    public void mainMenu()
+    {
+        isPaused = !isPaused;
+        Time.timeScale = 1;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
         menuActive.SetActive(false);
         menuActive = null;
     }
@@ -272,6 +286,7 @@ public class gameManager : MonoBehaviour
 
             try
             {
+                
                 slots[i].transform.GetChild(1).GetComponent<Image>().enabled = true;
                 slots[i].transform.GetChild(1).GetComponent<Image>().sprite = inventoryManager.instance.inventory[i].itemIcon;
                 slots[i].GetComponent<SlotBoss>().item = inventoryManager.instance.inventory[i];
@@ -309,6 +324,7 @@ public class gameManager : MonoBehaviour
     }
     #endregion Inventory
 
+
     private void getSavedAudioSettings()
     {
         float value;
@@ -325,4 +341,11 @@ public class gameManager : MonoBehaviour
             }
         }
     }
+
+    /*    public void SetObjectiveText(string objective)
+        {
+            currentObjective = objective;
+            objectiveText.SetText(currentObjective);
+        }*/
+
 }
