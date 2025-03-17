@@ -175,7 +175,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4263542785864728171
 Transform:
   m_ObjectHideFlags: 0
@@ -902,8 +902,6 @@ MonoBehaviour:
   playerHeight: 0
   standingHeight: 2
   crouchHeight: 0.5
-  playerHPMax: 100
-  playerHP: 0
   upgradeCurrency: 0
   shield: 0
   shieldMax: 100
@@ -995,6 +993,7 @@ MonoBehaviour:
   isCrouching: 0
   isWallRunning: 0
   isJetpacking: 0
+  hasHeadSpace: 0
   cameraChangeTime: 0
   wallRunTilt: 0
   tilt: 0
@@ -1012,6 +1011,8 @@ MonoBehaviour:
   isAirborne: 0
   grappleShootPos: {fileID: 0}
   grappleRope: {fileID: 0}
+  interactionDistance: 2
+  interactKey: 101
 --- !u!114 &8067939329775525885
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1056,7 +1057,6 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 65536
-  wallRunAcceleration: 10
 --- !u!114 &7288472048335276681
 MonoBehaviour:
   m_ObjectHideFlags: 0
