@@ -47,7 +47,7 @@ public class gameManager : MonoBehaviour
 
     [Header("State Monitoring Values")]
     public bool isPaused;
-    [SerializeField] public GameObject player;
+    public GameObject player;
     public playerController playerScript;
     public GameObject playerSpawnPos;
 
@@ -87,7 +87,7 @@ public class gameManager : MonoBehaviour
     {
         instance = this;
 
-        //player = GameObject.FindWithTag("Player");
+        player = GameObject.FindWithTag("Player");
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
 
         
