@@ -196,8 +196,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 }
 
                 //Ranged attack
-                if (type != enemyType.melee && shootTimer >= shootRate && angleToTarget <= shootAngle && agent.remainingDistance <= agent.stoppingDistance)
+                if (type != enemyType.melee && shootTimer >= shootRate && angleToTarget <= shootAngle && agent.remainingDistance <= agent.stoppingDistance + 0.5f)
                 {
+                    //Debug.Log("Remaing:" + agent.remainingDistance);
                     shoot();
                 }
                 //Melee attack
@@ -217,7 +218,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 return true;
             }
         }
-        agent.stoppingDistance = 0;
+        //agent.stoppingDistance = 0;
         return false;
     }
 

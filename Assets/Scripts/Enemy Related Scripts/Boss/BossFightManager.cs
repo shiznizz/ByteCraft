@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 
 public class BossFightManager : MonoBehaviour, IDamage
@@ -14,6 +15,9 @@ public class BossFightManager : MonoBehaviour, IDamage
     public NavMeshAgent bossAgent; // NavMeshAgent component for movement
     public Animator anim; // Boss animator component
     public Renderer bossRenderer; // For flashing effect when hit
+
+    [SerializeField] Image hpFillBar;
+    [SerializeField] Image hpBar;
 
     [Header("Audio Clips")]
     public AudioClip[] bossVoiceLines;  // Array of audio clips for the boss' voice lines
@@ -138,7 +142,7 @@ public class BossFightManager : MonoBehaviour, IDamage
         if (bossInvulnerability) bossInvulnerability.EndInvulnerability();
 
         // Log Phase One end (for debugging)
-        Debug.Log("Phase One ended, transitioning to Phase Two.");
+        //Debug.Log("Phase One ended, transitioning to Phase Two.");
     }
 
     void StartPhaseTwo()
@@ -157,13 +161,13 @@ public class BossFightManager : MonoBehaviour, IDamage
         if (bossInvulnerability != null)
         {
             bossInvulnerability.isInvulnerable = false;
-            Debug.Log("Phase Two started: Boss is now vulnerable!");
+            //Debug.Log("Phase Two started: Boss is now vulnerable!");
         }
 
         StartCoroutine(PhaseTwoMechanicsCycle());
     }
 
-    private void Update()
+    void Update()
     {
         if (isInPhaseTwo && bossHP > 0 && player)
         {
@@ -171,13 +175,23 @@ public class BossFightManager : MonoBehaviour, IDamage
             UpdateMovementAnimation();
             shootTimer += Time.deltaTime;  // Increment shoot timer
 
-            Debug.Log(Vector3.Distance(player.position, transform.position));
+            // Update health bar in each frame (optional)
+            updateEnemyUI();
 
+            // Handle attack mechanics
             if (Vector3.Distance(player.position, transform.position) <= attackRange && shootTimer >= shootRate && !isAttacking)
             {
                 shoot();  // Call the shoot method
                 shootTimer = 0f;  // Reset the timer after shooting
             }
+        }
+    }
+
+    void updateEnemyUI()
+    {
+        if (hpFillBar != null)
+        {
+            hpFillBar.fillAmount = (float)bossHP / 200f; // Assuming 200 is the max HP
         }
     }
 
@@ -251,7 +265,7 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     void shoot()
     {
-        Debug.Log("Attempting to shoot...");
+        //Debug.Log("Attempting to shoot...");
         shootTimer = 0;
 
         if (anim != null)
@@ -271,7 +285,7 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     IEnumerator SummonEnemies()
     {
-        Debug.Log("Boss summons enemy wave.");
+        //Debug.Log("Boss summons enemy wave.");
         if (bossSummon != null)
         {
             bossSummon.enabled = true; // Enable enemy summoning
@@ -282,7 +296,7 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     void ActivateEnergyShield()
     {
-        Debug.Log("Boss activates energy shield.");
+        //Debug.Log("Boss activates energy shield.");
         if (!isShieldActive)
         {
             isShieldActive = true;
@@ -304,12 +318,12 @@ public class BossFightManager : MonoBehaviour, IDamage
         if (shieldEffect != null)
             shieldEffect.SetActive(false); // Disable shield effect
 
-        Debug.Log("Boss shield deactivated.");
+        //Debug.Log("Boss shield deactivated.");
     }
 
     IEnumerator HeavyAOEAttack()
     {
-        Debug.Log("Boss is preparing a Heavy AOE Attack!");
+        //Debug.Log("Boss is preparing a Heavy AOE Attack!");
 
         //Show warning effect
         Instantiate(aoeWarningEffect, transform.position, Quaternion.identity);
@@ -322,12 +336,12 @@ public class BossFightManager : MonoBehaviour, IDamage
         //Deal damage if player is within range
         if (Vector3.Distance(player.position, transform.position) <= aoeRadius)
         {
-            Debug.Log("Player hit by AOE! Taking 50 damage.");
+            //Debug.Log("Player hit by AOE! Taking 50 damage.");
 
             if (playerStatManager.instance != null)
             {
                 playerStatManager.instance.shield -= 50;
-                Debug.Log($"Player HP after AOE: {playerStatManager.instance.HP}");
+                //Debug.Log($"Player HP after AOE: {playerStatManager.instance.HP}");
             }
         }
 
@@ -336,15 +350,33 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     IEnumerator LaunchTrackingProjectiles()
     {
-        Debug.Log("Boss fires tracking projectiles.");
+        //Debug.Log("Boss fires tracking projectiles.");
         // Create and launch tracking projectiles toward the player
 
         yield return new WaitForSeconds(1f); // Delay before next mechanic
     }
 
+    IEnumerator bossShowHpBar()
+    {
+        hpBar.gameObject.SetActive(true);  // Show the HP bar when damage is taken
+
+        // Wait only for a moment and ensure the bar stays visible long enough
+        yield return new WaitForSecondsRealtime(5f);
+
+        // Keep the health bar visible if the boss is still alive
+        if (bossHP > 0)
+        {
+            hpBar.gameObject.SetActive(true);  // Keep the health bar visible
+        }
+        else
+        {
+            hpBar.gameObject.SetActive(false);  // Hide if the boss dies
+        }
+    }
+
     public void takeDamage(int damage)
     {
-        Debug.Log("Boss received damage: " + damage);
+        //Debug.Log("Boss received damage: " + damage);
         TakeDamage(damage);  // Calls your existing TakeDamage method
     }
 
@@ -355,10 +387,13 @@ public class BossFightManager : MonoBehaviour, IDamage
 
         // Reduce HP
         bossHP -= damage;
-        Debug.Log($"Boss took {damage} damage. Remaining HP: {bossHP}");
+        //Debug.Log($"Boss took {damage} damage. Remaining HP: {bossHP}");
+
+        StartCoroutine(bossShowHpBar());
 
         // Flash effect to show hit
         StartCoroutine(FlashOnHit());
+
         if (anim != null)
             anim.SetTrigger("damage");
 
@@ -374,11 +409,11 @@ public class BossFightManager : MonoBehaviour, IDamage
     {
         if (bossRenderer == null)
         {
-            Debug.LogError("Boss Renderer is missing! Assign the Renderer in the Inspector.");
+            //Debug.LogError("Boss Renderer is missing! Assign the Renderer in the Inspector.");
             yield break; // Stop function if no Renderer exists
         }
 
-        Debug.Log("Boss hit! Flashing red.");
+        //Debug.Log("Boss hit! Flashing red.");
         Color originalColor = bossRenderer.material.color;
         bossRenderer.material.color = Color.red;
         yield return new WaitForSeconds(hitFlashDuration);
@@ -387,7 +422,7 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     private IEnumerator HandleDeath()
     {
-        Debug.Log("Boss has been defeated. Initiating death sequence...");
+        //Debug.Log("Boss has been defeated. Initiating death sequence...");
 
         isInPhaseTwo = false; // Stop Phase Two
         bossAgent.isStopped = true; // Stop movement
@@ -398,7 +433,13 @@ public class BossFightManager : MonoBehaviour, IDamage
             anim.SetTrigger("Death"); // Trigger death animation
         }
 
-        //PlayVoiceLine(bossVoiceLines.Length - 1); // Play death dialogue
+        // Destroy the health bar when the boss dies
+        if (hpBar != null)
+        {
+            Destroy(hpBar.gameObject); // Destroy the Canvas containing the health bar
+        }
+
+        PlayVoiceLine(bossVoiceLines.Length - 1); // Play death dialogue
 
         yield return new WaitForSeconds(3f); // Adjust based on death animation length
 
@@ -407,10 +448,10 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     void EndBossFight()
     {
-        Debug.Log("Boss has been defeated.");
+        //Debug.Log("Boss has been defeated.");
         // Implement boss death behavior here (e.g., play death animation, reward the player)
 
-        PlayVoiceLine(bossVoiceLines.Length - 1); // Play the final dialogue in array for death
+        //PlayVoiceLine(bossVoiceLines.Length - 1); // Play the final dialogue in array for death
         isInPhaseTwo = false;
         bossAgent.isStopped = true; // Stop boss movement
     }
