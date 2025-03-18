@@ -198,7 +198,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 //Ranged attack
                 if (type != enemyType.melee && shootTimer >= shootRate && angleToTarget <= shootAngle && agent.remainingDistance <= agent.stoppingDistance)
                 {
-                    Debug.Log("Pew");
+                    Debug.Log("remaining:" + agent.remainingDistance);
+                    Debug.Log("stopping:" + agent.stoppingDistance);
                     shoot();
                 }
                 //Melee attack
