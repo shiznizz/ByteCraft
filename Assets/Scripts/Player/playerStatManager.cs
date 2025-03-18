@@ -154,4 +154,9 @@ public class playerStatManager : MonoBehaviour
         shieldMax = origShieldMax * (100 + curShieldMaxMod + percentToIncrease) / 100;
         curShieldMaxMod += percentToIncrease;
     }
+
+    public void IncrementUpgradeCurrency(int amt)
+    {
+        upgradeCurrency += amt;
+    }
 }

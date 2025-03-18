@@ -79,7 +79,7 @@ public class QuestPoint : MonoBehaviour
             else if (currentQuestState.Equals(QuestState.CAN_FINISH)  && endPoint)
             {
                 GameEventsManager.instance.questEvents.FinishQuest(questId);
-                playerStatManager.instance.upgradeCurrency += 2;
+                //playerStatManager.instance.upgradeCurrency += 2;
                 // GoalManager.instance.triggerWin();
             }
 

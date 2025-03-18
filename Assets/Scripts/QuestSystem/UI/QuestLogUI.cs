@@ -76,6 +76,6 @@ public class QuestLogUI : MonoBehaviour
         }
 
         // rewards
-        experienceRewardsText.text = quest.info.experienceReward + " XP";
+        experienceRewardsText.text = quest.info.upgradeCurrencyReward + " Upgrade Points";
     }
 }
