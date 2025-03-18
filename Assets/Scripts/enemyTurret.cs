@@ -60,6 +60,10 @@ public class enemyTurret : MonoBehaviour, IDamage
     private Color colorOrig;
     private bool recentDmg;
 
+    [SerializeField] private GameObject floatingDamageTextPrefab;
+    [SerializeField] float textDestroyTimer;
+    private Coroutine damageTextCoroutine;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -191,6 +195,22 @@ public class enemyTurret : MonoBehaviour, IDamage
             turnTimer = 0;
             StartCoroutine(enemyShowHpBar());
 
+            // instantiate the floating damage text only once when damage is taken.
+            if (floatingDamageTextPrefab != null)
+            {
+                // set spawn position closer to the enemy 
+                Vector3 spawnPos = headPos.transform.position + Vector3.up * 0.5f;
+                // parent the floating text to the enemy so it moves with the enemy.
+                GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
+                Destroy(dmgText, textDestroyTimer);
+
+                FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
+                if (fdt != null)
+                {
+                    fdt.SetText(amount.ToString());
+                }
+            }
+
             HP -= amount;
             StartCoroutine(flashRed());
             if (anim != null)
@@ -207,6 +227,13 @@ public class enemyTurret : MonoBehaviour, IDamage
                     dropLoot();
 
                 handleDeath();
+
+                // stop looping dmg text coroutine since enemy is dead
+                if (damageTextCoroutine != null)
+                {
+                    StopCoroutine(damageTextCoroutine);
+                    damageTextCoroutine = null;
+                }
             }
         }
     }
