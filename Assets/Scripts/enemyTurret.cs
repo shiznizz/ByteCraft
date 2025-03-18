@@ -4,6 +4,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using Unity.Mathematics;
+
 
 public class enemyTurret : MonoBehaviour, IDamage
 {
@@ -39,9 +41,9 @@ public class enemyTurret : MonoBehaviour, IDamage
     [SerializeField] int amountToRotate;
     [SerializeField] float pauseTime;
     private float pauseTimer;
-    private Quaternion origRotation;
+    public Vector3 origRotation;
     private bool turnLeft = true;
-    private Quaternion rot;
+    public Quaternion rot;
 
     [Header("Loot Drop Settings")]
     [SerializeField] bool dropsLoot;
@@ -55,7 +57,6 @@ public class enemyTurret : MonoBehaviour, IDamage
     private Rigidbody rb;
     private Collider enemyCollider;
 
-
     private Color colorOrig;
     private bool recentDmg;
 
@@ -64,7 +65,7 @@ public class enemyTurret : MonoBehaviour, IDamage
     {
         if (type == TurretRotationType.set)
         {
-            origRotation = transform.rotation;
+            origRotation = transform.rotation.eulerAngles;
             rot = Quaternion.Euler(new Vector3(0, origRotation.y + amountToRotate, 0));
         }
 
@@ -103,7 +104,7 @@ public class enemyTurret : MonoBehaviour, IDamage
                 turnLeft = !turnLeft;
                 if (turnLeft)
                 {
-                    rot = Quaternion.Euler(new Vector3(0,origRotation.y + amountToRotate, 0));
+                    rot = Quaternion.Euler(new Vector3(0, origRotation.y + amountToRotate, 0));
                 }
                 else
                 {
@@ -233,7 +234,7 @@ public class enemyTurret : MonoBehaviour, IDamage
             }
 
 
-            float roll = Random.Range(0f, 100f);
+            float roll = UnityEngine.Random.Range(0f, 100f);
             if (roll <= adjustedDropChance)
             {
                 Instantiate(loot.itemModel, dropPos.position, transform.rotation);
