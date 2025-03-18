@@ -20,4 +20,13 @@ public class MiscEvents
             onEnemyKilled();
         }
     }
+
+    public event Action onButtonPressed;
+    public void ButtonPressed()
+    {
+        if (onButtonPressed != null)
+        {
+            onButtonPressed();
+        }
+    }
 }

@@ -292,7 +292,7 @@ PrefabInstance:
     - target: {fileID: 3540305151111380071, guid: 3256f3d6bd419f64782151d914235072, type: 3}
       propertyPath: dialoguePanel
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1288571223}
     - target: {fileID: 6486989639919377436, guid: 3256f3d6bd419f64782151d914235072, type: 3}
       propertyPath: m_Name
       value: MichaelReachLocationStart
@@ -8935,6 +8935,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1141443319}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1144482925 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 109184927804752684, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 81625465}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1197075704
 GameObject:
   m_ObjectHideFlags: 0
@@ -9585,6 +9590,17 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1233806300 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 853836967275925994, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 81625465}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1237942258
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9863,6 +9879,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 822562167}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
+--- !u!114 &1288571223 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5355341655730626381, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 81625465}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fc28753607c84b49b74135179243330, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1297817125
 GameObject:
   m_ObjectHideFlags: 0
@@ -9933,6 +9960,11 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!4 &1307386332 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1291906001593474764, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+  m_PrefabInstance: {fileID: 1608057933}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1310230360 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6693525336720116848, guid: 417c6c6a7aa0ff54eb91c3cd70c0258c, type: 3}
@@ -11068,6 +11100,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1445272655}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1453831746 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6163781131512520446, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 81625465}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1455601131
 GameObject:
   m_ObjectHideFlags: 0
@@ -12134,6 +12171,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NewPlayer
       objectReference: {fileID: 0}
+    - target: {fileID: 4654621764258498122, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: gunTip
+      value: 
+      objectReference: {fileID: 1307386332}
     - target: {fileID: 5043751963829147083, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -12174,10 +12215,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6947207261321354804, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: m_UseWorldSpace
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6947207261321354804, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: m_Positions.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6947207261321354804, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+      propertyPath: m_ApplyActiveColorSpace
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7288472048335276681, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
       propertyPath: inventorySlot
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1453831746}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -15411,11 +15464,11 @@ PrefabInstance:
     - target: {fileID: 716327289963687824, guid: d6acd4d0b4faa6d449968ce6ecc251ec, type: 3}
       propertyPath: hintText
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1233806300}
     - target: {fileID: 716327289963687824, guid: d6acd4d0b4faa6d449968ce6ecc251ec, type: 3}
       propertyPath: tutorialPanel
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1144482925}
     - target: {fileID: 767357987189471624, guid: d6acd4d0b4faa6d449968ce6ecc251ec, type: 3}
       propertyPath: m_Name
       value: TutorialManager
