@@ -85,7 +85,7 @@ public class enemyTurret : MonoBehaviour, IDamage
         pauseTimer += Time.deltaTime;
 
 
-        if (type == TurretRotationType.dynamic)
+        if (type == TurretRotationType.dynamic && !isDead)
         {
             if (playerInRange && canSeePlayer())
             {
@@ -97,7 +97,7 @@ public class enemyTurret : MonoBehaviour, IDamage
                 faceTarget();
             }
         }
-        else if (type == TurretRotationType.set)
+        else if (type == TurretRotationType.set && !isDead)
         {
             if (rot == transform.rotation && pauseTimer >= pauseTime)
             {
