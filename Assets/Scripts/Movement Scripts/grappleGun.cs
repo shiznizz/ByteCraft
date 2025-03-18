@@ -41,7 +41,7 @@ public class grappleGun : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(grappleKey)) startGrapple();
+        if (Input.GetKeyDown(grappleKey) && !joint) startGrapple();
         if (Input.GetKeyDown(jumpKey)) stopGrapple();
     }
 
@@ -78,7 +78,6 @@ public class grappleGun : MonoBehaviour
     private void drawRope()
     {
         if (!joint) return;
-
         lr.SetPosition(0, gunTip.position);
         lr.SetPosition(1, grapplePoint);
     }

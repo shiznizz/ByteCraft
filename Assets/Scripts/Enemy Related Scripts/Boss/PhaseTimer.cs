@@ -40,7 +40,7 @@ public class PhaseTimer : MonoBehaviour
             bossInvulnerabilityScript.EndInvulnerability();
 
             // Log that phase 1 has ended (for debugging)
-            Debug.Log("Phase 1 ended, boss is now vulnerable.");
+            //Debug.Log("Phase 1 ended, boss is now vulnerable.");
 
             // You could trigger phase 2 logic here
         }

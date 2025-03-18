@@ -131,6 +131,7 @@ public class QuestManager : MonoBehaviour
     private void ClaimRewards(Quest quest)
     {
         // TODO - Add logic for claiming rewards
+        playerStatManager.instance.IncrementUpgradeCurrency(quest.info.upgradeCurrencyReward);
     }
 
     private void QuestStepStateChange(string id, int stepIndex, QuestStepState questStepState)

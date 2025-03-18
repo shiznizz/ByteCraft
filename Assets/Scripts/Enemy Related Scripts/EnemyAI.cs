@@ -79,6 +79,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private float alertCooldown = 5f;
 
     [SerializeField] private GameObject floatingDamageTextPrefab;
+    [SerializeField] float textDestroyTimer;
     private Coroutine damageTextCoroutine;
 
     public bool isStunned = false;
@@ -196,8 +197,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 }
 
                 //Ranged attack
-                if (type != enemyType.melee && shootTimer >= shootRate && angleToTarget <= shootAngle)
+                if (type != enemyType.melee && shootTimer >= shootRate && angleToTarget <= shootAngle && agent.remainingDistance <= agent.stoppingDistance + 0.5f)
                 {
+                    //Debug.Log("Remaing:" + agent.remainingDistance);
                     shoot();
                 }
                 //Melee attack
@@ -217,7 +219,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 return true;
             }
         }
-        agent.stoppingDistance = 0;
+        //agent.stoppingDistance = 0;
         return false;
     }
 
@@ -330,7 +332,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 Vector3 spawnPos = headPos.transform.position + Vector3.up * 0.5f;
                 // parent the floating text to the enemy so it moves with the enemy.
                 GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
-                Debug.Log("Instantiated floating text!");
+                Destroy(dmgText, textDestroyTimer);
 
                 FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
                 if (fdt != null)
@@ -366,6 +368,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             {
                 isDead = true;
                 GoalManager.instance.updateGameGoal(-1);
+                GameEventsManager.instance.miscEvents.EnemyKilled();
+
                 if (dropsLoot)
                     dropLoot();
 
@@ -549,7 +553,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void dropLoot()
     {
         playerController player = gameManager.instance.playerScript;
-        float healthRatio = playerStatManager.instance.HP / (float)player.HPOrig;
+        float healthRatio = playerStatManager.instance.HP / (float)playerStatManager.instance.HPMax;
         float currAmmo = float.Parse(gameManager.instance.ammoCurText.text);
         float reserveAmmo = float.Parse(gameManager.instance.ammoReserveText.text);
         float maxAmmo = float.Parse(gameManager.instance.ammoMaxText.text);

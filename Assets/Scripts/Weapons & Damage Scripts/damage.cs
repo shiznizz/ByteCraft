@@ -58,7 +58,7 @@ public class damage : MonoBehaviour
             Destroy(gameObject, destroyTime);
         }
 
-        //audioSource = GetComponent<AudioSource>();
+        audioSource = GetComponent<AudioSource>();
         //if (audioSource == null)
         //{
         //    Debug.LogError("AudioSource not found on " + gameObject.name);
