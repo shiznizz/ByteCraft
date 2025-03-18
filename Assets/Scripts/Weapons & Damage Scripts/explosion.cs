@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class explosion : MonoBehaviour
@@ -60,30 +61,38 @@ public class explosion : MonoBehaviour
                     explosiveDevice.SetActive(false);
                 }
             }
-           
         }
     }
 
     public void Explode()
     {
+        if (hasExploded) return;
+
         Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
+
+        HashSet<GameObject> affectedObjects = new HashSet<GameObject>();
 
         foreach (Collider hit in colliders)
         {
-            Rigidbody rb = hit.GetComponent<Rigidbody>();
-
-            if (rb != null)
+            if (!affectedObjects.Contains(hit.gameObject)) // Ensure unique objects
             {
-                rb.AddForce(transform.up * explosionUpForce, ForceMode.Impulse);
-                rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
-            }
-            else
-            {
-                // hit
-            }
+                affectedObjects.Add(hit.gameObject);
 
-            IDamage damage = hit.GetComponent<IDamage>();
-            damage?.takeDamage(explosionDmg);
+                Rigidbody rb = hit.GetComponent<Rigidbody>();
+
+                if (rb != null)
+                {
+                    rb.AddForce(transform.up * explosionUpForce, ForceMode.Impulse);
+                    rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
+                }
+                else
+                {
+                    // hit
+                }
+
+                IDamage damage = hit.GetComponent<IDamage>();
+                damage?.takeDamage(explosionDmg);
+            }
         }
 
         if (explosionEffect != null)

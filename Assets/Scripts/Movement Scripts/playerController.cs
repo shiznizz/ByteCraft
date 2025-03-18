@@ -137,9 +137,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         moveDir = (horizontalInput * orientation.right) + (verticalInput * orientation.forward);
 
-        if(!isCrouching && !hasHeadSpace)
-            jump();
-            sprint();
+        //if(!isCrouching && !hasHeadSpace)
+        jump();
+        sprint();
     }
 
     #region Movement
