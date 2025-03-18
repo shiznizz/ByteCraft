@@ -136,13 +136,13 @@ public class StatusEffects : MonoBehaviour
     // initializes acid effect by applying a dmg multiplier to target
     private void StartAcidEffect()
     {
-        var ps = GetComponent<playerStatManager>();
-        if (ps != null)
+        //var ps = GetComponent<playerStatManager>();
+        if (playerStatManager.instance != null)
         {
             // store original dmg multiplier 
-            originalDamageMultiplier = ps.damageMultiplier;
+            originalDamageMultiplier = playerStatManager.instance.damageMultiplier;
             // apply acid multiplier
-            ps.damageMultiplier = acidDamageMultiplier;
+            playerStatManager.instance.damageMultiplier = acidDamageMultiplier;
             multiplierApplied = true;
         }
     }
