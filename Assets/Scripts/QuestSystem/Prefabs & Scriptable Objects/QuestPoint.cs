@@ -107,7 +107,8 @@ public class QuestPoint : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerIsNear = false;
-            dialoguePanel.contentParent.SetActive(false);
+            if (dialoguePanel != null)
+                dialoguePanel.contentParent.SetActive(false);
         }
     }
 }

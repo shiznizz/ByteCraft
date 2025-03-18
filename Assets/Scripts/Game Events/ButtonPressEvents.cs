@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 
-public class ButtonPressEvents : MonoBehaviour
+public class ButtonPressEvents
 {
     public event Action<int> onButtonGained;
     public void ButtonGained(int button)

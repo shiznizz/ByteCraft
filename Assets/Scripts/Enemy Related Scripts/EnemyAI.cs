@@ -79,6 +79,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private float alertCooldown = 5f;
 
     [SerializeField] private GameObject floatingDamageTextPrefab;
+    [SerializeField] float textDestroyTimer;
     private Coroutine damageTextCoroutine;
 
     public bool isStunned = false;
@@ -331,7 +332,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 Vector3 spawnPos = headPos.transform.position + Vector3.up * 0.5f;
                 // parent the floating text to the enemy so it moves with the enemy.
                 GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
-                Debug.Log("Instantiated floating text!");
+                Destroy(dmgText, textDestroyTimer);
 
                 FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
                 if (fdt != null)
