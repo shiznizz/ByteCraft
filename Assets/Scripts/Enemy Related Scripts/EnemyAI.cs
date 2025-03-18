@@ -196,7 +196,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 }
 
                 //Ranged attack
-                if (type != enemyType.melee && shootTimer >= shootRate && angleToTarget <= shootAngle)
+                if (type != enemyType.melee && shootTimer >= shootRate && angleToTarget <= shootAngle && agent.remainingDistance <= agent.stoppingDistance)
                 {
                     shoot();
                 }
