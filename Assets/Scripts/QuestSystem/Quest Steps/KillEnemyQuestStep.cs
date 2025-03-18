@@ -25,6 +25,7 @@ public class KillEnemyQuestStep : QuestStep
             {
                 isCompleted = true;
                 FinishQuestStep();
+                GoalManager.instance.triggerWin();
             }
         }
     }

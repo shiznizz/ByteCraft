@@ -476,4 +476,9 @@ public class BossFightManager : MonoBehaviour, IDamage
             bossAudioSource.Play();
         }
     }
+
+    public int getBossHP()
+    {
+        return bossHP;
+    }
 }

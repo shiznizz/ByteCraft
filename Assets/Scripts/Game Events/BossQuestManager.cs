@@ -7,13 +7,13 @@ public class BossQuestManager : MonoBehaviour
 
     [Header("Config")]
     [SerializeField] private GameObject parentComponent;
-    private enemyAI enemyScript;
+    private BossFightManager enemyScript;
     public bool isComplete;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         instance = this;
-        enemyScript = gameObject.GetComponentInParent<enemyAI>();
+        enemyScript = gameObject.GetComponentInParent<BossFightManager>();
     }
 
     // Update is called once per frame
@@ -21,7 +21,7 @@ public class BossQuestManager : MonoBehaviour
     {
         if (!isComplete)
         {
-            if (enemyScript.isDead)
+            if (enemyScript.getBossHP() <= 0)
             {
                 isComplete = true;
 
