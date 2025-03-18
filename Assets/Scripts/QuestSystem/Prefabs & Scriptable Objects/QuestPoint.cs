@@ -20,6 +20,7 @@ public class QuestPoint : MonoBehaviour
     private bool playerIsNear = false;
     private string questId;
     private QuestState currentQuestState;
+    private bool hasCompletedDialogue = false;
 
     private void Awake()
     {
@@ -64,7 +65,8 @@ public class QuestPoint : MonoBehaviour
         // if we have a knot name defined, try to start dialogue with it
         if (!dialogueKnotName.Equals(""))
         {
-            GameEventsManager.instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+            if (currentQuestState.Equals(QuestState.CAN_START) || currentQuestState.Equals(QuestState.FINISHED))
+                GameEventsManager.instance.dialogueEvents.EnterDialogue(dialogueKnotName);
         }
         // otherwise, start or finish the quest immediately without dialogue
         else
@@ -77,7 +79,7 @@ public class QuestPoint : MonoBehaviour
             else if (currentQuestState.Equals(QuestState.CAN_FINISH)  && endPoint)
             {
                 GameEventsManager.instance.questEvents.FinishQuest(questId);
-                playerStatManager.instance.upgradeCurrency += 2;
+                //playerStatManager.instance.upgradeCurrency += 2;
                 // GoalManager.instance.triggerWin();
             }
 

@@ -11,13 +11,14 @@ public class portal : MonoBehaviour
     public int sceneBuildIndex;
     public PortalType type;
     private GameObject quest;
+    public bool questCompleteRequired = true;
     
 
     private void OnTriggerEnter(Collider other)
     {
         quest = GameObject.FindWithTag("Event");
 
-        if (other.CompareTag("Player") && (quest == null))
+        if (other.CompareTag("Player") && (!questCompleteRequired || quest == null))
         {
             if (type == PortalType.teleport)
             {

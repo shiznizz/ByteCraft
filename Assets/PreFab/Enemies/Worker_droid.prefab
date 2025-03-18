@@ -468,6 +468,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 3
   movement: 0
+  target: {fileID: 0}
   model: {fileID: 6248553118979700596}
   agent: {fileID: 119756494804437004}
   anim: {fileID: 5801935872728288184}
@@ -477,6 +478,8 @@ MonoBehaviour:
   animTransSpeed: 8
   faceTargetSpeed: 32
   FOV: 180
+  armor: 0
+  speed: 0
   headPos: {fileID: 6668389229887157445}
   shootAngle: 1
   bullet: {fileID: 0}
@@ -492,6 +495,10 @@ MonoBehaviour:
   roamDist: 5
   bodyFadeTime: 5
   fadeDuration: 2
+  isDead: 0
+  floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
+  textDestroyTimer: 1
+  isStunned: 0
 --- !u!95 &5801935872728288184
 Animator:
   serializedVersion: 7

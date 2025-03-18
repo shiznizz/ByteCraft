@@ -88,4 +88,10 @@ public class mainMenu : MonoBehaviour
             }
         }
     }
+
+    public void debugLevel()
+    {
+        SceneManager.LoadScene(7);
+        newGame();
+    }
 }

@@ -8,7 +8,7 @@ public class KillEnemyQuestStep : QuestStep
     [Header("Config")]
     [SerializeField] GameObject enemy;
     [SerializeField] private string enemyName;
-    private bool enemyKilled = false;
+    //private bool enemyKilled = false;
     private bool isCompleted = false;
     private enemyAI enemyScript;
     public void Start()
