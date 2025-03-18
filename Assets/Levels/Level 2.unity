@@ -1155,6 +1155,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d4d10d4b5db1eb40a47729d04e7b5c4, type: 3}
+--- !u!114 &349199793 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8548893310799309714, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+  m_PrefabInstance: {fileID: 403051540}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ed4d7b1ae36634cb84e24b023a5ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &359589988 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8548893310799309714, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+  m_PrefabInstance: {fileID: 1609285445}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ed4d7b1ae36634cb84e24b023a5ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &363496349
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1355,8 +1377,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6030046431027386703, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 3226177055808268943, guid: c8b2751136842c14ca342d05b1192c87, type: 2}
     - target: {fileID: 6102032861578797434, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
       propertyPath: audSource
+      value: 
+      objectReference: {fileID: 1415362862}
+    - target: {fileID: 6102032861578797434, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: keyPickupSoundBank
+      value: 
+      objectReference: {fileID: 349199793}
+    - target: {fileID: 8548893310799309714, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: audioSource
       value: 
       objectReference: {fileID: 1415362862}
     m_RemovedComponents: []
@@ -2665,6 +2699,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d4d10d4b5db1eb40a47729d04e7b5c4, type: 3}
+--- !u!114 &747407303 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8548893310799309714, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+  m_PrefabInstance: {fileID: 989550801}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ed4d7b1ae36634cb84e24b023a5ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &755312855 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3635251353404866446, guid: 1d4d10d4b5db1eb40a47729d04e7b5c4, type: 3}
@@ -3352,6 +3397,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: KeyQuestPoint Start
       objectReference: {fileID: 0}
+    - target: {fileID: 6224240916145197967, guid: 8cc4cca0693d9514780a53af9475828f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3409,8 +3458,24 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6030046431027386703, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: m_Volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6030046431027386703, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 3226177055808268943, guid: c8b2751136842c14ca342d05b1192c87, type: 2}
     - target: {fileID: 6102032861578797434, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
       propertyPath: audSource
+      value: 
+      objectReference: {fileID: 1415362862}
+    - target: {fileID: 6102032861578797434, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: keyPickupSoundBank
+      value: 
+      objectReference: {fileID: 747407303}
+    - target: {fileID: 8548893310799309714, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: audioSource
       value: 
       objectReference: {fileID: 1415362862}
     m_RemovedComponents: []
@@ -4752,8 +4817,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6030046431027386703, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 3226177055808268943, guid: c8b2751136842c14ca342d05b1192c87, type: 2}
     - target: {fileID: 6102032861578797434, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
       propertyPath: audSource
+      value: 
+      objectReference: {fileID: 1415362862}
+    - target: {fileID: 6102032861578797434, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: keyPickupSoundBank
+      value: 
+      objectReference: {fileID: 2022715785}
+    - target: {fileID: 8548893310799309714, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: audioSource
       value: 
       objectReference: {fileID: 1415362862}
     m_RemovedComponents: []
@@ -5410,8 +5487,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6030046431027386703, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 3226177055808268943, guid: c8b2751136842c14ca342d05b1192c87, type: 2}
     - target: {fileID: 6102032861578797434, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
       propertyPath: audSource
+      value: 
+      objectReference: {fileID: 1415362862}
+    - target: {fileID: 6102032861578797434, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: keyPickupSoundBank
+      value: 
+      objectReference: {fileID: 359589988}
+    - target: {fileID: 8548893310799309714, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: audioSource
       value: 
       objectReference: {fileID: 1415362862}
     m_RemovedComponents: []
@@ -6138,8 +6227,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6030046431027386703, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: OutputAudioMixerGroup
+      value: 
+      objectReference: {fileID: 3226177055808268943, guid: c8b2751136842c14ca342d05b1192c87, type: 2}
     - target: {fileID: 6102032861578797434, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
       propertyPath: audSource
+      value: 
+      objectReference: {fileID: 1415362862}
+    - target: {fileID: 6102032861578797434, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: keyPickupSoundBank
+      value: 
+      objectReference: {fileID: 1857758428}
+    - target: {fileID: 8548893310799309714, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+      propertyPath: audioSource
       value: 
       objectReference: {fileID: 1415362862}
     m_RemovedComponents: []
@@ -6423,6 +6524,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d4d10d4b5db1eb40a47729d04e7b5c4, type: 3}
+--- !u!114 &1857758428 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8548893310799309714, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+  m_PrefabInstance: {fileID: 1755970588}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ed4d7b1ae36634cb84e24b023a5ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1879746022
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6791,6 +6903,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d4d10d4b5db1eb40a47729d04e7b5c4, type: 3}
+--- !u!114 &2022715785 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8548893310799309714, guid: 5a528f3ce1cd5d34e98d050ea4bb0dfa, type: 3}
+  m_PrefabInstance: {fileID: 1359854827}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ed4d7b1ae36634cb84e24b023a5ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2059288956
 PrefabInstance:
   m_ObjectHideFlags: 0

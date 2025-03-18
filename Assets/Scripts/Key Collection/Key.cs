@@ -26,7 +26,7 @@ public class Key : MonoBehaviour
 
     private void CollectKey()
     {
-        //keyPickupSoundBank.PlaySpecificExternal(audSource, audClip);
+        /*keyPickupSoundBank.PlaySpecificExternal(audSource, audClip);*/
         sphereCollider.enabled = false;
         visual.gameObject.SetActive(false);
         GameEventsManager.instance.keyEvents.KeyGained(keyGained);
@@ -38,6 +38,7 @@ public class Key : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            keyPickupSoundBank.PlaySpecificExternal(audSource, audClip);
             CollectKey();
         }
     }
