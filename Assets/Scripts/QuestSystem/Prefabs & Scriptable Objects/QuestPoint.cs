@@ -36,6 +36,11 @@ public class QuestPoint : MonoBehaviour
         else if (Input.GetButtonUp("Marker"))
             model.enabled = false;
 
+        if ((questId == "CollectKeysQuest" || questId == "KillEnemiesQuest") && currentQuestState.Equals(QuestState.CAN_FINISH))
+        {
+            GameEventsManager.instance.questEvents.FinishQuest(questId);
+        }
+
         //if (Input.GetButtonDown("Accept")) SubmitPressed();
     }
 
@@ -94,9 +99,13 @@ public class QuestPoint : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerIsNear = true;
-            if (currentQuestState.Equals(QuestState.IN_PROGRESS) && endPoint)
+            if (questId == "VisitLocationQuest2" && currentQuestState.Equals(QuestState.IN_PROGRESS) && endPoint)
             {
                 GameEventsManager.instance.questEvents.AdvanceQuest(questId);
+                if (currentQuestState.Equals(QuestState.CAN_FINISH))
+                {
+                    GameEventsManager.instance.questEvents.FinishQuest(questId);
+                }
             }
 
         }
