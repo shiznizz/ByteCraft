@@ -12,12 +12,12 @@ public class buttons : MonoBehaviour
     [Header("Button Settings")]
     [SerializeField] Transform buttonPosition;
     [SerializeField] SphereCollider buttonRadius;
-    [SerializeField] GameObject objectToActivate;
+    [SerializeField] GameObject[] objectsToActivate;
     [SerializeField] float activationRange;
     [SerializeField] float holdDuration;
     public bool isHoldButton;
     public bool playerInRange;
-    public bool isActivated;
+    //public bool isActivated;
     public bool isHolding;
     public float holdTime;
     bool isMarked;
@@ -77,8 +77,16 @@ public class buttons : MonoBehaviour
 
     public void toggleButton()
     {
-        isActivated = !isActivated;
-        objectToActivate.SetActive(isActivated);
+        //isActivated = !isActivated;
+        foreach(GameObject obj in objectsToActivate)
+            obj.SetActive(!obj.activeSelf);
+
+        if (!isMarked)
+        {
+            isMarked = true;
+            GameEventsManager.instance.buttonPressEvents.ButtonGained(1);
+            GameEventsManager.instance.miscEvents.ButtonPressed();
+        }
     }
 
     public void pressButton()
@@ -89,14 +97,6 @@ public class buttons : MonoBehaviour
             holdTime = 0;
         }
         else
-        {
-            toggleButton();
-            if (!isMarked) 
-            {
-                isMarked = true;
-                GameEventsManager.instance.buttonPressEvents.ButtonGained(1);
-                GameEventsManager.instance.miscEvents.ButtonPressed();
-            }
-        }
+            toggleButton();             
     }
 }

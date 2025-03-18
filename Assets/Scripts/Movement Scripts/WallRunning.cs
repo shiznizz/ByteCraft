@@ -51,7 +51,7 @@ public class WallRunning : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (pc.isWallRunning && verticalInput > 0)
+        if (pc.isWallRunning && verticalInput > 0 && !isExitingWall)
             WallRunMovement();
         else
             stopWallRun();
@@ -195,7 +195,7 @@ public class WallRunning : MonoBehaviour
         if (wallRunTimer <= 0)
             stopWallRun();
 
-        //Debug.Log("Wall time: " + wallRunTimer);
+        Debug.Log("Wall time: " + wallRunTimer);
 
 
         if (isExitingWall)
