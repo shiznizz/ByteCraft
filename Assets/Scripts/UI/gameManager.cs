@@ -125,6 +125,7 @@ public class gameManager : MonoBehaviour
             HandleMenuNavigation();
         }
 
+        CheckLowHealth();
     }
     #region Menus
 
@@ -186,14 +187,14 @@ public class gameManager : MonoBehaviour
             menuActive.SetActive(true);
         }
 
-        //// update button navigation
-        //menuButtons = menuActive.GetComponentsInChildren<Button>();
+        // update button navigation
+        menuButtons = menuActive.GetComponentsInChildren<Button>();
 
-        //if (menuButtons.Length > 0)
-        //{
-        //    selectedButtonIndex = 0;
-        //    HighlightButton(selectedButtonIndex);
-        //}
+        if (menuButtons.Length > 0)
+        {
+            selectedButtonIndex = 0;
+            HighlightButton(selectedButtonIndex);
+        }
     }
 
     public void youLose()
@@ -256,11 +257,6 @@ public class gameManager : MonoBehaviour
             menuButtons[selectedButtonIndex].onClick.Invoke();
         }
 
-        //// escape - close menu / go back
-        //if (Input.GetKeyDown(KeyCode.Escape))
-        //{
-        //    stateUnpause();
-        //}
     }
 
     void HighlightButton(int index)
@@ -268,6 +264,14 @@ public class gameManager : MonoBehaviour
         if (menuButtons == null || index < 0 || index >= menuButtons.Length) return;
 
         EventSystem.current.SetSelectedGameObject(menuButtons[index].gameObject);
+        ColorBlock cb = menuButtons[index].colors;
+        cb.normalColor = Color.white;
+        cb.highlightedColor = Color.yellow;
+        cb.selectedColor = Color.yellow;
+        cb.pressedColor = Color.red;
+        cb.colorMultiplier = 1.2f;
+
+        menuButtons[index].colors = cb;
     }
     #endregion
 

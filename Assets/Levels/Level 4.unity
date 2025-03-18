@@ -402,6 +402,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+--- !u!114 &90605153 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 525425887198857423, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+  m_PrefabInstance: {fileID: 90605152}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 879368cd4ab5760499d33f2e8ea402d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &91309697
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7286,6 +7297,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneBuildIndex: 5
   type: 0
+  questCompleteRequired: 1
 --- !u!1001 &2077270133
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7372,6 +7384,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 7368447216994616125, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: camController
+      value: 
+      objectReference: {fileID: 90605153}
     - target: {fileID: 8386706001582953583, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_Pivot.x
       value: 0
