@@ -36,7 +36,7 @@ public class QuestPoint : MonoBehaviour
         else if (Input.GetButtonUp("Marker"))
             model.enabled = false;
 
-        if ((questId == "CollectKeysQuest" || questId == "KillEnemiesQuest") && currentQuestState.Equals(QuestState.CAN_FINISH))
+        if ((questId == "CollectKeysQuest" || questId == "KillEnemiesQuest" || questId == "PressButtonsQuest") && currentQuestState.Equals(QuestState.CAN_FINISH))
         {
             GameEventsManager.instance.questEvents.FinishQuest(questId);
         }

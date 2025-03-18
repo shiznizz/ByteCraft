@@ -20,6 +20,7 @@ public class buttons : MonoBehaviour
     public bool isActivated;
     public bool isHolding;
     public float holdTime;
+    bool isMarked;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -88,9 +89,14 @@ public class buttons : MonoBehaviour
             holdTime = 0;
         }
         else
+        {
             toggleButton();
-
-        GameEventsManager.instance.buttonPressEvents.ButtonGained(1);
-        GameEventsManager.instance.miscEvents.ButtonPressed();
+            if (!isMarked) 
+            {
+                isMarked = true;
+                GameEventsManager.instance.buttonPressEvents.ButtonGained(1);
+                GameEventsManager.instance.miscEvents.ButtonPressed();
+            }
+        }
     }
 }
