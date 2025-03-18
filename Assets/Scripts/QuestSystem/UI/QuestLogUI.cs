@@ -29,17 +29,17 @@ public class QuestLogUI : MonoBehaviour
 
     private void Update()
     {
-        if (gameManager.instance.isPaused)
-        {
-            if (!gameManager.instance.inventoryOpen)
-            {
-                contentParent.SetActive(true);
-            }
-        }
-        else
-        {
-            contentParent.SetActive(false);
-        }
+        //if (gameManager.instance.isPaused)
+        //{
+        //    if (!gameManager.instance.inventoryOpen)
+        //    {
+        //        contentParent.SetActive(true);
+        //    }
+        //}
+        //else
+        //{
+        //    contentParent.SetActive(false);
+        //}
     }
 
     private void QuestStateChange(Quest quest)

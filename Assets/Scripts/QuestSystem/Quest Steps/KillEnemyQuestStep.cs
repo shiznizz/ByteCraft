@@ -18,7 +18,7 @@ public class KillEnemyQuestStep : QuestStep
 
     public void Update()
     {
-        if (!enemyKilled)
+        /*if (!enemyKilled)
         {
             enemyKilled = enemyScript.isDead;
         } else
@@ -27,6 +27,15 @@ public class KillEnemyQuestStep : QuestStep
             {
                 FinishQuestStep();
                 isCompleted = true;
+            }
+        }*/
+
+        if (!isCompleted)
+        {
+            if (BossQuestManager.instance.isComplete)
+            {
+                isCompleted = true;
+                FinishQuestStep();
             }
         }
     }

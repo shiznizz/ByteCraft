@@ -813,6 +813,7 @@ GameObject:
   - component: {fileID: 880456227251678012}
   - component: {fileID: 7288472048335276681}
   - component: {fileID: 3527069170420853430}
+  - component: {fileID: 4654621764258498122}
   - component: {fileID: 7066487906901695622}
   - component: {fileID: 5864598671350012223}
   - component: {fileID: 8244904287834974881}
@@ -889,6 +890,9 @@ MonoBehaviour:
   playerHeight: 0
   standingHeight: 2
   crouchHeight: 0.5
+  playerHPMax: 100
+  playerHP: 0
+  damageMultiplier: 1
   upgradeCurrency: 0
   shield: 100
   shieldMax: 100
@@ -1079,6 +1083,33 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 72
   gunEmptyClip: {fileID: 0}
+--- !u!114 &4654621764258498122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6683225297028311546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e22a3f98536a9cc45a6dc1bf94ac6957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lr: {fileID: 6947207261321354804}
+  gunTip: {fileID: 5798197359762240505}
+  cam: {fileID: 3146933043063798755}
+  player: {fileID: 766754491863903372}
+  maskGrappable:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  maxDistFromGrapple: 0.8
+  minDistFromGrapple: 0.25
+  jointSpring: 4.5
+  jointDamper: 7
+  jointMassScale: 4.5
+  maxGrappleDistance: 25
+  grappleKey: 113
+  jumpKey: 32
 --- !u!114 &7066487906901695622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1487,6 +1518,11 @@ PrefabInstance:
 --- !u!4 &5798197359762240505 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5174161406858139000, guid: f5cdeea7a0438284da67bfe709519c14, type: 3}
+  m_PrefabInstance: {fileID: 1709403743892334209}
+  m_PrefabAsset: {fileID: 0}
+--- !u!120 &6947207261321354804 stripped
+LineRenderer:
+  m_CorrespondingSourceObject: {fileID: 8633529780097923253, guid: f5cdeea7a0438284da67bfe709519c14, type: 3}
   m_PrefabInstance: {fileID: 1709403743892334209}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2146261887979927306
