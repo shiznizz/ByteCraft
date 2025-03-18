@@ -15,6 +15,7 @@ An unknown hostile group has infiltrated the station, and they're making a move 
 If they succeed, this whole place is going up in flames - and it'll take a chunk of the planet's orbit with it.
 Your mission is simple: stop them. That means securing key systems, defending critical points, and eliminating hostiles.
 Stay sharp out there. The station - and everyone on the planet - is counting on you.
+
 ~ StartQuest("VisitLocationQuest2")
 -> END
 
