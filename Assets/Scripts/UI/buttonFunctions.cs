@@ -21,6 +21,11 @@ public class buttonFunctions : MonoBehaviour
         gameManager.instance.mainMenu();
     }
 
+    public void debugLevel()
+    {
+        SceneManager.LoadScene(7);
+    }
+
     public void quit()
     {
 #if UNITY_EDITOR
