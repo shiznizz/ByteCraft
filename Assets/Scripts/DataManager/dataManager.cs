@@ -8,7 +8,7 @@ public class dataManager : MonoBehaviour
 {
     [Header("Debug")]
 
-    [SerializeField] bool persit;
+    [SerializeField] bool turnOffPersistence = false;
 
     [Header("File Storage Config")]
 
@@ -25,7 +25,6 @@ public class dataManager : MonoBehaviour
 
         if (instance != null)
         {
-            Debug.Log("found more the one data manager instances. Destroying the new one");
             Destroy(gameObject);
         }
         
@@ -79,7 +78,7 @@ public class dataManager : MonoBehaviour
     {
         this.gameData = dataHandler.Load();
        
-        if (gameData == null)
+        if (gameData == null || turnOffPersistence)
         {
             NewGame();
         }

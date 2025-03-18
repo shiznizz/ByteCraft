@@ -41,7 +41,7 @@ public class grappleGun : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(grappleKey)) startGrapple();
+        if (Input.GetKeyDown(grappleKey) && !joint) startGrapple();
         if (Input.GetKeyDown(jumpKey)) stopGrapple();
     }
 
