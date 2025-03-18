@@ -88,6 +88,8 @@ public class buttons : MonoBehaviour
         {
             isHolding = true;
             holdTime = 0;
+            GameEventsManager.instance.buttonPressEvents.ButtonGained(1);
+            GameEventsManager.instance.miscEvents.ButtonPressed();
         }
         else
             toggleButton();

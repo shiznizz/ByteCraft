@@ -343,6 +343,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             {
                 isDead = true;
                 GoalManager.instance.updateGameGoal(-1);
+                GameEventsManager.instance.miscEvents.EnemyKilled();
+
                 if (dropsLoot)
                     dropLoot();
 
