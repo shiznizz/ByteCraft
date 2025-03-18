@@ -10,11 +10,14 @@ public class portal : MonoBehaviour
     //Set this field in the Inspector for each portal you want to assign
     public int sceneBuildIndex;
     public PortalType type;
+    private GameObject quest;
     
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Player"))
+        quest = GameObject.FindWithTag("Event");
+
+        if (other.CompareTag("Player") && (quest == null))
         {
             if (type == PortalType.teleport)
             {
