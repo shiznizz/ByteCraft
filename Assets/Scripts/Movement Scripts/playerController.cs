@@ -295,8 +295,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (playerStatManager.instance.shield <= 0)
             shieldBreak = true;
 
-        hurtSounds.PlayRandomSound();
-        StartCoroutine(flashDamageScreen());
+        if(damage > 0)
+        {
+            hurtSounds.PlayRandomSound();
+            StartCoroutine(flashDamageScreen());
+        }
         updatePlayerUI();
         
         if (playerStatManager.instance.HP <= 0)
