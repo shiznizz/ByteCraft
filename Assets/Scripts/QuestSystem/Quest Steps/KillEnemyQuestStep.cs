@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 
 public class KillEnemyQuestStep : QuestStep
@@ -23,6 +26,8 @@ public class KillEnemyQuestStep : QuestStep
         {
             if (BossQuestManager.instance.isComplete)
             {
+                HandlePostKillDelay();
+
                 isCompleted = true;
                 FinishQuestStep();
                 GoalManager.instance.triggerWin();
@@ -30,7 +35,20 @@ public class KillEnemyQuestStep : QuestStep
         }
     }
 
-    private void UpdateState()
+    private IEnumerator HandlePostKillDelay()
+    {
+        // Wait for 5 seconds before triggering the win condition
+        yield return new WaitForSeconds(5f);
+
+        //// Mark the quest as complete after the delay
+        //isCompleted = true;
+        //FinishQuestStep();
+
+        //Trigger the win condition
+        //GoalManager.instance.triggerWin();
+    }
+
+        private void UpdateState()
     {
         string state = "In Progress";
         string status = "Kill " + enemyName;

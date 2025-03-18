@@ -169,7 +169,17 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     void Update()
     {
-        if (isInPhaseTwo && bossHP > 0 && player)
+        // Prevent boss actions if dead
+        if (bossHP <= 0)
+        {
+            if (!isInPhaseTwo)  // Make sure Phase Two is not still active after death
+            {
+                // Additional logic for boss death can go here if needed
+                return;
+            }
+        }
+
+        if (isInPhaseTwo && player)
         {
             bossAgent.SetDestination(player.position);
             UpdateMovementAnimation();
@@ -377,7 +387,7 @@ public class BossFightManager : MonoBehaviour, IDamage
     public void takeDamage(int damage)
     {
         //Debug.Log("Boss received damage: " + damage);
-        TakeDamage(damage);  // Calls your existing TakeDamage method
+        TakeDamage(damage);  // Calls existing TakeDamage method
     }
 
     void TakeDamage(int damage)
@@ -401,7 +411,7 @@ public class BossFightManager : MonoBehaviour, IDamage
         if (bossHP <= 0)
         {
             StartCoroutine(HandleDeath());
-            EndBossFight();
+            //EndBossFight();
         }
     }
 
@@ -442,6 +452,9 @@ public class BossFightManager : MonoBehaviour, IDamage
         PlayVoiceLine(bossVoiceLines.Length - 1); // Play death dialogue
 
         yield return new WaitForSeconds(3f); // Adjust based on death animation length
+
+        // Stop any further boss actions after death
+        //EndBossFight();
 
         //StartCoroutine(FadeOutAndDestroy());
     }
