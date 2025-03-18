@@ -8,6 +8,7 @@ using System.Diagnostics.Contracts;
 using UnityEngine.Audio;
 using Unity.VisualScripting;
 using System.Text.RegularExpressions;
+using UnityEngine.EventSystems;
 
 
 
@@ -73,11 +74,15 @@ public class gameManager : MonoBehaviour
     [SerializeField] float lowHealthThreshold = 0.25f;
     [SerializeField] float heartbeatSpeed = 2f;
     [SerializeField] float heartbeatMagnitude = 0.2f;
-    [SerializeField] float baseAlpha = 0.3f;
+    [SerializeField] float baseAlpha = 0.5f;
 
     [SerializeField] AudioMixer mixer;
     public bool inventoryOpen = false;
     private bool keepMenu;
+
+    private int selectedButtonIndex = 0;
+    private Button[] menuButtons;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -113,8 +118,12 @@ public class gameManager : MonoBehaviour
             inventoryOpen = true;
             switchMenu(menuInventory);
         }
+        // handle Keyboard Menu Navigation
+        if (menuActive != null)
+        {
+            HandleMenuNavigation();
+        }
 
-        //CheckLowHealth();
     }
     #region Menus
 
@@ -124,6 +133,15 @@ public class gameManager : MonoBehaviour
         Time.timeScale = 0;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
+
+        // find and highlight buttons
+        menuButtons = menuActive.GetComponentsInChildren<Button>();
+
+        if (menuButtons.Length > 0)
+        {
+            selectedButtonIndex = 0;
+            HighlightButton(selectedButtonIndex);
+        }
     }
 
     public void stateUnpause()
@@ -166,6 +184,14 @@ public class gameManager : MonoBehaviour
             menuActive.SetActive(true);
         }
 
+        // update button navigation
+        menuButtons = menuActive.GetComponentsInChildren<Button>();
+
+        if (menuButtons.Length > 0)
+        {
+            selectedButtonIndex = 0;
+            HighlightButton(selectedButtonIndex);
+        }
     }
 
     public void youLose()
@@ -188,6 +214,60 @@ public class gameManager : MonoBehaviour
     }
 
     #endregion Menus
+
+    #region Menu Navigation (Keyboard)
+    void HandleMenuNavigation()
+    {
+        if (menuButtons == null || menuButtons.Length == 0) return;
+
+        // down Arrow / s
+        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+        {
+            selectedButtonIndex = (selectedButtonIndex + 1) % menuButtons.Length;
+            HighlightButton(selectedButtonIndex);
+        }
+
+        // up Arrow / w
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+        {
+            selectedButtonIndex = (selectedButtonIndex - 1 + menuButtons.Length) % menuButtons.Length;
+            HighlightButton(selectedButtonIndex);
+        }
+
+        // right Arrow / d
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+        {
+            selectedButtonIndex = (selectedButtonIndex + 1) % menuButtons.Length;
+            HighlightButton(selectedButtonIndex);
+        }
+
+        // left Arrow / a
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+        {
+            selectedButtonIndex = (selectedButtonIndex - 1 + menuButtons.Length) % menuButtons.Length;
+            HighlightButton(selectedButtonIndex);
+        }
+
+        // enter / select
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+        {
+            menuButtons[selectedButtonIndex].onClick.Invoke();
+        }
+
+        // escape - close menu / go back
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            stateUnpause();
+        }
+    }
+
+    void HighlightButton(int index)
+    {
+        if (menuButtons == null || index < 0 || index >= menuButtons.Length) return;
+
+        EventSystem.current.SetSelectedGameObject(menuButtons[index].gameObject);
+    }
+    #endregion
 
     #region UI Element Updates
 
@@ -236,12 +316,12 @@ public class gameManager : MonoBehaviour
 
         if (playerStatManager.instance.HPMax <= 0) return;
 
-        float hpRatio = (float)playerStatManager.instance.HP / playerStatManager.instance.HPMax;
+        float hpRatio = (float)playerStatManager.instance.playerHP / playerStatManager.instance.playerHPMax;
 
         if (hpRatio <= lowHealthThreshold)
         {
             float alpha = baseAlpha + Mathf.Sin(Time.time * heartbeatSpeed) * heartbeatMagnitude;
-            alpha = Mathf.Clamp01(alpha);
+            //alpha = Mathf.Clamp01(alpha);
 
             Color c = lowHealthIndicator.color;
             c.a = alpha;
