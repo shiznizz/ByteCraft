@@ -11865,7 +11865,7 @@ MonoBehaviour:
   fadeDuration: 2
   isDead: 0
   floatingDamageTextPrefab: {fileID: 0}
-  FDTDeleteDelay: 1
+  isStunned: 0
 --- !u!4 &1384379459
 Transform:
   m_ObjectHideFlags: 0
@@ -13796,6 +13796,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5709111648268748456, guid: 6f828720489970141a6c759498d9159c, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -14474,9 +14478,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2588483812764124496, guid: 3e08bf8f6b04a63438c79746aa19f197, type: 3}
+      propertyPath: roamPauseTime
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5032558453747534726, guid: 3e08bf8f6b04a63438c79746aa19f197, type: 3}
       propertyPath: m_Name
       value: Assault_droid
+      objectReference: {fileID: 0}
+    - target: {fileID: 6807988873505759927, guid: 3e08bf8f6b04a63438c79746aa19f197, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15239,7 +15251,7 @@ MonoBehaviour:
   fadeDuration: 2
   isDead: 0
   floatingDamageTextPrefab: {fileID: 0}
-  FDTDeleteDelay: 1
+  isStunned: 0
 --- !u!1 &3545797121661986551
 GameObject:
   m_ObjectHideFlags: 0
@@ -16716,7 +16728,7 @@ MonoBehaviour:
   fadeDuration: 2
   isDead: 0
   floatingDamageTextPrefab: {fileID: 0}
-  FDTDeleteDelay: 1
+  isStunned: 0
 --- !u!4 &6812978430262553146
 Transform:
   m_ObjectHideFlags: 0
