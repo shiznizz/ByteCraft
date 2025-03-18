@@ -83,8 +83,8 @@ public class DialogueManager : MonoBehaviour
         }
 
         dialoguePlaying = true;
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        //Cursor.visible = true;
+        //Cursor.lockState = CursorLockMode.None;
 
         // inform other parts of system that we've started dialogue
         GameEventsManager.instance.dialogueEvents.DialogueStarted();

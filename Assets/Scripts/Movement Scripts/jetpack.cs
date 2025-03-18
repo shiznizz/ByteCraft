@@ -26,9 +26,10 @@ public class jetpackScript : MonoBehaviour
     {
         if (!gameManager.instance.isPaused)
         {
-            if (playerStatManager.instance.hasJetpack && !pc.isWallRunning)
+            if (playerStatManager.instance.hasJetpack)
             {
-                rigidJump();
+                if (!pc.isWallRunning)
+                    rigidJump();
                 handleJetpackFuelRegen();
             }
         }

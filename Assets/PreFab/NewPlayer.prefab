@@ -926,12 +926,12 @@ MonoBehaviour:
   slideSpeedMax: 14
   slideFriction: 10
   wallRunSpeed: 14
-  wallAdhesiveForce: 0
+  wallAdhesiveForce: 4
   wallJumpUpForce: 8
   wallJumpSideForce: 20
   maxWallRunTime: 1.5
   exitWallTime: 0.5
-  wallRerunTime: 3
+  wallRerunTime: 1
   wallCheckDistance: 0.7
   minimumWallAngleDifference: 15
   grappleDistance: 0
@@ -1101,7 +1101,7 @@ MonoBehaviour:
   player: {fileID: 766754491863903372}
   maskGrappable:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 131072
   maxDistFromGrapple: 0.8
   minDistFromGrapple: 0.25
   jointSpring: 4.5
@@ -1508,6 +1508,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7367560889514357925, guid: f5cdeea7a0438284da67bfe709519c14, type: 3}
       propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8633529780097923253, guid: f5cdeea7a0438284da67bfe709519c14, type: 3}
+      propertyPath: m_Positions.Array.size
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
