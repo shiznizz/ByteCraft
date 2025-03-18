@@ -11,7 +11,6 @@ public class buttons : MonoBehaviour
 
     [Header("Button Settings")]
     [SerializeField] Transform buttonPosition;
-    [SerializeField] KeyCode interactKey = KeyCode.E;
     [SerializeField] SphereCollider buttonRadius;
     [SerializeField] GameObject objectToActivate;
     [SerializeField] float activationRange;
@@ -79,7 +78,6 @@ public class buttons : MonoBehaviour
     {
         isActivated = !isActivated;
         objectToActivate.SetActive(isActivated);
-        Debug.Log("Button Toggled: " + isActivated);
     }
 
     public void pressButton()

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -78,6 +79,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private float alertCooldown = 5f;
 
     [SerializeField] private GameObject floatingDamageTextPrefab;
+    private Coroutine damageTextCoroutine;
+
+    public bool isStunned = false;
 
     #endregion Variables
 
@@ -117,6 +121,13 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void Update()
     {
        updateEnemyUI();
+        // if stunned, nav mesh will stop and skip rest of AI's logic
+        if (isStunned)
+        {
+            agent.isStopped = true;
+            return;
+        }
+
         if (isAlerted && !playerInRange) // specific to drone bot alerts
         {
             if (alertTimer < alertCooldown)
@@ -185,7 +196,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 }
 
                 //Ranged attack
-                if (type != enemyType.melee && shootTimer >= shootRate && angleToTarget <= shootAngle)
+                if (type != enemyType.melee && shootTimer >= shootRate && angleToTarget <= shootAngle && agent.remainingDistance <= agent.stoppingDistance)
                 {
                     shoot();
                 }
@@ -309,18 +320,30 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             int effectiveDamage = Mathf.Max(0, amount - armor);
             HP -= effectiveDamage;
 
-            // instantiate the floating damage text prefab
+            // debig log to confirm dmg is taken
+            Debug.Log("Enemy took: " + amount + " damage");
+
+            // instantiate the floating damage text only once when damage is taken.
             if (floatingDamageTextPrefab != null)
             {
-                // offset the spawn position upward for visibility
-                Vector3 spawnPos = transform.position + Vector3.up;
-                GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity);
+                // set spawn position closer to the enemy 
+                Vector3 spawnPos = headPos.transform.position + Vector3.up * 0.5f;
+                // parent the floating text to the enemy so it moves with the enemy.
+                GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
+                Debug.Log("Instantiated floating text!");
+
                 FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
                 if (fdt != null)
                 {
                     fdt.SetText(amount.ToString());
                 }
             }
+
+            // start coroutine to repeatedly spawn floating text 
+            //if (damageTextCoroutine == null)
+            //{
+            //    damageTextCoroutine = StartCoroutine(DamageTextLoop(amount));
+            //}
 
             StartCoroutine(flashRed());
             if (anim != null)
@@ -349,10 +372,46 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                     dropLoot();
 
                 handleDeath();
-                //Destroy(gameObject);
+
+                // stop looping dmg text coroutine since enemy is dead
+                if (damageTextCoroutine != null)
+                {
+                    StopCoroutine(damageTextCoroutine);
+                    damageTextCoroutine = null;
+                }
             }
         }
     }
+
+    //// coroutine that spawns text until enemy dies
+    //private IEnumerator DamageTextLoop(int damage)
+    //{
+    //    // loop until HP reaches 0
+    //    while (HP > 0)
+    //    {
+    //        if (floatingDamageTextPrefab != null)
+    //        {
+    //            // set spawn location near enemy 
+    //            Vector3 spawnPos = transform.position + Vector3.up * 1f;
+
+    //            // instantiate prefab and set parent to enemy so it follows enemy
+    //            GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
+
+    //            // debug log to confirm instantiation
+    //            Debug.Log("Instantiated looping floating text!");
+
+    //            // set dmg amount text
+    //            FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
+    //            if (fdt != null)
+    //            {
+    //                fdt.SetText(damage.ToString());
+    //            }
+    //        }
+    //        // wait for set interval before spawning next text
+    //        yield return new WaitForSeconds(1f);
+    //    }
+    //    damageTextCoroutine = null; // clear the reference
+    //}
 
     private void handleDeath()
     {
@@ -492,7 +551,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void dropLoot()
     {
         playerController player = gameManager.instance.playerScript;
-        float healthRatio = playerStatManager.instance.HP / (float)player.HPOrig;
+        float healthRatio = playerStatManager.instance.HP / (float)playerStatManager.instance.HPMax;
         float currAmmo = float.Parse(gameManager.instance.ammoCurText.text);
         float reserveAmmo = float.Parse(gameManager.instance.ammoReserveText.text);
         float maxAmmo = float.Parse(gameManager.instance.ammoMaxText.text);

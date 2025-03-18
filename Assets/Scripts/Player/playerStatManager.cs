@@ -14,6 +14,7 @@ public class playerStatManager : MonoBehaviour
     public float crouchHeight = 0.5f;
     public int playerHPMax = 100;
     public int playerHP;
+    public float damageMultiplier = 1f;
 
     public int upgradeCurrency;
 

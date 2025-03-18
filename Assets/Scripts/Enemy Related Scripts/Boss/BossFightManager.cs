@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.GraphicsBuffer;
 
 public class BossFightManager : MonoBehaviour, IDamage
 {
@@ -38,6 +39,26 @@ public class BossFightManager : MonoBehaviour, IDamage
     public int aoeDamage = 30; // Damage the attack deals
     public float aoeWarningTime = 2f; // Time before explosion
     public float aoeAttackCooldown = 10f; // Cooldown before the boss can use the attack again
+
+    [Header("Bullet Settings")]
+    public GameObject bulletPrefab;  // The bullet prefab to instantiate
+    public Transform shootPos;       // Position where bullet comes from
+    public float bulletSpeed = 10f;  // Speed of the bullet    
+    private float shootTimer = 0f;   // Timer for shooting cooldown
+    public float shootRate = 1f;     // Rate at which the boos shoots
+
+
+    [Header("Basic Attack Settings")]
+    public float basicAttackRange = 5f;
+    public int basicAttackDamage = 5;
+    public float attackCooldown = 2f;
+    private bool isAttacking = false;
+
+    [Header("Testing Flags")]
+    public bool testSummonEnemies = true;  // Toggle to test Summon Enemies
+    public bool testActivateEnergyShield = true;  // Toggle to test Energy Shield
+    public bool testHeavyAOEAttack = true;  // Toggle to test Heavy AOE Attack
+    public bool testLaunchTrackingProjectiles = true;  // Toggle to test Tracking Projectiles
 
     private bool fightStarted = false;
     private bool isInPhaseOne = false; // Tracks if boss is in phase one
@@ -148,6 +169,15 @@ public class BossFightManager : MonoBehaviour, IDamage
         {
             bossAgent.SetDestination(player.position);
             UpdateMovementAnimation();
+            shootTimer += Time.deltaTime;  // Increment shoot timer
+
+            Debug.Log(Vector3.Distance(player.position, transform.position));
+
+            if (Vector3.Distance(player.position, transform.position) <= attackRange && shootTimer >= shootRate && !isAttacking)
+            {
+                shoot();  // Call the shoot method
+                shootTimer = 0f;  // Reset the timer after shooting
+            }
         }
     }
 
@@ -174,20 +204,35 @@ public class BossFightManager : MonoBehaviour, IDamage
             switch (randomMechanic)
             {
                 case 0:
-                    StartCoroutine(SummonEnemies()); // Summon enemy wave
-                    PlayMechanicDialogue(0); // Dialogue for Summon Enemies
+                    if (testSummonEnemies) // Check if Summon Enemies is enabled
+                    {
+                        StartCoroutine(SummonEnemies()); // Summon enemy wave
+                        PlayMechanicDialogue(0); // Dialogue for Summon Enemies
+                    }
                     break;
+
                 case 1:
-                    ActivateEnergyShield(); // Energy shield
-                    PlayMechanicDialogue(1); // Dialogue for Energy Shield
+                    if (testActivateEnergyShield) // Check if Energy Shield is enabled
+                    {
+                        ActivateEnergyShield(); // Energy shield
+                        PlayMechanicDialogue(1); // Dialogue for Energy Shield
+                    }
                     break;
+
                 case 2:
-                    StartCoroutine(HeavyAOEAttack()); // AOE attack
-                    PlayMechanicDialogue(2); // Dialogue for AOE Attack
+                    if (testHeavyAOEAttack) // Check if Heavy AOE Attack is enabled
+                    {
+                        StartCoroutine(HeavyAOEAttack()); // AOE attack
+                        PlayMechanicDialogue(2); // Dialogue for AOE Attack
+                    }
                     break;
+
                 case 3:
-                    StartCoroutine(LaunchTrackingProjectiles()); // Tracking projectiles
-                    PlayMechanicDialogue(3); // Dialogue for Tracking Projectiles
+                    if (testLaunchTrackingProjectiles) // Check if Tracking Projectiles is enabled
+                    {
+                        StartCoroutine(LaunchTrackingProjectiles()); // Tracking projectiles
+                        PlayMechanicDialogue(3); // Dialogue for Tracking Projectiles
+                    }
                     break;
             }
 
@@ -201,6 +246,26 @@ public class BossFightManager : MonoBehaviour, IDamage
         if (bossHP <= 0)
         {
             EndBossFight(); // Boss is defeated
+        }
+    }
+
+    void shoot()
+    {
+        Debug.Log("Attempting to shoot...");
+        shootTimer = 0;
+
+        if (anim != null)
+            anim.SetTrigger("Shoot");
+        else
+            createProjectile();
+    }
+
+    public void createProjectile()
+    {
+        if (bulletPrefab != null && shootPos != null)
+        {
+            GameObject newBullet = Instantiate(bulletPrefab, shootPos.position, transform.rotation);
+            newBullet.GetComponent<damage>().updateTarget(player.gameObject);
         }
     }
 

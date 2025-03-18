@@ -28,10 +28,10 @@ public class GoalManager : MonoBehaviour
         goalCount += amount;
         goalCountText.text = goalCount.ToString("F0");
 
-        if (goalCount <= 0)
-        {
-            gameManager.instance.youWin();
-        }
+        //if (goalCount <= 0)
+        //{
+        //    gameManager.instance.youWin();
+        //}
     }
 
     public void triggerWin()

@@ -2,11 +2,13 @@ using UnityEditor;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using System.Diagnostics.Contracts;
 using UnityEngine.Audio;
 using Unity.VisualScripting;
 using System.Text.RegularExpressions;
+
 
 
 public class gameManager : MonoBehaviour
@@ -38,7 +40,6 @@ public class gameManager : MonoBehaviour
     public GameObject checkpointPopup;
 
     [Header("Text Fields to Update")]
-    //[SerializeField] public TMP_Text goalCountText;
     [SerializeField] public TMP_Text ammoCurText;
     [SerializeField] public TMP_Text ammoMaxText;
     [SerializeField] public TMP_Text ammoReserveText;
@@ -75,16 +76,15 @@ public class gameManager : MonoBehaviour
     [SerializeField] float baseAlpha = 0.3f;
 
     [SerializeField] AudioMixer mixer;
-
-    //public string currentObjective;
     public bool inventoryOpen = false;
+    private bool keepMenu;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         instance = this;
+
         player = GameObject.FindWithTag("Player");
-        playerScript = player.GetComponent<playerController>();
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
 
         
@@ -104,7 +104,7 @@ public class gameManager : MonoBehaviour
         {
             if (menuActive == null)
                 switchMenu(menuPause);
-            else
+            else if (!keepMenu)
                 stateUnpause();
             inventoryOpen = false;
         }
@@ -116,7 +116,6 @@ public class gameManager : MonoBehaviour
 
         //CheckLowHealth();
     }
-
     #region Menus
 
     public void statePause()
@@ -133,6 +132,17 @@ public class gameManager : MonoBehaviour
         Time.timeScale = 1;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        menuActive.SetActive(false);
+        menuActive = null;
+        keepMenu = false;
+    }
+
+    public void mainMenu()
+    {
+        isPaused = !isPaused;
+        Time.timeScale = 1;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
         menuActive.SetActive(false);
         menuActive = null;
     }
@@ -161,33 +171,25 @@ public class gameManager : MonoBehaviour
     public void youLose()
     {
         switchMenu(menuDeath);
+        keepMenu = true;
     }
 
-/*    public void objectiveFailed(string failedObj)
+    public void objectiveFailed(string failedObj)
     {
-
+        keepMenu = true;
         switchMenu(menuObjectiveFail);
-        objectiveText.SetText(currentObjective);
-    }*/
+        objectiveText.SetText(failedObj);
+    }
 
     public void youWin()
     {
+        keepMenu = true;
         switchMenu(menuWin);
     }
 
     #endregion Menus
 
     #region UI Element Updates
-/*    public void updateGameGoal(int amount)
-    {
-        goalCount += amount;
-        goalCountText.text = goalCount.ToString("F0");
-
-        if (goalCount <= 0)
-        {
-            youWin();
-        }
-    }*/
 
     public void updateAmmo()
     {
@@ -272,6 +274,7 @@ public class gameManager : MonoBehaviour
 
             try
             {
+                
                 slots[i].transform.GetChild(1).GetComponent<Image>().enabled = true;
                 slots[i].transform.GetChild(1).GetComponent<Image>().sprite = inventoryManager.instance.inventory[i].itemIcon;
                 slots[i].GetComponent<SlotBoss>().item = inventoryManager.instance.inventory[i];
@@ -309,23 +312,20 @@ public class gameManager : MonoBehaviour
     }
     #endregion Inventory
 
+
     private void getSavedAudioSettings()
     {
         float value;
-        Debug.Log("Audio Settings");
         foreach (AudioMixerGroup group in mixer.FindMatchingGroups(""))
         {
-            Debug.Log(group.name);
             value = PlayerPrefs.GetFloat(group.name);
-            Debug.Log(value);
             if (value == 0)
             {
                 mixer.SetFloat(group.name, -80);
             }
             else
             {
-                Debug.Log(mixer.SetFloat(group.name, Mathf.Log10(value) * 20));
-                Debug.Log(Mathf.Log10(value) * 20);
+                mixer.SetFloat(group.name, Mathf.Log10(value) * 20);
             }
         }
     }

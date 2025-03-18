@@ -256,7 +256,6 @@ GameObject:
   - component: {fileID: 1405979274743726800}
   - component: {fileID: 387298589365990422}
   - component: {fileID: 5941984117221710926}
-  - component: {fileID: 7613589616793478877}
   m_Layer: 7
   m_Name: Melee_droid
   m_TagString: Enemy
@@ -323,7 +322,9 @@ MonoBehaviour:
   roamDist: 5
   bodyFadeTime: 3
   fadeDuration: 2
+  isDead: 0
   floatingDamageTextPrefab: {fileID: 0}
+  floatingTextDelay: 0.5
 --- !u!195 &6884700982941092500
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -407,27 +408,6 @@ SphereCollider:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 5
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!135 &7613589616793478877
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1424812000805755106}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3

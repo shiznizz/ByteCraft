@@ -78,7 +78,6 @@ public class grappleGun : MonoBehaviour
     private void drawRope()
     {
         if (!joint) return;
-
         lr.SetPosition(0, gunTip.position);
         lr.SetPosition(1, grapplePoint);
     }
