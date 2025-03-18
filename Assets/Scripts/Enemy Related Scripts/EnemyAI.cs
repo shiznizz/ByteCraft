@@ -129,18 +129,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             return;
         }
 
-        if (isAlerted && !playerInRange) // specific to drone bot alerts
-        {
-            if (alertTimer < alertCooldown)
-            {
-                alertTimer += Time.deltaTime;
-            }
-            else if (alertTimer >= alertCooldown)
-            {
-                alertTimer = 0;
-                isAlerted = false;
-            }
-        }
+        
         if (type != enemyType.stationary)
         {
             float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
@@ -153,6 +142,20 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         }
 
         shootTimer += Time.deltaTime;
+        if (isAlerted && !playerInRange) // specific to drone bot alerts
+        {
+            if (alertTimer < alertCooldown)
+            {
+                alertTimer += Time.deltaTime;
+                target = gameManager.instance.player;
+                SeekTarget();
+            }
+            else if (alertTimer >= alertCooldown)
+            {
+                alertTimer = 0;
+                isAlerted = false;
+            }
+        }
 
         if (movement == movementType.seeking)
         {
