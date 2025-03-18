@@ -90,9 +90,8 @@ public class gameManager : MonoBehaviour
         instance = this;
 
         player = GameObject.FindWithTag("Player");
+        playerScript = player.GetComponent<playerController>();
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
-
-        
     }
 
     private void Start()
@@ -110,7 +109,9 @@ public class gameManager : MonoBehaviour
             if (menuActive == null)
                 switchMenu(menuPause);
             else if (!keepMenu)
+            {
                 stateUnpause();
+            }
             inventoryOpen = false;
         }
         if (Input.GetButtonDown("Inventory"))
@@ -169,9 +170,10 @@ public class gameManager : MonoBehaviour
     {
         if (menuActive == null)
         {
-            statePause();
+            Debug.Log(menuToOpen);           
             menuActive = menuToOpen;
             menuActive.SetActive(true);
+            statePause();
         }
         else if (closeMenu && menuActive == menuToOpen)
         {
@@ -184,14 +186,14 @@ public class gameManager : MonoBehaviour
             menuActive.SetActive(true);
         }
 
-        // update button navigation
-        menuButtons = menuActive.GetComponentsInChildren<Button>();
+        //// update button navigation
+        //menuButtons = menuActive.GetComponentsInChildren<Button>();
 
-        if (menuButtons.Length > 0)
-        {
-            selectedButtonIndex = 0;
-            HighlightButton(selectedButtonIndex);
-        }
+        //if (menuButtons.Length > 0)
+        //{
+        //    selectedButtonIndex = 0;
+        //    HighlightButton(selectedButtonIndex);
+        //}
     }
 
     public void youLose()
@@ -254,11 +256,11 @@ public class gameManager : MonoBehaviour
             menuButtons[selectedButtonIndex].onClick.Invoke();
         }
 
-        // escape - close menu / go back
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            stateUnpause();
-        }
+        //// escape - close menu / go back
+        //if (Input.GetKeyDown(KeyCode.Escape))
+        //{
+        //    stateUnpause();
+        //}
     }
 
     void HighlightButton(int index)

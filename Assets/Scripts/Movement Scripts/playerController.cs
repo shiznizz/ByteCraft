@@ -281,8 +281,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public void spawnPlayer()
     {
         controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
-
-        
         updatePlayerUI();
     }
     
