@@ -18,17 +18,6 @@ public class KillEnemyQuestStep : QuestStep
 
     public void Update()
     {
-        /*if (!enemyKilled)
-        {
-            enemyKilled = enemyScript.isDead;
-        } else
-        {
-            if (!isCompleted)
-            {
-                FinishQuestStep();
-                isCompleted = true;
-            }
-        }*/
 
         if (!isCompleted)
         {
