@@ -13,7 +13,7 @@ public class AlarmDrone : MonoBehaviour
     [SerializeField] public float speed;
     [SerializeField] public float detectionRange;
     [SerializeField] List<enemyAI> nearbyEnemies;
-    [SerializeField] SphereCollider coll;
+    //[SerializeField] SphereCollider coll;
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioClip alertClip;
     [SerializeField] private LayerMask playerLayer;
@@ -31,7 +31,7 @@ public class AlarmDrone : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         audioSource.volume = 0.3f;
         audioSource.enabled = false;
-        coll.radius = detectionRange;
+        //coll.radius = detectionRange;
         isAlerted = false;
     }
 
@@ -116,7 +116,7 @@ public class AlarmDrone : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             isAlerted = true;
-            coll.radius = detectionRange + 2;
+            //coll.radius = detectionRange + 2;
             DetectPlayer();
         }
     }
@@ -125,7 +125,7 @@ public class AlarmDrone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            coll.radius = detectionRange;
+            //coll.radius = detectionRange;
             isAlerted = false;
             audioSource.enabled = false;
             foreach (enemyAI enemy in nearbyEnemies)
