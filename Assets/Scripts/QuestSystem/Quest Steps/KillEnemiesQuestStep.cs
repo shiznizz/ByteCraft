@@ -3,7 +3,7 @@ using UnityEngine;
 public class KillEnemiesQuestStep : QuestStep
 {
     private int enemiesKilled = 0;
-    private int enemiesToKill = 5;
+    [SerializeField] public int enemiesToKill = 5;
 
     private void Start()
     {
