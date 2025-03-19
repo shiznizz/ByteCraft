@@ -466,7 +466,7 @@ public class BossFightManager : MonoBehaviour, IDamage
 
         // Stop any further boss actions after death
         //EndBossFight();
-
+        gameManager.instance.youWin();
         //StartCoroutine(FadeOutAndDestroy());
     }
 
