@@ -6,12 +6,14 @@ public class explosion : MonoBehaviour
     [Header("Explosion Properties")]
     [SerializeField] GameObject explosiveDevice;
     [SerializeField] GameObject explosiveContainer;
+    [SerializeField] SphereCollider sphereCollider;
     [SerializeField] Transform explosionCenter;
     [SerializeField] float explosionRadius;
     [SerializeField] int explosionDmg;
     [SerializeField] float explosionForce;
     [SerializeField] float explosionUpForce;
     [SerializeField] float detonationDelay;
+    public StatusEffects status;
     public bool defaultActiveState;
     public bool doesBombDestroy = true;
 
