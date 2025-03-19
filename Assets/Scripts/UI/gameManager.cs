@@ -404,7 +404,6 @@ public class gameManager : MonoBehaviour
     }
     #endregion Inventory
 
-
     private void getSavedAudioSettings()
     {
         float value;
