@@ -20,7 +20,7 @@ public class QuestPoint : MonoBehaviour
     private bool playerIsNear = false;
     private string questId;
     private QuestState currentQuestState;
-    private bool hasCompletedDialogue = false;
+    //private bool hasCompletedDialogue = false;
 
     private void Awake()
     {

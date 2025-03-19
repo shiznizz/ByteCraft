@@ -12,12 +12,20 @@ public class BreakableObject : MonoBehaviour, IDamage
     [SerializeField] string failedText;
 
     private Color originalColor;
+    private float originalObjectHP;
 
     void Start()
     {
         originalColor = wholeObject.GetComponent<Renderer>().material.color;
-    }
+        originalObjectHP = objectHP;
+        if (isMainObjective)
+        {
+            gameManager.instance.enemyHealthbar.SetActive(true);
+            gameManager.instance.enemyHPBar.color = Color.green;
+            gameManager.instance.enemyHPBar.fillAmount = (float)objectHP / originalObjectHP;
+        }
 
+    }
 
     public void takeDamage(int amount)
     {
@@ -27,11 +35,19 @@ public class BreakableObject : MonoBehaviour, IDamage
         {
             BreakObject();
             if (isMainObjective)
+            {
                 gameManager.instance.objectiveFailed(failedText);
+                gameManager.instance.enemyHPBar.color = Color.red;
+            }
         }
         else
         {
             StartCoroutine(colorFlash());
+        }
+
+        if (isMainObjective)
+        {
+            gameManager.instance.enemyHPBar.fillAmount = (float) objectHP / originalObjectHP;
         }
     }
 

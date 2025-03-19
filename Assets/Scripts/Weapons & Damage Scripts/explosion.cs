@@ -52,7 +52,7 @@ public class explosion : MonoBehaviour
                 if (doesBombDestroy)
                 {
                     if (explosiveContainer != null)
-                    Destroy(explosiveContainer, destroyDelay);
+                        Destroy(explosiveContainer, destroyDelay);
                     Destroy(explosiveDevice, destroyDelay);
                 }
                 else

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BossSummon : MonoBehaviour
 {
-    public GameObject enemyPrefab; // The enemy prefab to spawn
+    public GameObject[] enemyPrefabs; // The enemy prefab to spawn
     public GameObject[] spawnPoints; // Array to hold the boss enemy spawn points
     public int maxEnemies = 1; // How many enemies to spawn at each location (set to 1 here, but you can adjust)
     public float summonInterval = 5f; // Time in seconds between summons
@@ -37,7 +37,19 @@ public class BossSummon : MonoBehaviour
 
                 for (int i = 0; i < maxEnemies; i++)
                 {
-                    GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);                    
+                    // Select a random enemy prefab from the array
+                    if (enemyPrefabs.Length > 0)
+                    {
+                        int randomIndex = Random.Range(0, enemyPrefabs.Length);
+                        GameObject selectedEnemyPrefab = enemyPrefabs[randomIndex];
+
+                        // Instantiate the selected enemy at the spawn position
+                        Instantiate(selectedEnemyPrefab, spawnPosition, Quaternion.identity);
+                    }
+                    else
+                    {
+                        Debug.LogError("No enemy prefabs assigned in BossSummon script!");
+                    }
                 }
             }
         }

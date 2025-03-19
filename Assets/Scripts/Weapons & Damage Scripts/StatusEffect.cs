@@ -19,7 +19,7 @@ public class StatusEffects : MonoBehaviour
     public float tickInterval = 0.2f;
 
     // keep track of how much time has passed
-    private float timer = 0f;
+    public float timer = 0f;
 
     #region On Fire Settings
 

@@ -158,6 +158,13 @@ public class damage : MonoBehaviour
             return;
         }
 
+        // Check if the AudioSource is disabled
+        if (!audioSource.enabled)
+        {
+            Debug.LogWarning("AudioSource is disabled on " + gameObject.name);
+            audioSource.enabled = true;  // Enable the AudioSource before playing
+        }
+
         if (damageHitSounds.Length == 0 || damageHitSounds[0] == null)
         {
             Debug.LogWarning("No AudioClips assigned to damageHitSounds on " + gameObject.name);
@@ -166,7 +173,7 @@ public class damage : MonoBehaviour
 
         // Play a random sound from the damageHitSounds array
         AudioClip soundToPlay = damageHitSounds[Random.Range(0, damageHitSounds.Length)];
-        //Debug.Log("Playing sound: " + soundToPlay.name);
+        // Debug.Log("Playing sound: " + soundToPlay.name);
         audioSource.PlayOneShot(soundToPlay);
     }
 

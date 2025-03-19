@@ -29,7 +29,7 @@ public class gameManager : MonoBehaviour
     [Header("UI Elements to Toggle Visibility")]
     [SerializeField] GameObject ammoHUD;
     [SerializeField] GameObject jetpackHUD;
-    [SerializeField] GameObject enemyHealthbar;
+    [SerializeField] public GameObject enemyHealthbar;
     [SerializeField] GameObject overShieldHUD;
     public Image playerHPBar;
     public Image enemyHPBar;
@@ -90,13 +90,18 @@ public class gameManager : MonoBehaviour
         instance = this;
 
         player = GameObject.FindWithTag("Player");
+        playerScript = player.GetComponent<playerController>();
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
-
-        
     }
 
     private void Start()
     {
+        // Assign a default value to menuActive if it's not already assigned
+        if (menuActive == null)
+        {
+            menuActive = menuPause;  // Or any other menu GameObject you want to set as the default
+        }
+
         updateInventory();
         getSavedAudioSettings();
     }
@@ -110,7 +115,9 @@ public class gameManager : MonoBehaviour
             if (menuActive == null)
                 switchMenu(menuPause);
             else if (!keepMenu)
+            {
                 stateUnpause();
+            }
             inventoryOpen = false;
         }
         if (Input.GetButtonDown("Inventory"))
@@ -124,6 +131,7 @@ public class gameManager : MonoBehaviour
             HandleMenuNavigation();
         }
 
+        CheckLowHealth();
     }
     #region Menus
 
@@ -169,9 +177,10 @@ public class gameManager : MonoBehaviour
     {
         if (menuActive == null)
         {
-            statePause();
+            Debug.Log(menuToOpen);           
             menuActive = menuToOpen;
             menuActive.SetActive(true);
+            statePause();
         }
         else if (closeMenu && menuActive == menuToOpen)
         {
@@ -254,11 +263,6 @@ public class gameManager : MonoBehaviour
             menuButtons[selectedButtonIndex].onClick.Invoke();
         }
 
-        // escape - close menu / go back
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            stateUnpause();
-        }
     }
 
     void HighlightButton(int index)
@@ -266,6 +270,14 @@ public class gameManager : MonoBehaviour
         if (menuButtons == null || index < 0 || index >= menuButtons.Length) return;
 
         EventSystem.current.SetSelectedGameObject(menuButtons[index].gameObject);
+        ColorBlock cb = menuButtons[index].colors;
+        cb.normalColor = Color.white;
+        cb.highlightedColor = Color.yellow;
+        cb.selectedColor = Color.yellow;
+        cb.pressedColor = Color.red;
+        cb.colorMultiplier = 1.2f;
+
+        menuButtons[index].colors = cb;
     }
     #endregion
 
