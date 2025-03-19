@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class grappleGun : MonoBehaviour
 {
+    private playerController pc;
+
     [Header("References")]
     public LineRenderer lr;
     public Transform gunTip, cam, player;
@@ -39,6 +41,11 @@ public class grappleGun : MonoBehaviour
     [SerializeField] KeyCode grappleKey;
     [SerializeField] KeyCode jumpKey;
 
+    private void Start()
+    {
+        pc = GetComponent<playerController>();
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(grappleKey) && !joint) startGrapple();
@@ -55,6 +62,7 @@ public class grappleGun : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(cam.position, cam.forward, out hit, maxGrappleDistance, maskGrappable))
         {
+            pc.isGrappling = true;
             grapplePoint = hit.point;
             // adds a springjoint to the player
             joint = player.AddComponent<SpringJoint>();
@@ -85,7 +93,7 @@ public class grappleGun : MonoBehaviour
     private void stopGrapple()
     {
         lr.positionCount = 0;
-
+        pc.isGrappling = false;
         Destroy(joint);
     }
 }
