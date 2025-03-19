@@ -29,7 +29,7 @@ public class gameManager : MonoBehaviour
     [Header("UI Elements to Toggle Visibility")]
     [SerializeField] GameObject ammoHUD;
     [SerializeField] GameObject jetpackHUD;
-    [SerializeField] GameObject enemyHealthbar;
+    [SerializeField] public GameObject enemyHealthbar;
     [SerializeField] GameObject overShieldHUD;
     public Image playerHPBar;
     public Image enemyHPBar;
