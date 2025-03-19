@@ -107,7 +107,7 @@ public class StatusEffects : MonoBehaviour
         EndEffect();
     }
 
-    #region On Fire Effect Methods
+    #region On Fire Methods
 
     private void StartOnFire()
     {
@@ -136,13 +136,13 @@ public class StatusEffects : MonoBehaviour
     // initializes acid effect by applying a dmg multiplier to target
     private void StartAcidEffect()
     {
-        var ps = GetComponent<playerStatManager>();
-        if (ps != null)
+        //var ps = GetComponent<playerStatManager>();
+        if (playerStatManager.instance != null)
         {
             // store original dmg multiplier 
-            originalDamageMultiplier = ps.damageMultiplier;
+            originalDamageMultiplier = playerStatManager.instance.damageMultiplier;
             // apply acid multiplier
-            ps.damageMultiplier = acidDamageMultiplier;
+            playerStatManager.instance.damageMultiplier = acidDamageMultiplier;
             multiplierApplied = true;
         }
     }
@@ -162,10 +162,10 @@ public class StatusEffects : MonoBehaviour
         // if multiplier was successful, restore original val
         if (multiplierApplied)
         {
-            var ps = GetComponent<playerStatManager>();
-            if (ps != null)
+            //var ps = GetComponent<playerStatManager>();
+            if (playerStatManager.instance != null)
             {
-                ps.damageMultiplier = originalDamageMultiplier;
+                playerStatManager.instance.damageMultiplier = originalDamageMultiplier;
             }
             multiplierApplied = false;
         }
@@ -239,9 +239,33 @@ public class StatusEffects : MonoBehaviour
         Destroy(this);
     }
 
-    // Update is called once per frame
-    void Update()
+    public static void ApplyStatusEffect(GameObject target, StatusEffects orig)
     {
+        // check for existing effects to avoid stacking.
+        if (target.GetComponent<StatusEffects>() == null)
+        {
+            StatusEffects effect = target.AddComponent<StatusEffects>();
 
+            // copy over the general settings.
+            effect.effectType = orig.effectType;
+            effect.duration = orig.duration;
+            effect.tickInterval = orig.tickInterval;
+
+            // copy effect specific settings.
+            switch (orig.effectType)
+            {
+                case StatusEffectType.OnFire:
+                    effect.onFireDamagePerTick = orig.onFireDamagePerTick;
+                    effect.fireEffectPrefab = orig.fireEffectPrefab;
+                    break;
+                case StatusEffectType.Acid:
+                    effect.acidDamagePerTick = orig.acidDamagePerTick;
+                    effect.acidDamageMultiplier = orig.acidDamageMultiplier;
+                    break;
+                case StatusEffectType.Stun:
+                    effect.stunEffectPrefab = orig.stunEffectPrefab;
+                    break;
+            }
+        }
     }
 }
