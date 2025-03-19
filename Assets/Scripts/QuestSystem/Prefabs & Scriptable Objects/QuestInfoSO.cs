@@ -19,10 +19,11 @@ public class QuestInfoSO : ScriptableObject
     //public int experienceReward;
     public int upgradeCurrencyReward;
 
-    private void OnValidate() // ensure the id is always the name of the Scriptable Object
+    private void Awake() // ensure the id is always the name of the Scriptable Object
     {
-#if UNITY_EDITOR
+
         id = this.name;
+#if UNITY_EDITOR
         UnityEditor.EditorUtility.SetDirty(this);
 #endif 
     }
