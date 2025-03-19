@@ -2,15 +2,25 @@ using UnityEngine;
 using System.Collections.Generic;
 
 
+public enum HazardType
+{
+    Fire,
+    Acid,
+    Stun
+}
+
 public class HazardDamage : MonoBehaviour
 {
     [Header("Immediate Damage Settings")]
     public int immediateDamage = 5;
 
     [Header("DOT Settings")]
-    public int damagePerTick = 2;
+    public int dotDamagePerTick = 2;
 
-    public float damageInterval = 0.5f;
+    public float dotInterval = 0.5f;
+
+    [Header("Lingering Status Effect Settings")]
+    public StatusEffects statusEffectBlueprint;
 
     // track how much time has passed for each target in the hazard.
     private Dictionary<Collider, float> targetTimers = new Dictionary<Collider, float>();
@@ -21,14 +31,23 @@ public class HazardDamage : MonoBehaviour
         // check if the collider belongs to a valid target (using tags "Player" or "Enemy").
         if (other.CompareTag("Player") || other.CompareTag("Enemy"))
         {
-            // apply immediate damage if the target has an IDamage component.
-            IDamage damageable = other.GetComponent<IDamage>();
-            if (damageable != null)
+            // apply immediate damage if configured.
+            if (immediateDamage > 0)
             {
-                damageable.takeDamage(immediateDamage);
+                IDamage damageable = other.GetComponent<IDamage>();
+                if (damageable != null)
+                {
+                    damageable.takeDamage(immediateDamage);
+                }
             }
 
-            // initialize a damage timer for this target.
+            // apply a lingering status effect using the blueprint if one is provided.
+            if (statusEffectBlueprint != null)
+            {
+                StatusEffects.ApplyStatusEffect(other.gameObject, statusEffectBlueprint);
+            }
+
+            // initialize a DOT timer for this target.
             if (!targetTimers.ContainsKey(other))
             {
                 targetTimers.Add(other, 0f);
@@ -41,22 +60,22 @@ public class HazardDamage : MonoBehaviour
     {
         if (other.CompareTag("Player") || other.CompareTag("Enemy"))
         {
-            // update the timer for this target.
             if (targetTimers.ContainsKey(other))
             {
-                targetTimers[other] += Time.deltaTime;
+                // Increment the DOT timer for this target.
+                float timer = targetTimers[other] + Time.deltaTime;
 
-                // once the timer reaches the defined damage interval, apply DOT damage.
-                if (targetTimers[other] >= damageInterval)
+                // Once the timer exceeds the interval, apply DOT damage and reset the timer.
+                if (timer >= dotInterval)
                 {
                     IDamage damageable = other.GetComponent<IDamage>();
-                    if (damageable != null)
+                    if (damageable != null && dotDamagePerTick > 0)
                     {
-                        damageable.takeDamage(damagePerTick);
+                        damageable.takeDamage(dotDamagePerTick);
                     }
-                    // reset the timer for this target.
-                    targetTimers[other] = 0f;
+                    timer = 0f;
                 }
+                targetTimers[other] = timer;
             }
         }
     }

@@ -328,7 +328,7 @@ public class gameManager : MonoBehaviour
 
         if (playerStatManager.instance.HPMax <= 0) return;
 
-        float hpRatio = (float)playerStatManager.instance.playerHP / playerStatManager.instance.playerHPMax;
+        float hpRatio = (float)playerStatManager.instance.HP / playerStatManager.instance.HPMax;
 
         if (hpRatio <= lowHealthThreshold)
         {
