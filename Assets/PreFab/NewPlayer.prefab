@@ -588,6 +588,7 @@ Transform:
   - {fileID: 5929054030745968534}
   - {fileID: 4993188158193299260}
   - {fileID: 5798197359762240505}
+  - {fileID: 5435498518023769496}
   m_Father: {fileID: 763200605003819836}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &525425887198857423
@@ -796,6 +797,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &3741235011494148993
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5435498518023769496}
+  m_Layer: 0
+  m_Name: carry
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5435498518023769496
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3741235011494148993}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3146933043063798755}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6683225297028311546
 GameObject:
   m_ObjectHideFlags: 0
@@ -821,6 +853,7 @@ GameObject:
   - component: {fileID: 1056466831797773187}
   - component: {fileID: 4434567090822296454}
   - component: {fileID: 329725358130494944}
+  - component: {fileID: 7509590603439080105}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -938,7 +971,7 @@ MonoBehaviour:
   grappleLift: 0
   grappleSpeedMultiplier: 0
   grappleSpeedMin: 0
-  grappleSpeedMax: 0
+  grappleSpeedMax: 15
   grappleCooldown: 0
   grappleShootPos: {fileID: 0}
   grappleRope: {fileID: 0}
@@ -1350,6 +1383,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7509590603439080105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6683225297028311546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcacbb952acfef04e9e3561b4f80b918, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carryPoint: {fileID: 5435498518023769496}
+  pickupRange: 3
 --- !u!1 &7438968554801749307
 GameObject:
   m_ObjectHideFlags: 0

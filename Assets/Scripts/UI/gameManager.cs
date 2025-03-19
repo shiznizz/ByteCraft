@@ -96,12 +96,6 @@ public class gameManager : MonoBehaviour
 
     private void Start()
     {
-        // Assign a default value to menuActive if it's not already assigned
-        if (menuActive == null)
-        {
-            menuActive = menuPause;  // Or any other menu GameObject you want to set as the default
-        }
-
         updateInventory();
         getSavedAudioSettings();
     }
@@ -403,7 +397,6 @@ public class gameManager : MonoBehaviour
         displaySlot.SetActive(false);
     }
     #endregion Inventory
-
 
     private void getSavedAudioSettings()
     {

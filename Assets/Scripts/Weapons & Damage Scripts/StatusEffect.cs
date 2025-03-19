@@ -14,17 +14,17 @@ public class StatusEffects : MonoBehaviour
     [Header("General Settings")]
     public StatusEffectType effectType = StatusEffectType.OnFire;
 
-    public float duration = 3f;
-
-    public float tickInterval = 0.2f;
+    float effectDuration;
+    int effectDamage;
+    float tickInterval;
 
     // keep track of how much time has passed
-    public float timer = 0f;
+    public float timer;
 
     #region On Fire Settings
 
     [Header("On Fire Settings")]
-    public int onFireDamagePerTick = 5;
+    //public int onFireDamagePerTick = 5;
 
     public ParticleSystem fireEffectPrefab;
 
@@ -34,7 +34,7 @@ public class StatusEffects : MonoBehaviour
 
     #region Acid Settings
     [Header("Acid Settings")]
-    public int acidDamagePerTick = 2;
+    //public int acidDamagePerTick = 2;
 
     public float acidDamageMultiplier = 2f;
 
@@ -57,6 +57,14 @@ public class StatusEffects : MonoBehaviour
     private enemyAI stunnedEnemyAI;
 
     #endregion Stun Settings
+
+    public void InitializeStatus(int statusDamage, float interval, float duration, StatusEffectType statusEffect)
+    {
+        effectDuration = duration;
+        tickInterval = interval;
+        effectDamage = statusDamage;
+        effectType = statusEffect;
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -83,7 +91,7 @@ public class StatusEffects : MonoBehaviour
     private IEnumerator EffectRoutine()
     {
         // continue applying effect logic until total duration is reached
-        while (timer < duration)
+        while (timer < effectDuration)
         {
             switch (effectType)
             {
@@ -125,7 +133,7 @@ public class StatusEffects : MonoBehaviour
         IDamage damageable = GetComponent<IDamage>();
         if (damageable != null)
         {
-            damageable.takeDamage(onFireDamagePerTick);
+            damageable.takeDamage(effectDamage);
         }
     }
 
@@ -153,7 +161,7 @@ public class StatusEffects : MonoBehaviour
         IDamage damageable = GetComponent<IDamage>();
         if (damageable != null)
         {
-            damageable.takeDamage(acidDamagePerTick);
+            damageable.takeDamage(effectDamage);
         }
     }
 
@@ -248,18 +256,18 @@ public class StatusEffects : MonoBehaviour
 
             // copy over the general settings.
             effect.effectType = orig.effectType;
-            effect.duration = orig.duration;
+            effect.effectDuration = orig.effectDuration;
             effect.tickInterval = orig.tickInterval;
 
             // copy effect specific settings.
             switch (orig.effectType)
             {
                 case StatusEffectType.OnFire:
-                    effect.onFireDamagePerTick = orig.onFireDamagePerTick;
+                    effect.effectDamage = orig.effectDamage;
                     effect.fireEffectPrefab = orig.fireEffectPrefab;
                     break;
                 case StatusEffectType.Acid:
-                    effect.acidDamagePerTick = orig.acidDamagePerTick;
+                    effect.effectDamage = orig.effectDamage;
                     effect.acidDamageMultiplier = orig.acidDamageMultiplier;
                     break;
                 case StatusEffectType.Stun:
