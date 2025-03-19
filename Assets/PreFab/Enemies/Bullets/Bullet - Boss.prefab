@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 5324130936506761322}
   - component: {fileID: 387160077820546038}
   - component: {fileID: 5503909726278647114}
-  - component: {fileID: 5347964345578482434}
+  - component: {fileID: 8116086664541568238}
   m_Layer: 8
-  m_Name: Bullet - Sniper
+  m_Name: Bullet - Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 8404054753871229023}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.25, y: 2, z: 16}
+  m_LocalPosition: {x: 2.25, y: 2, z: 12.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -50,17 +50,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   rb: {fileID: 387160077820546038}
-  damageAmount: 20
-  speed: 50
-  destroyTime: 10
+  damageAmount: 5
+  speed: 10
+  destroyTime: 3
   playerProjectile: 0
   damageHitSounds:
   - {fileID: 8300000, guid: de81904d8e377d14cbcc11f1628d417f, type: 3}
   targetingDistance: 0
-  turnSpeed: 0
+  turnSpeed: 3
   ignoreLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 384
 --- !u!135 &5324130936506761322
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -154,7 +154,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 1
+  m_Time: 0.3
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -216,7 +216,7 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
---- !u!82 &5347964345578482434
+--- !u!82 &8116086664541568238
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
