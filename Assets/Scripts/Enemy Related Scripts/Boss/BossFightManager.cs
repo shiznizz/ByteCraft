@@ -97,6 +97,18 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     void StartPhaseOne()
     {
+        // Ensure health bar is visible from the start of Phase One
+        if (hpBar != null)
+        {
+            hpBar.gameObject.SetActive(true);  // Make sure the health bar is visible at all times
+        }
+
+        // Set the health bar to full when the phase starts
+        if (hpFillBar != null)
+        {
+            hpFillBar.fillAmount = 1f;
+        }
+
         // Prevent phase one voice line from playing multiple times
         if (!hasPlayedPhaseOneVoiceLine)
         {
@@ -201,7 +213,7 @@ public class BossFightManager : MonoBehaviour, IDamage
     {
         if (hpFillBar != null)
         {
-            hpFillBar.fillAmount = (float)bossHP / 200f; // Assuming 200 is the max HP
+            hpFillBar.fillAmount = (float)bossHP / 200f;
         }
     }
 
@@ -368,20 +380,19 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     IEnumerator bossShowHpBar()
     {
-        hpBar.gameObject.SetActive(true);  // Show the HP bar when damage is taken
+        if (hpBar != null)
+        {
+            hpBar.gameObject.SetActive(true);  // Show the health bar
 
-        // Wait only for a moment and ensure the bar stays visible long enough
+            // Optional: If you want to hide the health bar when the boss dies, you can check the boss's HP here
+            if (bossHP <= 0)
+            {
+                hpBar.gameObject.SetActive(false);  // Hide if the boss dies
+            }
+        }
+
+        // Wait for a moment to keep the bar visible long enough
         yield return new WaitForSecondsRealtime(5f);
-
-        // Keep the health bar visible if the boss is still alive
-        if (bossHP > 0)
-        {
-            hpBar.gameObject.SetActive(true);  // Keep the health bar visible
-        }
-        else
-        {
-            hpBar.gameObject.SetActive(false);  // Hide if the boss dies
-        }
     }
 
     public void takeDamage(int damage)
