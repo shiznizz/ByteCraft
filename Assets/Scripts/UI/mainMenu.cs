@@ -93,5 +93,6 @@ public class mainMenu : MonoBehaviour
     {
         SceneManager.LoadScene(7);
         newGame();
+        gameManager.instance.stateUnpause();
     }
 }

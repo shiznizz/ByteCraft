@@ -322,10 +322,11 @@ public class gameManager : MonoBehaviour
 
         if (playerStatManager.instance.HPMax <= 0) return;
 
-        float hpRatio = (float)playerStatManager.instance.playerHP / playerStatManager.instance.playerHPMax;
+        float hpRatio = (float)playerStatManager.instance.HP / playerStatManager.instance.HPMax;
 
         if (hpRatio <= lowHealthThreshold)
         {
+            lowHealthIndicator.enabled = true;
             float alpha = baseAlpha + Mathf.Sin(Time.time * heartbeatSpeed) * heartbeatMagnitude;
             //alpha = Mathf.Clamp01(alpha);
 
@@ -335,6 +336,7 @@ public class gameManager : MonoBehaviour
         }
         else
         {
+            lowHealthIndicator.enabled = false;
             Color c = lowHealthIndicator.color;
             c.a = Mathf.MoveTowards(c.a, 0f, Time.deltaTime);
             lowHealthIndicator.color = c;

@@ -17,6 +17,7 @@ public class BossFightManager : MonoBehaviour, IDamage
     public Renderer bossRenderer; // For flashing effect when hit
 
     [SerializeField] Image hpFillBar;
+    [SerializeField] Image invulnerableHpFillBar;
     [SerializeField] Image hpBar;
 
     [Header("Audio Clips")]
@@ -104,9 +105,9 @@ public class BossFightManager : MonoBehaviour, IDamage
         }
 
         // Set the health bar to full when the phase starts
-        if (hpFillBar != null)
+        if (invulnerableHpFillBar != null)
         {
-            hpFillBar.fillAmount = 1f;
+            invulnerableHpFillBar.fillAmount = 1f;
         }
 
         // Prevent phase one voice line from playing multiple times
@@ -121,6 +122,12 @@ public class BossFightManager : MonoBehaviour, IDamage
             if (bossSummon != null) bossSummon.enabled = true;
             if (phaseTimer != null) phaseTimer.enabled = true;
             if (bossInvulnerability != null) bossInvulnerability.isInvulnerable = true; // Make the boss invulnerable during Phase One
+        }
+
+        // Start the shield effect for Phase One
+        if (shieldEffect != null)
+        {
+            shieldEffect.SetActive(true);  // Turn on shield effect for Phase One
         }
 
         //Starts the EndPhaseOne coroutine to disable the summoning after 3 minutes
@@ -152,6 +159,12 @@ public class BossFightManager : MonoBehaviour, IDamage
 
         // Disable invulnerability and prepare for Phase Two
         if (bossInvulnerability) bossInvulnerability.EndInvulnerability();
+
+        // Remove the shield effect at the end of Phase One
+        if (shieldEffect != null)
+        {
+            shieldEffect.SetActive(false);  // Turn off the shield effect after Phase One ends
+        }
 
         // Log Phase One end (for debugging)
         //Debug.Log("Phase One ended, transitioning to Phase Two.");
@@ -211,9 +224,32 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     void updateEnemyUI()
     {
-        if (hpFillBar != null)
+        //if (hpFillBar != null)
+        //{
+        //    hpFillBar.fillAmount = (float)bossHP / 200f;
+        //}
+
+        // Update health bar fill based on current boss HP (for the regular health bar)
+        if (hpFillBar != null && !isShieldActive)
         {
+            // Normal health bar
             hpFillBar.fillAmount = (float)bossHP / 200f;
+        }
+
+        // Update invulnerable health bar when shield is active
+        if (invulnerableHpFillBar != null)
+        {
+            // Show invulnerable health bar when shield is active
+            if (isShieldActive)  // If shield is active
+            {
+                invulnerableHpFillBar.gameObject.SetActive(true);  // Ensure the invulnerable bar is visible
+                invulnerableHpFillBar.fillAmount = (float)bossHP / 200f;  // Sync the blue bar with current health
+                invulnerableHpFillBar.color = Color.blue;  // Make it blue to indicate invulnerability
+            }
+            else
+            {
+                invulnerableHpFillBar.gameObject.SetActive(false);  // Hide when not invulnerable
+            }
         }
     }
 
@@ -319,14 +355,25 @@ public class BossFightManager : MonoBehaviour, IDamage
     void ActivateEnergyShield()
     {
         //Debug.Log("Boss activates energy shield.");
-        if (!isShieldActive)
+        if (!isShieldActive)  // Check if shield is not already active
         {
-            isShieldActive = true;
-            bossInvulnerability.isInvulnerable = true; // Make the boss invulnerable due to shield
+            isShieldActive = true;  // Mark shield as active
+            bossInvulnerability.isInvulnerable = true;  // Make boss invulnerable
+
+            // Update the invulnerable health bar to show remaining health (in blue)
+            if (invulnerableHpFillBar != null)
+            {
+                invulnerableHpFillBar.gameObject.SetActive(true);  // Ensure the invulnerable bar is visible
+                invulnerableHpFillBar.fillAmount = (float)bossHP / 200f;  // Sync the health with the regular health bar
+                invulnerableHpFillBar.color = Color.blue;  // Set color to blue
+            }
 
             if (shieldEffect != null)
-                shieldEffect.SetActive(true); // Enable shield effect
+            {
+                shieldEffect.SetActive(true);  // Turn on shield effect
+            }
 
+            // Start the shield duration timer
             StartCoroutine(ShieldDuration());
         }
     }
@@ -339,6 +386,12 @@ public class BossFightManager : MonoBehaviour, IDamage
 
         if (shieldEffect != null)
             shieldEffect.SetActive(false); // Disable shield effect
+
+        // After shield is removed, hide the invulnerable HP bar and switch back to regular health bar
+        if (invulnerableHpFillBar != null)
+        {
+            invulnerableHpFillBar.gameObject.SetActive(false);  // Hide the invulnerable health bar when shield is no longer active
+        }
 
         //Debug.Log("Boss shield deactivated.");
     }
@@ -466,7 +519,7 @@ public class BossFightManager : MonoBehaviour, IDamage
 
         // Stop any further boss actions after death
         //EndBossFight();
-
+        gameManager.instance.youWin();
         //StartCoroutine(FadeOutAndDestroy());
     }
 
