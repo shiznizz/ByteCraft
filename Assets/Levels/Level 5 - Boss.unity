@@ -13204,6 +13204,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1597086748}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!224 &1614070501 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1868746056506643152, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 1627505581}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1627505581
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13302,7 +13307,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1868746056506643152, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1976165144}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
 --- !u!1 &1666724253
@@ -13939,6 +13947,81 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &1976165143
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1976165144}
+  - component: {fileID: 1976165146}
+  - component: {fileID: 1976165145}
+  m_Layer: 5
+  m_Name: Invulnerable HP Bar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1976165144
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1976165143}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.985, y: 0.8, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1614070501}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 750, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1976165145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1976165143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0.5340066, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: db242a316cfbcf8459628c9bc21ef647, type: 3}
+  m_Type: 3
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 0
+  m_FillAmount: 0.56
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &1976165146
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1976165143}
+  m_CullTransparentMesh: 1
 --- !u!4 &1992905621 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3635251353404866446, guid: 1d4d10d4b5db1eb40a47729d04e7b5c4, type: 3}
@@ -16593,7 +16676,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 384
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -17605,6 +17688,7 @@ MonoBehaviour:
   anim: {fileID: 6420263321762916147}
   bossRenderer: {fileID: 9067546439961135959}
   hpFillBar: {fileID: 1845156544}
+  invulnerableHpFillBar: {fileID: 1976165145}
   hpBar: {fileID: 969298943}
   bossVoiceLines:
   - {fileID: 8300000, guid: fa98dedda508de14a9ac165554cc1310, type: 3}
@@ -17638,10 +17722,10 @@ MonoBehaviour:
   basicAttackRange: 5
   basicAttackDamage: 5
   attackCooldown: 2
-  testSummonEnemies: 1
+  testSummonEnemies: 0
   testActivateEnergyShield: 1
-  testHeavyAOEAttack: 1
-  testLaunchTrackingProjectiles: 1
+  testHeavyAOEAttack: 0
+  testLaunchTrackingProjectiles: 0
 --- !u!4 &3928176889445309726
 Transform:
   m_ObjectHideFlags: 0
@@ -18034,7 +18118,7 @@ GameObject:
   - component: {fileID: 5493838794067886008}
   - component: {fileID: 9067546439961135959}
   - component: {fileID: 2833284834013015787}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BOSS Heavy_droid
   m_TagString: Boss
   m_Icon: {fileID: 0}
