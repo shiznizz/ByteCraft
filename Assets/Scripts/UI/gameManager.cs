@@ -171,7 +171,7 @@ public class gameManager : MonoBehaviour
     {
         if (menuActive == null)
         {
-            Debug.Log(menuToOpen);           
+            //Debug.Log(menuToOpen);           
             menuActive = menuToOpen;
             menuActive.SetActive(true);
             statePause();

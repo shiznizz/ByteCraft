@@ -131,7 +131,6 @@ public class QuestManager : MonoBehaviour
 
     private void ClaimRewards(Quest quest)
     {
-        // TODO - Add logic for claiming rewards
         playerStatManager.instance.IncrementUpgradeCurrency(quest.info.upgradeCurrencyReward);
     }
 
@@ -145,7 +144,8 @@ public class QuestManager : MonoBehaviour
     private Dictionary<string, Quest> CreateQuestMap()
     {
         // loads all quest info SO under Assets/Resources/Quests folder
-        QuestInfoSO[] allQuests = allQuestsTwo;//Resources.LoadAll<QuestInfoSO>("Quests");
+        //QuestInfoSO[] allQuests = allQuestsTwo;
+        QuestInfoSO[] allQuests = Resources.LoadAll<QuestInfoSO>("Quests");
 
         Dictionary<string, Quest> idToQuestMap = new Dictionary<string, Quest>();
 
