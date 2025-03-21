@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4348363964938428177}
   - component: {fileID: 6202919952506323470}
   - component: {fileID: 7825754244131130256}
+  - component: {fileID: 4062989492947790210}
   m_Layer: 0
   m_Name: Shield Loot
   m_TagString: Untagged
@@ -104,3 +105,24 @@ MonoBehaviour:
   amount: 20
   lootItem: {fileID: 11400000, guid: bc8650c89273dd8469ae5ae40740389d, type: 2}
   gunPickupSound: {fileID: 8300000, guid: 4994a8f4deae17342843b14d6c01c913, type: 3}
+--- !u!135 &4062989492947790210
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8534982807189741304}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1
+  m_Center: {x: 0, y: 0.6176894, z: -0.00000013411045}

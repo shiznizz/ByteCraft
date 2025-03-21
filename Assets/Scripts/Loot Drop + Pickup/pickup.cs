@@ -41,16 +41,7 @@ public class pickup : MonoBehaviour
                         AddAmmo();
                         break;
                     case pickup.LootType.Upgrade:
-                        if (lootItem.upgradeType == upgradeType.Armor)
-                        {
-                            playerStatManager.instance.shield += lootItem.restoreAmt;
-                        } else if (lootItem.upgradeType == upgradeType.Damage)
-                        {
-                            playerStatManager.instance.attackDamage += lootItem.restoreAmt;
-                        } else if (lootItem.upgradeType == upgradeType.Sprint)
-                        {
-                            playerStatManager.instance.sprintSpeed += lootItem.restoreAmt;
-                        }
+                        HandleUpgrade();
                         break;
                 }
                 Destroy(this.gameObject); // remove loot from scene
@@ -94,7 +85,8 @@ public class pickup : MonoBehaviour
     void AddShield()
     {
         amount = lootItem.restoreAmt;
-        Debug.Log($"Current shield amt: {playerStatManager.instance.shield}, incoming shield amt: {amount}, shield max: {playerStatManager.instance.shieldMax}");
+        //Debug.Log($"Current shield amt: {playerStatManager.instance.shield}, incoming shield amt: {amount}, shield max: {playerStatManager.instance.shieldMax}");
+        
         // if the current shield amt is equal to the max shield amt, return
         if (playerStatManager.instance.shield == playerStatManager.instance.shieldMax) return;
 
@@ -110,5 +102,21 @@ public class pickup : MonoBehaviour
             playerStatManager.instance.shield += amount;
         }
 
+    }
+
+    void HandleUpgrade()
+    {
+        if (lootItem.upgradeType == upgradeType.Armor)
+        {
+            playerStatManager.instance.shield += lootItem.restoreAmt;
+        }
+        else if (lootItem.upgradeType == upgradeType.Damage)
+        {
+            playerStatManager.instance.attackDamage += lootItem.restoreAmt;
+        }
+        else if (lootItem.upgradeType == upgradeType.Sprint)
+        {
+            playerStatManager.instance.sprintSpeed += lootItem.restoreAmt;
+        }
     }
 }

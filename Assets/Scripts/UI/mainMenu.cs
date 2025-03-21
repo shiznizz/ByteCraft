@@ -10,6 +10,7 @@ public class mainMenu : MonoBehaviour
     private AudioSource audioSource;
 
     public GameObject optionsPanel;
+    [SerializeField] public GameObject questManager;
 
     private void Start()
     {
@@ -24,6 +25,7 @@ public class mainMenu : MonoBehaviour
 
     public void newGame()
     {
+        ResetQuestProgress();
         dataManager.instance.NewGame();
     }
 
@@ -94,5 +96,19 @@ public class mainMenu : MonoBehaviour
         SceneManager.LoadScene(7);
         newGame();
         gameManager.instance.stateUnpause();
+    }
+    public void ResetQuestProgress()
+    {
+        QuestInfoSO[] allQuests = Resources.LoadAll<QuestInfoSO>("Quests");
+        foreach (QuestInfoSO questInfo in allQuests)
+        {
+            if (PlayerPrefs.HasKey(questInfo.id))
+            {
+                PlayerPrefs.DeleteKey(questInfo.id);
+            }
+        }
+
+        PlayerPrefs.Save();
+        Debug.Log("Quest Progress Reset.");
     }
 }

@@ -13,7 +13,7 @@ public class QuestManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI questUpdatePopupText;
 
     [SerializeField] private QuestLogScrollingList questLogScrollingList;
-    public QuestInfoSO[] allQuestsTwo;
+    public QuestInfoSO[] allQuests;
 
     private void Awake()
     {
@@ -145,7 +145,7 @@ public class QuestManager : MonoBehaviour
     {
         // loads all quest info SO under Assets/Resources/Quests folder
         //QuestInfoSO[] allQuests = allQuestsTwo;
-        QuestInfoSO[] allQuests = Resources.LoadAll<QuestInfoSO>("Quests");
+        allQuests = Resources.LoadAll<QuestInfoSO>("Quests");
 
         Dictionary<string, Quest> idToQuestMap = new Dictionary<string, Quest>();
 
@@ -243,4 +243,18 @@ public class QuestManager : MonoBehaviour
     {
         questUpdatePopupText.text = "";
     }
+    /*public void ResetQuestProgress()
+    {
+        foreach (QuestInfoSO questInfo in allQuests)
+        {
+            if (PlayerPrefs.HasKey(questInfo.id))
+            {
+                PlayerPrefs.DeleteKey(questInfo.id);
+            }
+        }
+
+        PlayerPrefs.Save();
+        Debug.Log("Quest Progress Reset.");
+    }*/
 }
+
