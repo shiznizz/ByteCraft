@@ -143,8 +143,7 @@ public class QuestManager : MonoBehaviour
 
     private Dictionary<string, Quest> CreateQuestMap()
     {
-        // loads all quest info SO under Assets/Resources/Quests folder
-        //QuestInfoSO[] allQuests = allQuestsTwo;
+        // loads all quest info SO under Assets/Resources/Quests folder;
         allQuests = Resources.LoadAll<QuestInfoSO>("Quests");
 
         Dictionary<string, Quest> idToQuestMap = new Dictionary<string, Quest>();
@@ -243,18 +242,5 @@ public class QuestManager : MonoBehaviour
     {
         questUpdatePopupText.text = "";
     }
-    /*public void ResetQuestProgress()
-    {
-        foreach (QuestInfoSO questInfo in allQuests)
-        {
-            if (PlayerPrefs.HasKey(questInfo.id))
-            {
-                PlayerPrefs.DeleteKey(questInfo.id);
-            }
-        }
-
-        PlayerPrefs.Save();
-        Debug.Log("Quest Progress Reset.");
-    }*/
 }
 
