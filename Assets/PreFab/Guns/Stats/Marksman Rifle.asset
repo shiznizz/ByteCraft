@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Marksman Rifle
   itemDescription: 
-  itemIcon: {fileID: 0}
+  itemIcon: {fileID: 21300046, guid: 71a7f8669de848e45ba57bda95f3a58e, type: 3}
   itemTypye: 0
   wepType: 0
   attackType: 0
   model: {fileID: 4080261730901961734, guid: 6b0c084ea2b485a43b5040ca3db9bc93, type: 3}
-  moveFlashX: 0
-  moveFlashY: 0
-  moveFlashZ: 0
+  moveFlashX: 0.36
+  moveFlashY: -0.3
+  moveFlashZ: 1.9
   shootDamage: 20
   shootRange: 150
   shootRate: 0.5
@@ -31,7 +31,10 @@ MonoBehaviour:
   ammoReserveMax: 15
   bulletObj: {fileID: 0}
   hitEffect: {fileID: 0}
-  shootSounds: []
-  shootVolume: 0
-  reloadSounds: []
-  reloadVolume: 0
+  shootSounds:
+  - {fileID: 8300000, guid: 5e5a5e95adafdc840ab881f58a1c07fb, type: 3}
+  shootVolume: 0.8
+  reloadSounds:
+  - {fileID: 8300000, guid: a835bb687af22f745b692ce85e6643d5, type: 3}
+  - {fileID: 8300000, guid: 6675c3e4d1ad8b64c887aed699ad3e22, type: 3}
+  reloadVolume: 0.8

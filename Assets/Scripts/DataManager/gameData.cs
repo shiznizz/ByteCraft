@@ -18,7 +18,9 @@ public class gameData
         this.playerWeapons = new();
         this.playerInventory = new();
 
-        this.playerHP = 30;
+        this.weaponPos = 0;
+
+        this.playerHP = 100;
         this.playerShield = 100;
     }
 }

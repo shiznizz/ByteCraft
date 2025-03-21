@@ -2,7 +2,7 @@ using UnityEngine;
 
 public abstract class QuestStep : MonoBehaviour
 {
-    private bool isFinished = false;
+    public bool isFinished = false;
     private string questId;
     private int stepIndex;
 

@@ -8,6 +8,7 @@ using System.Diagnostics.Contracts;
 using UnityEngine.Audio;
 using Unity.VisualScripting;
 using System.Text.RegularExpressions;
+using UnityEngine.EventSystems;
 
 
 
@@ -28,7 +29,7 @@ public class gameManager : MonoBehaviour
     [Header("UI Elements to Toggle Visibility")]
     [SerializeField] GameObject ammoHUD;
     [SerializeField] GameObject jetpackHUD;
-    [SerializeField] GameObject enemyHealthbar;
+    [SerializeField] public GameObject enemyHealthbar;
     [SerializeField] GameObject overShieldHUD;
     public Image playerHPBar;
     public Image enemyHPBar;
@@ -40,7 +41,6 @@ public class gameManager : MonoBehaviour
     public GameObject checkpointPopup;
 
     [Header("Text Fields to Update")]
-    //[SerializeField] public TMP_Text goalCountText;
     [SerializeField] public TMP_Text ammoCurText;
     [SerializeField] public TMP_Text ammoMaxText;
     [SerializeField] public TMP_Text ammoReserveText;
@@ -50,9 +50,6 @@ public class gameManager : MonoBehaviour
     public GameObject player;
     public playerController playerScript;
     public GameObject playerSpawnPos;
-
-    public GameObject holderPlayer;
-    public GameObject holderUI;
 
     int goalCount;
 
@@ -77,10 +74,15 @@ public class gameManager : MonoBehaviour
     [SerializeField] float lowHealthThreshold = 0.25f;
     [SerializeField] float heartbeatSpeed = 2f;
     [SerializeField] float heartbeatMagnitude = 0.2f;
-    [SerializeField] float baseAlpha = 0.3f;
+    [SerializeField] float baseAlpha = 0.5f;
 
     [SerializeField] AudioMixer mixer;
     public bool inventoryOpen = false;
+    private bool keepMenu;
+
+    private int selectedButtonIndex = 0;
+    private Button[] menuButtons;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -88,9 +90,8 @@ public class gameManager : MonoBehaviour
         instance = this;
 
         player = GameObject.FindWithTag("Player");
+        playerScript = player.GetComponent<playerController>();
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
-
-        
     }
 
     private void Start()
@@ -107,8 +108,10 @@ public class gameManager : MonoBehaviour
         {
             if (menuActive == null)
                 switchMenu(menuPause);
-            else
+            else if (!keepMenu)
+            {
                 stateUnpause();
+            }
             inventoryOpen = false;
         }
         if (Input.GetButtonDown("Inventory"))
@@ -116,8 +119,13 @@ public class gameManager : MonoBehaviour
             inventoryOpen = true;
             switchMenu(menuInventory);
         }
+        // handle Keyboard Menu Navigation
+        if (menuActive != null)
+        {
+            HandleMenuNavigation();
+        }
 
-        //CheckLowHealth();
+        CheckLowHealth();
     }
     #region Menus
 
@@ -127,6 +135,15 @@ public class gameManager : MonoBehaviour
         Time.timeScale = 0;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
+
+        // find and highlight buttons
+        menuButtons = menuActive.GetComponentsInChildren<Button>();
+
+        if (menuButtons.Length > 0)
+        {
+            selectedButtonIndex = 0;
+            HighlightButton(selectedButtonIndex);
+        }
     }
 
     public void stateUnpause()
@@ -137,6 +154,7 @@ public class gameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         menuActive.SetActive(false);
         menuActive = null;
+        keepMenu = false;
     }
 
     public void mainMenu()
@@ -153,9 +171,10 @@ public class gameManager : MonoBehaviour
     {
         if (menuActive == null)
         {
-            statePause();
+            Debug.Log(menuToOpen);           
             menuActive = menuToOpen;
             menuActive.SetActive(true);
+            statePause();
         }
         else if (closeMenu && menuActive == menuToOpen)
         {
@@ -168,38 +187,95 @@ public class gameManager : MonoBehaviour
             menuActive.SetActive(true);
         }
 
+        // update button navigation
+        menuButtons = menuActive.GetComponentsInChildren<Button>();
+
+        if (menuButtons.Length > 0)
+        {
+            selectedButtonIndex = 0;
+            HighlightButton(selectedButtonIndex);
+        }
     }
 
     public void youLose()
     {
         switchMenu(menuDeath);
+        keepMenu = true;
     }
 
     public void objectiveFailed(string failedObj)
     {
-
+        keepMenu = true;
         switchMenu(menuObjectiveFail);
         objectiveText.SetText(failedObj);
     }
 
     public void youWin()
     {
+        keepMenu = true;
         switchMenu(menuWin);
     }
 
     #endregion Menus
 
-    #region UI Element Updates
-/*    public void updateGameGoal(int amount)
+    #region Menu Navigation (Keyboard)
+    void HandleMenuNavigation()
     {
-        goalCount += amount;
-        goalCountText.text = goalCount.ToString("F0");
+        if (menuButtons == null || menuButtons.Length == 0) return;
 
-        if (goalCount <= 0)
+        // down Arrow / s
+        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
-            youWin();
+            selectedButtonIndex = (selectedButtonIndex + 1) % menuButtons.Length;
+            HighlightButton(selectedButtonIndex);
         }
-    }*/
+
+        // up Arrow / w
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+        {
+            selectedButtonIndex = (selectedButtonIndex - 1 + menuButtons.Length) % menuButtons.Length;
+            HighlightButton(selectedButtonIndex);
+        }
+
+        // right Arrow / d
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+        {
+            selectedButtonIndex = (selectedButtonIndex + 1) % menuButtons.Length;
+            HighlightButton(selectedButtonIndex);
+        }
+
+        // left Arrow / a
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+        {
+            selectedButtonIndex = (selectedButtonIndex - 1 + menuButtons.Length) % menuButtons.Length;
+            HighlightButton(selectedButtonIndex);
+        }
+
+        // enter / select
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+        {
+            menuButtons[selectedButtonIndex].onClick.Invoke();
+        }
+
+    }
+
+    void HighlightButton(int index)
+    {
+        if (menuButtons == null || index < 0 || index >= menuButtons.Length) return;
+
+        EventSystem.current.SetSelectedGameObject(menuButtons[index].gameObject);
+        ColorBlock cb = menuButtons[index].colors;
+        //cb.normalColor = Color.white;
+        //cb.highlightedColor = Color.yellow;
+        //cb.selectedColor = Color.yellow;
+        //cb.pressedColor = Color.red;
+        //cb.colorMultiplier = 1.2f;
+
+        menuButtons[index].colors = cb;
+    }
+    #endregion
+
+    #region UI Element Updates
 
     public void updateAmmo()
     {
@@ -250,8 +326,9 @@ public class gameManager : MonoBehaviour
 
         if (hpRatio <= lowHealthThreshold)
         {
+            lowHealthIndicator.enabled = true;
             float alpha = baseAlpha + Mathf.Sin(Time.time * heartbeatSpeed) * heartbeatMagnitude;
-            alpha = Mathf.Clamp01(alpha);
+            //alpha = Mathf.Clamp01(alpha);
 
             Color c = lowHealthIndicator.color;
             c.a = alpha;
@@ -259,6 +336,7 @@ public class gameManager : MonoBehaviour
         }
         else
         {
+            lowHealthIndicator.enabled = false;
             Color c = lowHealthIndicator.color;
             c.a = Mathf.MoveTowards(c.a, 0f, Time.deltaTime);
             lowHealthIndicator.color = c;
@@ -322,7 +400,6 @@ public class gameManager : MonoBehaviour
     }
     #endregion Inventory
 
-
     private void getSavedAudioSettings()
     {
         float value;
@@ -339,11 +416,4 @@ public class gameManager : MonoBehaviour
             }
         }
     }
-
-    /*    public void SetObjectiveText(string objective)
-        {
-            currentObjective = objective;
-            objectiveText.SetText(currentObjective);
-        }*/
-
 }

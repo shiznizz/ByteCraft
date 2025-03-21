@@ -1,11 +1,12 @@
 using UnityEngine;
 
-public class SpawnerDoor : MonoBehaviour
+public class SpawnerDoor : MonoBehaviour, IDamage
 {
     [Header("Config")]
     [SerializeField] GameObject[] objectsToSpawn;
     [SerializeField] public int timeBetweenSpawns;
     [SerializeField] Transform spawnPos;
+    [SerializeField] int HP;
 
     float spawnTimer;
     int spawnCount;
@@ -47,5 +48,15 @@ public class SpawnerDoor : MonoBehaviour
         GoalManager.instance.updateGameGoal(-1);
         spawnCount++;
         spawnTimer = 0;
+    }
+
+    public void takeDamage(int amount)
+    {
+        HP -= amount;
+
+        if (HP <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 }

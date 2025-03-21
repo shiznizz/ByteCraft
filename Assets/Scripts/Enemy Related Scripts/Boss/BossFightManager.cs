@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class BossFightManager : MonoBehaviour, IDamage
 {
@@ -13,6 +15,10 @@ public class BossFightManager : MonoBehaviour, IDamage
     public NavMeshAgent bossAgent; // NavMeshAgent component for movement
     public Animator anim; // Boss animator component
     public Renderer bossRenderer; // For flashing effect when hit
+
+    [SerializeField] Image hpFillBar;
+    [SerializeField] Image invulnerableHpFillBar;
+    [SerializeField] Image hpBar;
 
     [Header("Audio Clips")]
     public AudioClip[] bossVoiceLines;  // Array of audio clips for the boss' voice lines
@@ -38,6 +44,26 @@ public class BossFightManager : MonoBehaviour, IDamage
     public int aoeDamage = 30; // Damage the attack deals
     public float aoeWarningTime = 2f; // Time before explosion
     public float aoeAttackCooldown = 10f; // Cooldown before the boss can use the attack again
+
+    [Header("Bullet Settings")]
+    public GameObject bulletPrefab;  // The bullet prefab to instantiate
+    public Transform shootPos;       // Position where bullet comes from
+    public float bulletSpeed = 10f;  // Speed of the bullet    
+    private float shootTimer = 0f;   // Timer for shooting cooldown
+    public float shootRate = 1f;     // Rate at which the boos shoots
+
+
+    [Header("Basic Attack Settings")]
+    public float basicAttackRange = 5f;
+    public int basicAttackDamage = 5;
+    public float attackCooldown = 2f;
+    private bool isAttacking = false;
+
+    [Header("Testing Flags")]
+    public bool testSummonEnemies = true;  // Toggle to test Summon Enemies
+    public bool testActivateEnergyShield = true;  // Toggle to test Energy Shield
+    public bool testHeavyAOEAttack = true;  // Toggle to test Heavy AOE Attack
+    public bool testLaunchTrackingProjectiles = true;  // Toggle to test Tracking Projectiles
 
     private bool fightStarted = false;
     private bool isInPhaseOne = false; // Tracks if boss is in phase one
@@ -72,6 +98,18 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     void StartPhaseOne()
     {
+        // Ensure health bar is visible from the start of Phase One
+        if (hpBar != null)
+        {
+            hpBar.gameObject.SetActive(true);  // Make sure the health bar is visible at all times
+        }
+
+        // Set the health bar to full when the phase starts
+        if (invulnerableHpFillBar != null)
+        {
+            invulnerableHpFillBar.fillAmount = 1f;
+        }
+
         // Prevent phase one voice line from playing multiple times
         if (!hasPlayedPhaseOneVoiceLine)
         {
@@ -84,6 +122,12 @@ public class BossFightManager : MonoBehaviour, IDamage
             if (bossSummon != null) bossSummon.enabled = true;
             if (phaseTimer != null) phaseTimer.enabled = true;
             if (bossInvulnerability != null) bossInvulnerability.isInvulnerable = true; // Make the boss invulnerable during Phase One
+        }
+
+        // Start the shield effect for Phase One
+        if (shieldEffect != null)
+        {
+            shieldEffect.SetActive(true);  // Turn on shield effect for Phase One
         }
 
         //Starts the EndPhaseOne coroutine to disable the summoning after 3 minutes
@@ -116,8 +160,14 @@ public class BossFightManager : MonoBehaviour, IDamage
         // Disable invulnerability and prepare for Phase Two
         if (bossInvulnerability) bossInvulnerability.EndInvulnerability();
 
+        // Remove the shield effect at the end of Phase One
+        if (shieldEffect != null)
+        {
+            shieldEffect.SetActive(false);  // Turn off the shield effect after Phase One ends
+        }
+
         // Log Phase One end (for debugging)
-        Debug.Log("Phase One ended, transitioning to Phase Two.");
+        //Debug.Log("Phase One ended, transitioning to Phase Two.");
     }
 
     void StartPhaseTwo()
@@ -136,18 +186,70 @@ public class BossFightManager : MonoBehaviour, IDamage
         if (bossInvulnerability != null)
         {
             bossInvulnerability.isInvulnerable = false;
-            Debug.Log("Phase Two started: Boss is now vulnerable!");
+            //Debug.Log("Phase Two started: Boss is now vulnerable!");
         }
 
         StartCoroutine(PhaseTwoMechanicsCycle());
     }
 
-    private void Update()
+    void Update()
     {
-        if (isInPhaseTwo && bossHP > 0 && player)
+        // Prevent boss actions if dead
+        if (bossHP <= 0)
+        {
+            if (!isInPhaseTwo)  // Make sure Phase Two is not still active after death
+            {
+                // Additional logic for boss death can go here if needed
+                return;
+            }
+        }
+
+        if (isInPhaseTwo && player)
         {
             bossAgent.SetDestination(player.position);
             UpdateMovementAnimation();
+            shootTimer += Time.deltaTime;  // Increment shoot timer
+
+            // Update health bar in each frame (optional)
+            updateEnemyUI();
+
+            // Handle attack mechanics
+            if (Vector3.Distance(player.position, transform.position) <= attackRange && shootTimer >= shootRate && !isAttacking)
+            {
+                shoot();  // Call the shoot method
+                shootTimer = 0f;  // Reset the timer after shooting
+            }
+        }
+    }
+
+    void updateEnemyUI()
+    {
+        //if (hpFillBar != null)
+        //{
+        //    hpFillBar.fillAmount = (float)bossHP / 200f;
+        //}
+
+        // Update health bar fill based on current boss HP (for the regular health bar)
+        if (hpFillBar != null && !isShieldActive)
+        {
+            // Normal health bar
+            hpFillBar.fillAmount = (float)bossHP / 200f;
+        }
+
+        // Update invulnerable health bar when shield is active
+        if (invulnerableHpFillBar != null)
+        {
+            // Show invulnerable health bar when shield is active
+            if (isShieldActive)  // If shield is active
+            {
+                invulnerableHpFillBar.gameObject.SetActive(true);  // Ensure the invulnerable bar is visible
+                invulnerableHpFillBar.fillAmount = (float)bossHP / 200f;  // Sync the blue bar with current health
+                invulnerableHpFillBar.color = Color.blue;  // Make it blue to indicate invulnerability
+            }
+            else
+            {
+                invulnerableHpFillBar.gameObject.SetActive(false);  // Hide when not invulnerable
+            }
         }
     }
 
@@ -174,20 +276,35 @@ public class BossFightManager : MonoBehaviour, IDamage
             switch (randomMechanic)
             {
                 case 0:
-                    StartCoroutine(SummonEnemies()); // Summon enemy wave
-                    PlayMechanicDialogue(0); // Dialogue for Summon Enemies
+                    if (testSummonEnemies) // Check if Summon Enemies is enabled
+                    {
+                        StartCoroutine(SummonEnemies()); // Summon enemy wave
+                        PlayMechanicDialogue(0); // Dialogue for Summon Enemies
+                    }
                     break;
+
                 case 1:
-                    ActivateEnergyShield(); // Energy shield
-                    PlayMechanicDialogue(1); // Dialogue for Energy Shield
+                    if (testActivateEnergyShield) // Check if Energy Shield is enabled
+                    {
+                        ActivateEnergyShield(); // Energy shield
+                        PlayMechanicDialogue(1); // Dialogue for Energy Shield
+                    }
                     break;
+
                 case 2:
-                    StartCoroutine(HeavyAOEAttack()); // AOE attack
-                    PlayMechanicDialogue(2); // Dialogue for AOE Attack
+                    if (testHeavyAOEAttack) // Check if Heavy AOE Attack is enabled
+                    {
+                        StartCoroutine(HeavyAOEAttack()); // AOE attack
+                        PlayMechanicDialogue(2); // Dialogue for AOE Attack
+                    }
                     break;
+
                 case 3:
-                    StartCoroutine(LaunchTrackingProjectiles()); // Tracking projectiles
-                    PlayMechanicDialogue(3); // Dialogue for Tracking Projectiles
+                    if (testLaunchTrackingProjectiles) // Check if Tracking Projectiles is enabled
+                    {
+                        StartCoroutine(LaunchTrackingProjectiles()); // Tracking projectiles
+                        PlayMechanicDialogue(3); // Dialogue for Tracking Projectiles
+                    }
                     break;
             }
 
@@ -204,9 +321,29 @@ public class BossFightManager : MonoBehaviour, IDamage
         }
     }
 
+    void shoot()
+    {
+        //Debug.Log("Attempting to shoot...");
+        shootTimer = 0;
+
+        if (anim != null)
+            anim.SetTrigger("Shoot");
+        else
+            createProjectile();
+    }
+
+    public void createProjectile()
+    {
+        if (bulletPrefab != null && shootPos != null)
+        {
+            GameObject newBullet = Instantiate(bulletPrefab, shootPos.position, transform.rotation);
+            newBullet.GetComponent<damage>().updateTarget(player.gameObject);
+        }
+    }
+
     IEnumerator SummonEnemies()
     {
-        Debug.Log("Boss summons enemy wave.");
+        //Debug.Log("Boss summons enemy wave.");
         if (bossSummon != null)
         {
             bossSummon.enabled = true; // Enable enemy summoning
@@ -217,15 +354,26 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     void ActivateEnergyShield()
     {
-        Debug.Log("Boss activates energy shield.");
-        if (!isShieldActive)
+        //Debug.Log("Boss activates energy shield.");
+        if (!isShieldActive)  // Check if shield is not already active
         {
-            isShieldActive = true;
-            bossInvulnerability.isInvulnerable = true; // Make the boss invulnerable due to shield
+            isShieldActive = true;  // Mark shield as active
+            bossInvulnerability.isInvulnerable = true;  // Make boss invulnerable
+
+            // Update the invulnerable health bar to show remaining health (in blue)
+            if (invulnerableHpFillBar != null)
+            {
+                invulnerableHpFillBar.gameObject.SetActive(true);  // Ensure the invulnerable bar is visible
+                invulnerableHpFillBar.fillAmount = (float)bossHP / 200f;  // Sync the health with the regular health bar
+                invulnerableHpFillBar.color = Color.blue;  // Set color to blue
+            }
 
             if (shieldEffect != null)
-                shieldEffect.SetActive(true); // Enable shield effect
+            {
+                shieldEffect.SetActive(true);  // Turn on shield effect
+            }
 
+            // Start the shield duration timer
             StartCoroutine(ShieldDuration());
         }
     }
@@ -239,12 +387,18 @@ public class BossFightManager : MonoBehaviour, IDamage
         if (shieldEffect != null)
             shieldEffect.SetActive(false); // Disable shield effect
 
-        Debug.Log("Boss shield deactivated.");
+        // After shield is removed, hide the invulnerable HP bar and switch back to regular health bar
+        if (invulnerableHpFillBar != null)
+        {
+            invulnerableHpFillBar.gameObject.SetActive(false);  // Hide the invulnerable health bar when shield is no longer active
+        }
+
+        //Debug.Log("Boss shield deactivated.");
     }
 
     IEnumerator HeavyAOEAttack()
     {
-        Debug.Log("Boss is preparing a Heavy AOE Attack!");
+        //Debug.Log("Boss is preparing a Heavy AOE Attack!");
 
         //Show warning effect
         Instantiate(aoeWarningEffect, transform.position, Quaternion.identity);
@@ -257,12 +411,12 @@ public class BossFightManager : MonoBehaviour, IDamage
         //Deal damage if player is within range
         if (Vector3.Distance(player.position, transform.position) <= aoeRadius)
         {
-            Debug.Log("Player hit by AOE! Taking 50 damage.");
+            //Debug.Log("Player hit by AOE! Taking 50 damage.");
 
             if (playerStatManager.instance != null)
             {
                 playerStatManager.instance.shield -= 50;
-                Debug.Log($"Player HP after AOE: {playerStatManager.instance.HP}");
+                //Debug.Log($"Player HP after AOE: {playerStatManager.instance.HP}");
             }
         }
 
@@ -271,16 +425,33 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     IEnumerator LaunchTrackingProjectiles()
     {
-        Debug.Log("Boss fires tracking projectiles.");
+        //Debug.Log("Boss fires tracking projectiles.");
         // Create and launch tracking projectiles toward the player
 
         yield return new WaitForSeconds(1f); // Delay before next mechanic
     }
 
+    IEnumerator bossShowHpBar()
+    {
+        if (hpBar != null)
+        {
+            hpBar.gameObject.SetActive(true);  // Show the health bar
+
+            // Optional: If you want to hide the health bar when the boss dies, you can check the boss's HP here
+            if (bossHP <= 0)
+            {
+                hpBar.gameObject.SetActive(false);  // Hide if the boss dies
+            }
+        }
+
+        // Wait for a moment to keep the bar visible long enough
+        yield return new WaitForSecondsRealtime(5f);
+    }
+
     public void takeDamage(int damage)
     {
-        Debug.Log("Boss received damage: " + damage);
-        TakeDamage(damage);  // Calls your existing TakeDamage method
+        //Debug.Log("Boss received damage: " + damage);
+        TakeDamage(damage);  // Calls existing TakeDamage method
     }
 
     void TakeDamage(int damage)
@@ -290,10 +461,13 @@ public class BossFightManager : MonoBehaviour, IDamage
 
         // Reduce HP
         bossHP -= damage;
-        Debug.Log($"Boss took {damage} damage. Remaining HP: {bossHP}");
+        //Debug.Log($"Boss took {damage} damage. Remaining HP: {bossHP}");
+
+        StartCoroutine(bossShowHpBar());
 
         // Flash effect to show hit
         StartCoroutine(FlashOnHit());
+
         if (anim != null)
             anim.SetTrigger("damage");
 
@@ -301,7 +475,7 @@ public class BossFightManager : MonoBehaviour, IDamage
         if (bossHP <= 0)
         {
             StartCoroutine(HandleDeath());
-            EndBossFight();
+            //EndBossFight();
         }
     }
 
@@ -309,11 +483,11 @@ public class BossFightManager : MonoBehaviour, IDamage
     {
         if (bossRenderer == null)
         {
-            Debug.LogError("Boss Renderer is missing! Assign the Renderer in the Inspector.");
+            //Debug.LogError("Boss Renderer is missing! Assign the Renderer in the Inspector.");
             yield break; // Stop function if no Renderer exists
         }
 
-        Debug.Log("Boss hit! Flashing red.");
+        //Debug.Log("Boss hit! Flashing red.");
         Color originalColor = bossRenderer.material.color;
         bossRenderer.material.color = Color.red;
         yield return new WaitForSeconds(hitFlashDuration);
@@ -322,7 +496,7 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     private IEnumerator HandleDeath()
     {
-        Debug.Log("Boss has been defeated. Initiating death sequence...");
+        //Debug.Log("Boss has been defeated. Initiating death sequence...");
 
         isInPhaseTwo = false; // Stop Phase Two
         bossAgent.isStopped = true; // Stop movement
@@ -333,19 +507,28 @@ public class BossFightManager : MonoBehaviour, IDamage
             anim.SetTrigger("Death"); // Trigger death animation
         }
 
-        //PlayVoiceLine(bossVoiceLines.Length - 1); // Play death dialogue
+        // Destroy the health bar when the boss dies
+        if (hpBar != null)
+        {
+            Destroy(hpBar.gameObject); // Destroy the Canvas containing the health bar
+        }
+
+        PlayVoiceLine(bossVoiceLines.Length - 1); // Play death dialogue
 
         yield return new WaitForSeconds(3f); // Adjust based on death animation length
 
+        // Stop any further boss actions after death
+        //EndBossFight();
+        gameManager.instance.youWin();
         //StartCoroutine(FadeOutAndDestroy());
     }
 
     void EndBossFight()
     {
-        Debug.Log("Boss has been defeated.");
+        //Debug.Log("Boss has been defeated.");
         // Implement boss death behavior here (e.g., play death animation, reward the player)
 
-        PlayVoiceLine(bossVoiceLines.Length - 1); // Play the final dialogue in array for death
+        //PlayVoiceLine(bossVoiceLines.Length - 1); // Play the final dialogue in array for death
         isInPhaseTwo = false;
         bossAgent.isStopped = true; // Stop boss movement
     }
@@ -369,5 +552,10 @@ public class BossFightManager : MonoBehaviour, IDamage
             bossAudioSource.clip = phaseTwoMechanicDialogue[mechanicIndex];
             bossAudioSource.Play();
         }
+    }
+
+    public int getBossHP()
+    {
+        return bossHP;
     }
 }

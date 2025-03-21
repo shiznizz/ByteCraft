@@ -13,6 +13,7 @@ public class traps : MonoBehaviour
 
     [Header("Land Mine Settings")]
     [SerializeField] GameObject explosionEffect;
+    [SerializeField] GameObject explosiveDevice;
 
     [Header("Stationary Laser Settings")]
     [SerializeField] GameObject laserBeam;
@@ -57,7 +58,7 @@ public class traps : MonoBehaviour
         {
             //Debug.Log("Player entered the laser trigger area!");
             isTriggered = true;
-            ApplyDamage(other.gameObject);
+            //ApplyDamage(other.gameObject);
             TriggerTrapEffect();
         }
     }
@@ -105,7 +106,10 @@ public class traps : MonoBehaviour
             Instantiate(explosionEffect, transform.position, Quaternion.identity);
         }
 
-        Destroy(gameObject);
+        if (explosiveDevice != null)
+            explosiveDevice.SetActive(true);
+
+        //Destroy(gameObject);
     }
 
     // Stationary laser-specific effects (activating the laser)

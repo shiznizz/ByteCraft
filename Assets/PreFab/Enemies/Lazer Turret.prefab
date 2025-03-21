@@ -329,7 +329,7 @@ MonoBehaviour:
   hpBar: {fileID: 1219597138482355002}
   HP: 10
   animTransSpeed: 0
-  turnSpeed: 0
+  turnSpeed: 1
   FOV: 90
   headPos: {fileID: 279754090894260489}
   shootAngle: 5
@@ -339,11 +339,15 @@ MonoBehaviour:
   turnTimeAfterDmg: 1
   amountToRotate: 0
   pauseTime: 0
+  origRotation: {x: 0, y: 0, z: 0}
+  rot: {x: 0, y: 0, z: 0, w: 0}
   dropsLoot: 0
   lootTable: []
   dropPos: {fileID: 3306132972609129468}
   bodyFadeTime: 5
   fadeDuration: 2
+  floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
+  textDestroyTimer: 1
 --- !u!1001 &4961887221825358410
 PrefabInstance:
   m_ObjectHideFlags: 0

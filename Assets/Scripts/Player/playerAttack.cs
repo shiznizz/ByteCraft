@@ -42,6 +42,8 @@ public class playerAttack : MonoBehaviour
         {
             if (inventoryManager.instance.weaponList[inventoryManager.instance.weaponListPos].ammoCur > 0)
                 shoot();
+            else
+                audioSource.PlayOneShot(gunEmptyClip, 0.1f);
         }
 
         selectWeapon();
@@ -51,10 +53,7 @@ public class playerAttack : MonoBehaviour
     void shoot()
     {
         if (isReloading) return;
-        if (inventoryManager.instance.returnCurrentWeapon().ammoCur == 0)
-        {
-            audioSource.PlayOneShot(gunEmptyClip);
-        }
+
         playerStatManager.instance.attackTimer = 0;
         StartCoroutine(flashMuzzle());
         inventoryManager.instance.returnCurrentWeapon().ammoCur--;
@@ -113,6 +112,8 @@ public class playerAttack : MonoBehaviour
     public void removeWeaponUI()
     {
         playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = null;
+        playerStatManager.instance.gunModel.GetComponent<MeshRenderer>().sharedMaterial = null;
+        gameManager.instance.hideAmmo();
     }
 
     public void changeWeapon()
@@ -143,7 +144,6 @@ public class playerAttack : MonoBehaviour
         playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = gun.model.GetComponent<MeshFilter>().sharedMesh;
         playerStatManager.instance.gunModel.GetComponent<MeshRenderer>().sharedMaterial = gun.model.GetComponent<MeshRenderer>().sharedMaterial;
 
-        //turnOffWeaponModels();
     }
 
     void gunReload()
@@ -238,4 +238,6 @@ public class playerAttack : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         isReloading = false;
     }
+
+
 }

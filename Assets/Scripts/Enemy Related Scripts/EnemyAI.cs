@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -78,10 +79,13 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private float alertCooldown = 5f;
 
     [SerializeField] private GameObject floatingDamageTextPrefab;
+    [SerializeField] float textDestroyTimer;
     private Coroutine damageTextCoroutine;
 
-    [SerializeField] float FDTDeleteDelay = 1;
+    public bool isStunned = false;
+
     #endregion Variables
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -118,18 +122,14 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void Update()
     {
        updateEnemyUI();
-        if (isAlerted && !playerInRange) // specific to drone bot alerts
+        // if stunned, nav mesh will stop and skip rest of AI's logic
+        if (isStunned)
         {
-            if (alertTimer < alertCooldown)
-            {
-                alertTimer += Time.deltaTime;
-            }
-            else if (alertTimer >= alertCooldown)
-            {
-                alertTimer = 0;
-                isAlerted = false;
-            }
+            agent.isStopped = true;
+            return;
         }
+
+        
         if (type != enemyType.stationary)
         {
             float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
@@ -142,6 +142,20 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         }
 
         shootTimer += Time.deltaTime;
+        if (isAlerted && !playerInRange) // specific to drone bot alerts
+        {
+            if (alertTimer < alertCooldown)
+            {
+                alertTimer += Time.deltaTime;
+                target = gameManager.instance.player;
+                SeekTarget();
+            }
+            else if (alertTimer >= alertCooldown)
+            {
+                alertTimer = 0;
+                isAlerted = false;
+            }
+        }
 
         if (movement == movementType.seeking)
         {
@@ -186,8 +200,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 }
 
                 //Ranged attack
-                if (type != enemyType.melee && shootTimer >= shootRate && angleToTarget <= shootAngle)
+                if (type != enemyType.melee && shootTimer >= shootRate && angleToTarget <= shootAngle && agent.remainingDistance <= agent.stoppingDistance + 0.5f)
                 {
+                    //Debug.Log("Remaing:" + agent.remainingDistance);
                     shoot();
                 }
                 //Melee attack
@@ -207,7 +222,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 return true;
             }
         }
-        agent.stoppingDistance = 0;
+        //agent.stoppingDistance = 0;
         return false;
     }
 
@@ -320,10 +335,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 Vector3 spawnPos = headPos.transform.position + Vector3.up * 0.5f;
                 // parent the floating text to the enemy so it moves with the enemy.
                 GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
-
-                Destroy(dmgText, FDTDeleteDelay);
-
-                Debug.Log("Instantiated floating text!");
+                Destroy(dmgText, textDestroyTimer);
 
                 FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
                 if (fdt != null)
@@ -359,6 +371,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             {
                 isDead = true;
                 GoalManager.instance.updateGameGoal(-1);
+                GameEventsManager.instance.miscEvents.EnemyKilled();
+
                 if (dropsLoot)
                     dropLoot();
 
@@ -542,7 +556,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void dropLoot()
     {
         playerController player = gameManager.instance.playerScript;
-        float healthRatio = playerStatManager.instance.HP / (float)player.HPOrig;
+        float healthRatio = playerStatManager.instance.HP / (float)playerStatManager.instance.HPMax;
         float currAmmo = float.Parse(gameManager.instance.ammoCurText.text);
         float reserveAmmo = float.Parse(gameManager.instance.ammoReserveText.text);
         float maxAmmo = float.Parse(gameManager.instance.ammoMaxText.text);
