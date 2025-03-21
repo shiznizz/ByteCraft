@@ -35,7 +35,25 @@ public class pickup : MonoBehaviour
                         player.addInventory(item);
                         break;
                     case pickup.LootType.Ammo:
-                        player.addInventory(item);
+                        amount = lootItem.restoreAmt;
+                        weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
+                        
+                        // if the current gun's ammo reserve is equal to the max reserve ammo, return
+                        if (gun.ammoReserve == gun.ammoReserveMax) break;
+
+                        // if adding the ammo amt would be greater than the reserve ammo max, only add enough to hit that max
+                        if ((gun.ammoReserve + amount) > gun.ammoReserveMax)
+                        {
+                            int amtToAdd = gun.ammoReserveMax - gun.ammoReserve;
+                            gun.ammoReserve += amtToAdd;
+
+                        }
+                        // otherwise, add regularly
+                        else if ((gun.ammoReserve + amount) <= gun.ammoReserveMax)
+                        {
+                            gun.ammoReserve += amount;
+                        }
+                        gameManager.instance.updateAmmo();
                         break;
                     case pickup.LootType.Upgrade:
                         if (lootItem.upgradeType == upgradeType.Armor)

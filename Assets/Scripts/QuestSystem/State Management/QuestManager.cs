@@ -152,7 +152,7 @@ public class QuestManager : MonoBehaviour
         Debug.Log("Test");
         foreach (QuestInfoSO questInfo in allQuests)
         {
-            Debug.Log(questInfo.displayName);
+            //Debug.Log(questInfo.displayName);
             if (idToQuestMap.ContainsKey(questInfo.displayName))
             {
                 Debug.LogWarning("Duplicate ID found when creating quest map: " + questInfo.id);
