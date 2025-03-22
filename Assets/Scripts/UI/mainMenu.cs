@@ -108,6 +108,5 @@ public class mainMenu : MonoBehaviour
         }
 
         PlayerPrefs.Save();
-        Debug.Log("Quest Progress Reset.");
     }
 }

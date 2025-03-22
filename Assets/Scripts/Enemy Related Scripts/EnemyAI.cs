@@ -19,6 +19,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] Renderer model;
     [SerializeField] public NavMeshAgent agent;
     [SerializeField] Animator anim;
+    [SerializeField] private bool isDrone = false;
     private GameObject originalTarget;
 
     [Header("Enemy Stats")]
@@ -369,6 +370,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
             if (HP <= 0 && !isDead)
             {
+                Debug.Log("Enemy is dead!");
                 isDead = true;
                 GoalManager.instance.updateGameGoal(-1);
                 GameEventsManager.instance.miscEvents.EnemyKilled();
@@ -421,6 +423,15 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private void handleDeath()
     {
         hpBar.gameObject.SetActive(false);
+        Debug.Log("Hitting handle death.");
+        AlarmDrone droneScript = GetComponent<AlarmDrone>();
+        if (droneScript != null) Debug.Log("Found drone script!");
+        /*if (isDrone)
+        {
+            Debug.Log("Hitting if statement.");
+            AlarmDrone script = GetComponent<AlarmDrone>();
+            script.handleDeath();
+        }*/
 
         //Disable the collider
         if (enemyCollider != null)
