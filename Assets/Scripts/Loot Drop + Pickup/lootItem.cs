@@ -25,7 +25,8 @@ public enum itemType
     Ammo,
     Fuel,
     Key,
-    Upgrade
+    Upgrade,
+    Shield
 }
 
 public enum upgradeType

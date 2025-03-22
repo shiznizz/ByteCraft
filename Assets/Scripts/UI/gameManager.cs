@@ -171,7 +171,7 @@ public class gameManager : MonoBehaviour
     {
         if (menuActive == null)
         {
-            Debug.Log(menuToOpen);           
+            //Debug.Log(menuToOpen);           
             menuActive = menuToOpen;
             menuActive.SetActive(true);
             statePause();
@@ -265,11 +265,11 @@ public class gameManager : MonoBehaviour
 
         EventSystem.current.SetSelectedGameObject(menuButtons[index].gameObject);
         ColorBlock cb = menuButtons[index].colors;
-        cb.normalColor = Color.white;
-        cb.highlightedColor = Color.yellow;
-        cb.selectedColor = Color.yellow;
-        cb.pressedColor = Color.red;
-        cb.colorMultiplier = 1.2f;
+        //cb.normalColor = Color.white;
+        //cb.highlightedColor = Color.yellow;
+        //cb.selectedColor = Color.yellow;
+        //cb.pressedColor = Color.red;
+        //cb.colorMultiplier = 1.2f;
 
         menuButtons[index].colors = cb;
     }

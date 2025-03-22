@@ -13,7 +13,7 @@ public class QuestManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI questUpdatePopupText;
 
     [SerializeField] private QuestLogScrollingList questLogScrollingList;
-    public QuestInfoSO[] allQuestsTwo;
+    public QuestInfoSO[] allQuests;
 
     private void Awake()
     {
@@ -131,7 +131,6 @@ public class QuestManager : MonoBehaviour
 
     private void ClaimRewards(Quest quest)
     {
-        // TODO - Add logic for claiming rewards
         playerStatManager.instance.IncrementUpgradeCurrency(quest.info.upgradeCurrencyReward);
     }
 
@@ -144,15 +143,15 @@ public class QuestManager : MonoBehaviour
 
     private Dictionary<string, Quest> CreateQuestMap()
     {
-        // loads all quest info SO under Assets/Resources/Quests folder
-        QuestInfoSO[] allQuests = allQuestsTwo;//Resources.LoadAll<QuestInfoSO>("Quests");
+        // loads all quest info SO under Assets/Resources/Quests folder;
+        allQuests = Resources.LoadAll<QuestInfoSO>("Quests");
 
         Dictionary<string, Quest> idToQuestMap = new Dictionary<string, Quest>();
 
         Debug.Log("Test");
         foreach (QuestInfoSO questInfo in allQuests)
         {
-            Debug.Log(questInfo.displayName);
+            //Debug.Log(questInfo.displayName);
             if (idToQuestMap.ContainsKey(questInfo.displayName))
             {
                 Debug.LogWarning("Duplicate ID found when creating quest map: " + questInfo.id);
@@ -244,3 +243,4 @@ public class QuestManager : MonoBehaviour
         questUpdatePopupText.text = "";
     }
 }
+
