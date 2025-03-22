@@ -30,6 +30,11 @@ public class inventoryManager : MonoBehaviour, IPersistData
         instance = this;
     }
 
+    private void Start()
+    {
+        slotBossScript = inventorySlot.GetComponent<SlotBoss>();
+    }
+
     // adds item to inventory
     public void addItem(itemSO item)
     {
@@ -39,20 +44,20 @@ public class inventoryManager : MonoBehaviour, IPersistData
             weapon.RefreshAmmo();
         }
 
-        if (weapon.wepType == weaponStats.weaponType.primary && !inventorySlot.GetComponent<SlotBoss>().primaryWeapon.isFull)
+        if (weapon.wepType == weaponStats.weaponType.primary && !slotBossScript.primaryWeapon.isFull)
         {
             //Debug.Log("7");
-            inventorySlot.GetComponent<SlotBoss>().equipGear(item);
+            slotBossScript.equipGear(item);
         }
-        else if (weapon.wepType == weaponStats.weaponType.secondary && !inventorySlot.GetComponent<SlotBoss>().secondaryWeapon.isFull)
+        else if (weapon.wepType == weaponStats.weaponType.secondary && !slotBossScript.secondaryWeapon.isFull)
         {
             //Debug.Log("8");
-            inventorySlot.GetComponent<SlotBoss>().equipGear(item);
+            slotBossScript.equipGear(item);
         }
-        else if(weapon.wepType == weaponStats.weaponType.special && !inventorySlot.GetComponent<SlotBoss>().specialWeapon.isFull)
+        else if(weapon.wepType == weaponStats.weaponType.special && !slotBossScript.specialWeapon.isFull)
         {
             //Debug.Log("9");
-            inventorySlot.GetComponent<SlotBoss>().equipGear(item);
+            slotBossScript.equipGear(item);
         }
         else
         {
