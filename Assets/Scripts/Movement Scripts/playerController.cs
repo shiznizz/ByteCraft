@@ -16,6 +16,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] LayerMask groundLayer;
     // is this variable going to be used here? 
     [SerializeField] traps trap;
+    [SerializeField] LayerMask groundMask;
 
     public bool isGrounded;
     public bool isSprinting;
@@ -102,7 +103,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         {
             playerInput();
             SpeedControl();
-            checkGround();
+            checkGround();         
             handleShieldRegen();
             SetIsAirborne(!isGrounded);
 
@@ -197,7 +198,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void checkGround()
     {
         // call in update.
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerStatManager.instance.playerHeight * 0.5f + 0.1f/*,~ignoreLayer*/);
+        //isGrounded = Physics.Raycast(transform.position, Vector3.down, playerStatManager.instance.playerHeight * 0.5f + 0.1f/*,~ignoreLayer*/);
+        isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, playerStatManager.instance.playerHeight / 2, 0), 0.5f, groundMask);
 
         // applies drag and resets jump count
         if (isGrounded)
