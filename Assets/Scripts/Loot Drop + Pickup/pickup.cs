@@ -5,7 +5,7 @@ public class pickup : MonoBehaviour
 {
     [SerializeField] itemSO item;
 
-    public enum LootType {Health, Weapon, armor, Ammo, Fuel, Upgrade}
+    public enum LootType {Health, Weapon, armor, Ammo, Fuel, Upgrade, Shield}
     public LootType lootType;
     public int amount; // how much value the loot gives to player
     public LootItem lootItem;
@@ -34,20 +34,14 @@ public class pickup : MonoBehaviour
                     case pickup.LootType.Fuel:
                         player.addInventory(item);
                         break;
+                    case pickup.LootType.Shield:
+                        AddShield();
+                        break;
                     case pickup.LootType.Ammo:
-                        player.addInventory(item);
+                        AddAmmo();
                         break;
                     case pickup.LootType.Upgrade:
-                        if (lootItem.upgradeType == upgradeType.Armor)
-                        {
-                            playerStatManager.instance.shield += lootItem.restoreAmt;
-                        } else if (lootItem.upgradeType == upgradeType.Damage)
-                        {
-                            playerStatManager.instance.attackDamage += lootItem.restoreAmt;
-                        } else if (lootItem.upgradeType == upgradeType.Sprint)
-                        {
-                            playerStatManager.instance.sprintSpeed += lootItem.restoreAmt;
-                        }
+                        HandleUpgrade();
                         break;
                 }
                 Destroy(this.gameObject); // remove loot from scene
@@ -63,5 +57,66 @@ public class pickup : MonoBehaviour
         //    weapon.gun.ammoCur = weapon.gun.ammoMax;
         //    weapon.gun.ammoReserve = weapon.gun.ammoReserveMax;
         //}
+    }
+
+    void AddAmmo()
+    {
+        amount = lootItem.restoreAmt;
+        weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
+
+        // if the current gun's ammo reserve is equal to the max reserve ammo, return
+        if (gun.ammoReserve == gun.ammoReserveMax) return;
+
+        // if adding the ammo amt would be greater than the reserve ammo max, only add enough to hit that max
+        if ((gun.ammoReserve + amount) > gun.ammoReserveMax)
+        {
+            int amtToAdd = gun.ammoReserveMax - gun.ammoReserve;
+            gun.ammoReserve += amtToAdd;
+
+        }
+        // otherwise, add regularly
+        else if ((gun.ammoReserve + amount) <= gun.ammoReserveMax)
+        {
+            gun.ammoReserve += amount;
+        }
+        gameManager.instance.updateAmmo();
+    }
+
+    void AddShield()
+    {
+        amount = lootItem.restoreAmt;
+        //Debug.Log($"Current shield amt: {playerStatManager.instance.shield}, incoming shield amt: {amount}, shield max: {playerStatManager.instance.shieldMax}");
+        
+        // if the current shield amt is equal to the max shield amt, return
+        if (playerStatManager.instance.shield == playerStatManager.instance.shieldMax) return;
+
+        // if adding the shield amt would be greater than the max shield amt, only add enough to hit that max
+        if ((playerStatManager.instance.shield + amount) > playerStatManager.instance.shieldMax)
+        {
+            float amtToAdd = playerStatManager.instance.shieldMax - playerStatManager.instance.shield;
+            playerStatManager.instance.shield += amtToAdd;
+        }
+        // otherwise, add regularly
+        else if ((playerStatManager.instance.shield + amount) <= playerStatManager.instance.shieldMax)
+        {
+            playerStatManager.instance.shield += amount;
+        }
+
+    }
+
+    void HandleUpgrade()
+    {
+        if (lootItem.upgradeType == upgradeType.Armor)
+        {
+            playerStatManager.instance.shield += lootItem.restoreAmt;
+        }
+        else if (lootItem.upgradeType == upgradeType.Damage)
+        {
+            playerStatManager.instance.attackDamage += lootItem.restoreAmt;
+        }
+        else if (lootItem.upgradeType == upgradeType.Sprint)
+        {
+            playerStatManager.instance.sprintSpeed += lootItem.restoreAmt;
+        }
     }
 }
