@@ -45,7 +45,7 @@ public class playerAttack : MonoBehaviour
             else
                 audioSource.PlayOneShot(gunEmptyClip, 0.1f);
         }
-
+        hotKeyWeapon();
         selectWeapon();
         gunReload();
     }
@@ -214,6 +214,38 @@ public class playerAttack : MonoBehaviour
             changeWeapon();
             inventoryManager.instance.currentEquippedWeapon();
         }
+    }
+    void hotKeyWeapon()
+    {
+        int weaponIndex;
+        if (Input.GetKeyDown(KeyCode.Alpha1) && inventoryManager.instance.weaponList[0] != null)
+        {
+            
+            weaponIndex = inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.slotBossScript.primaryWeapon.weapon);
+
+            inventoryManager.instance.weaponListPos = weaponIndex;
+            changeWeapon();
+            inventoryManager.instance.currentEquippedWeapon();
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2) && inventoryManager.instance.weaponList[1] != null)
+        {
+            
+            weaponIndex = inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.slotBossScript.secondaryWeapon.weapon);
+
+            inventoryManager.instance.weaponListPos = weaponIndex;
+            changeWeapon();
+            inventoryManager.instance.currentEquippedWeapon();
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3) && inventoryManager.instance.weaponList[2] != null)
+        {
+            
+            weaponIndex = inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.slotBossScript.specialWeapon.weapon);
+
+            inventoryManager.instance.weaponListPos = weaponIndex;
+            changeWeapon();
+            inventoryManager.instance.currentEquippedWeapon();
+        }
+        
     }
 
     void playShootSound()
