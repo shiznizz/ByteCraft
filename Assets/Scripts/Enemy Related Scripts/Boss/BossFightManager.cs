@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -70,6 +71,12 @@ public class BossFightManager : MonoBehaviour, IDamage
     private bool hasPlayedPhaseOneVoiceLine = false; // Tracks if the phase one voice line as been played
     private bool isShieldActive = false;
     private bool isInPhaseTwo = false;
+
+    [Header("UI References")]
+    [SerializeField] TextMeshProUGUI subtitleText;
+    [SerializeField] public BossDialogueManager bossDialogueManager;
+    [SerializeField] private GameObject contentParent;
+    private string[] subtitles = { "Well, well, well. What do we have here? Another foolish hero thinking they can take me down? How utterly predictable.", "You think you can defeat me with ease? Let me show you the power of my minions!", "Enough! The time for petty distractions is over. Prepare yourself for the real challenge!", "You may have won this round, but I'll return stronger!" };
 
     private void OnTriggerEnter(Collider other)
     {
@@ -541,6 +548,8 @@ public class BossFightManager : MonoBehaviour, IDamage
             // Play the specific voice line if it exists
             bossAudioSource.clip = bossVoiceLines[lineIndex];
             bossAudioSource.Play();
+
+            StartCoroutine(DisplaySubtitles(bossVoiceLines[lineIndex].length, lineIndex));
         }
     }
 
@@ -557,5 +566,18 @@ public class BossFightManager : MonoBehaviour, IDamage
     public int getBossHP()
     {
         return bossHP;
+    }
+
+    IEnumerator DisplaySubtitles(float voiceLength, int lineIdx)
+    {
+        contentParent.SetActive(true);
+        string dialogueLine = subtitles[lineIdx];
+        if (dialogueLine != null)
+        {
+            subtitleText.text = dialogueLine;
+            yield return new WaitForSeconds(voiceLength);
+            subtitleText.text = string.Empty;
+        }
+        contentParent.SetActive(false);
     }
 }
