@@ -74,7 +74,6 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     [Header("UI References")]
     [SerializeField] TextMeshProUGUI subtitleText;
-    [SerializeField] public BossDialogueManager bossDialogueManager;
     [SerializeField] private GameObject contentParent;
     private string[] subtitles = { "Well, well, well. What do we have here? Another foolish hero thinking they can take me down? How utterly predictable.", "You think you can defeat me with ease? Let me show you the power of my minions!", "Enough! The time for petty distractions is over. Prepare yourself for the real challenge!", "You may have won this round, but I'll return stronger!" };
 
