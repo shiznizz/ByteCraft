@@ -65,6 +65,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private Collider enemyCollider;
     private Renderer bodyRenderer;
 
+    [Header("Audio")]
+    [SerializeField] AudioSource enemyAudio;
+    [SerializeField] AudioClip hurtSound;
 
     Vector3 startingPos;
     float roamTimer;
@@ -314,6 +317,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void takeDamage(int amount)
     {
         if (isDead) return;
+        if (isDrone) enemyAudio.PlayOneShot(hurtSound);
 
         if (movement == movementType.seeking)
         {
@@ -370,7 +374,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
             if (HP <= 0 && !isDead)
             {
-                Debug.Log("Enemy is dead!");
                 isDead = true;
                 GoalManager.instance.updateGameGoal(-1);
                 GameEventsManager.instance.miscEvents.EnemyKilled();
