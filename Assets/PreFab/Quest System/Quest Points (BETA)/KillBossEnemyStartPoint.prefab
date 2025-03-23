@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2281783711299296665
+--- !u!1 &5283043937196055493
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,39 +8,39 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1166813487659259880}
-  - component: {fileID: 1206984139633602234}
-  - component: {fileID: 475951902688449367}
+  - component: {fileID: 7817348900704043072}
+  - component: {fileID: 8607452167994767676}
+  - component: {fileID: 8386806511562482074}
   m_Layer: 0
-  m_Name: MichaelReachLocationEnd
+  m_Name: KillBossEnemyStartPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1166813487659259880
+--- !u!4 &7817348900704043072
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2281783711299296665}
+  m_GameObject: {fileID: 5283043937196055493}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 62.9, y: -30.81308, z: 20.9}
+  m_LocalPosition: {x: -43.59, y: 0.375, z: -46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6427949610203744930}
+  - {fileID: 7826508519525335355}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &1206984139633602234
+--- !u!135 &8607452167994767676
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2281783711299296665}
+  m_GameObject: {fileID: 5283043937196055493}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -55,13 +55,13 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 6
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &475951902688449367
+--- !u!114 &8386806511562482074
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2281783711299296665}
+  m_GameObject: {fileID: 5283043937196055493}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c1a32fa44d7d0944ab65c4cfa2281499, type: 3}
@@ -69,17 +69,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueKnotName: 
   dialoguePanel: {fileID: 0}
-  questInfoForPoint: {fileID: 11400000, guid: 86ec965c3fe589945b9ea8fbb50e6c4f, type: 2}
-  startPoint: 0
-  endPoint: 1
+  questInfoForPoint: {fileID: 11400000, guid: 13a5b188daee0e648ba5d3773ec2a6ed, type: 2}
+  startPoint: 1
+  endPoint: 0
   currentQuestState: 0
---- !u!1001 &4476954646996485783
+--- !u!1001 &831095126111341838
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1166813487659259880}
+    m_TransformParent: {fileID: 7817348900704043072}
     m_Modifications:
     - target: {fileID: 7428120877558697013, guid: 492f3a6089d834046a84dce38b422f40, type: 3}
       propertyPath: m_LocalPosition.x
@@ -130,8 +130,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 492f3a6089d834046a84dce38b422f40, type: 3}
---- !u!4 &6427949610203744930 stripped
+--- !u!4 &7826508519525335355 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7428120877558697013, guid: 492f3a6089d834046a84dce38b422f40, type: 3}
-  m_PrefabInstance: {fileID: 4476954646996485783}
+  m_PrefabInstance: {fileID: 831095126111341838}
   m_PrefabAsset: {fileID: 0}
