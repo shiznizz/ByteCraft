@@ -21,6 +21,9 @@ public class playerAttack : MonoBehaviour
     private bool isMeleeAttacking = false;
     private bool isReloading = false;
 
+    private BoxCollider continuousCollider;
+    private Transform continuousMesh;
+
     private void Awake()
     {
         instance = this;
@@ -72,6 +75,10 @@ public class playerAttack : MonoBehaviour
         {
             shootContinuous();
         }
+        else if (inventoryManager.instance.returnCurrentWeapon().attackType == weaponStats.bulletType.lobber)
+        {
+            shootLobber();
+        }
     }
 
 
@@ -105,6 +112,26 @@ public class playerAttack : MonoBehaviour
     }
 
     void shootContinuous()
+    {
+        //Instantiate(inventoryManager.instance.returnCurrentWeapon().bulletObj, playerStatManager.instance.muzzleFlash.position, Camera.main.transform.rotation);
+        continuousCollider = inventoryManager.instance.returnCurrentWeapon().bulletObj.GetComponent<BoxCollider>();
+        continuousMesh = inventoryManager.instance.returnCurrentWeapon().bulletObj.GetComponent<MeshFilter>().transform;
+
+        continuousCollider.enabled = true;
+        continuousCollider.size = new Vector3(continuousCollider.size.x, continuousCollider.size.y, 100);
+        continuousCollider.center = new Vector3(0, 0, 100 / 2f);
+        continuousMesh.localScale = new Vector3(1, 1, 100);
+
+        if (Input.GetButtonUp("Fire1"))
+        {
+            continuousCollider.size = new Vector3(continuousCollider.size.x, continuousCollider.size.y, 0);
+            continuousMesh.localScale = Vector3.one;
+            //inventoryManager.instance.returnCurrentWeapon().bulletObj.SetActive(false);
+
+        }
+    }
+
+    void shootLobber()
     {
 
     }
