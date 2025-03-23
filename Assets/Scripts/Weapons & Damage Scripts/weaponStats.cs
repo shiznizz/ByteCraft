@@ -12,6 +12,7 @@ public class weaponStats : itemSO
     public GameObject model;
 
     [Header("Adjustment for muzzle flash placement")]
+    [SerializeField] public Transform flashPOS;
     public float moveFlashX;
     public float moveFlashY;
     public float moveFlashZ;
