@@ -21,7 +21,7 @@ public class QuestMarker : MonoBehaviour
     void Update()
     {
         currentQuestState = questPointScript.GetCurrentQuestState();
-        if (Input.GetButtonDown("Marker") && currentQuestState.Equals(QuestState.IN_PROGRESS) && !questPointScript.startPoint)
+        if (Input.GetButtonDown("Marker") && (currentQuestState.Equals(QuestState.IN_PROGRESS) || currentQuestState.Equals(QuestState.CAN_FINISH) || currentQuestState.Equals(QuestState.FINISHED)) && !questPointScript.startPoint)
         {
             ShowMarker();
         } else if (Input.GetButtonUp("Marker"))
