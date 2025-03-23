@@ -12,9 +12,10 @@ public class weaponStats : itemSO
     public GameObject model;
 
     [Header("Adjustment for muzzle flash placement")]
-    public float moveFlashX;
-    public float moveFlashY;
-    public float moveFlashZ;
+    public Transform flashPOS;
+    //public float moveFlashX;
+    //public float moveFlashY;
+    //public float moveFlashZ;
 
     [Header("Weapon Stats")]
     public int shootDamage;
@@ -51,4 +52,8 @@ public class weaponStats : itemSO
         return this;
     }
 
+    public void setFlashPosition()
+    {
+        flashPOS = model.transform.GetChild(0);
+    }
 }

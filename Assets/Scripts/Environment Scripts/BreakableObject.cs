@@ -53,7 +53,7 @@ public class BreakableObject : MonoBehaviour, IDamage
 
     private void BreakObject()
     {
-        wholeObject.SetActive(false);
+       
         this.GetComponent<Collider>().enabled = false;
         GameObject createdObject = Instantiate(fracturedObject, transform.position, transform.rotation);
 
@@ -64,6 +64,7 @@ public class BreakableObject : MonoBehaviour, IDamage
         }
 
         StartCoroutine(RemovePieces(createdObject));
+        wholeObject.SetActive(false);
     }
 
     IEnumerator RemovePieces(GameObject objectToDestroy)

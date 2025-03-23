@@ -139,12 +139,20 @@ public class playerAttack : MonoBehaviour
         playerStatManager.instance.attackDamage = gun.shootDamage;
         playerStatManager.instance.attackDistance = gun.shootRange;
         playerStatManager.instance.attackCooldown = gun.shootRate;
-        playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(gun.moveFlashX, gun.moveFlashY, gun.moveFlashZ), playerStatManager.instance.muzzleFlash.rotation);
+
+        Vector3 gunPOS = playerStatManager.instance.gunModel.transform.localPosition;
+        gun.setFlashPosition();
+        Vector3 flashPOS = gun.flashPOS.localPosition;
+        float scale = 0.5f;
+
+        //playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(gun.moveFlashX, gun.moveFlashY, gun.moveFlashZ), playerStatManager.instance.muzzleFlash.rotation);
+        playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(gunPOS.x-(flashPOS.z*scale), gunPOS.y + (flashPOS.y*scale), gunPOS.z+(flashPOS.x*scale)), playerStatManager.instance.muzzleFlash.rotation);
+        
 
         playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = gun.model.GetComponent<MeshFilter>().sharedMesh;
         playerStatManager.instance.gunModel.GetComponent<MeshRenderer>().sharedMaterial = gun.model.GetComponent<MeshRenderer>().sharedMaterial;
-
     }
+
 
     void gunReload()
     {
@@ -175,7 +183,8 @@ public class playerAttack : MonoBehaviour
 
     IEnumerator flashMuzzle()
     {
-        playerStatManager.instance.muzzleFlash.localEulerAngles = new Vector3(0, 0, Random.Range(0, 360));
+        weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
+
         playerStatManager.instance.muzzleFlash.gameObject.SetActive(true);
         yield return new WaitForSeconds(0.05f);
         playerStatManager.instance.muzzleFlash.gameObject.SetActive(false);
