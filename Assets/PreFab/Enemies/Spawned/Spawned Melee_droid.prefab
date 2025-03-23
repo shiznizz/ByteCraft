@@ -257,7 +257,7 @@ GameObject:
   - component: {fileID: 387298589365990422}
   - component: {fileID: 5941984117221710926}
   m_Layer: 7
-  m_Name: Melee_droid
+  m_Name: Spawned Melee_droid
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -296,6 +296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   movement: 0
+  spawn: 1
   target: {fileID: 0}
   model: {fileID: 5842897556333300750}
   agent: {fileID: 6884700982941092500}
@@ -326,7 +327,7 @@ MonoBehaviour:
   bodyFadeTime: 3
   fadeDuration: 2
   spawnEffects: {fileID: 6912174993487290012}
-  invulnerableTime: 0
+  invulnerableTime: 3
   godMode: 0
   isDead: 0
   enemyAudio: {fileID: 0}
