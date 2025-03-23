@@ -10,16 +10,19 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
     enum enemyType { range, melee, stationary, kamikaze }
     enum movementType { random, setPath, seeking, drone }
+    enum spawnType { notSpawned, spawned }
 
     #region Variables
     [Header("General Enemy Settings")]
     [SerializeField] enemyType type;
     [SerializeField] movementType movement;
+    [SerializeField] spawnType spawn;
     [SerializeField] GameObject target;
     [SerializeField] Renderer model;
     [SerializeField] public NavMeshAgent agent;
     [SerializeField] Animator anim;
     [SerializeField] private bool isDrone = false;
+    [SerializeField] GameObject hpBarTarget;
     private GameObject originalTarget;
 
     [Header("Enemy Stats")]
@@ -60,6 +63,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [Header("Death Settings")]
     [SerializeField] private float bodyFadeTime = 5f;
     [SerializeField] private float fadeDuration = 2f;
+
+    [Header("Spawn settings")]
+    [SerializeField] private GameObject spawnEffects;
+    [SerializeField] private float invulnerableTime;
+    [SerializeField] private bool godMode = false;
+
     public bool isDead = false;
     private Rigidbody rb;
     private Collider enemyCollider;
@@ -120,12 +129,16 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         }
 
         originalTarget = target;
+
+        if (spawn == spawnType.spawned)
+            onSpawn();
     }
 
     // Update is called once per frame
     void Update()
     {
-       updateEnemyUI();
+        
+        updateEnemyUI();
         // if stunned, nav mesh will stop and skip rest of AI's logic
         if (isStunned)
         {
@@ -134,7 +147,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         }
 
         
-        if (type != enemyType.stationary)
+        if (type != enemyType.stationary && !godMode)
         {
             float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
             float animatorCurSpeed = anim.GetFloat("Speed");
@@ -175,7 +188,20 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void updateEnemyUI()
     {
         hpFillBar.fillAmount = (float)HP / HPOrginal;
-        hpBar.transform.LookAt(target.transform.position);
+        hpBar.transform.LookAt(hpBarTarget.transform.position);
+    }
+
+    void onSpawn()
+    {
+        spawnEffects.SetActive(true);
+        StartCoroutine(OnSpawn());
+    }
+
+    IEnumerator OnSpawn()
+    {
+        godMode = true;
+        yield return new WaitForSecondsRealtime(invulnerableTime);
+        godMode = false;
     }
 
     #region EnemyMovement
@@ -321,7 +347,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     }
     public void takeDamage(int amount)
     {
-        if (isDead) return;
+        if (isDead || godMode) return;
         if (isDrone) enemyAudio.PlayOneShot(hurtSound);
 
         if (movement == movementType.seeking)
