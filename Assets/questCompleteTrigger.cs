@@ -3,14 +3,9 @@ using UnityEngine;
 
 public class questCompleteTrigger : MonoBehaviour
 {
+    [SerializeField] GameObject enableObj;
     GameObject quest;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        this.enabled = false;
-        
-    }
 
     // Update is called once per frame
     void Update()
@@ -19,7 +14,12 @@ public class questCompleteTrigger : MonoBehaviour
 
         if (quest == null)
         {
-            this.enabled = true;
+            enableObj.SetActive(true);
         }
+        else
+        {
+            enableObj.SetActive(false);
+        } 
+            
     }
 }

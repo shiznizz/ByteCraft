@@ -215,7 +215,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 //if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= meleeDistance) // Ensures attack happens when the shoot timer is ready
                 {
                     meleeAttack();
-                }               
+                }
+                //Kamaikaze
+                if (type == enemyType.kamikaze && shootTimer >= shootRate && distanceToPlayer <= meleeDistance && !hasExploded)
+                {
+                    kamikazeAttack();
+                }
                 if (agent.remainingDistance <= agent.stoppingDistance && !isDead)
                 {
                     faceTarget();                 
@@ -529,10 +534,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
         hasExploded = true;
 
-        if (type == enemyType.kamikaze)
-        {
-            agent.SetDestination(target.transform.position);
-        }
+        // Ensure the Kamikaze starts moving towards the player
+        agent.SetDestination(target.transform.position);
 
         // Check if within melee range to trigger detonation
         if (Vector3.Distance(transform.position, target.transform.position) <= meleeDistance)
@@ -556,12 +559,14 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (Vector3.Distance(transform.position, target.transform.position) <= meleeDistance)
         {
             // scale explosion damage based on difficulty
-            int baseDamage = 25;
-            int explosionDamage = (DifficultyManager.instance != null)
-                ? Mathf.RoundToInt(baseDamage * DifficultyManager.instance.enemyDamageMultiplier)
-                : baseDamage;
-            gameManager.instance.playerScript.takeDamage(25); // Adjust explosion damage as needed
+            int explosionDamage = 25;  // Base explosion damage
+            if (DifficultyManager.instance != null)
+            {
+                explosionDamage = Mathf.RoundToInt(explosionDamage * DifficultyManager.instance.enemyDamageMultiplier);
+            }
+            gameManager.instance.playerScript.takeDamage(explosionDamage); // Adjust the explosion damage as needed
         }
+
 
         // Destroy the Kamikaze enemy after explosion
         Destroy(gameObject);
