@@ -910,10 +910,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 4009720074549839824, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5309947183878286330, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5809270350288258848, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: loadingScreenPrefab
+      value: 
+      objectReference: {fileID: 589826668}
     - target: {fileID: 7368447216994616125, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: camController
       value: 
       objectReference: {fileID: 1608057934}
+    - target: {fileID: 7870052015786841950, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8386706001582953583, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -6549,6 +6565,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dffa4c53f99723c42bf6d52cad3914d1, type: 3}
+--- !u!1 &589826668 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5309947183878286330, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 81625465}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &608917401
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9528,6 +9549,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8439725001971357387, guid: b57aa90e7ef2ad34db4e36c45a171311, type: 3}
   m_PrefabInstance: {fileID: 1665855451}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &903476113 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5809270350288258848, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 81625465}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bb21b8ffa4a5f749aab680e73152f44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &912321854
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10421,6 +10453,7 @@ MonoBehaviour:
   sceneBuildIndex: 4
   type: 0
   questCompleteRequired: 0
+  mainGameManager: {fileID: 903476113}
 --- !u!65 &995192964
 BoxCollider:
   m_ObjectHideFlags: 0
