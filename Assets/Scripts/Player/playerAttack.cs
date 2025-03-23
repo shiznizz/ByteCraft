@@ -140,16 +140,19 @@ public class playerAttack : MonoBehaviour
         playerStatManager.instance.attackDistance = gun.shootRange;
         playerStatManager.instance.attackCooldown = gun.shootRate;
 
-        Vector3 gunPOS = playerStatManager.instance.gunModel.transform.position;
-        Vector3 flashPOS = gun.flashPOS.position;
+        Vector3 gunPOS = playerStatManager.instance.gunModel.transform.localPosition;
+        gun.setFlashPosition();
+        Vector3 flashPOS = gun.flashPOS.localPosition;
+        float scale = 0.5f;
 
         //playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(gun.moveFlashX, gun.moveFlashY, gun.moveFlashZ), playerStatManager.instance.muzzleFlash.rotation);
-        playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(gunPOS.x + flashPOS.x, gunPOS.y + flashPOS.y, gunPOS.z + flashPOS.z), playerStatManager.instance.muzzleFlash.rotation);
+        playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(gunPOS.x-(flashPOS.z*scale), gunPOS.y + (flashPOS.y*scale), gunPOS.z+(flashPOS.x*scale)), playerStatManager.instance.muzzleFlash.rotation);
         
 
         playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = gun.model.GetComponent<MeshFilter>().sharedMesh;
         playerStatManager.instance.gunModel.GetComponent<MeshRenderer>().sharedMaterial = gun.model.GetComponent<MeshRenderer>().sharedMaterial;
     }
+
 
     void gunReload()
     {
