@@ -10,21 +10,16 @@ public class QuestPoint : MonoBehaviour
     [SerializeField] private QuestInfoSO questInfoForPoint;
 
     [Header("Config")]
-    [SerializeField] private bool startPoint = true;
-    [SerializeField] private bool endPoint = true;
-
-    [Header("Marker")]
-    [SerializeField] Renderer model;
+    [SerializeField] public bool startPoint = true;
+    [SerializeField] public bool endPoint = true;
 
 
     private bool playerIsNear = false;
     private string questId;
-    private QuestState currentQuestState;
-    //private bool hasCompletedDialogue = false;
+    public QuestState currentQuestState;
 
     private void Awake()
     {
-        // model.enabled = false;
         questId = questInfoForPoint.id;
 
     }
@@ -32,17 +27,10 @@ public class QuestPoint : MonoBehaviour
     private void Update()
     {
         SubmitPressed();
-        if (Input.GetButtonDown("Marker") && currentQuestState.Equals(QuestState.IN_PROGRESS))
-            model.enabled = true;
-        else if (Input.GetButtonUp("Marker"))
-            model.enabled = false;
-
         if ((questId == "CollectKeysQuest" || questId == "KillEnemiesQuest" || questId == "PressButtonsQuest") && currentQuestState.Equals(QuestState.CAN_FINISH))
         {
             GameEventsManager.instance.questEvents.FinishQuest(questId);
         }
-
-        //if (Input.GetButtonDown("Accept")) SubmitPressed();
     }
 
     private void OnEnable()
@@ -121,5 +109,10 @@ public class QuestPoint : MonoBehaviour
             if (dialoguePanel != null)
                 dialoguePanel.contentParent.SetActive(false);
         }
+    }
+
+    public QuestState GetCurrentQuestState()
+    {
+        return currentQuestState;
     }
 }

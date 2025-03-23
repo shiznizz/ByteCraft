@@ -16,3 +16,4 @@ INCLUDE collectKeysStart.ink
 INCLUDE npcTest.ink
 INCLUDE killEnemyStart.ink
 INCLUDE tutorialStart.ink
+INCLUDE bossDialogue.ink

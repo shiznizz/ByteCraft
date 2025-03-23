@@ -19,6 +19,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] Renderer model;
     [SerializeField] public NavMeshAgent agent;
     [SerializeField] Animator anim;
+    [SerializeField] private bool isDrone = false;
     private GameObject originalTarget;
 
     [Header("Enemy Stats")]
@@ -64,6 +65,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private Collider enemyCollider;
     private Renderer bodyRenderer;
 
+    [Header("Audio")]
+    [SerializeField] AudioSource enemyAudio;
+    [SerializeField] AudioClip hurtSound;
 
     Vector3 startingPos;
     float roamTimer;
@@ -318,6 +322,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void takeDamage(int amount)
     {
         if (isDead) return;
+        if (isDrone) enemyAudio.PlayOneShot(hurtSound);
 
         if (movement == movementType.seeking)
         {
@@ -426,6 +431,15 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private void handleDeath()
     {
         hpBar.gameObject.SetActive(false);
+        Debug.Log("Hitting handle death.");
+        AlarmDrone droneScript = GetComponent<AlarmDrone>();
+        if (droneScript != null) Debug.Log("Found drone script!");
+        /*if (isDrone)
+        {
+            Debug.Log("Hitting if statement.");
+            AlarmDrone script = GetComponent<AlarmDrone>();
+            script.handleDeath();
+        }*/
 
         //Disable the collider
         if (enemyCollider != null)
