@@ -199,7 +199,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         // call in update.
         //isGrounded = Physics.Raycast(transform.position, Vector3.down, playerStatManager.instance.playerHeight * 0.5f + 0.1f/*,~ignoreLayer*/);
-        isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, playerStatManager.instance.playerHeight / 2, 0), 0.2f, groundMask);
+        isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, 1, 0), 0.2f, groundMask);
 
         // applies drag and resets jump count
         if (isGrounded)
