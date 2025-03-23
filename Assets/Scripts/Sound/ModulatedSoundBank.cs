@@ -54,7 +54,7 @@ public class ModulatedSoundBank : MonoBehaviour
     public void PlaySpecificExternal(AudioSource externalAudioSource, AudioClip clip)
     {
         audioSource.pitch = pitchModifier * Random.Range(minPitchVariation, maxPitchVariation); Random.Range(minPitchVariation, maxPitchVariation);
-        externalAudioSource.PlayOneShot(clip);
+        externalAudioSource.PlayOneShot(clip, 2);
     }
 
 

@@ -10,7 +10,6 @@ public class mainMenu : MonoBehaviour
     private AudioSource audioSource;
 
     public GameObject optionsPanel;
-    [SerializeField] public GameObject questManager;
 
     private void Start()
     {
@@ -109,6 +108,5 @@ public class mainMenu : MonoBehaviour
         }
 
         PlayerPrefs.Save();
-        Debug.Log("Quest Progress Reset.");
     }
 }

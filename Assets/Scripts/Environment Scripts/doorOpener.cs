@@ -3,22 +3,31 @@ using UnityEngine;
 public class doorOpener : MonoBehaviour
 {
     [SerializeField] Animator doorAnimator;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] GameObject dependentObject;
 
     void OnTriggerEnter(Collider character)
     {
         if (character.CompareTag("Player"))
-            doorAnimator.SetTrigger("Open");
+        {
+            if (dependentObject == null || dependentObject.activeSelf == true)
+            {
+                if (doorAnimator != null)
+                    doorAnimator.SetTrigger("Open");
+                else
+                    this.GetComponent<Animation>().Play("open");
+            }
+        }
     }
 
     void OnTriggerExit(Collider character)
     {
-        if (character.CompareTag("Player"))
-            doorAnimator.SetTrigger("Close");
+        if (dependentObject == null || dependentObject.activeSelf == true)
+        {
+            if (character.CompareTag("Player"))
+                if (doorAnimator != null)
+                    doorAnimator.SetTrigger("Close");
+                else
+                    this.GetComponent<Animation>().Play("close");
+        }
     }
 }

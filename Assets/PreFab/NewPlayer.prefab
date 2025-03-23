@@ -1092,6 +1092,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 33792
   trap: {fileID: 0}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 32768
   isGrounded: 0
   isSprinting: 0
   isGrappling: 0
@@ -1211,7 +1214,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lr: {fileID: 6947207261321354804}
-  gunTip: {fileID: 5798197359762240505}
+  gunTip: {fileID: 1291906001593474764}
   cam: {fileID: 3146933043063798755}
   player: {fileID: 766754491863903372}
   maskGrappable:
@@ -1648,6 +1651,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f5cdeea7a0438284da67bfe709519c14, type: 3}
+--- !u!4 &1291906001593474764 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 456200620316063821, guid: f5cdeea7a0438284da67bfe709519c14, type: 3}
+  m_PrefabInstance: {fileID: 1709403743892334209}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5798197359762240505 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5174161406858139000, guid: f5cdeea7a0438284da67bfe709519c14, type: 3}
