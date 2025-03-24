@@ -20,18 +20,19 @@ MonoBehaviour:
   attackType: 2
   model: {fileID: 6410884639855604318, guid: 5000accdcfcdebc4db5cac5c5ec11cd3, type: 3}
   flashPOS: {fileID: 4380741854999654472, guid: 5000accdcfcdebc4db5cac5c5ec11cd3, type: 3}
+  muzzleTransform: {fileID: 0}
   shootDamage: 2
   shootRange: 100
   shootRate: 0.2
   ammoCur: 30
   ammoMax: 30
-  ammoReserve: 64
+  ammoReserve: 120
   ammoReserveMax: 120
   bulletObj: {fileID: 8404054753871229023, guid: 488f4709aab8d5b45adba07265db180d, type: 3}
   continuousRadius: 0.5
   maxRange: 100
-  extensionSpeed: 50
-  currLength: 23.749346
+  extensionSpeed: 2000
+  currLength: 0
   tickRate: 0
   heatGenPerShot: 0
   canOverheat: 1
@@ -43,3 +44,5 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 6675c3e4d1ad8b64c887aed699ad3e22, type: 3}
   - {fileID: 8300000, guid: a835bb687af22f745b692ce85e6643d5, type: 3}
   reloadVolume: 0.8
+  noAmmoSounds: []
+  noAmmoVolume: 0

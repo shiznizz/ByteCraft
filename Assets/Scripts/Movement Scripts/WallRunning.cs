@@ -10,6 +10,16 @@ public class WallRunning : MonoBehaviour
 
     private Vector3 forwardDir;
 
+    [Header("Camera Effects")]
+    [SerializeField] Camera cam;
+    [SerializeField] float fov;
+    [SerializeField] float wallRunFov;
+    [SerializeField] float wallRunFovTime;
+    [SerializeField] float camTilt;
+    [SerializeField] float camTiltTime;
+
+    public float tilt {  get; private set; }
+
     [Header("Wallrunning")]
     public LayerMask wallLayer;
 
@@ -172,11 +182,20 @@ public class WallRunning : MonoBehaviour
         pc.isWallRunning = true;
         startingWR = true;
 
+        cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, wallRunFov, wallRunFovTime * Time.deltaTime);
+        if (wallRight)
+            tilt = Mathf.Lerp(tilt, camTilt, camTiltTime * Time.deltaTime);
+        else if(wallLeft)
+            tilt = Mathf.Lerp(tilt, -camTilt, camTiltTime * Time.deltaTime);
+
         wallRunTimer = playerStatManager.instance.maxWallRunTime;
     }
 
     private void stopWallRun()
     {
+        cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, fov, wallRunFovTime * Time.deltaTime);
+        tilt = Mathf.Lerp(tilt, 0, camTiltTime * Time.deltaTime);
+
         pc.isWallRunning = false;
         prevWallNormal = wallNormal;
 

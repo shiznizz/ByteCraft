@@ -23,6 +23,7 @@ public class playerAttack : MonoBehaviour
 
     private BoxCollider continuousCollider;
     private Transform continuousMesh;
+    [SerializeField] Transform laserPos;
     public GameObject activeContinuous;
 
     private void Awake()
@@ -47,11 +48,14 @@ public class playerAttack : MonoBehaviour
             if (inventoryManager.instance.weaponList[inventoryManager.instance.weaponListPos].ammoCur > 0)
                 shoot();
             else
-                audioSource.PlayOneShot(inventoryManager.instance.returnCurrentWeapon().noAmmoSounds[Random.Range(0, inventoryManager.instance.returnCurrentWeapon().noAmmoSounds.Length)], inventoryManager.instance.returnCurrentWeapon().noAmmoVolume);
+                audioSource.PlayOneShot(inventoryManager.instance.returnCurrentWeapon().noAmmoSounds[Random.Range(0, inventoryManager.instance.returnCurrentWeapon().noAmmoSounds.Length)], inventoryManager.instance.returnCurrentWeapon().noAmmoVolume); 
         }
         hotKeyWeapon();
         selectWeapon();
         gunReload();
+
+        if (Input.GetButtonUp("Fire1"))
+            stopContinous();
     }
 
     void shoot()
@@ -59,7 +63,8 @@ public class playerAttack : MonoBehaviour
         if (isReloading) return;
 
         playerStatManager.instance.attackTimer = 0;
-        StartCoroutine(flashMuzzle());
+        if(inventoryManager.instance.returnCurrentWeapon().attackType != weaponStats.bulletType.Continuous)
+            StartCoroutine(flashMuzzle());
         inventoryManager.instance.returnCurrentWeapon().ammoCur--;
         if (inventoryManager.instance.returnCurrentWeapon().shootSounds.Length != 0)
             playShootSound();
@@ -103,8 +108,6 @@ public class playerAttack : MonoBehaviour
             IDamage damage = hit.collider.GetComponent<IDamage>();
             damage?.takeDamage(playerStatManager.instance.attackDamage);
         }
-
-
     }
 
     void shootProjectile()
@@ -118,9 +121,6 @@ public class playerAttack : MonoBehaviour
 
         if (inventoryManager.instance.returnCurrentWeapon().currLength < inventoryManager.instance.returnCurrentWeapon().maxRange)
             extendContinuous();
-
-        if (Input.GetButtonUp("Fire1"))
-            stopContinous();
     }
 
     void startContinuous()
@@ -128,8 +128,10 @@ public class playerAttack : MonoBehaviour
         if (activeContinuous == null) // Only instantiate if it doesn't already exist
         {
             //activeContinuous = Instantiate(inventoryManager.instance.returnCurrentWeapon().bulletObj, inventoryManager.instance.returnCurrentWeapon().flashPOS.position, Camera.main.transform.rotation);
-            activeContinuous = Instantiate(inventoryManager.instance.returnCurrentWeapon().bulletObj, inventoryManager.instance.returnCurrentWeapon().flashPOS.position, inventoryManager.instance.returnCurrentWeapon().flashPOS.rotation);
-            //activeContinuous.transform.SetParent(inventoryManager.instance.returnCurrentWeapon().flashPOS); // Optional: Attach to weapon
+            activeContinuous = Instantiate(inventoryManager.instance.returnCurrentWeapon().bulletObj, inventoryManager.instance.returnCurrentWeapon().flashPOS.localPosition, inventoryManager.instance.returnCurrentWeapon().flashPOS.localRotation);
+            //activeContinuous = Instantiate(inventoryManager.instance.returnCurrentWeapon().bulletObj, inventoryManager.instance.returnCurrentWeapon().muzzleTransform.position, inventoryManager.instance.returnCurrentWeapon().muzzleTransform.rotation);
+            //activeContinuous = Instantiate(inventoryManager.instance.returnCurrentWeapon().bulletObj, laserPos.position, laserPos.rotation);
+            //activeContinuous.transform.SetParent(inventoryManager.instance.returnCurrentWeapon().flashPOS);
         }
     }
 
@@ -139,6 +141,7 @@ public class playerAttack : MonoBehaviour
         {
             Destroy(activeContinuous);
             activeContinuous = null;
+            inventoryManager.instance.returnCurrentWeapon().currLength = 0;
         }
     }
 

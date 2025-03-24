@@ -13,6 +13,7 @@ public class weaponStats : itemSO
 
     [Header("Adjustment for muzzle flash placement")]
     public Transform flashPOS;
+    public Transform muzzleTransform;
     //public float moveFlashX;
     //public float moveFlashY;
     //public float moveFlashZ;
