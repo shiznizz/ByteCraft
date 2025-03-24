@@ -19,9 +19,7 @@ MonoBehaviour:
   wepType: 1
   attackType: 1
   model: {fileID: 3762765695189490583, guid: d2f0f167fbb14c04c9c5382690767fef, type: 3}
-  moveFlashX: 0.38
-  moveFlashY: -0.44
-  moveFlashZ: 1.8
+  flashPOS: {fileID: 0}
   shootDamage: 1
   shootRange: 100
   shootRate: 0.5
@@ -33,7 +31,12 @@ MonoBehaviour:
   hitEffect: {fileID: 0}
   shootSounds:
   - {fileID: 8300000, guid: 68ad5fab2b2d2fb4fb9ba09bcc2c6b8e, type: 3}
-  shootVolume: 0.8
+  - {fileID: 8300000, guid: 57ef1fbe514657d48857bd3ff7a18060, type: 3}
+  - {fileID: 8300000, guid: 1b766da7cc2d648aa84e36cb5fe8abcb, type: 3}
+  shootVolume: 1
   reloadSounds:
-  - {fileID: 8300000, guid: 946ebdb1b9f525e49a14b36b54314f3d, type: 3}
-  reloadVolume: 0.8
+  - {fileID: 8300000, guid: fc706ae615ce33a4e9dc92140b212916, type: 3}
+  reloadVolume: 1
+  noAmmoSounds:
+  - {fileID: 8300000, guid: 44cd49b1a59b0fa4aa2010d98a21769d, type: 3}
+  noAmmoVolume: 1
