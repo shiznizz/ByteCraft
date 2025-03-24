@@ -188,7 +188,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void updateEnemyUI()
     {
         hpFillBar.fillAmount = (float)HP / HPOrginal;
-        hpBar.transform.LookAt(hpBarTarget.transform.position);
+        hpBar.transform.LookAt(target.transform.position);
     }
 
     void onSpawn()
