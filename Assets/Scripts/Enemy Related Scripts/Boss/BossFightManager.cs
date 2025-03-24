@@ -32,19 +32,19 @@ public class BossFightManager : MonoBehaviour, IDamage
     public float bossTalkDuration = 3f; // Duration of the boss talking (in seconds)
     public float chaseSpeed = 3.5f; // Movement Speed
     public float attackRange = 3f; // Range to trigger AOE attack
-    [SerializeField] private float phaseTwoTimer = 30f; // Time between random mechanics is 30 seconds
+    [SerializeField] private float phaseTwoTimer; // Time between random mechanics is 30 seconds
 
     [Header("Animation Settings")]
     public float animTransSpeed = 5f; // Speed of animation transition
     public GameObject shieldEffect; // Assign shield effect here
 
-    [Header("Heavy AOE Attack Settings")]
-    public GameObject aoeWarningEffect; // The warning effect that shows where the attack will hit
-    public GameObject aoeExplosionEffect; // The explosion effect
-    public float aoeRadius = 5f; // Radius of the AOE attack
-    public int aoeDamage = 30; // Damage the attack deals
-    public float aoeWarningTime = 2f; // Time before explosion
-    public float aoeAttackCooldown = 10f; // Cooldown before the boss can use the attack again
+    //[Header("Heavy AOE Attack Settings")]
+    //public GameObject aoeWarningEffect; // The warning effect that shows where the attack will hit
+    //public GameObject aoeExplosionEffect; // The explosion effect
+    //public float aoeRadius = 5f; // Radius of the AOE attack
+    //public int aoeDamage = 30; // Damage the attack deals
+    //public float aoeWarningTime = 2f; // Time before explosion
+    //public float aoeAttackCooldown = 10f; // Cooldown before the boss can use the attack again
 
     [Header("Bullet Settings")]
     public GameObject bulletPrefab;  // The bullet prefab to instantiate
@@ -180,7 +180,7 @@ public class BossFightManager : MonoBehaviour, IDamage
     {
         isInPhaseTwo = true; // Marked as true for phase two
         bossHP = 200; // Resets boss HP for phase two
-        phaseTwoTimer = 30f; // Resets phase mechanic timer
+        phaseTwoTimer = 10f; // Resets phase mechanic timer
 
         if (bossAgent != null)
         {
@@ -318,7 +318,7 @@ public class BossFightManager : MonoBehaviour, IDamage
                 bossAgent.SetDestination(player.position);
 
             // Reset the timer for the next mechanic
-            phaseTwoTimer = 30f;
+            phaseTwoTimer = 10f;
         }
 
         if (bossHP <= 0)
