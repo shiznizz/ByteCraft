@@ -26,8 +26,9 @@ public class weaponStats : itemSO
 
     [Header("Continous Specific Stats")]
     public float continuousRadius;
-    public float colliderMaxRange;
-    public float colliderExtensionSpeed;
+    public float maxRange;
+    public float extensionSpeed;
+    public float currLength;
     public float tickRate;
     public float heatGenPerShot;
     public bool canOverheat;

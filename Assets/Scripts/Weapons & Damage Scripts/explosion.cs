@@ -41,10 +41,15 @@ public class explosion : MonoBehaviour
         {
             if(!hasExploded)
             {
+                //Debug.Log("Det Timer:" + detonationTimer);
                 if(explosiveDevice.activeSelf && detonationTimer >= detonationDelay)
-                     Explode();
+                {
+                    Debug.Log("you got into condition");
+                    Explode();
+                }
                 else
                      detonationTimer += Time.deltaTime;
+                //Debug.Log("Det +1:" + detonationTimer);
 
                 if (detonationTimer <= 0)
                      explosiveDevice.SetActive(true);
@@ -68,6 +73,7 @@ public class explosion : MonoBehaviour
 
     public void Explode()
     {
+        Debug.Log("Explode: " + detonationTimer);
         if (hasExploded) return;
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
