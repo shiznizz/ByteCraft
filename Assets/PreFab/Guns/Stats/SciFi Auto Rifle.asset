@@ -10,26 +10,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e21f5821f5f548640b2b963930b98da4, type: 3}
-  m_Name: Black Auto Rifle - new 1
+  m_Name: SciFi Auto Rifle
   m_EditorClassIdentifier: 
   itemName: Black Rifle
   itemDescription: it go pew pew
-  itemIcon: {fileID: 21300044, guid: 71a7f8669de848e45ba57bda95f3a58e, type: 3}
+  itemIcon: {fileID: 21300000, guid: 5ee00e117dec0bf4999f376bdc649378, type: 3}
   itemTypye: 0
   wepType: 0
   attackType: 0
-  model: {fileID: 7320126194257204296, guid: 4ae7b36808f20b640966e26040268823, type: 3}
-  moveFlashX: 0.36
-  moveFlashY: -0.3
-  moveFlashZ: 1.9
+  model: {fileID: 6799863786082906623, guid: 5449487d4a66a8840ada2dbfb1160fd1, type: 3}
+  flashPOS: {fileID: 62710438629164157, guid: 5449487d4a66a8840ada2dbfb1160fd1, type: 3}
+  muzzleTransform: {fileID: 0}
   shootDamage: 2
   shootRange: 100
   shootRate: 0.2
-  ammoCur: 30
+  ammoCur: 20
   ammoMax: 30
   ammoReserve: 120
   ammoReserveMax: 120
   bulletObj: {fileID: 0}
+  continuousRadius: 0
+  maxRange: 0
+  extensionSpeed: 0
+  currLength: 0
+  tickRate: 0
+  heatGenPerShot: 0
+  canOverheat: 0
   hitEffect: {fileID: 0}
   shootSounds:
   - {fileID: 8300000, guid: d737db35d91e07347a457efa333b791f, type: 3}
@@ -38,3 +44,5 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 6675c3e4d1ad8b64c887aed699ad3e22, type: 3}
   - {fileID: 8300000, guid: a835bb687af22f745b692ce85e6643d5, type: 3}
   reloadVolume: 0.8
+  noAmmoSounds: []
+  noAmmoVolume: 0
