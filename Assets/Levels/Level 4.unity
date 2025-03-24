@@ -865,10 +865,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3084279293563185391, guid: 23e0d63c467818f448704e7a6456de18, type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3518557129058248310, guid: 23e0d63c467818f448704e7a6456de18, type: 3}
       propertyPath: m_Name
       value: standing button
       objectReference: {fileID: 0}
+    - target: {fileID: 3518557129058248310, guid: 23e0d63c467818f448704e7a6456de18, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6028015884966908719, guid: 23e0d63c467818f448704e7a6456de18, type: 3}
+      propertyPath: buttonModel
+      value: 
+      objectReference: {fileID: 905121472}
+    - target: {fileID: 6028015884966908719, guid: 23e0d63c467818f448704e7a6456de18, type: 3}
+      propertyPath: buttonPrompt
+      value: 
+      objectReference: {fileID: 470905448}
     - target: {fileID: 6028015884966908719, guid: 23e0d63c467818f448704e7a6456de18, type: 3}
       propertyPath: objectToActivate
       value: 
@@ -2419,6 +2435,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3635251353404866446, guid: 1d4d10d4b5db1eb40a47729d04e7b5c4, type: 3}
   m_PrefabInstance: {fileID: 458567272}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &470905448 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4176825476313260336, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+  m_PrefabInstance: {fileID: 2086746651}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &474461858
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3824,6 +3845,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 3635251353404866446, guid: 1d4d10d4b5db1eb40a47729d04e7b5c4, type: 3}
   m_PrefabInstance: {fileID: 875915657}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &905121472 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5233730372406903835, guid: 23e0d63c467818f448704e7a6456de18, type: 3}
+  m_PrefabInstance: {fileID: 180055335}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &911093997
 PrefabInstance:
@@ -7330,6 +7356,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 109184927804752684, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3354133548953732252, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_Name
       value: UI
