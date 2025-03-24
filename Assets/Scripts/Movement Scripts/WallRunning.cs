@@ -12,6 +12,7 @@ public class WallRunning : MonoBehaviour
 
     [Header("Camera Effects")]
     [SerializeField] Camera cam;
+    [SerializeField] Camera gunCam;
     [SerializeField] float fov;
     [SerializeField] float wallRunFov;
     [SerializeField] float wallRunFovTime;
@@ -183,6 +184,7 @@ public class WallRunning : MonoBehaviour
         startingWR = true;
 
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, wallRunFov, wallRunFovTime * Time.deltaTime);
+        gunCam.fieldOfView = Mathf.Lerp(gunCam.fieldOfView, wallRunFov, wallRunFovTime * Time.deltaTime);
         if (wallRight)
             tilt = Mathf.Lerp(tilt, camTilt, camTiltTime * Time.deltaTime);
         else if(wallLeft)
@@ -194,6 +196,7 @@ public class WallRunning : MonoBehaviour
     private void stopWallRun()
     {
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, fov, wallRunFovTime * Time.deltaTime);
+        gunCam.fieldOfView = Mathf.Lerp(gunCam.fieldOfView, fov, wallRunFovTime * Time.deltaTime);
         tilt = Mathf.Lerp(tilt, 0, camTiltTime * Time.deltaTime);
 
         pc.isWallRunning = false;
