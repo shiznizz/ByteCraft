@@ -12,6 +12,8 @@ public class creditsScene : MonoBehaviour
 
     public Button backToMainMenu;
 
+    public float musicVolume = 0.2f; // Default volume
+
     void Start()
     {
         rectTransform = GetComponent<RectTransform>();
@@ -30,13 +32,21 @@ public class creditsScene : MonoBehaviour
         {
             audioSource.clip = creditsMusic;
             audioSource.loop = true;  // Optional: loop the music
-            audioSource.Play();  // Start playing the music
+            audioSource.volume = musicVolume; // Set the volume to the specified value
+            //audioSource.Play();  // Start playing the music
+            Invoke("PlayMusic", 1f);  // Call PlayMusic after 1 second delay
         }
 
         if (backToMainMenu != null)
         {
             backToMainMenu.onClick.AddListener(goToMainMenu);
         }
+    }
+
+    // This function is called after the 1-second delay
+    void PlayMusic()
+    {
+        audioSource.Play();
     }
 
     void Update()
@@ -46,6 +56,6 @@ public class creditsScene : MonoBehaviour
 
     void goToMainMenu()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 }

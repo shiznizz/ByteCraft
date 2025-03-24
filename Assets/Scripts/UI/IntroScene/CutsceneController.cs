@@ -28,9 +28,16 @@ public class CutsceneController : MonoBehaviour
     //This is call after first timeline finishes
     private void OnFirstTimelineFinished(PlayableDirector director)
     {
-        //Play the second timeline after the first one finishes
-        secondTimelineDirector.stopped += OnSecondTimelineFinished; // Listen for the second timeline to finish
-        secondTimelineDirector.Play(); // Start the second timeline
+        ////Play the second timeline after the first one finishes
+        //secondTimelineDirector.stopped += OnSecondTimelineFinished; // Listen for the second timeline to finish
+        //secondTimelineDirector.Play(); // Start the second timeline
+
+        // Make sure the second timeline director is not null before playing it
+        if (secondTimelineDirector != null)
+        {
+            secondTimelineDirector.stopped += OnSecondTimelineFinished;
+            secondTimelineDirector.Play(); // Start the second timeline
+        }
     }
 
     //This is called when the second timeline finishes
