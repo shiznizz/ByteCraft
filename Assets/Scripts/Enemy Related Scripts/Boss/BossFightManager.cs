@@ -404,29 +404,27 @@ public class BossFightManager : MonoBehaviour, IDamage
 
     IEnumerator HeavyAOEAttack()
     {
-        //Debug.Log("Boss is preparing a Heavy AOE Attack!");
-
-        //Show warning effect
-        Instantiate(aoeWarningEffect, transform.position, Quaternion.identity);
-
-        yield return new WaitForSeconds(aoeWarningTime); // Wait before explosion
-
-        //Spawn explosion effect
-        Instantiate(aoeExplosionEffect, transform.position, Quaternion.identity);
-
-        //Deal damage if player is within range
-        if (Vector3.Distance(player.position, transform.position) <= aoeRadius)
+        //Ensure that the BossSummon script is enabled
+        if (bossSummon != null)
         {
-            //Debug.Log("Player hit by AOE! Taking 50 damage.");
+            bossSummon.enabled = true;  // Enable the BossSummon script to allow bomb summoning
 
-            if (playerStatManager.instance != null)
-            {
-                playerStatManager.instance.shield -= 50;
-                //Debug.Log($"Player HP after AOE: {playerStatManager.instance.HP}");
-            }
+            //Summon bombs at random locations after a brief delay (or immediately)
+            yield return new WaitForSeconds(1f);  // Delay before summoning bombs (you can adjust this)
+
+            //Call the method to summon bombs at random spawn points
+            bossSummon.SummonBombs();
+
+            //Wait for a brief duration before ending the attack
+            yield return new WaitForSeconds(1f); // Bombs are summoned, so give time for visual effects
+
+            //Disable the BossSummon script after the bomb summoning is complete
+            bossSummon.enabled = false;
         }
-
-        yield return new WaitForSeconds(aoeAttackCooldown); // Cooldown before next attack
+        else
+        {
+            Debug.LogError("BossSummon script is not assigned or missing!");
+        }
     }
 
     IEnumerator LaunchTrackingProjectiles()
