@@ -53,7 +53,7 @@ public class jetpackScript : MonoBehaviour
 
             playerStatManager.instance.jumpCount++;
         }
-        if (Input.GetButtonDown("Jump") && !pc.isJetpacking && !pc.isGrounded && playerStatManager.instance.hasJetpack)
+        else if (Input.GetButtonDown("Jump") && !pc.isJetpacking && !pc.isGrounded && playerStatManager.instance.hasJetpack)
         {
             // if existing jetpackCoroutine stop routine
             if (jetpackCoroutine != null)

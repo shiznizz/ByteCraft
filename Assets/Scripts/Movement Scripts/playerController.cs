@@ -92,8 +92,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         HPOrig = playerStatManager.instance.HPMax;
 
-
-
         spawnPlayer();
     }
 
@@ -209,12 +207,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             
             // if you are grounded and moving play step sounds.
             if (moveDir.magnitude > 0 && !isPlayingSteps && !isSliding)
-            {
                 StartCoroutine(PlaySteps());
-            }
         }
         else
+        {
             rb.linearDamping = playerStatManager.instance.airDrag;
+
+            if (moveDir.magnitude > 0 && !isPlayingSteps && isWallRunning)
+                StartCoroutine(PlaySteps());         
+        }
     }
     void checkSky()
     {
@@ -279,10 +280,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         isPlayingSteps = true;
         footStepSounds.PlayRandomSound();
-        if (!isSprinting)
-            yield return new WaitForSeconds(walkSoundInterval);
-        else
+
+        if (isSprinting || isWallRunning)
             yield return new WaitForSeconds(runSoundInterval);
+        else
+            yield return new WaitForSeconds(walkSoundInterval);
+
         isPlayingSteps = false;
     }
 

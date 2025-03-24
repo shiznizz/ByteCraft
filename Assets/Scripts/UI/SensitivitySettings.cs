@@ -31,7 +31,7 @@ public class SensitivitySettings : MonoBehaviour
     {
         // Set the slider to the saved value
         sensitivitySlider.value = PlayerPrefs.GetFloat(sensitivityParameter, sensitivitySlider.value);
-
+        Debug.Log(PlayerPrefs.GetFloat(sensitivityParameter, sensitivitySlider.value));
         // Load the last sensitivity value if needed for reset logic
         //lastSensitivity = PlayerPrefs.GetFloat(sensitivityParameter + "lastSensitivity", lastSensitivity);
 
