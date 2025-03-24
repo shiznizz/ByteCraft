@@ -30,6 +30,8 @@ public class weaponStats : itemSO
     [Range(0, 1)] public float shootVolume;
     public AudioClip[] reloadSounds;
     [Range(0, 1)] public float reloadVolume;
+    public AudioClip[] noAmmoSounds;
+    [Range(0, 1)] public float noAmmoVolume;
 
     public void RefreshAmmo()
     {

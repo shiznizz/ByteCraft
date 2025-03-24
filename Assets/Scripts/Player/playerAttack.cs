@@ -43,7 +43,7 @@ public class playerAttack : MonoBehaviour
             if (inventoryManager.instance.weaponList[inventoryManager.instance.weaponListPos].ammoCur > 0)
                 shoot();
             else
-                audioSource.PlayOneShot(gunEmptyClip, 0.1f);
+                audioSource.PlayOneShot(inventoryManager.instance.returnCurrentWeapon().noAmmoSounds[Random.Range(0, inventoryManager.instance.returnCurrentWeapon().noAmmoSounds.Length)], inventoryManager.instance.returnCurrentWeapon().noAmmoVolume);
         }
         hotKeyWeapon();
         selectWeapon();
