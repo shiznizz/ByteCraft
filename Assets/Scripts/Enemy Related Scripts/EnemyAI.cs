@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -17,13 +18,14 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] enemyType type;
     [SerializeField] movementType movement;
     [SerializeField] spawnType spawn;
-    [SerializeField] GameObject target;
+    [SerializeField] public GameObject target;
     [SerializeField] Renderer model;
     [SerializeField] public NavMeshAgent agent;
     [SerializeField] Animator anim;
     [SerializeField] private bool isDrone = false;
     [SerializeField] GameObject hpBarTarget;
     private GameObject originalTarget;
+    private bool isKami;
 
     [Header("Enemy Stats")]
     [SerializeField] Image hpFillBar;
@@ -105,9 +107,10 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     {
         HPOrginal = HP;
         colorOrig = model.material.color;
-        GoalManager.instance.updateGameGoal(1);
         startingPos = transform.position;
+
         if (speed != 0) agent.speed = speed;
+        
         if (type != enemyType.stationary)
         {
             stoppingDistOrig = agent.stoppingDistance;
@@ -140,14 +143,18 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         
         updateEnemyUI();
         // if stunned, nav mesh will stop and skip rest of AI's logic
-        if (isStunned)
+        if (isStunned || godMode || isKami)
         {
             agent.isStopped = true;
             return;
         }
+        else
+        {
+            agent.isStopped = false;
+        }
 
         
-        if (type != enemyType.stationary && !godMode)
+        if (type != enemyType.stationary)
         {
             float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
             float animatorCurSpeed = anim.GetFloat("Speed");
@@ -188,7 +195,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void updateEnemyUI()
     {
         hpFillBar.fillAmount = (float)HP / HPOrginal;
-        hpBar.transform.LookAt(hpBarTarget.transform.position);
+        hpBar.transform.LookAt(target.transform.position);
     }
 
     void onSpawn()
@@ -230,7 +237,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 }
 
                 //Ranged attack
-                if (type != enemyType.melee && shootTimer >= shootRate && angleToTarget <= shootAngle && agent.remainingDistance <= agent.stoppingDistance + 0.5f)
+                if (type != enemyType.melee && type != enemyType.kamikaze && shootTimer >= shootRate && angleToTarget <= shootAngle && agent.remainingDistance <= agent.stoppingDistance + 0.5f)
                 {
                     //Debug.Log("Remaing:" + agent.remainingDistance);
                     shoot();
@@ -245,6 +252,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 //Kamaikaze
                 if (type == enemyType.kamikaze && shootTimer >= shootRate && distanceToPlayer <= meleeDistance && !hasExploded)
                 {
+                    
                     kamikazeAttack();
                 }
                 if (agent.remainingDistance <= agent.stoppingDistance && !isDead)
@@ -271,7 +279,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             if (type == enemyType.kamikaze)
             {
                 //Start the kamikaze attack
-                kamikazeAttack();
+                //kamikazeAttack();
             }
         }
     }
@@ -406,7 +414,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             if (HP <= 0 && !isDead)
             {
                 isDead = true;
-                GoalManager.instance.updateGameGoal(-1);
                 GameEventsManager.instance.miscEvents.EnemyKilled();
 
                 if (dropsLoot)
@@ -559,7 +566,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (hasExploded) return;
 
         hasExploded = true;
-
+        isKami = true;
+        
         // Ensure the Kamikaze starts moving towards the player
         agent.SetDestination(target.transform.position);
 
@@ -567,7 +575,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (Vector3.Distance(transform.position, target.transform.position) <= meleeDistance)
         {
             // Trigger detonate animation (similar to melee attack)
+            
             anim.SetTrigger("Detonate");
+            
 
             StartCoroutine(explosionAfterDelay());
         }

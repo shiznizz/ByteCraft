@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class buttons : MonoBehaviour
 {
@@ -17,17 +18,27 @@ public class buttons : MonoBehaviour
     [SerializeField] float holdDuration;
     public bool isHoldButton;
     public bool playerInRange;
-    //public bool isActivated;
+    public bool isActivated;
     public bool isHolding;
     public float holdTime;
     bool isMarked;
 
+    [Header("Visuals & Audio")]
+    [SerializeField] Renderer buttonModel;
+    private Color colorActive;
+    private Color colorInactive;
+    [SerializeField] Image holdBarFill;
+    [SerializeField] Canvas holdBar;
+    [SerializeField] GameObject buttonPrompt;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         buttonRadius = GetComponent<SphereCollider>();
         buttonRadius.radius = activationRange;
+        colorInactive = buttonModel.material.color;
+        colorActive = Color.green;
+        buttonPrompt.SetActive(false);
     }
 
     // Update is called once per frame
@@ -35,6 +46,8 @@ public class buttons : MonoBehaviour
     {
         if(isHolding)
         {
+            holdBar.gameObject.SetActive(true);
+            UpdateHoldBar();
             holdTime += Time.deltaTime;
 
             if (holdTime >= holdDuration)
@@ -52,6 +65,7 @@ public class buttons : MonoBehaviour
         {
             isHolding = false;
             holdTime = 0;
+            holdBar.gameObject.SetActive(false);
         }
     }
 
@@ -60,6 +74,7 @@ public class buttons : MonoBehaviour
         // check if you have to leave and come back to activate multiple times
         if (other.CompareTag("Player"))
         {
+            buttonPrompt.SetActive(true);
             holdTime = 0;
             playerInRange = true;
         }
@@ -69,6 +84,7 @@ public class buttons : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            buttonPrompt.SetActive(false);
             holdTime = 0;
             isHolding = false;
             playerInRange = false;
@@ -77,7 +93,8 @@ public class buttons : MonoBehaviour
 
     public void toggleButton()
     {
-        //isActivated = !isActivated;
+        isActivated = !isActivated;
+        buttonModel.material.color = isActivated ? colorActive : colorInactive;
         foreach(GameObject obj in objectsToActivate)
             obj.SetActive(!obj.activeSelf);
 
@@ -98,5 +115,10 @@ public class buttons : MonoBehaviour
         }
         else
             toggleButton();             
+    }
+
+    void UpdateHoldBar()
+    {
+        holdBarFill.fillAmount = (float)holdTime / holdDuration;
     }
 }

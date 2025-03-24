@@ -9,6 +9,8 @@ using UnityEngine.Audio;
 using Unity.VisualScripting;
 using System.Text.RegularExpressions;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 
 
@@ -83,11 +85,23 @@ public class gameManager : MonoBehaviour
     private int selectedButtonIndex = 0;
     private Button[] menuButtons;
 
+    //[Header("Loading Screen")]
+    //public GameObject loadingScreenPrefab; // Reference to the loading screen prefab
+    //private GameObject loadingScreenInstance; // Instance of the loading screen
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        instance = this;
+        //instance = this;
+
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
 
         player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<playerController>();
@@ -422,4 +436,88 @@ public class gameManager : MonoBehaviour
             }
         }
     }
+
+//    #region LoadingScreen
+//    //Function to load a scene asynchronously and show loading screen
+//    public void LoadScene(int sceneBuildIndex)
+//    {
+//        Debug.Log("LoadScene called with scene index: " + sceneBuildIndex);
+
+//        if (loadingScreenPrefab == null)
+//        {
+//            Debug.LogError("Loading Screen Prefab is not assigned in the inspector.");
+//            return;
+//        }
+
+//        string sceneName = SceneManager.GetSceneAt(sceneBuildIndex).name;
+
+//        Debug.Log("Scene name to load: " + sceneName);  // Add log to confirm the scene name
+
+//        loadingScreenInstance = Instantiate(loadingScreenPrefab, Vector3.zero, Quaternion.identity);
+
+//        if (loadingScreenInstance != null)
+//        {
+//            Debug.Log("Loading screen instantiated successfully.");
+//        }
+//        else
+//        {
+//            Debug.LogError("Failed to instantiate the loading screen.");
+//        }
+
+//        StartCoroutine(LoadSceneAsync(sceneName));
+//    }
+
+//    private IEnumerator LoadSceneAsync(string sceneName)
+//    {
+//        Debug.Log("Started loading scene: " + sceneName);
+
+//        //Start loading the scene asynchronously
+//        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+
+//        //Don't let the scene activate until it's ready
+//        operation.allowSceneActivation = false;
+
+//        //Wait until the scene is almost done loading (90%)
+//        while (!operation.isDone)
+//        {
+//            //Update the loading screen
+//            float progress = Mathf.Clamp01(operation.progress / 0.9f);
+
+//            //Debug log to check loading progress
+//            Debug.Log("Loading progress: " + progress * 100 + "%");
+
+//            //Update the loading screen progress
+//            if (loadingScreenInstance != null)
+//            {
+//                loadingScreenInstance.GetComponent<LoadingScreen>().UpdateLoadingProgress(progress);
+//            }
+
+//            //When loading is done (90% progress), allow scene activation (player can skip)
+//            if (operation.progress >= 0.9f)
+//            {
+//                ////Let the player skip after 90% progress
+//                //if (Input.anyKeyDown)
+//                //{
+//                //    operation.allowSceneActivation = true;
+//                //}
+
+//                //Add an artificial delay before the scene activates (to ensure the loading screen stays visible)
+//                yield return new WaitForSeconds(5f); // Adjust this value if needed
+
+//                // Allow scene activation after the artificial delay
+//                operation.allowSceneActivation = true;
+//                Debug.Log("Scene is ready to activate.");
+//            }
+
+//            yield return null;
+//        }
+
+//        //Destroy the loading screen after the scene is fully loaded
+//        if (loadingScreenInstance != null)
+//        {
+//            Destroy(loadingScreenInstance);
+//        }
+//        Debug.Log("Scene Loaded!");
+//    }
+//#endregion
 }
