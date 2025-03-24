@@ -92,8 +92,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         HPOrig = playerStatManager.instance.HPMax;
 
-
-
         spawnPlayer();
     }
 
