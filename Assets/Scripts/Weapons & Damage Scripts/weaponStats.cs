@@ -5,7 +5,7 @@ using UnityEngine;
 public class weaponStats : itemSO
 {
     public enum weaponType { primary, secondary, special }
-    public enum bulletType { RayCast, Projectile, Continuous}
+    public enum bulletType { RayCast, Projectile, Continuous, lobber}
     public weaponType wepType;
     public bulletType attackType;
 
@@ -13,6 +13,7 @@ public class weaponStats : itemSO
 
     [Header("Adjustment for muzzle flash placement")]
     public Transform flashPOS;
+    public Transform muzzleTransform;
     //public float moveFlashX;
     //public float moveFlashY;
     //public float moveFlashZ;
@@ -24,12 +25,23 @@ public class weaponStats : itemSO
     public int ammoCur, ammoMax, ammoReserve, ammoReserveMax;
     public GameObject bulletObj;
 
+    [Header("Continous Specific Stats")]
+    public float continuousRadius;
+    public float maxRange;
+    public float extensionSpeed;
+    public float currLength;
+    public float tickRate;
+    public float heatGenPerShot;
+    public bool canOverheat;
+
     [Header("Visuals and Sounds")]
     public ParticleSystem hitEffect;
     public AudioClip[] shootSounds;
     [Range(0, 1)] public float shootVolume;
     public AudioClip[] reloadSounds;
     [Range(0, 1)] public float reloadVolume;
+    public AudioClip[] noAmmoSounds;
+    [Range(0, 1)] public float noAmmoVolume;
 
     public void RefreshAmmo()
     {

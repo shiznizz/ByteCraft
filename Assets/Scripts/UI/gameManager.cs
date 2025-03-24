@@ -76,7 +76,7 @@ public class gameManager : MonoBehaviour
     [SerializeField] float lowHealthThreshold = 0.25f;
     [SerializeField] float heartbeatSpeed = 2f;
     [SerializeField] float heartbeatMagnitude = 0.2f;
-    [SerializeField] float baseAlpha = 0.5f;
+    [SerializeField] float baseAlpha = 0.3f;
 
     [SerializeField] AudioMixer mixer;
     public bool inventoryOpen = false;
@@ -338,6 +338,8 @@ public class gameManager : MonoBehaviour
 
         float hpRatio = (float)playerStatManager.instance.HP / playerStatManager.instance.HPMax;
 
+        if (lowHealthIndicator == null) return;
+
         if (hpRatio <= lowHealthThreshold)
         {
             lowHealthIndicator.enabled = true;
@@ -346,14 +348,18 @@ public class gameManager : MonoBehaviour
 
             Color c = lowHealthIndicator.color;
             c.a = alpha;
-            lowHealthIndicator.color = c;  
+            lowHealthIndicator.color = c;
         }
         else
         {
-            lowHealthIndicator.enabled = false;
             Color c = lowHealthIndicator.color;
             c.a = Mathf.MoveTowards(c.a, 0f, Time.deltaTime);
             lowHealthIndicator.color = c;
+
+            if (c.a <= 0.01f)
+            {
+                lowHealthIndicator.enabled = false;
+            }
         }
     }
 

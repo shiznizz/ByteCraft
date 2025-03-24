@@ -12,26 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e21f5821f5f548640b2b963930b98da4, type: 3}
   m_Name: Pulse Rifle
   m_EditorClassIdentifier: 
-  itemName: 
+  itemName: Pulse Rifle
   itemDescription: 
   itemIcon: {fileID: 0}
   itemTypye: 0
   wepType: 0
   attackType: 0
-  model: {fileID: 0}
-  moveFlashX: 0
-  moveFlashY: 0
-  moveFlashZ: 0
-  shootDamage: 0
-  shootRange: 0
-  shootRate: 0
-  ammoCur: 0
-  ammoMax: 0
-  ammoReserve: 0
-  ammoReserveMax: 0
+  model: {fileID: 4325776790434845396, guid: 2304202ae9af01244bd37d935f09424e, type: 3}
+  flashPOS: {fileID: 6809310397273752945, guid: 2304202ae9af01244bd37d935f09424e, type: 3}
+  shootDamage: 15
+  shootRange: 50
+  shootRate: 0.2
+  ammoCur: 25
+  ammoMax: 25
+  ammoReserve: 75
+  ammoReserveMax: 100
   bulletObj: {fileID: 0}
   hitEffect: {fileID: 0}
-  shootSounds: []
-  shootVolume: 0
-  reloadSounds: []
-  reloadVolume: 0
+  shootSounds:
+  - {fileID: 8300000, guid: 08f78eba48bb21c44ac5a74ca84efc83, type: 3}
+  - {fileID: 8300000, guid: 3dc7b4438e9f788479f2eba0e75191b1, type: 3}
+  - {fileID: 8300000, guid: e196615aab553a14ab4e1aeb462c195c, type: 3}
+  - {fileID: 8300000, guid: 159aa6b3153429349b06479ba4bcb8fc, type: 3}
+  shootVolume: 1
+  reloadSounds:
+  - {fileID: 8300000, guid: 6a32a0d49cd240b4cb9934adf37a49a5, type: 3}
+  reloadVolume: 1
+  noAmmoSounds:
+  - {fileID: 8300000, guid: b8d2d012a098c254ca879b5d23323854, type: 3}
+  noAmmoVolume: 1

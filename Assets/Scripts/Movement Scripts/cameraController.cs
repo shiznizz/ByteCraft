@@ -5,6 +5,7 @@ using UnityEngine;
 public class cameraController : MonoBehaviour
 {
     [SerializeField] Transform orientation;
+    [SerializeField] WallRunning wallrun;
 
     [SerializeField] public int sens;
     [SerializeField] int lockVertMin, lockVertMax;
@@ -37,7 +38,7 @@ public class cameraController : MonoBehaviour
 
         rotX = Mathf.Clamp(rotX, lockVertMin, lockVertMax);
         // rotates camera left right up and down
-        transform.localRotation = Quaternion.Euler(rotX, rotY, 0);
+        transform.localRotation = Quaternion.Euler(rotX, rotY, wallrun.tilt);
         // rotates the player left and right
         orientation.rotation = Quaternion.Euler(0, rotY, 0);
     }
