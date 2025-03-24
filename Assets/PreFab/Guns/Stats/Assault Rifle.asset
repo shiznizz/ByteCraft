@@ -19,22 +19,25 @@ MonoBehaviour:
   wepType: 0
   attackType: 0
   model: {fileID: 699685758888692305, guid: e80985dbe7928d14081e2f7c5977392e, type: 3}
-  moveFlashX: 0.36
-  moveFlashY: -0.3
-  moveFlashZ: 1.9
+  flashPOS: {fileID: 2228625459676037561, guid: e80985dbe7928d14081e2f7c5977392e, type: 3}
   shootDamage: 2
   shootRange: 75
   shootRate: 0.08
   ammoCur: 20
   ammoMax: 20
-  ammoReserve: 100
+  ammoReserve: 53
   ammoReserveMax: 100
   bulletObj: {fileID: 8404054753871229023, guid: ae1db21d834ba7b40bbea42884b4b1ad, type: 3}
   hitEffect: {fileID: 0}
   shootSounds:
-  - {fileID: 8300000, guid: d737db35d91e07347a457efa333b791f, type: 3}
-  shootVolume: 0.8
+  - {fileID: 8300000, guid: 947719fd38845824ba3638af9d8e4e54, type: 3}
+  - {fileID: 8300000, guid: ee4ef2f8f89f0834d8c92266456d0922, type: 3}
+  - {fileID: 8300000, guid: 97b5820b1e079ab4bbbe90e89bd4db5d, type: 3}
+  - {fileID: 8300000, guid: 7e950513b9c6d734e8130770598861f3, type: 3}
+  shootVolume: 1
   reloadSounds:
-  - {fileID: 8300000, guid: 6675c3e4d1ad8b64c887aed699ad3e22, type: 3}
-  - {fileID: 8300000, guid: a835bb687af22f745b692ce85e6643d5, type: 3}
-  reloadVolume: 0.8
+  - {fileID: 8300000, guid: 8f268095f67575b44b10ea19a4482b2c, type: 3}
+  reloadVolume: 1
+  noAmmoSounds:
+  - {fileID: 8300000, guid: 80e397195ea2940b69ee7bdbded856a5, type: 3}
+  noAmmoVolume: 1
