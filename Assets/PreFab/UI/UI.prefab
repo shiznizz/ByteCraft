@@ -5122,7 +5122,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3315853462615766295}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -10486,11 +10486,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 8790748049409394833}
   - {fileID: 1232036740070286289}
   - {fileID: 2860042491439663757}
   - {fileID: 2281124994483830783}
   - {fileID: 1887809657044348439}
-  - {fileID: 8790748049409394833}
   m_Father: {fileID: 8386706001582953583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -12450,7 +12450,7 @@ MonoBehaviour:
   tabObjects:
   - {fileID: 8372178875738152482}
   - {fileID: 7994761135656940166}
-  - {fileID: 3315853462615766295}
+  - {fileID: 6682188098174830281}
   buttonDefault: {fileID: 21300000, guid: 9bbbf6d2a452ed84e914f0837e2adab8, type: 3}
   buttonSelected: {fileID: 21300000, guid: 00f23dcf91498de4eafd8c0bf4db3fbc, type: 3}
   buttonHover: {fileID: 21300000, guid: 57332c9bbcbea46418d36adfa3410fbf, type: 3}
@@ -18066,7 +18066,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2985079004281670381, guid: d6a8a7d761866d743b9494a0374b6ec1, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241160189887999277, guid: d6a8a7d761866d743b9494a0374b6ec1, type: 3}
+      propertyPath: m_Spacing
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4285081949545252428, guid: d6a8a7d761866d743b9494a0374b6ec1, type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -18075,6 +18079,10 @@ PrefabInstance:
     - target: {fileID: 4285081949545252428, guid: d6a8a7d761866d743b9494a0374b6ec1, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -500
+      objectReference: {fileID: 0}
+    - target: {fileID: 4534272651052868119, guid: d6a8a7d761866d743b9494a0374b6ec1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4534272651052868119, guid: d6a8a7d761866d743b9494a0374b6ec1, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -18123,6 +18131,10 @@ PrefabInstance:
     - target: {fileID: 7041961339057798920, guid: d6a8a7d761866d743b9494a0374b6ec1, type: 3}
       propertyPath: m_Name
       value: QuestLogUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 7041961339057798920, guid: d6a8a7d761866d743b9494a0374b6ec1, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7419722264176273888, guid: d6a8a7d761866d743b9494a0374b6ec1, type: 3}
       propertyPath: m_Pivot.x
@@ -18309,6 +18321,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bd5e2b688049534db5afe5c18a6aede, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &6682188098174830281 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2985079004281670381, guid: d6a8a7d761866d743b9494a0374b6ec1, type: 3}
+  m_PrefabInstance: {fileID: 8491193096407764004}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8726778951619105963
 PrefabInstance:
   m_ObjectHideFlags: 0
