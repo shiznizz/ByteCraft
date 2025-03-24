@@ -464,6 +464,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private void handleDeath()
     {
         hpBar.gameObject.SetActive(false);
+        this.GetComponent<CapsuleCollider>().enabled = false;
         Debug.Log("Hitting handle death.");
         AlarmDrone droneScript = GetComponent<AlarmDrone>();
         if (droneScript != null) Debug.Log("Found drone script!");
