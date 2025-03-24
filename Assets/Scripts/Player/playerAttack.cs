@@ -21,6 +21,10 @@ public class playerAttack : MonoBehaviour
     private bool isMeleeAttacking = false;
     private bool isReloading = false;
 
+    private BoxCollider continuousCollider;
+    private Transform continuousMesh;
+    public GameObject activeContinuous;
+
     private void Awake()
     {
         instance = this;
@@ -72,6 +76,10 @@ public class playerAttack : MonoBehaviour
         {
             shootContinuous();
         }
+        else if (inventoryManager.instance.returnCurrentWeapon().attackType == weaponStats.bulletType.lobber)
+        {
+            shootLobber();
+        }
     }
 
 
@@ -105,6 +113,48 @@ public class playerAttack : MonoBehaviour
     }
 
     void shootContinuous()
+    {
+        startContinuous();
+
+        if (inventoryManager.instance.returnCurrentWeapon().currLength < inventoryManager.instance.returnCurrentWeapon().maxRange)
+            extendContinuous();
+
+        if (Input.GetButtonUp("Fire1"))
+            stopContinous();
+    }
+
+    void startContinuous()
+    {
+        if (activeContinuous == null) // Only instantiate if it doesn't already exist
+        {
+            //activeContinuous = Instantiate(inventoryManager.instance.returnCurrentWeapon().bulletObj, inventoryManager.instance.returnCurrentWeapon().flashPOS.position, Camera.main.transform.rotation);
+            activeContinuous = Instantiate(inventoryManager.instance.returnCurrentWeapon().bulletObj, inventoryManager.instance.returnCurrentWeapon().flashPOS.position, inventoryManager.instance.returnCurrentWeapon().flashPOS.rotation);
+            //activeContinuous.transform.SetParent(inventoryManager.instance.returnCurrentWeapon().flashPOS); // Optional: Attach to weapon
+        }
+    }
+
+    void stopContinous()
+    {
+        if (activeContinuous != null)
+        {
+            Destroy(activeContinuous);
+            activeContinuous = null;
+        }
+    }
+
+    void extendContinuous()
+    {
+        Debug.Log("flashPOS Position: " + inventoryManager.instance.returnCurrentWeapon().flashPOS.position);
+
+        inventoryManager.instance.returnCurrentWeapon().currLength += inventoryManager.instance.returnCurrentWeapon().extensionSpeed * Time.deltaTime;
+        inventoryManager.instance.returnCurrentWeapon().currLength = Mathf.Min(inventoryManager.instance.returnCurrentWeapon().currLength, inventoryManager.instance.returnCurrentWeapon().maxRange);
+        activeContinuous.GetComponent<BoxCollider>().size = new Vector3(activeContinuous.GetComponent<BoxCollider>().size.x, activeContinuous.GetComponent<BoxCollider>().size.y, inventoryManager.instance.returnCurrentWeapon().currLength);
+        activeContinuous.GetComponent<BoxCollider>().center = new Vector3(0, 0, inventoryManager.instance.returnCurrentWeapon().currLength / 2f);
+
+        activeContinuous.GetComponent<MeshRenderer>().transform.localScale = activeContinuous.GetComponent<BoxCollider>().size;
+    }
+
+    void shootLobber()
     {
 
     }

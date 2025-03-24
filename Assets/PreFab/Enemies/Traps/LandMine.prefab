@@ -51,15 +51,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   explosiveDevice: {fileID: 3929342834466362950}
   explosiveContainer: {fileID: 7087576670978546954}
+  sphereCollider: {fileID: 0}
   explosionCenter: {fileID: 5976532675725426277}
   explosionRadius: 5
   explosionDmg: 50
   explosionForce: 15
   explosionUpForce: 5
   detonationDelay: 0
+  status: {fileID: 0}
   defaultActiveState: 0
   doesBombDestroy: 1
   explosionEffect: {fileID: 100000, guid: 15ca5b8fa431dc04291a79cadcd19874, type: 3}
+  explosionAudio: {fileID: 0}
   explosionSound: {fileID: 0}
   destroyDelay: 0
 --- !u!33 &7011079365273141779
@@ -93,7 +96,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: abbc11b90dc915444b32b635c7bc968e, type: 2}
+  - {fileID: 2100000, guid: c1857fc7091ac4633a78fe5387c5d66a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -275,7 +278,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: abbc11b90dc915444b32b635c7bc968e, type: 2}
+  - {fileID: 2100000, guid: c1857fc7091ac4633a78fe5387c5d66a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

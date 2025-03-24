@@ -5,7 +5,7 @@ using UnityEngine;
 public class weaponStats : itemSO
 {
     public enum weaponType { primary, secondary, special }
-    public enum bulletType { RayCast, Projectile, Continuous}
+    public enum bulletType { RayCast, Projectile, Continuous, lobber}
     public weaponType wepType;
     public bulletType attackType;
 
@@ -23,6 +23,15 @@ public class weaponStats : itemSO
     public float shootRate;
     public int ammoCur, ammoMax, ammoReserve, ammoReserveMax;
     public GameObject bulletObj;
+
+    [Header("Continous Specific Stats")]
+    public float continuousRadius;
+    public float maxRange;
+    public float extensionSpeed;
+    public float currLength;
+    public float tickRate;
+    public float heatGenPerShot;
+    public bool canOverheat;
 
     [Header("Visuals and Sounds")]
     public ParticleSystem hitEffect;
