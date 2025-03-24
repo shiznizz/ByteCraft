@@ -751,7 +751,7 @@ GameObject:
   - component: {fileID: 3067801544143702087}
   - component: {fileID: 2938868307854434387}
   - component: {fileID: 674004461312044192}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Assault_droid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -790,10 +790,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   movement: 2
+  spawn: 0
   target: {fileID: 0}
   model: {fileID: 1713002497166622511}
   agent: {fileID: 6807988873505759927}
   anim: {fileID: 3067801544143702087}
+  isDrone: 0
+  hpBarTarget: {fileID: 0}
   hpFillBar: {fileID: 6090817092273606114}
   hpBar: {fileID: 3526371411784541654}
   HP: 10
@@ -817,7 +820,12 @@ MonoBehaviour:
   roamDist: 5
   bodyFadeTime: 5
   fadeDuration: 2
+  spawnEffects: {fileID: 0}
+  invulnerableTime: 0
+  godMode: 0
   isDead: 0
+  enemyAudio: {fileID: 0}
+  hurtSound: {fileID: 0}
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
