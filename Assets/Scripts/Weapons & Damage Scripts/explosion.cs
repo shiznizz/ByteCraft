@@ -19,6 +19,7 @@ public class explosion : MonoBehaviour
 
     [Header("Explosion Effects")]
     [SerializeField] GameObject explosionEffect;
+    [SerializeField] AudioSource explosionAudio;
     [SerializeField] AudioClip explosionSound;
     [SerializeField] float destroyDelay;
     bool hasExploded;
@@ -41,15 +42,11 @@ public class explosion : MonoBehaviour
         {
             if(!hasExploded)
             {
-                //Debug.Log("Det Timer:" + detonationTimer);
+                Debug.Log("Det timer" + detonationTimer);
                 if(explosiveDevice.activeSelf && detonationTimer >= detonationDelay)
-                {
-                    Debug.Log("you got into condition");
-                    Explode();
-                }
+                     Explode();
                 else
                      detonationTimer += Time.deltaTime;
-                //Debug.Log("Det +1:" + detonationTimer);
 
                 if (detonationTimer <= 0)
                      explosiveDevice.SetActive(true);
@@ -73,7 +70,7 @@ public class explosion : MonoBehaviour
 
     public void Explode()
     {
-        Debug.Log("Explode: " + detonationTimer);
+                Debug.Log("Explode timer" + detonationTimer);
         if (hasExploded) return;
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
@@ -108,9 +105,10 @@ public class explosion : MonoBehaviour
             Instantiate(explosionEffect, transform.position, Quaternion.identity);
         }
 
-        if (explosionSound != null)
+        if (explosionAudio != null)
         {
-            AudioSource.PlayClipAtPoint(explosionSound, transform.position);
+            //AudioSource.PlayClipAtPoint(explosionSound, transform.position);
+            explosionAudio.Play();
         }
 
         hasExploded = true;
