@@ -11,7 +11,7 @@ public class QuestManager : MonoBehaviour
     [SerializeField] private QuestLogUI questLogUI;
     [SerializeField] private GameObject questUpdateDisplay;
     [SerializeField] private TextMeshProUGUI questUpdatePopupText;
-
+    
     [SerializeField] private QuestLogScrollingList questLogScrollingList;
     public QuestInfoSO[] allQuests;
 

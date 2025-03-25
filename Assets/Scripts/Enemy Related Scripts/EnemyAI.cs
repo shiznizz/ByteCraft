@@ -146,9 +146,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         
         updateEnemyUI();
         // if stunned, nav mesh will stop and skip rest of AI's logic
-        
+        if (agent.velocity.magnitude > 0.1f && !enemyFootsteps.IsPlaying())
+        {
+            enemyFootsteps.PlayRandomSound();
+        }
 
-        
+
         if (type != enemyType.stationary)
         {
             float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
