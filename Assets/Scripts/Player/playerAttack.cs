@@ -175,7 +175,7 @@ public class playerAttack : MonoBehaviour
 
     void extendContinuous()
     {
-        Debug.Log("flashPOS Position: " + inventoryManager.instance.returnCurrentWeapon().flashPOS.position);
+        //Debug.Log("flashPOS Position: " + inventoryManager.instance.returnCurrentWeapon().flashPOS.position);
 
         inventoryManager.instance.returnCurrentWeapon().currLength += inventoryManager.instance.returnCurrentWeapon().extensionSpeed * Time.deltaTime;
         inventoryManager.instance.returnCurrentWeapon().currLength = Mathf.Min(inventoryManager.instance.returnCurrentWeapon().currLength, inventoryManager.instance.returnCurrentWeapon().maxRange);
@@ -303,7 +303,7 @@ public class playerAttack : MonoBehaviour
     void hotKeyWeapon()
     {
         int weaponIndex;
-        if (Input.GetKeyDown(KeyCode.Alpha1) && inventoryManager.instance.weaponList[0] != null)
+        if (Input.GetKeyDown(KeyCode.Alpha1) && inventoryManager.instance.weaponList.Count >= 1 && inventoryManager.instance.weaponList[0] != null)
         {
             
             weaponIndex = inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.slotBossScript.primaryWeapon.weapon);
@@ -312,16 +312,17 @@ public class playerAttack : MonoBehaviour
             changeWeapon();
             inventoryManager.instance.currentEquippedWeapon();
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha2) && inventoryManager.instance.weaponList[1] != null)
+        else if (Input.GetKeyDown(KeyCode.Alpha2) && inventoryManager.instance.weaponList.Count >= 2 && inventoryManager.instance.weaponList[1] != null)
         {
             
             weaponIndex = inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.slotBossScript.secondaryWeapon.weapon);
 
             inventoryManager.instance.weaponListPos = weaponIndex;
+            Debug.Log(weaponIndex.ToString());
             changeWeapon();
             inventoryManager.instance.currentEquippedWeapon();
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha3) && inventoryManager.instance.weaponList[2] != null)
+        else if (Input.GetKeyDown(KeyCode.Alpha3) && inventoryManager.instance.weaponList.Count >= 3 && inventoryManager.instance.weaponList[2] != null)
         {
             
             weaponIndex = inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.slotBossScript.specialWeapon.weapon);

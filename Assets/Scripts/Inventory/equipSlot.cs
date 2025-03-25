@@ -75,6 +75,7 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
     {
         this.item = weapon.GetItem();
         itemIcon.sprite = item.itemIcon;
+        this.weapon = weapon;
         equippedSlot.SetActive(true);
 
     }
@@ -92,7 +93,7 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
             if (item == inventoryManager.instance.equippedWeapon)
             {
                 // remove current weapons UI and Visual
-                Debug.Log("remove");
+                //Debug.Log("remove");
                 gameManager.instance.player.GetComponent<playerAttack>().removeWeaponUI();
             }
             // remove weapon then change weapon POS to make sure we dont go out of bounds

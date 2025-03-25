@@ -161,8 +161,8 @@ public class AlarmDrone : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
+        //Gizmos.color = Color.red;
+        //Gizmos.DrawWireSphere(transform.position, detectionRange);
     }
 
     private void OnTriggerEnter(Collider other)

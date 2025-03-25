@@ -146,7 +146,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         
         updateEnemyUI();
         // if stunned, nav mesh will stop and skip rest of AI's logic
-        if (agent.velocity.magnitude > 0.1f)
+        if (agent != null && agent.velocity.magnitude > 0.1f)
         {
             if (enemyFootsteps != null && !enemyFootsteps.IsPlaying()) enemyFootsteps.PlayRandomSound();
         }
@@ -232,7 +232,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         targetDir = target.transform.position - headPos.position;
         angleToTarget = Vector3.Angle(new Vector3(targetDir.x, 0, targetDir.z), transform.forward);
 
-        Debug.DrawRay(headPos.position, targetDir,Color.cyan);
+        //Debug.DrawRay(headPos.position, targetDir,Color.cyan);
 
         RaycastHit hit;
         if (Physics.Raycast(headPos.position, targetDir, out hit) && angleToTarget <= FOV)
@@ -380,7 +380,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             HP -= effectiveDamage;
 
             // debig log to confirm dmg is taken
-            Debug.Log("Enemy took: " + amount + " damage");
+            //Debug.Log("Enemy took: " + amount + " damage");
 
             // instantiate the floating damage text only once when damage is taken.
             if (floatingDamageTextPrefab != null)

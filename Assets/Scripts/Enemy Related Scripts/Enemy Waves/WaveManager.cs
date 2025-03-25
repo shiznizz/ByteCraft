@@ -25,7 +25,7 @@ public class WaveManager : MonoBehaviour
                 for (int i = 0; i < spawnEvent.enemyCount; i++)
                 {
                     Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
-                    Debug.Log("Spawning enemy.");
+                    //Debug.Log("Spawning enemy.");
                     Instantiate(spawnEvent.enemyPrefab, spawnPoint.position, spawnPoint.rotation);
                     GoalManager.instance.updateGameGoal(-1);
                 }
