@@ -398,7 +398,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         //if (Physics.SphereCast(Camera.main.transform.position, interactionRadius, Camera.main.transform.forward, out RaycastHit hit, interactionDistance, ~ignoreLayer))
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, interactionDistance, ~ignoreLayer))
         {
-            Debug.Log("Hit: " + hit.collider.name);
 
             buttons button = hit.collider.GetComponent<buttons>();
 
