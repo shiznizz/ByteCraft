@@ -54,7 +54,7 @@ public class creditsScene : MonoBehaviour
         rectTransform.anchoredPosition += new Vector2(0, scrollSpeed * Time.deltaTime);
     }
 
-    void goToMainMenu()
+    public void goToMainMenu()
     {
         SceneManager.LoadScene(1);
     }
