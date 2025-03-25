@@ -146,15 +146,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         
         updateEnemyUI();
         // if stunned, nav mesh will stop and skip rest of AI's logic
-        if (isStunned || godMode || isKami)
-        {
-            agent.isStopped = true;
-            return;
-        }
-        else
-        {
-            agent.isStopped = false;
-        }
+        
 
         
         if (type != enemyType.stationary)
@@ -166,10 +158,20 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             
             if (agent.remainingDistance < 0.01f)
                 roamTimer += Time.deltaTime;
+
+            if (isStunned || godMode || isKami)
+            {
+                agent.isStopped = true;
+                return;
+            }
+            else
+            {
+                agent.isStopped = false;
+            }
         }
 
         shootTimer += Time.deltaTime;
-        if (isAlerted && !playerInRange) // specific to drone bot alerts
+        if (isAlerted && !playerInRange && type != enemyType.stationary) // specific to drone bot alerts
         {
             if (alertTimer < alertCooldown)
             {
@@ -294,7 +296,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             playerInRange = false;
             target = originalTarget;
         }
-        agent.stoppingDistance = 0;
+
+        if (agent != null)
+            agent.stoppingDistance = 0;
     }
 
     void faceTarget()
@@ -656,7 +660,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (isAlerted)
         {
             alertTimer = 0f;
-
         }
     }
 

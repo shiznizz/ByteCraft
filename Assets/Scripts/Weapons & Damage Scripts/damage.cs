@@ -181,6 +181,5 @@ public class damage : MonoBehaviour
     {
         
         target = newTarget;
-        Debug.Log("Target Updated: " + target.name);
     }
 }
