@@ -2135,6 +2135,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!4 &76610250
 Transform:
   m_ObjectHideFlags: 0
@@ -3767,6 +3769,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!4 &167446721
 Transform:
   m_ObjectHideFlags: 0
@@ -38141,6 +38145,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!4 &1169197060
 Transform:
   m_ObjectHideFlags: 0
@@ -38364,6 +38370,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!4 &1176368037
 Transform:
   m_ObjectHideFlags: 0
@@ -41872,6 +41880,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 0}
   textDestroyTimer: 0
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!4 &1384379459
 Transform:
   m_ObjectHideFlags: 0
@@ -54156,6 +54166,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!4 &1652312049
 Transform:
   m_ObjectHideFlags: 0
@@ -55361,6 +55373,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!4 &1701379378
 Transform:
   m_ObjectHideFlags: 0
@@ -68869,6 +68883,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orientation: {fileID: 1040981788586641529}
   cam: {fileID: 5231367633606247611}
+  gunCam: {fileID: 0}
   fov: 80
   wallRunFov: 90
   wallRunFovTime: 20
@@ -70136,6 +70151,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!137 &1713002496211194144
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0
@@ -71626,6 +71643,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!136 &2595463042900245921
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -73483,6 +73502,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 0}
   textDestroyTimer: 0
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!1 &3545797121661986551
 GameObject:
   m_ObjectHideFlags: 0
@@ -73647,6 +73668,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!137 &3624568388519162752
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0
@@ -76972,6 +76995,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!4 &5296672405636027771
 Transform:
   m_ObjectHideFlags: 0
@@ -79779,6 +79804,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 0}
   textDestroyTimer: 0
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!1 &6403514433629699397
 GameObject:
   m_ObjectHideFlags: 0
@@ -85423,6 +85450,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 0}
   textDestroyTimer: 0
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!222 &6774949223626726155
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -91328,6 +91357,8 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
 --- !u!4 &7459361990467322280
 Transform:
   m_ObjectHideFlags: 0

@@ -99,6 +99,12 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     public bool isStunned = false;
 
+    public bool isDamaged = false; // Flag to track damage state
+    public float damageCooldown = 0.5f; // Time interval before the damage animation can be triggered again
+    private float lastDamageTime = 0f; // Time when the last damage was taken
+    [SerializeField] private float damageAnimationCooldown = 5f; // Time between take damage animations
+    private float lastDamageAnimationTime = 0f; // Tracks the last time the damage animation was triggered
+
     #endregion Variables
 
 
@@ -355,8 +361,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     }
     public void takeDamage(int amount)
     {
-        if (isDead || godMode) return;
+        if (isDead || godMode || Time.time - lastDamageTime < damageCooldown) return;
         if (isDrone) enemyAudio.PlayOneShot(hurtSound);
+
+        lastDamageTime = Time.time;  // Update the last damage time
+        isDamaged = true;            // Set the flag to indicate that the enemy is in the "damaged" state
 
         if (movement == movementType.seeking)
         {
@@ -395,9 +404,19 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             //}
 
             StartCoroutine(flashRed());
-            if (anim != null)
+            //if (anim != null)
+            //    anim.SetTrigger("damage");
+            // Ensure the damage animation doesn't spam.
+            AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo.IsName("damage") && stateInfo.normalizedTime < 3f)
+            {
+                return; // Don't trigger the animation again if it's still playing
+            }
+            if (anim != null && Time.time - lastDamageAnimationTime >= damageAnimationCooldown)
+            {
                 anim.SetTrigger("damage");
-
+                lastDamageAnimationTime = Time.time; // Update the time of the last damage animation
+            }
 
             if (type != enemyType.stationary)
             {
@@ -429,7 +448,18 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 }
             }
         }
+        else
+        {
+            isDamaged = false; // Resets the damage state when HP reaches zero
+        }
     }
+
+    //IEnumerator ResetDamageState()
+    //{
+    //    //Wait for the take damage animation to finish
+    //    yield return new WaitForSeconds(1.5f);  // You may need to adjust this depending on your animation length
+    //    isDamaged = false;  // Reset the flag
+    //}
 
     //// coroutine that spawns text until enemy dies
     //private IEnumerator DamageTextLoop(int damage)
