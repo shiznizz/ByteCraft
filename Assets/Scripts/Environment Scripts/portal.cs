@@ -8,7 +8,7 @@ public class portal : MonoBehaviour
 
     [Header("Portal Settings")]
     //Set this field in the Inspector for each portal you want to assign
-    public int sceneBuildIndex;
+    public string sceneName;
     public PortalType type;
     private GameObject quest;
     public bool questCompleteRequired = true;
@@ -23,7 +23,7 @@ public class portal : MonoBehaviour
             if (type == PortalType.teleport)
             {
                 //Loads the scene specified in the inspector
-                SceneManager.LoadScene(sceneBuildIndex);
+                SceneManager.LoadScene(sceneName);
             }
             else if (type == PortalType.endLevel)
             {
