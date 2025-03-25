@@ -7904,6 +7904,7 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 0
+  lobberExplosive: {fileID: 0}
 --- !u!1001 &284258269
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26416,6 +26417,7 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 0
+  lobberExplosive: {fileID: 0}
 --- !u!4 &725864596 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1413860588622064372, guid: 387926cd7df2de8418855745c1b683d3, type: 3}
@@ -30083,6 +30085,7 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 0
+  lobberExplosive: {fileID: 0}
 --- !u!4 &856856584
 Transform:
   m_ObjectHideFlags: 0
@@ -31793,6 +31796,7 @@ MonoBehaviour:
   explosionAudio: {fileID: 0}
   explosionSound: {fileID: 8300000, guid: e1e8a568f0cea9b41b0f60c736286369, type: 3}
   destroyDelay: 0
+  detonationTimer: 0
 --- !u!43 &888379128
 Mesh:
   m_ObjectHideFlags: 0
@@ -41921,6 +41925,7 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 0
+  lobberExplosive: {fileID: 0}
 --- !u!4 &1126074287 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1655198856165112636, guid: dffa4c53f99723c42bf6d52cad3914d1, type: 3}
@@ -51998,6 +52003,7 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 0
+  lobberExplosive: {fileID: 0}
 --- !u!1001 &1543354580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -54927,6 +54933,71 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dffa4c53f99723c42bf6d52cad3914d1, type: 3}
+--- !u!1001 &1642061758
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4001318520099993143, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4001318520099993143, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6318994338744366076, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
+      propertyPath: m_Name
+      value: Rail Gun
+      objectReference: {fileID: 0}
+    - target: {fileID: 6699741559958513990, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 61.011654
+      objectReference: {fileID: 0}
+    - target: {fileID: 6699741559958513990, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -20.487816
+      objectReference: {fileID: 0}
+    - target: {fileID: 6699741559958513990, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -23.872303
+      objectReference: {fileID: 0}
+    - target: {fileID: 6699741559958513990, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.99144495
+      objectReference: {fileID: 0}
+    - target: {fileID: 6699741559958513990, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6699741559958513990, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.13052596
+      objectReference: {fileID: 0}
+    - target: {fileID: 6699741559958513990, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6699741559958513990, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6699741559958513990, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6699741559958513990, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 724ba53e7e92045479a65c3e2b6969a1, type: 3}
 --- !u!1001 &1642354779
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -55860,6 +55931,7 @@ MonoBehaviour:
   explosionAudio: {fileID: 0}
   explosionSound: {fileID: 8300000, guid: 0c5d33c4b726d3f4aa6016966ad4b574, type: 3}
   destroyDelay: 1
+  detonationTimer: 0
 --- !u!82 &1678330200
 AudioSource:
   m_ObjectHideFlags: 0
@@ -68605,6 +68677,7 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 0
+  lobberExplosive: {fileID: 0}
 --- !u!4 &2135968292688426426
 Transform:
   m_ObjectHideFlags: 0
@@ -71543,6 +71616,7 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 0
+  lobberExplosive: {fileID: 0}
 --- !u!4 &4864967934000897141
 Transform:
   m_ObjectHideFlags: 0
@@ -71898,6 +71972,67 @@ Transform:
   - {fileID: 6668389231386019718}
   m_Father: {fileID: 1548680472274791866}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &5116475215786604544
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 8401683749099214237, guid: 560615e08c95d7c4fb7cc0c1f1998ccd, type: 3}
+      propertyPath: m_Name
+      value: Grenade Launcher
+      objectReference: {fileID: 0}
+    - target: {fileID: 8533848609066605430, guid: 560615e08c95d7c4fb7cc0c1f1998ccd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9210730365651210023, guid: 560615e08c95d7c4fb7cc0c1f1998ccd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 59.745014
+      objectReference: {fileID: 0}
+    - target: {fileID: 9210730365651210023, guid: 560615e08c95d7c4fb7cc0c1f1998ccd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -20.110016
+      objectReference: {fileID: 0}
+    - target: {fileID: 9210730365651210023, guid: 560615e08c95d7c4fb7cc0c1f1998ccd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -16.55917
+      objectReference: {fileID: 0}
+    - target: {fileID: 9210730365651210023, guid: 560615e08c95d7c4fb7cc0c1f1998ccd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.99144495
+      objectReference: {fileID: 0}
+    - target: {fileID: 9210730365651210023, guid: 560615e08c95d7c4fb7cc0c1f1998ccd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9210730365651210023, guid: 560615e08c95d7c4fb7cc0c1f1998ccd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.13052596
+      objectReference: {fileID: 0}
+    - target: {fileID: 9210730365651210023, guid: 560615e08c95d7c4fb7cc0c1f1998ccd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9210730365651210023, guid: 560615e08c95d7c4fb7cc0c1f1998ccd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9210730365651210023, guid: 560615e08c95d7c4fb7cc0c1f1998ccd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 9210730365651210023, guid: 560615e08c95d7c4fb7cc0c1f1998ccd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 560615e08c95d7c4fb7cc0c1f1998ccd, type: 3}
 --- !u!1 &5121384368093536274
 GameObject:
   m_ObjectHideFlags: 0
@@ -80586,6 +80721,7 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 0
+  lobberExplosive: {fileID: 0}
 --- !u!1 &8498329510286577935
 GameObject:
   m_ObjectHideFlags: 0
@@ -81005,6 +81141,7 @@ MonoBehaviour:
   explosionAudio: {fileID: 0}
   explosionSound: {fileID: 8300000, guid: 0c5d33c4b726d3f4aa6016966ad4b574, type: 3}
   destroyDelay: 2
+  detonationTimer: 0
 --- !u!23 &9067546439961135959
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -81154,3 +81291,5 @@ SceneRoots:
   - {fileID: 2111493004}
   - {fileID: 217235167}
   - {fileID: 2107339786}
+  - {fileID: 1642061758}
+  - {fileID: 5116475215786604544}
