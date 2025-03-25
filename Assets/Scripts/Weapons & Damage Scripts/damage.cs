@@ -3,7 +3,7 @@ using UnityEngine.Rendering;
 
 public class damage : MonoBehaviour
 {
-    enum damageType { moving, stationary, seeking, forward}
+    enum damageType { moving, stationary, seeking, forward, lobber}
 
     [Header("General Projectile Settings")]
     [SerializeField] damageType type;

@@ -25,6 +25,7 @@ public class playerAttack : MonoBehaviour
     private Transform continuousMesh;
     [SerializeField] Transform laserPos;
     public GameObject activeContinuous;
+    private float chargeTimer;
 
     private void Awake()
     {
@@ -55,12 +56,18 @@ public class playerAttack : MonoBehaviour
         gunReload();
 
         if (Input.GetButtonUp("Fire1"))
+        {
             stopContinous();
+            chargeTimer = 0;
+        }
     }
 
     void shoot()
     {
         if (isReloading) return;
+
+        if (inventoryManager.instance.returnCurrentWeapon().isChargeWeapon && chargeTimer < inventoryManager.instance.returnCurrentWeapon().chargeTime)
+            return;
 
         playerStatManager.instance.attackTimer = 0;
         if(inventoryManager.instance.returnCurrentWeapon().attackType != weaponStats.bulletType.Continuous)
@@ -81,10 +88,10 @@ public class playerAttack : MonoBehaviour
         {
             shootContinuous();
         }
-        else if (inventoryManager.instance.returnCurrentWeapon().attackType == weaponStats.bulletType.lobber)
-        {
-            shootLobber();
-        }
+        //else if (inventoryManager.instance.returnCurrentWeapon().attackType == weaponStats.bulletType.lobber)
+        //{
+        //    shootLobber();
+        //}
     }
 
 
@@ -113,6 +120,12 @@ public class playerAttack : MonoBehaviour
     void shootProjectile()
     {
         Instantiate(inventoryManager.instance.returnCurrentWeapon().bulletObj, playerStatManager.instance.muzzleFlash.position, Camera.main.transform.rotation);
+    }
+
+    void handleChargeWeapons()
+    {
+        if (inventoryManager.instance.returnCurrentWeapon().isChargeWeapon && chargeTimer < inventoryManager.instance.returnCurrentWeapon().chargeTime)
+            chargeTimer += Time.deltaTime;
     }
 
     void shootContinuous()
