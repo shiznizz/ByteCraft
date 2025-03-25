@@ -30,7 +30,7 @@ public class PlayerCarry : MonoBehaviour
                     {
                         carryable.PickUp(carryPoint);
                         currentCarry = carryable;
-                        Debug.Log("Picked Up: " + carryable.name);
+                        //Debug.Log("Picked Up: " + carryable.name);
                     }
                 }
             }
@@ -39,7 +39,7 @@ public class PlayerCarry : MonoBehaviour
                 // drop current carried obj
                 currentCarry.Drop();
                 currentCarry = null;
-                Debug.Log("Dropped the Object.");
+                //Debug.Log("Dropped the Object.");
             }
         }
     }

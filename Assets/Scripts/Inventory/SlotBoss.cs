@@ -23,10 +23,10 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
 
     public void LateUpdate()
     {
-        if (selectedItem != null && Input.GetButtonDown("Delete"))
-        {
-            deleteItem();
-        }
+        //if (selectedItem != null && Input.GetButtonDown("Delete"))
+        //{
+        //    deleteItem();
+        //}
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -51,7 +51,6 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
         {
             if (isFull)
             {
-                
                 equipGear(item);
                 gameManager.instance.deselectSlot();
             }
@@ -160,7 +159,6 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
 
     IEnumerator deletePopUp()
     {
-        
         gameManager.instance.deleteNotifaction.text = selectedItem.itemName + " Deleted";
         yield return new WaitForSecondsRealtime(1.5f);
         gameManager.instance.deleteNotifaction.text = " ";
