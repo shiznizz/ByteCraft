@@ -22,7 +22,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] Renderer model;
     [SerializeField] public NavMeshAgent agent;
     [SerializeField] Animator anim;
-    //[SerializeField] private bool isDrone = false;
+    [SerializeField] private bool isDrone = false;
     [SerializeField] GameObject hpBarTarget;
     private GameObject originalTarget;
     private bool isKami;
@@ -77,11 +77,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private Renderer bodyRenderer;
 
     [Header("Audio")]
-    //[SerializeField] AudioSource enemyAudio;
-    [SerializeField] ModulatedSoundBank enemyHurtSounds;
-    [SerializeField] ModulatedSoundBank enemyFootsteps;
-    [SerializeField] ModulatedSoundBank enemyAttackSounds;
-    [SerializeField] ModulatedSoundBank enemyDeathSounds;
+    [SerializeField] AudioSource enemyAudio;
+    [SerializeField] AudioClip hurtSound;
 
     Vector3 startingPos;
     float roamTimer;
@@ -143,8 +140,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     // Update is called once per frame
     void Update()
     {
+        
         updateEnemyUI();
-
         // if stunned, nav mesh will stop and skip rest of AI's logic
         if (isStunned || godMode || isKami)
         {
@@ -155,6 +152,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         {
             agent.isStopped = false;
         }
+
         
         if (type != enemyType.stationary)
         {
@@ -192,11 +190,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             checkRoam();
         else if (!playerInRange)
             checkRoam();
-
-        if (agent.remainingDistance > 0.01f)
-        {
-            PlayMovementSound();
-        }
     }
 
     void updateEnemyUI()
@@ -363,7 +356,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void takeDamage(int amount)
     {
         if (isDead || godMode) return;
-        StartCoroutine(PlayHurtSound());
+        if (isDrone) enemyAudio.PlayOneShot(hurtSound);
 
         if (movement == movementType.seeking)
         {
@@ -377,7 +370,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             HP -= effectiveDamage;
 
             // debig log to confirm dmg is taken
-            //Debug.Log("Enemy took: " + amount + " damage");
+            Debug.Log("Enemy took: " + amount + " damage");
 
             // instantiate the floating damage text only once when damage is taken.
             if (floatingDamageTextPrefab != null)
@@ -470,10 +463,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     private void handleDeath()
     {
-        StartCoroutine(PlayDeathSound());
         hpBar.gameObject.SetActive(false);
+        this.GetComponent<CapsuleCollider>().enabled = false;
+        Debug.Log("Hitting handle death.");
         AlarmDrone droneScript = GetComponent<AlarmDrone>();
-        //if (droneScript != null) Debug.Log("Found drone script!");
+        if (droneScript != null) Debug.Log("Found drone script!");
         /*if (isDrone)
         {
             Debug.Log("Hitting if statement.");
@@ -537,7 +531,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void shoot()
     {
         shootTimer = 0;
-        StartCoroutine(PlayWeaponSound());
 
         if (anim != null)
             anim.SetTrigger("Shoot");
@@ -567,7 +560,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         {
             kamikazeAttack();
         }
-        StartCoroutine(PlayWeaponSound());
     }
 
     void kamikazeAttack()
@@ -683,48 +675,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void SetHP(int newHP)
     {
         this.HP = newHP;
-    }
-    #endregion
-
-    #region Audio
-    IEnumerator PlayHurtSound()
-    {
-        if (enemyHurtSounds != null)
-        {
-            float clipDuration = enemyHurtSounds.GetClipDuration();
-            enemyHurtSounds.PlayCurrentClip();
-            yield return new WaitForSeconds(clipDuration);
-        }
-    }
-
-    IEnumerator PlayMovementSound()
-    {
-        if (enemyFootsteps != null)
-        {
-            float clipDuration = enemyDeathSounds.GetClipDuration();
-            enemyDeathSounds.PlayCurrentClip();
-            yield return new WaitForSeconds(clipDuration);
-        }
-    }
-
-    IEnumerator PlayDeathSound()
-    {
-        if (enemyDeathSounds != null)
-        {
-            float clipDuration = enemyDeathSounds.GetClipDuration();
-            enemyDeathSounds.PlayCurrentClip();
-            yield return new WaitForSeconds(clipDuration);
-        }
-    }
-
-    IEnumerator PlayWeaponSound()
-    {
-        if (enemyAttackSounds != null)
-        {
-            float clipDuration = enemyAttackSounds.GetClipDuration();
-            enemyAttackSounds.PlayCurrentClip();
-            yield return new WaitForSeconds(clipDuration);
-        }
     }
     #endregion
 }

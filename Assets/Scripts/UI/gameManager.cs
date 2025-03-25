@@ -118,16 +118,34 @@ public class gameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Cancel"))
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
         {
-            if (menuActive == null)
-                switchMenu(menuPause);
-            else if (!keepMenu)
+            if (Input.GetKeyDown(KeyCode.P))
             {
-                stateUnpause();
+                if (menuActive == null)
+                    switchMenu(menuPause);
+                else if (!keepMenu)
+                {
+                    stateUnpause();
+                }
+                inventoryOpen = false;
             }
-            inventoryOpen = false;
         }
+        else
+        {
+            if (Input.GetButtonDown("Cancel"))
+            {
+                if (menuActive == null)
+                    switchMenu(menuPause);
+                else if (!keepMenu)
+                {
+                    stateUnpause();
+                }
+                inventoryOpen = false;
+            }
+        }
+        
+
         if (Input.GetButtonDown("Inventory"))
         {
             inventoryOpen = true;
