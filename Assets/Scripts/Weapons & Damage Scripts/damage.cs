@@ -3,7 +3,7 @@ using UnityEngine.Rendering;
 
 public class damage : MonoBehaviour
 {
-    enum damageType { moving, stationary, seeking, forward}
+    enum damageType { moving, stationary, seeking, forward, lobber}
 
     [Header("General Projectile Settings")]
     [SerializeField] damageType type;
@@ -22,6 +22,9 @@ public class damage : MonoBehaviour
     [SerializeField] int targetingDistance;
     [SerializeField] float turnSpeed;
     [SerializeField] LayerMask ignoreLayer;
+
+    [Header("Lobber Explosive (optional)")]
+    [SerializeField] GameObject lobberExplosive;
 
     private GameObject target;
     private IDamage seekTarget;
@@ -53,6 +56,11 @@ public class damage : MonoBehaviour
                 }
 
                 rb.linearVelocity = Camera.main.transform.forward * speed;
+
+                if(type == damageType.lobber)
+                {
+                    rb.linearVelocity = new Vector3(rb.linearVelocity.x, 10, rb.linearVelocity.z);
+                }
             }
 
             Destroy(gameObject, destroyTime);
@@ -135,6 +143,13 @@ public class damage : MonoBehaviour
         {
             if (other.isTrigger)
                 return;
+
+            if(type == damageType.lobber && lobberExplosive != null)
+            {
+                lobberExplosive.SetActive(true);
+                lobberExplosive.GetComponent<explosion>().detonationTimer = lobberExplosive.GetComponent<explosion>().detonationDelay;
+                return;
+            }
 
             IDamage dmg = other.GetComponent<IDamage>();
 

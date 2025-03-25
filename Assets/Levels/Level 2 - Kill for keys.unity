@@ -257,6 +257,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e08bf8f6b04a63438c79746aa19f197, type: 3}
+--- !u!82 &99530828 stripped
+AudioSource:
+  m_CorrespondingSourceObject: {fileID: 2047931529293122156, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
+  m_PrefabInstance: {fileID: 1105272902}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &140406258
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -337,6 +342,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 3354133548953732252, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3952302529509498176, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -395,7 +404,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5433175866917044444, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5809270350288258848, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: player
@@ -413,6 +422,10 @@ PrefabInstance:
       propertyPath: playerSpawnPos
       value: 
       objectReference: {fileID: 1641036485}
+    - target: {fileID: 5809270350288258848, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: heartbeatSource
+      value: 
+      objectReference: {fileID: 99530828}
     - target: {fileID: 5981920104445373947, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0.125

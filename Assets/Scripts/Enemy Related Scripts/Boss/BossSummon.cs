@@ -65,7 +65,7 @@ public class BossSummon : MonoBehaviour
                     }
                     else
                     {
-                        Debug.LogError("No enemy prefabs assigned in BossSummon script!");
+                        //Debug.LogError("No enemy prefabs assigned in BossSummon script!");
                     }
                 }
             }
@@ -101,7 +101,7 @@ public class BossSummon : MonoBehaviour
             }
             else
             {
-                Debug.LogError("No bomb prefabs assigned in BossSummon script!");
+                //Debug.LogError("No bomb prefabs assigned in BossSummon script!");
             }
         }
     }
