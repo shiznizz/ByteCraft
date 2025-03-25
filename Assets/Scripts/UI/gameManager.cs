@@ -78,6 +78,11 @@ public class gameManager : MonoBehaviour
     [SerializeField] float heartbeatMagnitude = 0.2f;
     [SerializeField] float baseAlpha = 0.3f;
 
+    [Header("Low Health Audio")]
+    [SerializeField] private AudioSource heartbeatSource;
+    [SerializeField] private AudioClip heartbeatClip;
+    [SerializeField] private float heartbeatVolume = 0.5f;
+
     [SerializeField] AudioMixer mixer;
     public bool inventoryOpen = false;
     private bool keepMenu;
@@ -367,6 +372,13 @@ public class gameManager : MonoBehaviour
             Color c = lowHealthIndicator.color;
             c.a = alpha;
             lowHealthIndicator.color = c;
+            if (!heartbeatSource.isPlaying)
+            {
+                heartbeatSource.clip = heartbeatClip;
+                heartbeatSource.loop = true;
+                heartbeatSource.volume = heartbeatVolume;
+                heartbeatSource.Play();
+            }
         }
         else
         {
@@ -377,6 +389,10 @@ public class gameManager : MonoBehaviour
             if (c.a <= 0.01f)
             {
                 lowHealthIndicator.enabled = false;
+                if (heartbeatSource.isPlaying)
+                {
+                    heartbeatSource.Stop();
+                }
             }
         }
     }

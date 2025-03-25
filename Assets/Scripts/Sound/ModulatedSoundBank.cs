@@ -79,6 +79,4 @@ public class ModulatedSoundBank : MonoBehaviour
         audioSource.pitch = pitchModifier * Random.Range(minPitchVariation, maxPitchVariation); Random.Range(minPitchVariation, maxPitchVariation);
         audioSource.PlayOneShot(audioClips[currentClipIndex]);
     }
-
-
 }
