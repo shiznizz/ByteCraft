@@ -8,7 +8,7 @@ public class dataManager : MonoBehaviour
 {
     [Header("Debug")]
 
-    [SerializeField] bool turnOffPersistence = false;
+    //[SerializeField] bool turnOffPersistence = false;
 
     [Header("File Storage Config")]
 
@@ -78,7 +78,7 @@ public class dataManager : MonoBehaviour
     {
         this.gameData = dataHandler.Load();
        
-        if (gameData == null || turnOffPersistence)
+        if (gameData == null /*|| turnOffPersistence*/)
         {
             NewGame();
         }
