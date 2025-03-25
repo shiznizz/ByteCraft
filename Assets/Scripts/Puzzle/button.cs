@@ -38,7 +38,9 @@ public class buttons : MonoBehaviour
         buttonRadius.radius = activationRange;
         colorInactive = buttonModel.material.color;
         colorActive = Color.green;
-        buttonPrompt.SetActive(false);
+
+        if (buttonPrompt != null) 
+            buttonPrompt.SetActive(false);
     }
 
     // Update is called once per frame
@@ -74,7 +76,9 @@ public class buttons : MonoBehaviour
         // check if you have to leave and come back to activate multiple times
         if (other.CompareTag("Player"))
         {
-            buttonPrompt.SetActive(true);
+            if (buttonPrompt != null) 
+                buttonPrompt.SetActive(true);
+
             holdTime = 0;
             playerInRange = true;
         }
@@ -84,7 +88,9 @@ public class buttons : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            buttonPrompt.SetActive(false);
+            if (buttonPrompt != null)
+                buttonPrompt.SetActive(false);
+
             holdTime = 0;
             isHolding = false;
             playerInRange = false;
