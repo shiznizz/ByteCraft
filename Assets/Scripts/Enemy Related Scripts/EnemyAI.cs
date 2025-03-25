@@ -77,8 +77,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private Renderer bodyRenderer;
 
     [Header("Audio")]
-    [SerializeField] AudioSource enemyAudio;
-    [SerializeField] AudioClip hurtSound;
+    //[SerializeField] AudioSource enemyAudio;
+    [SerializeField] ModulatedSoundBank enemyHurtSounds;
+    [SerializeField] ModulatedSoundBank enemyFootsteps;
+    [SerializeField] ModulatedSoundBank enemyDeathSounds;
+    [SerializeField] ModulatedSoundBank enemyAttackSounds;
 
     Vector3 startingPos;
     float roamTimer;
@@ -143,15 +146,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         
         updateEnemyUI();
         // if stunned, nav mesh will stop and skip rest of AI's logic
-        if (isStunned || godMode || isKami)
-        {
-            agent.isStopped = true;
-            return;
-        }
-        else
-        {
-            agent.isStopped = false;
-        }
+        
 
         
         if (type != enemyType.stationary)
@@ -163,10 +158,20 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             
             if (agent.remainingDistance < 0.01f)
                 roamTimer += Time.deltaTime;
+
+            if (isStunned || godMode || isKami)
+            {
+                agent.isStopped = true;
+                return;
+            }
+            else
+            {
+                agent.isStopped = false;
+            }
         }
 
         shootTimer += Time.deltaTime;
-        if (isAlerted && !playerInRange) // specific to drone bot alerts
+        if (isAlerted && !playerInRange && type != enemyType.stationary) // specific to drone bot alerts
         {
             if (alertTimer < alertCooldown)
             {
@@ -291,7 +296,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             playerInRange = false;
             target = originalTarget;
         }
-        agent.stoppingDistance = 0;
+
+        if (agent != null)
+            agent.stoppingDistance = 0;
     }
 
     void faceTarget()
@@ -356,7 +363,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void takeDamage(int amount)
     {
         if (isDead || godMode) return;
-        if (isDrone) enemyAudio.PlayOneShot(hurtSound);
+        StartCoroutine(PlayHurtSound()); //if (isDrone) enemyAudio.PlayOneShot(hurtSound);
 
         if (movement == movementType.seeking)
         {
@@ -464,16 +471,10 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private void handleDeath()
     {
         hpBar.gameObject.SetActive(false);
-        Debug.Log("Hitting handle death.");
+        this.GetComponent<CapsuleCollider>().enabled = false;
+        //Debug.Log("Hitting handle death.");
         AlarmDrone droneScript = GetComponent<AlarmDrone>();
-        if (droneScript != null) Debug.Log("Found drone script!");
-        /*if (isDrone)
-        {
-            Debug.Log("Hitting if statement.");
-            AlarmDrone script = GetComponent<AlarmDrone>();
-            script.handleDeath();
-        }*/
-
+        StartCoroutine(PlayDeathSound());
         //Disable the collider
         if (enemyCollider != null)
         {
@@ -530,7 +531,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void shoot()
     {
         shootTimer = 0;
-
+        PlayWeaponSound();
         if (anim != null)
             anim.SetTrigger("Shoot");
         else
@@ -547,7 +548,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void meleeAttack()
     {
         if (isDead) return;
-
+        StartCoroutine(PlayWeaponSound());
         shootTimer = 0;
         anim.SetTrigger("Melee Attack");
         //shootTimer = 0; // Reset the shoot timer for the cooldown between melee attacks
@@ -659,7 +660,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (isAlerted)
         {
             alertTimer = 0f;
-
         }
     }
 
@@ -674,6 +674,48 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void SetHP(int newHP)
     {
         this.HP = newHP;
+    }
+    #endregion
+
+    #region Audio
+    IEnumerator PlayHurtSound()
+    {
+        if (enemyHurtSounds != null)
+        {
+            float clipDuration = enemyHurtSounds.GetClipDuration();
+            enemyHurtSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
+    }
+
+    IEnumerator PlayMovementSound()
+    {
+        if (enemyFootsteps != null)
+        {
+            float clipDuration = enemyDeathSounds.GetClipDuration();
+            enemyDeathSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
+    }
+
+    IEnumerator PlayDeathSound()
+    {
+        if (enemyDeathSounds != null)
+        {
+            float clipDuration = enemyDeathSounds.GetClipDuration();
+            enemyDeathSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
+    }
+
+    IEnumerator PlayWeaponSound()
+    {
+        if (enemyAttackSounds != null)
+        {
+            float clipDuration = enemyAttackSounds.GetClipDuration();
+            enemyAttackSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
     }
     #endregion
 }
