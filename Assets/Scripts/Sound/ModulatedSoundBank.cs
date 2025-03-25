@@ -12,8 +12,6 @@ public class ModulatedSoundBank : MonoBehaviour
 
     private int currentClipIndex;
     public bool isPlaying = false;
-    public float enemyMovementTimer = 0;
-    public float enemyMovementMax = 1;
 
     private void Awake()
     {
