@@ -180,7 +180,7 @@ public class BossFightManager : MonoBehaviour, IDamage
     {
         isInPhaseTwo = true; // Marked as true for phase two
         bossHP = 200; // Resets boss HP for phase two
-        phaseTwoTimer = 10f; // Resets phase mechanic timer
+        phaseTwoTimer = 20f; // Resets phase mechanic timer
 
         if (bossAgent != null)
         {

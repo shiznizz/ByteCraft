@@ -70,7 +70,7 @@ public class explosion : MonoBehaviour
 
     public void Explode()
     {
-                Debug.Log("Explode timer" + detonationTimer);
+                //Debug.Log("Explode timer" + detonationTimer);
         if (hasExploded) return;
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
@@ -82,21 +82,23 @@ public class explosion : MonoBehaviour
             if (!affectedObjects.Contains(hit.gameObject)) // Ensure unique objects
             {
                 affectedObjects.Add(hit.gameObject);
-
-                Rigidbody rb = hit.GetComponent<Rigidbody>();
-
-                if (rb != null)
+                if (!hit.CompareTag("Boss"))
                 {
-                    rb.AddForce(transform.up * explosionUpForce, ForceMode.Impulse);
-                    rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
-                }
-                else
-                {
-                    // hit
-                }
+                    Rigidbody rb = hit.GetComponent<Rigidbody>();
 
-                IDamage damage = hit.GetComponent<IDamage>();
-                damage?.takeDamage(explosionDmg);
+                    if (rb != null)
+                    {
+                        rb.AddForce(transform.up * explosionUpForce, ForceMode.Impulse);
+                        rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
+                    }
+                    else
+                    {
+                        // hit
+                    }
+
+                    IDamage damage = hit.GetComponent<IDamage>();
+                    damage?.takeDamage(explosionDmg);
+                }                
             }
         }
 
