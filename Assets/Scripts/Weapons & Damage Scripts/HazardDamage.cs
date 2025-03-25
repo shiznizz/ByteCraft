@@ -37,6 +37,16 @@ public class HazardDamage : MonoBehaviour
         }
     }
 
+    private void OnTriggerExit(Collider other)
+    {
+        // check if the collider belongs to a valid target (using tags "Player" or "Enemy").
+        if (other.CompareTag("Player") || other.CompareTag("Enemy"))
+        {
+            if (!other.GetComponent<StatusEffects>())
+                ApplyStatusEffect(other.gameObject);
+        }
+    }
+
     // call every frame while a collider remains inside the trigger.
     private void OnTriggerStay(Collider other)
     {
