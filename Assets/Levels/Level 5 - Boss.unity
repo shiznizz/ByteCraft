@@ -3144,7 +3144,7 @@ PrefabInstance:
       objectReference: {fileID: 1869270422}
     - target: {fileID: 8487477621115965858, guid: 23e0d63c467818f448704e7a6456de18, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9.974291
+      value: 6.8350306
       objectReference: {fileID: 0}
     - target: {fileID: 8487477621115965858, guid: 23e0d63c467818f448704e7a6456de18, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3152,7 +3152,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8487477621115965858, guid: 23e0d63c467818f448704e7a6456de18, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 86.70567
+      value: 87.54683
       objectReference: {fileID: 0}
     - target: {fileID: 8487477621115965858, guid: 23e0d63c467818f448704e7a6456de18, type: 3}
       propertyPath: m_LocalRotation.w
@@ -29670,8 +29670,8 @@ Transform:
   m_GameObject: {fileID: 920212164}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 39.750008, y: 0, z: -11.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 39.750004, y: 0, z: -18.749987}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 305190903}
@@ -43966,7 +43966,6 @@ MonoBehaviour:
   model: {fileID: 865566539}
   agent: {fileID: 1384379457}
   anim: {fileID: 1384379456}
-  isDrone: 0
   hpBarTarget: {fileID: 0}
   hpFillBar: {fileID: 896929297}
   hpBar: {fileID: 592773222}
@@ -46254,9 +46253,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 703656378806508234, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 703656378806508234, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 703656378806508234, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.125
+      objectReference: {fileID: 0}
     - target: {fileID: 3354133548953732252, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_Name
       value: UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 5981920104445373947, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.125
+      objectReference: {fileID: 0}
+    - target: {fileID: 5981920104445373947, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882184558347955722, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8386706001582953583, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_Pivot.x
@@ -47234,8 +47257,8 @@ Transform:
   m_GameObject: {fileID: 1527035429}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 39.750008, y: 0, z: 4}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 39.750004, y: 0, z: 4.000015}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 305190903}
@@ -49204,7 +49227,8 @@ PrefabInstance:
       value: -90
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 9150133572663125597, guid: 61e0ddc06dc88a643ab1889d4e8261f3, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 61e0ddc06dc88a643ab1889d4e8261f3, type: 3}
@@ -50458,7 +50482,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 3226177055808268943, guid: c8b2751136842c14ca342d05b1192c87, type: 2}
-  m_audioClip: {fileID: 8300000, guid: 0c5d33c4b726d3f4aa6016966ad4b574, type: 3}
+  m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 0c5d33c4b726d3f4aa6016966ad4b574, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
@@ -61315,7 +61339,6 @@ MonoBehaviour:
   model: {fileID: 6248553120696796215}
   agent: {fileID: 119756494259780431}
   anim: {fileID: 5801935873141111035}
-  isDrone: 0
   hpBarTarget: {fileID: 186652285}
   hpFillBar: {fileID: 4316115}
   hpBar: {fileID: 1453712816}
@@ -62333,7 +62356,6 @@ MonoBehaviour:
   model: {fileID: 1713002496211194144}
   agent: {fileID: 6807988873115782328}
   anim: {fileID: 3067801544023549512}
-  isDrone: 0
   hpBarTarget: {fileID: 186652285}
   hpFillBar: {fileID: 6090817091322455021}
   hpBar: {fileID: 3526371412186827737}
@@ -63517,7 +63539,6 @@ MonoBehaviour:
   model: {fileID: 3714856057188005058}
   agent: {fileID: 4400204478777930328}
   anim: {fileID: 8149543951539501596}
-  isDrone: 0
   hpBarTarget: {fileID: 186652285}
   hpFillBar: {fileID: 1487027053972739186}
   hpBar: {fileID: 8130166075819752518}
@@ -65840,7 +65861,6 @@ MonoBehaviour:
   model: {fileID: 3624568388519162752}
   agent: {fileID: 7899005270020087759}
   anim: {fileID: 3440655411929203023}
-  isDrone: 0
   hpBarTarget: {fileID: 475057330815734872, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
   hpFillBar: {fileID: 64822959913052229}
   hpBar: {fileID: 2332979433583799325}
@@ -67934,7 +67954,6 @@ MonoBehaviour:
   model: {fileID: 6403514433624454149}
   agent: {fileID: 6403514433629695440}
   anim: {fileID: 6403514433620310429}
-  isDrone: 0
   hpBarTarget: {fileID: 0}
   hpFillBar: {fileID: 0}
   hpBar: {fileID: 1157911494}
@@ -68598,7 +68617,6 @@ MonoBehaviour:
   model: {fileID: 3709222326374384275}
   agent: {fileID: 4541038480869909433}
   anim: {fileID: 529860837441394104}
-  isDrone: 0
   hpBarTarget: {fileID: 0}
   hpFillBar: {fileID: 4970144989217984071}
   hpBar: {fileID: 2346196505672328819}
