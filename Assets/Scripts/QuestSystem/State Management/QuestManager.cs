@@ -148,13 +148,13 @@ public class QuestManager : MonoBehaviour
 
         Dictionary<string, Quest> idToQuestMap = new Dictionary<string, Quest>();
 
-        Debug.Log("Test");
+        //Debug.Log("Test");
         foreach (QuestInfoSO questInfo in allQuests)
         {
             //Debug.Log(questInfo.displayName);
             if (idToQuestMap.ContainsKey(questInfo.displayName))
             {
-                Debug.LogWarning("Duplicate ID found when creating quest map: " + questInfo.id);
+                //Debug.LogWarning("Duplicate ID found when creating quest map: " + questInfo.id);
             }
             idToQuestMap.Add(questInfo.id, LoadQuest(questInfo));
         }
@@ -168,7 +168,7 @@ public class QuestManager : MonoBehaviour
 
         if (quest == null)
         {
-            Debug.LogError("ID not found in the Quest Map: " + id);
+            //Debug.LogError("ID not found in the Quest Map: " + id);
         }
 
         return quest;
@@ -198,7 +198,7 @@ public class QuestManager : MonoBehaviour
         } 
         catch (System.Exception e) 
         {
-            Debug.LogError("Failed to save quest with id " + quest.info.id + ": " + e);
+            //Debug.LogError("Failed to save quest with id " + quest.info.id + ": " + e);
         }
     }
 
@@ -224,7 +224,7 @@ public class QuestManager : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            Debug.LogError("Failed to load quest with id " + quest.info.id + ": " + e);
+            //Debug.LogError("Failed to load quest with id " + quest.info.id + ": " + e);
         }
         return quest;
     }

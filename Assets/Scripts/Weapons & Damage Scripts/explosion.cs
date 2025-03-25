@@ -12,7 +12,7 @@ public class explosion : MonoBehaviour
     [SerializeField] int explosionDmg;
     [SerializeField] float explosionForce;
     [SerializeField] float explosionUpForce;
-    [SerializeField] float detonationDelay;
+    public float detonationDelay;
     public StatusEffects status;
     public bool defaultActiveState;
     public bool doesBombDestroy = true;
@@ -24,7 +24,7 @@ public class explosion : MonoBehaviour
     [SerializeField] float destroyDelay;
     bool hasExploded;
     
-    float detonationTimer;
+    public float detonationTimer;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

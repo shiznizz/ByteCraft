@@ -71,6 +71,7 @@ public class gameManager : MonoBehaviour
     public GameObject displaySlot;
 
     [Header("Low Health Screen Indicator")]
+    [SerializeField] GameObject lowHealthDisplay;
     public Image lowHealthIndicator;
 
     [SerializeField] float lowHealthThreshold = 0.25f;
@@ -317,9 +318,12 @@ public class gameManager : MonoBehaviour
     public void updateAmmo()
     {
         weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
-        ammoCurText.text = gun.ammoCur.ToString("D3");
-        ammoMaxText.text = gun.ammoMax.ToString("D3");
-        ammoReserveText.text = gun.ammoReserve.ToString("D3");
+        if (gun != null)
+        {
+            ammoCurText.text = gun.ammoCur.ToString("D3");
+            ammoMaxText.text = gun.ammoMax.ToString("D3");
+            ammoReserveText.text = gun.ammoReserve.ToString("D3");
+        }
     }
 
     public void hideAmmo()
@@ -355,17 +359,17 @@ public class gameManager : MonoBehaviour
     private void CheckLowHealth()
     {
         // Check if playerStatManager or lowHealthIndicator is null to avoid NullReferenceException
-        if (playerStatManager.instance == null || lowHealthIndicator == null) return;
+        if (playerStatManager.instance == null || lowHealthIndicator == null || lowHealthDisplay == null) return;
 
         if (playerStatManager.instance.HPMax <= 0) return;
 
         float hpRatio = (float)playerStatManager.instance.HP / playerStatManager.instance.HPMax;
 
-        if (lowHealthIndicator == null) return;
-
         if (hpRatio <= lowHealthThreshold)
         {
-            lowHealthIndicator.enabled = true;
+            //lowHealthIndicator.enabled = true;
+            lowHealthDisplay.SetActive(true);
+
             float alpha = baseAlpha + Mathf.Sin(Time.time * heartbeatSpeed) * heartbeatMagnitude;
             //alpha = Mathf.Clamp01(alpha);
 
@@ -388,7 +392,9 @@ public class gameManager : MonoBehaviour
 
             if (c.a <= 0.01f)
             {
-                lowHealthIndicator.enabled = false;
+                //lowHealthIndicator.enabled = false;
+                lowHealthDisplay.SetActive(false);
+
                 if (heartbeatSource.isPlaying)
                 {
                     heartbeatSource.Stop();
