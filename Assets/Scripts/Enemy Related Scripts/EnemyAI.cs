@@ -77,8 +77,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private Renderer bodyRenderer;
 
     [Header("Audio")]
-    [SerializeField] AudioSource enemyAudio;
-    [SerializeField] AudioClip hurtSound;
+    //[SerializeField] AudioSource enemyAudio;
+    [SerializeField] ModulatedSoundBank enemyHurtSounds;
+    [SerializeField] ModulatedSoundBank enemyFootsteps;
+    [SerializeField] ModulatedSoundBank enemyDeathSounds;
+    [SerializeField] ModulatedSoundBank enemyAttackSounds;
 
     Vector3 startingPos;
     float roamTimer;
@@ -356,7 +359,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void takeDamage(int amount)
     {
         if (isDead || godMode) return;
-        if (isDrone) enemyAudio.PlayOneShot(hurtSound);
+        StartCoroutine(PlayHurtSound()); //if (isDrone) enemyAudio.PlayOneShot(hurtSound);
 
         if (movement == movementType.seeking)
         {
@@ -465,16 +468,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     {
         hpBar.gameObject.SetActive(false);
         this.GetComponent<CapsuleCollider>().enabled = false;
-        Debug.Log("Hitting handle death.");
+        //Debug.Log("Hitting handle death.");
         AlarmDrone droneScript = GetComponent<AlarmDrone>();
-        if (droneScript != null) Debug.Log("Found drone script!");
-        /*if (isDrone)
-        {
-            Debug.Log("Hitting if statement.");
-            AlarmDrone script = GetComponent<AlarmDrone>();
-            script.handleDeath();
-        }*/
-
+        StartCoroutine(PlayDeathSound());
         //Disable the collider
         if (enemyCollider != null)
         {
@@ -531,7 +527,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void shoot()
     {
         shootTimer = 0;
-
+        PlayWeaponSound();
         if (anim != null)
             anim.SetTrigger("Shoot");
         else
@@ -548,7 +544,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void meleeAttack()
     {
         if (isDead) return;
-
+        StartCoroutine(PlayWeaponSound());
         shootTimer = 0;
         anim.SetTrigger("Melee Attack");
         //shootTimer = 0; // Reset the shoot timer for the cooldown between melee attacks
@@ -675,6 +671,48 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void SetHP(int newHP)
     {
         this.HP = newHP;
+    }
+    #endregion
+
+    #region Audio
+    IEnumerator PlayHurtSound()
+    {
+        if (enemyHurtSounds != null)
+        {
+            float clipDuration = enemyHurtSounds.GetClipDuration();
+            enemyHurtSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
+    }
+
+    IEnumerator PlayMovementSound()
+    {
+        if (enemyFootsteps != null)
+        {
+            float clipDuration = enemyDeathSounds.GetClipDuration();
+            enemyDeathSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
+    }
+
+    IEnumerator PlayDeathSound()
+    {
+        if (enemyDeathSounds != null)
+        {
+            float clipDuration = enemyDeathSounds.GetClipDuration();
+            enemyDeathSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
+    }
+
+    IEnumerator PlayWeaponSound()
+    {
+        if (enemyAttackSounds != null)
+        {
+            float clipDuration = enemyAttackSounds.GetClipDuration();
+            enemyAttackSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
     }
     #endregion
 }
