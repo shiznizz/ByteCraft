@@ -159,7 +159,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             if (agent.remainingDistance < 0.01f)
                 roamTimer += Time.deltaTime;
 
-            if (isStunned || godMode || isKami)
+            if (isStunned || godMode || isKami || isDead)
             {
                 agent.isStopped = true;
                 return;
