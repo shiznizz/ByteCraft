@@ -29173,6 +29173,9 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 0}
   textDestroyTimer: 0
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
+  damageAnimationCooldown: 5
 --- !u!4 &1384379459
 Transform:
   m_ObjectHideFlags: 0
@@ -32242,10 +32245,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3952302529509498176, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 0.125
       objectReference: {fileID: 0}
     - target: {fileID: 3952302529509498176, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4206086029975969457, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5044492246973741911, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
@@ -32262,15 +32269,15 @@ PrefabInstance:
       objectReference: {fileID: 1255869140}
     - target: {fileID: 7790815238185708145, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 0.125
       objectReference: {fileID: 0}
     - target: {fileID: 7790815238185708145, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7790815238185708145, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0
+      value: 0.125
       objectReference: {fileID: 0}
     - target: {fileID: 8386706001582953583, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_Pivot.x
@@ -39598,6 +39605,9 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
+  damageAnimationCooldown: 5
 --- !u!137 &1713002496211194144
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0
@@ -40614,6 +40624,9 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
+  damageAnimationCooldown: 5
 --- !u!136 &2595463042900245921
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -41796,6 +41809,9 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 0}
   textDestroyTimer: 0
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
+  damageAnimationCooldown: 5
 --- !u!1 &3545797121661986551
 GameObject:
   m_ObjectHideFlags: 0
@@ -44101,6 +44117,9 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
+  damageAnimationCooldown: 5
 --- !u!4 &5296672405636027771
 Transform:
   m_ObjectHideFlags: 0
@@ -46193,6 +46212,9 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 0}
   textDestroyTimer: 0
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
+  damageAnimationCooldown: 5
 --- !u!1 &6403514433629699397
 GameObject:
   m_ObjectHideFlags: 0
@@ -46860,6 +46882,9 @@ MonoBehaviour:
   floatingDamageTextPrefab: {fileID: 0}
   textDestroyTimer: 0
   isStunned: 0
+  isDamaged: 0
+  damageCooldown: 0.5
+  damageAnimationCooldown: 5
 --- !u!114 &6790845019982190287
 MonoBehaviour:
   m_ObjectHideFlags: 0
