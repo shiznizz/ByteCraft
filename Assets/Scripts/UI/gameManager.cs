@@ -33,6 +33,9 @@ public class gameManager : MonoBehaviour
     [SerializeField] GameObject jetpackHUD;
     [SerializeField] public GameObject enemyHealthbar;
     [SerializeField] GameObject overShieldHUD;
+    [SerializeField] public GameObject ShootBG;
+    [SerializeField] public Image ShootFill;
+
     public Image playerHPBar;
     public Image enemyHPBar;
     public Image JPFuelGauge;
