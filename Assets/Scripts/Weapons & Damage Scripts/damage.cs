@@ -103,7 +103,6 @@ public class damage : MonoBehaviour
     {
         if (seekTarget != null)
         {
-            Debug.Log(hit);
             Vector3 enemyDir = hit.transform.position - transform.position;
             Quaternion rot = Quaternion.LookRotation(new Vector3(enemyDir.x, 0, enemyDir.z));
             transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * turnSpeed);
@@ -181,6 +180,5 @@ public class damage : MonoBehaviour
     {
         
         target = newTarget;
-        Debug.Log("Target Updated: " + target.name);
     }
 }

@@ -10,6 +10,9 @@ public class ModulatedSoundBank : MonoBehaviour
     [SerializeField][Range(1, 5)] private int maxClipsPerEvent = 1;
     [SerializeField] private float pitchModifier = 2f;
 
+    private int currentClipIndex;
+    public bool isPlaying = false;
+
     private void Awake()
     {
         if (!audioSource) audioSource = GetComponent<AudioSource>();
@@ -18,7 +21,7 @@ public class ModulatedSoundBank : MonoBehaviour
     /// <summary>
     /// Plays a random clip with pitch modulation.
     /// </summary>
- 
+
     public void PlayRandomSound()
     {
         if (audioClips == null || audioClips.Length == 0) return;
@@ -57,5 +60,23 @@ public class ModulatedSoundBank : MonoBehaviour
         externalAudioSource.PlayOneShot(clip, 2);
     }
 
+    public float GetClipDuration()
+    {
+        SetCurrentClipIndex();
+        AudioClip clip = audioClips[currentClipIndex];
+        float clipDuration = clip.length;
+        return clipDuration;
+    }
 
+    public void SetCurrentClipIndex()
+    {
+        int clipIndex = Random.Range(0, audioClips.Length);
+    }
+
+    public void PlayCurrentClip()
+    {
+
+        audioSource.pitch = pitchModifier * Random.Range(minPitchVariation, maxPitchVariation); Random.Range(minPitchVariation, maxPitchVariation);
+        audioSource.PlayOneShot(audioClips[currentClipIndex]);
+    }
 }
