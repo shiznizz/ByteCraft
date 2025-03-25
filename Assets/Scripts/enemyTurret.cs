@@ -97,7 +97,7 @@ public class enemyTurret : MonoBehaviour, IDamage
             }
             else if (HP < HPOrginal && turnTimer <= turnTimeAfterDmg)
             {
-                Debug.Log("turn");
+                //Debug.Log("turn");
                 faceTarget();
             }
         }
@@ -149,7 +149,7 @@ public class enemyTurret : MonoBehaviour, IDamage
         playerDir = gameManager.instance.player.transform.position - headPos.position;
         angleToPlayer = Vector3.Angle(new Vector3(playerDir.x, 0, playerDir.z), transform.forward);
 
-        Debug.DrawRay(headPos.position, playerDir, Color.cyan);
+        //Debug.DrawRay(headPos.position, playerDir, Color.cyan);
 
         RaycastHit hit;
         if (Physics.Raycast(headPos.position, playerDir, out hit) && angleToPlayer <= FOV)

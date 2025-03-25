@@ -257,6 +257,29 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e08bf8f6b04a63438c79746aa19f197, type: 3}
+--- !u!1 &65354497 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2524392381789407201, guid: eadd52da5c0c6ee4d83d47cdc6e0ae7b, type: 3}
+  m_PrefabInstance: {fileID: 1265691180237401272}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &65354499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 65354497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 032d4ccca092e5649bc6bd1c1066cee7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  immediateDamage: 5
+  DOT: 7
+  duration: 4
+  interval: 0.5
+  effectType: 1
+  statusEffectBlueprint: {fileID: 0}
 --- !u!82 &99530828 stripped
 AudioSource:
   m_CorrespondingSourceObject: {fileID: 2047931529293122156, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
@@ -404,7 +427,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5433175866917044444, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5809270350288258848, guid: 273342c9ac311c040aa06c533f1d7d5b, type: 3}
       propertyPath: player
@@ -3325,10 +3348,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7232237790418285742, guid: eadd52da5c0c6ee4d83d47cdc6e0ae7b, type: 3}
+      propertyPath: damageAmount
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2524392381789407201, guid: eadd52da5c0c6ee4d83d47cdc6e0ae7b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 65354499}
   m_SourcePrefab: {fileID: 100100000, guid: eadd52da5c0c6ee4d83d47cdc6e0ae7b, type: 3}
 --- !u!1001 &1956865382912873873
 PrefabInstance:

@@ -42,7 +42,7 @@ public class explosion : MonoBehaviour
         {
             if(!hasExploded)
             {
-                Debug.Log("Det timer" + detonationTimer);
+                //Debug.Log("Det timer" + detonationTimer);
                 if(explosiveDevice.activeSelf && detonationTimer >= detonationDelay)
                      Explode();
                 else
