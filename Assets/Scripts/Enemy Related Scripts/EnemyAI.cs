@@ -22,7 +22,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [SerializeField] Renderer model;
     [SerializeField] public NavMeshAgent agent;
     [SerializeField] Animator anim;
-    [SerializeField] private bool isDrone = false;
+    //[SerializeField] private bool isDrone = false;
     [SerializeField] GameObject hpBarTarget;
     private GameObject originalTarget;
     private bool isKami;
