@@ -77,8 +77,11 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private Renderer bodyRenderer;
 
     [Header("Audio")]
-    [SerializeField] AudioSource enemyAudio;
-    [SerializeField] AudioClip hurtSound;
+    //[SerializeField] AudioSource enemyAudio;
+    [SerializeField] ModulatedSoundBank enemyHurtSounds;
+    [SerializeField] ModulatedSoundBank enemyFootsteps;
+    [SerializeField] ModulatedSoundBank enemyDeathSounds;
+    [SerializeField] ModulatedSoundBank enemyAttackSounds;
 
     Vector3 startingPos;
     float roamTimer;
@@ -98,12 +101,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     private Coroutine damageTextCoroutine;
 
     public bool isStunned = false;
-
-    public bool isDamaged = false; // Flag to track damage state
-    public float damageCooldown = 0.5f; // Time interval before the damage animation can be triggered again
-    private float lastDamageTime = 0f; // Time when the last damage was taken
-    [SerializeField] private float damageAnimationCooldown = 5f; // Time between take damage animations
-    private float lastDamageAnimationTime = 0f; // Tracks the last time the damage animation was triggered
 
     #endregion Variables
 
@@ -149,15 +146,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         
         updateEnemyUI();
         // if stunned, nav mesh will stop and skip rest of AI's logic
-        if (isStunned || godMode || isKami)
-        {
-            agent.isStopped = true;
-            return;
-        }
-        else
-        {
-            agent.isStopped = false;
-        }
+        
 
         
         if (type != enemyType.stationary)
@@ -169,10 +158,20 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             
             if (agent.remainingDistance < 0.01f)
                 roamTimer += Time.deltaTime;
+
+            if (isStunned || godMode || isKami)
+            {
+                agent.isStopped = true;
+                return;
+            }
+            else
+            {
+                agent.isStopped = false;
+            }
         }
 
         shootTimer += Time.deltaTime;
-        if (isAlerted && !playerInRange) // specific to drone bot alerts
+        if (isAlerted && !playerInRange && type != enemyType.stationary) // specific to drone bot alerts
         {
             if (alertTimer < alertCooldown)
             {
@@ -297,7 +296,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             playerInRange = false;
             target = originalTarget;
         }
-        agent.stoppingDistance = 0;
+
+        if (agent != null)
+            agent.stoppingDistance = 0;
     }
 
     void faceTarget()
@@ -361,11 +362,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     }
     public void takeDamage(int amount)
     {
-        if (isDead || godMode || Time.time - lastDamageTime < damageCooldown) return;
-        if (isDrone) enemyAudio.PlayOneShot(hurtSound);
-
-        lastDamageTime = Time.time;  // Update the last damage time
-        isDamaged = true;            // Set the flag to indicate that the enemy is in the "damaged" state
+        if (isDead || godMode) return;
+        StartCoroutine(PlayHurtSound()); //if (isDrone) enemyAudio.PlayOneShot(hurtSound);
 
         if (movement == movementType.seeking)
         {
@@ -404,19 +402,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             //}
 
             StartCoroutine(flashRed());
-            //if (anim != null)
-            //    anim.SetTrigger("damage");
-            // Ensure the damage animation doesn't spam.
-            AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-            if (stateInfo.IsName("damage") && stateInfo.normalizedTime < 3f)
-            {
-                return; // Don't trigger the animation again if it's still playing
-            }
-            if (anim != null && Time.time - lastDamageAnimationTime >= damageAnimationCooldown)
-            {
+            if (anim != null)
                 anim.SetTrigger("damage");
-                lastDamageAnimationTime = Time.time; // Update the time of the last damage animation
-            }
+
 
             if (type != enemyType.stationary)
             {
@@ -448,18 +436,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 }
             }
         }
-        else
-        {
-            isDamaged = false; // Resets the damage state when HP reaches zero
-        }
     }
-
-    //IEnumerator ResetDamageState()
-    //{
-    //    //Wait for the take damage animation to finish
-    //    yield return new WaitForSeconds(1.5f);  // You may need to adjust this depending on your animation length
-    //    isDamaged = false;  // Reset the flag
-    //}
 
     //// coroutine that spawns text until enemy dies
     //private IEnumerator DamageTextLoop(int damage)
@@ -495,16 +472,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     {
         hpBar.gameObject.SetActive(false);
         this.GetComponent<CapsuleCollider>().enabled = false;
-        Debug.Log("Hitting handle death.");
+        //Debug.Log("Hitting handle death.");
         AlarmDrone droneScript = GetComponent<AlarmDrone>();
-        if (droneScript != null) Debug.Log("Found drone script!");
-        /*if (isDrone)
-        {
-            Debug.Log("Hitting if statement.");
-            AlarmDrone script = GetComponent<AlarmDrone>();
-            script.handleDeath();
-        }*/
-
+        StartCoroutine(PlayDeathSound());
         //Disable the collider
         if (enemyCollider != null)
         {
@@ -561,7 +531,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void shoot()
     {
         shootTimer = 0;
-
+        PlayWeaponSound();
         if (anim != null)
             anim.SetTrigger("Shoot");
         else
@@ -578,7 +548,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void meleeAttack()
     {
         if (isDead) return;
-
+        StartCoroutine(PlayWeaponSound());
         shootTimer = 0;
         anim.SetTrigger("Melee Attack");
         //shootTimer = 0; // Reset the shoot timer for the cooldown between melee attacks
@@ -690,7 +660,6 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (isAlerted)
         {
             alertTimer = 0f;
-
         }
     }
 
@@ -705,6 +674,48 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void SetHP(int newHP)
     {
         this.HP = newHP;
+    }
+    #endregion
+
+    #region Audio
+    IEnumerator PlayHurtSound()
+    {
+        if (enemyHurtSounds != null)
+        {
+            float clipDuration = enemyHurtSounds.GetClipDuration();
+            enemyHurtSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
+    }
+
+    IEnumerator PlayMovementSound()
+    {
+        if (enemyFootsteps != null)
+        {
+            float clipDuration = enemyDeathSounds.GetClipDuration();
+            enemyDeathSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
+    }
+
+    IEnumerator PlayDeathSound()
+    {
+        if (enemyDeathSounds != null)
+        {
+            float clipDuration = enemyDeathSounds.GetClipDuration();
+            enemyDeathSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
+    }
+
+    IEnumerator PlayWeaponSound()
+    {
+        if (enemyAttackSounds != null)
+        {
+            float clipDuration = enemyAttackSounds.GetClipDuration();
+            enemyAttackSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
     }
     #endregion
 }
