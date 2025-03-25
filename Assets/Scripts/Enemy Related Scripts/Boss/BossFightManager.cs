@@ -2,6 +2,8 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Playables;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 
@@ -519,12 +521,37 @@ public class BossFightManager : MonoBehaviour, IDamage
 
         PlayVoiceLine(bossVoiceLines.Length - 1); // Play death dialogue
 
-        yield return new WaitForSeconds(3f); // Adjust based on death animation length
+        //yield return new WaitForSeconds(3f); // Adjust based on death animation length
+        
+        // Wait for the boss dialogue to finish
+        yield return new WaitForSeconds(bossVoiceLines[bossVoiceLines.Length - 1].length);
+
+        // After the dialogue finishes, play the end scene
+        StartCoroutine(PlayEndScene());
 
         // Stop any further boss actions after death
         //EndBossFight();
-        gameManager.instance.youWin();
+        //gameManager.instance.youWin();
         //StartCoroutine(FadeOutAndDestroy());
+    }
+
+    //This will handle the transition to the end scene
+    private IEnumerator PlayEndScene()
+    {
+        //Assuming EndSceneController is attached to an object in the scene
+        EndSceneController endSceneController = Object.FindFirstObjectByType<EndSceneController>();
+
+        //Play the timeline (EndSceneController will handle the timeline logic)
+        if (endSceneController != null)
+        {
+            endSceneController.timelineDirector.Play();
+
+            //Wait for the timeline to finish, depending on the desired behavior
+            yield return new WaitUntil(() => endSceneController.timelineDirector.time >= endSceneController.timelineDirector.duration);
+        }
+
+        //Load the credits scene
+        SceneManager.LoadScene("9 Game Ending");
     }
 
     void EndBossFight()
