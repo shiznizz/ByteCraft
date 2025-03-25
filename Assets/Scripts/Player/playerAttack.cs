@@ -26,6 +26,7 @@ public class playerAttack : MonoBehaviour
     [SerializeField] Transform laserPos;
     public GameObject activeContinuous;
     private float chargeTimer;
+    [SerializeField] private AudioClip weaponChargeAudio;
 
     private void Awake()
     {
@@ -127,8 +128,19 @@ public class playerAttack : MonoBehaviour
 
     void handleChargeWeapons()
     {
+        AudioSource audioSource = inventoryManager.instance.returnCurrentWeapon().GetComponent<AudioSource>();
         if (inventoryManager.instance.returnCurrentWeapon().isChargeWeapon && chargeTimer < inventoryManager.instance.returnCurrentWeapon().chargeTime)
+        {
+            if (audioSource != null && !audioSource.isPlaying)
+            {
+                audioSource.clip = weaponChargeAudio;
+                audioSource.loop = true;
+                audioSource.Play();
+            }
             chargeTimer += Time.deltaTime;
+        }
+        else
+            audioSource.Stop();
     }
 
     void shootContinuous()
