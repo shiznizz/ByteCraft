@@ -318,7 +318,6 @@ public class playerAttack : MonoBehaviour
             weaponIndex = inventoryManager.instance.weaponList.IndexOf(inventoryManager.instance.slotBossScript.secondaryWeapon.weapon);
 
             inventoryManager.instance.weaponListPos = weaponIndex;
-            Debug.Log(weaponIndex.ToString());
             changeWeapon();
             inventoryManager.instance.currentEquippedWeapon();
         }
