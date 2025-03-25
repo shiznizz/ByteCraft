@@ -57,7 +57,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     [SerializeField] LineRenderer grappleRope;
 
     [Header("Button Options")]
-    [SerializeField] private float interactionDistance = 2f;
+    [SerializeField] private float interactionDistance = 1f;
+    [SerializeField] private float interactionRadius = 0.2f;
     [SerializeField] private KeyCode interactKey = KeyCode.E;
 
     float grappleCooldownTimer;
@@ -393,9 +394,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     }
     
     void tryToInteract()
-    {  
+    {
+        //if (Physics.SphereCast(Camera.main.transform.position, interactionRadius, Camera.main.transform.forward, out RaycastHit hit, interactionDistance, ~ignoreLayer))
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, interactionDistance, ~ignoreLayer))
         {
+            Debug.Log("Hit: " + hit.collider.name);
+
             buttons button = hit.collider.GetComponent<buttons>();
 
             if (button != null)
