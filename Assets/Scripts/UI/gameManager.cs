@@ -229,7 +229,7 @@ public class gameManager : MonoBehaviour
         }
 
         // update button navigation
-        menuButtons = menuActive.GetComponentsInChildren<Button>();
+        
 
         if (menuButtons.Length > 0)
         {
