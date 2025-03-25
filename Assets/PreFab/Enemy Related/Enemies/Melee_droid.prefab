@@ -296,6 +296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   movement: 0
+  spawn: 0
   target: {fileID: 0}
   model: {fileID: 5842897556333300750}
   agent: {fileID: 6884700982941092500}
@@ -317,9 +318,11 @@ MonoBehaviour:
   shootRate: 1
   meleeCol: {fileID: 7440738341910741769}
   meleeDistance: 3
-  dropsLoot: 0
-  lootTable: []
-  dropPos: {fileID: 0}
+  dropsLoot: 1
+  lootTable:
+  - {fileID: 11400000, guid: d2fac76925cf74040b68765fd8297372, type: 2}
+  - {fileID: 11400000, guid: 52b1930380fd3f047a5f600e5c7dd893, type: 2}
+  dropPos: {fileID: 989982239456892265}
   roamPauseTime: 1
   pathPositions: []
   roamDist: 5

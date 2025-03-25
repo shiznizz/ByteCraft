@@ -105,6 +105,8 @@ public class enemyTurret : MonoBehaviour, IDamage
         {
             if (rot == transform.rotation && pauseTimer >= pauseTime)
             {
+                Debug.Log("Change turn");
+                pauseTimer = 0;
                 turnLeft = !turnLeft;
                 if (turnLeft)
                 {
