@@ -146,9 +146,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         
         updateEnemyUI();
         // if stunned, nav mesh will stop and skip rest of AI's logic
-        if (agent.velocity.magnitude > 0.1f && !enemyFootsteps.IsPlaying())
+        if (agent.velocity.magnitude > 0.1f)
         {
-            enemyFootsteps.PlayRandomSound();
+            if (enemyFootsteps != null && !enemyFootsteps.IsPlaying()) enemyFootsteps.PlayRandomSound();
         }
 
 
