@@ -338,6 +338,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             gameManager.instance.overShieldBar.fillAmount = 0;
         }
 
+        if (playerStatManager.instance.attackTimer >= playerStatManager.instance.attackCooldown)
+        {
+            gameManager.instance.ShootBG.SetActive(false);
+        }
+        else if (inventoryManager.instance.weaponList.Count > 0)
+        {
+            gameManager.instance.ShootBG.SetActive(true);
+            gameManager.instance.ShootFill.fillAmount = (float)playerStatManager.instance.attackTimer / playerStatManager.instance.attackCooldown;
+        }
+
 
         //Toggle jetpack recharge UI
         if (playerStatManager.instance.hasJetpack)
