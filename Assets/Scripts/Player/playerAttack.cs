@@ -67,7 +67,10 @@ public class playerAttack : MonoBehaviour
         if (isReloading) return;
 
         if (inventoryManager.instance.returnCurrentWeapon().isChargeWeapon && chargeTimer < inventoryManager.instance.returnCurrentWeapon().chargeTime)
+        {
+            handleChargeWeapons();
             return;
+        }
 
         playerStatManager.instance.attackTimer = 0;
         if(inventoryManager.instance.returnCurrentWeapon().attackType != weaponStats.bulletType.Continuous)
@@ -168,11 +171,6 @@ public class playerAttack : MonoBehaviour
         activeContinuous.GetComponent<BoxCollider>().center = new Vector3(0, 0, inventoryManager.instance.returnCurrentWeapon().currLength / 2f);
 
         activeContinuous.GetComponent<MeshRenderer>().transform.localScale = activeContinuous.GetComponent<BoxCollider>().size;
-    }
-
-    void shootLobber()
-    {
-
     }
 
     public void removeWeaponUI()
