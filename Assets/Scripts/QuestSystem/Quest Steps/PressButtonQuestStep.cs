@@ -3,7 +3,7 @@ using UnityEngine;
 public class PressButtonQuestStep : QuestStep
 {
     private int buttonsPressed = 0;
-    private int buttonsToPress = 2;
+    private int buttonsToPress = 4;
 
     private void Start()
     {

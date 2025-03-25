@@ -40,7 +40,7 @@ public class AlarmDrone : MonoBehaviour
     private void Start()
     {
         alertAudioSource.volume = 0.3f;
-        alertAudioSource.enabled = false;
+        //alertAudioSource.enabled = false;
         isAlerted = false;
         droneScript = GetComponent<enemyAI>();
     }
