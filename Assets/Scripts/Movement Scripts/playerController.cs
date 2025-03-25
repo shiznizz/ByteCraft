@@ -58,7 +58,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     [Header("Button Options")]
     [SerializeField] private float interactionDistance = 1f;
-    [SerializeField] private float interactionRadius = 0.2f;
+    //[SerializeField] private float interactionRadius = 0.2f;
     [SerializeField] private KeyCode interactKey = KeyCode.E;
 
     float grappleCooldownTimer;
