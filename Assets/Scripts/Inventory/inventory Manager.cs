@@ -119,7 +119,6 @@ public class inventoryManager : MonoBehaviour, IPersistData
         this.inventory = data.playerInventory;
         this.weaponListPos = data.weaponPos;
         OnLoad();
-        
     }
 
     public void OnLoad()
