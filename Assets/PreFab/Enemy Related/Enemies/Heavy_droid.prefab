@@ -404,6 +404,7 @@ Transform:
   - {fileID: 1355847395547983176}
   - {fileID: 731260150461799261}
   - {fileID: 5770207740830014884}
+  - {fileID: 3768251022042689425}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &6492096782830285263
@@ -476,8 +477,10 @@ MonoBehaviour:
   invulnerableTime: 0
   godMode: 0
   isDead: 0
-  enemyAudio: {fileID: 0}
-  hurtSound: {fileID: 0}
+  enemyHurtSounds: {fileID: 4617786514771959996}
+  enemyFootsteps: {fileID: 4741172536029172241}
+  enemyDeathSounds: {fileID: 4936204073511939462}
+  enemyAttackSounds: {fileID: 3092840258738818882}
   floatingDamageTextPrefab: {fileID: 0}
   textDestroyTimer: 0
   isStunned: 0
@@ -1347,6 +1350,124 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6969798709173597343}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &3628910935504386661
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7275694727261949058}
+    m_Modifications:
+    - target: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.625
+      objectReference: {fileID: 0}
+    - target: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.625
+      objectReference: {fileID: 0}
+    - target: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.625
+      objectReference: {fileID: 0}
+    - target: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 34.273083
+      objectReference: {fileID: 0}
+    - target: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -18.633175
+      objectReference: {fileID: 0}
+    - target: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 11.733877
+      objectReference: {fileID: 0}
+    - target: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7568694210414303209, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+      propertyPath: m_Name
+      value: Heavy Gunner Sound Banks
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+--- !u!114 &3092840258738818882 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1781035736013960487, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+  m_PrefabInstance: {fileID: 3628910935504386661}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ed4d7b1ae36634cb84e24b023a5ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &3768251022042689425 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 439099941619471860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+  m_PrefabInstance: {fileID: 3628910935504386661}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4617786514771959996 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8235349902940871385, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+  m_PrefabInstance: {fileID: 3628910935504386661}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ed4d7b1ae36634cb84e24b023a5ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4741172536029172241 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8327292092806047860, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+  m_PrefabInstance: {fileID: 3628910935504386661}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ed4d7b1ae36634cb84e24b023a5ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4936204073511939462 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8564879158403340259, guid: e323fadebfa6b7445bf270c44d89b2c6, type: 3}
+  m_PrefabInstance: {fileID: 3628910935504386661}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ed4d7b1ae36634cb84e24b023a5ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3905558684071498555
 PrefabInstance:
   m_ObjectHideFlags: 0
