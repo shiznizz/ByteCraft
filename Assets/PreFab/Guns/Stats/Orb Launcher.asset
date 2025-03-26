@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e21f5821f5f548640b2b963930b98da4, type: 3}
   m_Name: Orb Launcher
   m_EditorClassIdentifier: 
-  itemName: 
+  itemName: Orb Launcher
   itemDescription: 
-  itemIcon: {fileID: 21300026, guid: 71a7f8669de848e45ba57bda95f3a58e, type: 3}
+  itemIcon: {fileID: 21300000, guid: 27091438d453dbb4e96a73af04172796, type: 3}
   itemTypye: 0
   wepType: 2
   attackType: 1
@@ -23,11 +23,20 @@ MonoBehaviour:
   shootDamage: 25
   shootRange: 50
   shootRate: 5
-  ammoCur: 0
+  ammoCur: 5
   ammoMax: 5
-  ammoReserve: 0
+  ammoReserve: 5
   ammoReserveMax: 5
   bulletObj: {fileID: 6061055620128851903, guid: aee19892884691d4191c89030ed76195, type: 3}
+  isChargeWeapon: 0
+  chargeTime: 0
+  continuousRadius: 0
+  maxRange: 0
+  extensionSpeed: 0
+  currLength: 0
+  tickRate: 0
+  heatGenPerShot: 0
+  canOverheat: 0
   hitEffect: {fileID: 0}
   shootSounds:
   - {fileID: 8300000, guid: 92d35fe1c59bbd14eaee9e3d3b54cea7, type: 3}
