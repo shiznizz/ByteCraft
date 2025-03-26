@@ -16,6 +16,10 @@ public class creditsScene : MonoBehaviour
 
     void Start()
     {
+        // Unlock and show cursor when entering the credits scene
+        Cursor.lockState = CursorLockMode.None;  // Unlock the cursor
+        Cursor.visible = true;  // Make the cursor visible
+
         rectTransform = GetComponent<RectTransform>();
 
         // Get or add an AudioSource component to the GameObject
@@ -52,6 +56,12 @@ public class creditsScene : MonoBehaviour
     void Update()
     {
         rectTransform.anchoredPosition += new Vector2(0, scrollSpeed * Time.deltaTime);
+
+        // Check for any key press to return to the main menu
+        if (Input.anyKeyDown)  // Detect any key press
+        {
+            goToMainMenu();  // Go to main menu if any key is pressed
+        }
     }
 
     public void goToMainMenu()
