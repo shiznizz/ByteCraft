@@ -88,6 +88,8 @@ public class explosion : MonoBehaviour
 
                     if (rb != null)
                     {
+                        if(hit.CompareTag("Player")) Camera.main.GetComponent<CameraShake>().Shake(0.5f, 0.3f);
+
                         rb.AddForce(transform.up * explosionUpForce, ForceMode.Impulse);
                         rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
                     }
