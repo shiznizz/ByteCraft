@@ -52,6 +52,12 @@ public class creditsScene : MonoBehaviour
     void Update()
     {
         rectTransform.anchoredPosition += new Vector2(0, scrollSpeed * Time.deltaTime);
+
+        // Check for any key press to return to the main menu
+        if (Input.anyKeyDown)  // Detect any key press
+        {
+            goToMainMenu();  // Go to main menu if any key is pressed
+        }
     }
 
     public void goToMainMenu()
