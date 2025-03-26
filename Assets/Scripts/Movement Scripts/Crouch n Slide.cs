@@ -58,11 +58,11 @@ public class CrouchnSlide : MonoBehaviour
     {
         if (Input.GetButtonDown("Crouch"))
         {// toggles crouch 
-            if (pc.isGrounded)
+            if (pc.isGrounded && pc.hasHeadSpace)
                 pc.isCrouching = !pc.isCrouching;
         }
 
-        if ((Input.GetButtonDown("Jump") || Input.GetButtonDown("Sprint")) && pc.isCrouching)
+        if (pc.hasHeadSpace && pc.isCrouching && (Input.GetButtonDown("Jump") || Input.GetButtonDown("Sprint")))
             pc.isCrouching = false;
      
         // adjusts controller height and orients controller on ground
@@ -108,6 +108,7 @@ public class CrouchnSlide : MonoBehaviour
 
         pc.isCrouching = false;
         pc.isSliding = false;
+        pc.hasHeadSpace = true;
 
         cameraTransform.localPosition = normalCamPos;
     }

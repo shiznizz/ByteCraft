@@ -112,7 +112,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             updatePlayerUI();
             playAtk.weaponHandler();
 
-            Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
+            //Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
         }
     }
 
@@ -137,9 +137,12 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         moveDir = (horizontalInput * orientation.right) + (verticalInput * orientation.forward);
 
-        //if(!isCrouching && !hasHeadSpace)
-        jump();
-        sprint();
+        if(hasHeadSpace)
+        {
+            jump();
+            sprint();
+        }
+        
     }
 
     #region Movement
@@ -222,8 +225,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         // call in update.
         //Debug.DrawRay(transform.position, Vector3.up, Color.red, playerStatManager.instance.playerHeight * 0.5f + 0.1f);
-        hasHeadSpace = Physics.SphereCast(transform.position, 2f, Vector3.up, out RaycastHit hit, playerStatManager.instance.playerHeight + 0.1f/*,~ignoreLayer*/);
-        //Debug.Log("ray" + hit);
+        Vector3 adjustment = new Vector3(transform.position.x, transform.position.y, transform.position.z - .5f);
+        //hasHeadSpace = !Physics.SphereCast(adjustment, .5f, Vector3.up, out RaycastHit hit, playerStatManager.instance.playerHeight + 2.5f, ~ignoreLayer);
+        hasHeadSpace = !Physics.Raycast(adjustment, Vector3.up, playerStatManager.instance.playerHeight + .1f);
+        Debug.Log(transform.position);
+        
     }
 
     void sprint()
