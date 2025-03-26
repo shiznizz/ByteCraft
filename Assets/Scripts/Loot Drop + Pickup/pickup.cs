@@ -61,6 +61,9 @@ public class pickup : MonoBehaviour
 
     void AddAmmo()
     {
+        if (inventoryManager.instance.weaponList.Count == 0)
+            return;
+
         amount = lootItem.restoreAmt;
         weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
 
