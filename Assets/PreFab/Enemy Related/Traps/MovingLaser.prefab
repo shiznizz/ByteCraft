@@ -60,6 +60,7 @@ MonoBehaviour:
   damageAmount: 5
   triggerRadius: 1
   explosionEffect: {fileID: 0}
+  explosiveDevice: {fileID: 0}
   laserBeam: {fileID: 2695736350738140332}
   maxLaserDistance: 100
   startPoint: {fileID: 0}
@@ -180,14 +181,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   rb: {fileID: 0}
-  damageAmount: 5
-  speed: 1
+  damageAmount: 15
+  speed: 0.2
   destroyTime: 0
   playerProjectile: 0
   damageHitSounds:
   - {fileID: 8300000, guid: 255193e7c82496c45af04eab03f61cf7, type: 3}
   targetingDistance: 0
   turnSpeed: 0
+  ignoreLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  lobberExplosive: {fileID: 0}
 --- !u!82 &9101210734589394581
 AudioSource:
   m_ObjectHideFlags: 0

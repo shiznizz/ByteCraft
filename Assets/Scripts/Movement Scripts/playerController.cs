@@ -221,7 +221,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void checkSky()
     {
         // call in update.
-        Debug.DrawRay(transform.position, Vector3.up, Color.red, playerStatManager.instance.playerHeight * 0.5f + 0.1f);
+        //Debug.DrawRay(transform.position, Vector3.up, Color.red, playerStatManager.instance.playerHeight * 0.5f + 0.1f);
         hasHeadSpace = Physics.SphereCast(transform.position, 2f, Vector3.up, out RaycastHit hit, playerStatManager.instance.playerHeight + 0.1f/*,~ignoreLayer*/);
         //Debug.Log("ray" + hit);
     }
@@ -336,6 +336,16 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         {
             gameManager.instance.hideOverShield();
             gameManager.instance.overShieldBar.fillAmount = 0;
+        }
+
+        if (playerStatManager.instance.attackTimer >= playerStatManager.instance.attackCooldown)
+        {
+            gameManager.instance.ShootBG.SetActive(false);
+        }
+        else if (inventoryManager.instance.weaponList.Count > 0)
+        {
+            gameManager.instance.ShootBG.SetActive(true);
+            gameManager.instance.ShootFill.fillAmount = (float)playerStatManager.instance.attackTimer / playerStatManager.instance.attackCooldown;
         }
 
 

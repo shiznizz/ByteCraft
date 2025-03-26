@@ -20,7 +20,7 @@ public class BreakableObject : MonoBehaviour, IDamage
         originalObjectHP = objectHP;
         if (isMainObjective)
         {
-            gameManager.instance.enemyHealthbar.SetActive(true);
+            //gameManager.instance.enemyHealthbar.SetActive(true);
             gameManager.instance.enemyHPBar.color = Color.green;
             gameManager.instance.enemyHPBar.fillAmount = (float)objectHP / originalObjectHP;
         }

@@ -36,7 +36,7 @@ public class DifficultyManager : MonoBehaviour
     {
         currentDifficulty = newDifficulty;
         UpdateDifficultyMultipliers();
-        Debug.Log("Difficulty set to: " + currentDifficulty.ToString());
+        //Debug.Log("Difficulty set to: " + currentDifficulty.ToString());
     }
 
     public void SetDifficultyFromIndex(int index)

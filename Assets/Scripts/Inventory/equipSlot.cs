@@ -55,6 +55,11 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    public void swapGear(itemSO item)
+    {
+        
+    }
+
     public void equipGear(itemSO item)
     {
         this.item = item;
@@ -75,6 +80,7 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
     {
         this.item = weapon.GetItem();
         itemIcon.sprite = item.itemIcon;
+        this.weapon = weapon;
         equippedSlot.SetActive(true);
 
     }
