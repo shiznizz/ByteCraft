@@ -168,20 +168,20 @@ public class damage : MonoBehaviour
     {
         if (audioSource == null)
         {
-            Debug.LogWarning("AudioSource is missing on " + gameObject.name);
+            //Debug.LogWarning("AudioSource is missing on " + gameObject.name);
             return;
         }
 
         // Check if the AudioSource is disabled
         if (!audioSource.enabled)
         {
-            Debug.LogWarning("AudioSource is disabled on " + gameObject.name);
+            //Debug.LogWarning("AudioSource is disabled on " + gameObject.name);
             audioSource.enabled = true;  // Enable the AudioSource before playing
         }
 
         if (damageHitSounds.Length == 0 || damageHitSounds[0] == null)
         {
-            Debug.LogWarning("No AudioClips assigned to damageHitSounds on " + gameObject.name);
+            //Debug.LogWarning("No AudioClips assigned to damageHitSounds on " + gameObject.name);
             return;
         }
 

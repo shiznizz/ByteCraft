@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class creditsScene : MonoBehaviour
 {
-    public float scrollSpeed = 40f; // Adjust the speed as needed
+    public float scrollSpeed = 50f; // Adjust the speed as needed
     private RectTransform rectTransform;
     public AudioClip creditsMusic;
     private AudioSource audioSource;
