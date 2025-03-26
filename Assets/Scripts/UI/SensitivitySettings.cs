@@ -8,6 +8,7 @@ public class SensitivitySettings : MonoBehaviour
     [SerializeField] Slider sensitivitySlider;
     [SerializeField] TextMeshProUGUI sensitivityValueText;
     [SerializeField] cameraController camController;
+    [SerializeField] float sensitivtyControl = 150;
 
     //This will be the last saved sensitivity value
     float lastSensitivity;
@@ -29,14 +30,28 @@ public class SensitivitySettings : MonoBehaviour
 
     void Start()
     {
-        // Set the slider to the saved value
+
+        if (camController == null)
+        {
+            camController = FindFirstObjectByType<cameraController>();
+        }
+
         sensitivitySlider.value = PlayerPrefs.GetFloat(sensitivityParameter, sensitivitySlider.value);
+        camController.SetSensitivity(sensitivitySlider.value);
+
+        // Set the slider to the saved value
+        //sensitivitySlider.value = PlayerPrefs.GetFloat(sensitivityParameter, sensitivitySlider.value);
         //Debug.Log(PlayerPrefs.GetFloat(sensitivityParameter, sensitivitySlider.value));
         // Load the last sensitivity value if needed for reset logic
         //lastSensitivity = PlayerPrefs.GetFloat(sensitivityParameter + "lastSensitivity", lastSensitivity);
 
         // Update the camera sensitivity to match the loaded value
         //camController.SetSensitivity(lastSensitivity);
+    }
+
+    public void SetSensitivity(float value)
+    {
+        sensitivtyControl = value;
     }
 
     private void SensitivitySliderValueChanged(float value)

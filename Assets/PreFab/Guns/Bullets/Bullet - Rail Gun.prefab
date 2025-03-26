@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5503909726278647114}
   - component: {fileID: -4682122101440161017}
   m_Layer: 6
-  m_Name: Bullet - SciFi Seeker
+  m_Name: Bullet - Rail Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48,10 +48,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bfb08c61bb591f43aa94311eab97330, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 2
+  type: 0
   rb: {fileID: 387160077820546038}
-  damageAmount: 5
-  speed: 20
+  damageAmount: 100
+  speed: 100
   destroyTime: 3
   playerProjectile: 1
   damageHitSounds:
@@ -177,7 +177,7 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.9622642, g: 0, b: 0, a: 1}
+      key0: {r: 0, g: 0.9607843, b: 0.8982245, a: 1}
       key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 1, g: 1, b: 1, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
