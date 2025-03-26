@@ -198,7 +198,8 @@ public class QuestManager : MonoBehaviour
         } 
         catch (System.Exception e) 
         {
-            Debug.LogError("Failed to save quest with id " + quest.info.id + ": " + e);
+            string eStr = e.Message;
+            Debug.LogError("Failed to save quest with id " + quest.info.id + ": " + eStr);
         }
     }
 
@@ -224,7 +225,8 @@ public class QuestManager : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            Debug.LogError("Failed to load quest with id " + quest.info.id + ": " + e);
+            string eStr = e.Message;
+            Debug.LogError("Failed to load quest with id " + quest.info.id + ": " + eStr);
         }
         return quest;
     }
