@@ -55,6 +55,11 @@ public class equipSlot : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    public void swapGear(itemSO item)
+    {
+        
+    }
+
     public void equipGear(itemSO item)
     {
         this.item = item;
