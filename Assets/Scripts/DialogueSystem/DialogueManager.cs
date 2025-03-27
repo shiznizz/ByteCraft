@@ -83,6 +83,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         dialoguePlaying = true;
+        gameManager.instance.isPaused = true;
         //Cursor.visible = true;
         //Cursor.lockState = CursorLockMode.None;
 
@@ -151,6 +152,7 @@ public class DialogueManager : MonoBehaviour
         dialoguePlaying = false;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        gameManager.instance.isPaused = false;
 
         // inform other parts of system that we've finished dialogue
         GameEventsManager.instance.dialogueEvents.DialogueFinished();
