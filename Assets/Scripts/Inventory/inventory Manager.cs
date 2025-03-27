@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class inventoryManager : MonoBehaviour, IPersistData
@@ -111,6 +112,7 @@ public class inventoryManager : MonoBehaviour, IPersistData
         data.playerWeapons = this.weaponList;
         data.playerInventory = this.inventory;
         data.weaponPos = this.weaponListPos;
+        
     }
 
     public void LoadData(gameData data)
@@ -118,6 +120,7 @@ public class inventoryManager : MonoBehaviour, IPersistData
         this.weaponList = data.playerWeapons;
         this.inventory = data.playerInventory;
         this.weaponListPos = data.weaponPos;
+        
         OnLoad();
     }
 

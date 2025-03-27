@@ -8,11 +8,13 @@ public class dataManager : MonoBehaviour
 {
     [Header("Debug")]
 
-    //[SerializeField] bool turnOffPersistence = false;
+    [SerializeField] bool turnOffPersistence = false;
 
     [Header("File Storage Config")]
 
     [SerializeField] string fileName;
+
+    public bool isRestart = false;
 
     private gameData gameData;
     private List<IPersistData> persistDataObj;
@@ -27,9 +29,9 @@ public class dataManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        
-        instance = this;
 
+        instance = this;
+        
         DontDestroyOnLoad(this.gameObject);
         this.dataHandler = new fileDataHandler(Application.persistentDataPath, fileName);
     }
@@ -48,13 +50,15 @@ public class dataManager : MonoBehaviour
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        
         this.persistDataObj = findAllDataobj();
         LoadGame();
     }
 
     public void OnSceneUnloaded(Scene scene)
     {
-        SaveGame();
+        if (!this.isRestart)
+            SaveGame();
     }
 
     public void NewGame()
@@ -64,6 +68,7 @@ public class dataManager : MonoBehaviour
 
     public void SaveGame()
     {
+        Debug.Log("Save Game");
         // pass data to scripts to be updated
         foreach (IPersistData data in persistDataObj)
         {
@@ -77,11 +82,12 @@ public class dataManager : MonoBehaviour
     public void LoadGame()
     {
         this.gameData = dataHandler.Load();
-       
-        if (gameData == null /*|| turnOffPersistence*/)
+        isRestart = false;
+        if (gameData == null || turnOffPersistence)
         {
             NewGame();
         }
+        
 
         foreach (IPersistData data in persistDataObj)
         {
@@ -92,7 +98,6 @@ public class dataManager : MonoBehaviour
 
     public void OnApplicationQuit()
     {
-        
         SaveGame();
     }
 

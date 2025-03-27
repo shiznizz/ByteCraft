@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [CreateAssetMenu]
 
@@ -22,6 +23,7 @@ public class weaponStats : itemSO
     public int shootRange;
     public float shootRate;
     public int ammoCur, ammoMax, ammoReserve, ammoReserveMax;
+    public int saveAmmoCur, saveAmmoReserve;
     public GameObject bulletObj;
     public bool isChargeWeapon;
     public float chargeTime;
@@ -43,6 +45,33 @@ public class weaponStats : itemSO
     [Range(0, 1)] public float reloadVolume;
     public AudioClip[] noAmmoSounds;
     [Range(0, 1)] public float noAmmoVolume;
+
+    public void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
+    }
+
+    public void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneUnloaded -= OnSceneUnloaded;
+    }
+
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ammoCur = saveAmmoCur;
+        ammoReserve = saveAmmoReserve;
+    }
+
+    public void OnSceneUnloaded(Scene scene)
+    {
+        if (!dataManager.instance.isRestart)
+        {
+            saveAmmoCur = ammoCur;
+            saveAmmoReserve = ammoReserve;
+        }
+    }
 
     public void RefreshAmmo()
     {

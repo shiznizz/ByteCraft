@@ -12,15 +12,17 @@ public class gameData
     public int  playerHP;
     public float playerShield;
     public int weaponPos;
+    
 
     public gameData()
     {
         this.playerWeapons = new();
-        this.playerInventory = new();
+       
 
         this.weaponPos = 0;
 
         this.playerHP = 100;
         this.playerShield = 100;
+        this.playerInventory = new();
     }
 }
