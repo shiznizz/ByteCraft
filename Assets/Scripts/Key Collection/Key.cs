@@ -27,7 +27,7 @@ public class Key : MonoBehaviour
     private void CollectKey()
     {
         /*keyPickupSoundBank.PlaySpecificExternal(audSource, audClip);*/
-        sphereCollider.enabled = false;
+        //sphereCollider.enabled = false;
         visual.gameObject.SetActive(false);
         GameEventsManager.instance.keyEvents.KeyGained(keyGained);
         GameEventsManager.instance.miscEvents.KeyCollected();
