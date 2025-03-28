@@ -87,9 +87,13 @@ public class QuestManager : MonoBehaviour
     {
         foreach (Quest quest in questMap.Values)
         {
-            if (quest.state == QuestState.REQUIREMENTS_NOT_MET)
+            if (quest.state == QuestState.REQUIREMENTS_NOT_MET && CheckRequirementsMet(quest))
             {
                 ChangeQuestState(quest.info.id, QuestState.CAN_START);
+            }
+            else if (!CheckRequirementsMet(quest))
+            {
+                ChangeQuestState(quest.info.id, QuestState.REQUIREMENTS_NOT_MET);
             }
         }
     }
