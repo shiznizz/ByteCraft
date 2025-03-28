@@ -19,7 +19,7 @@ public class buttonFunctions : MonoBehaviour
 
     public void backToMainMenu()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("1 Main Menu");
         gameManager.instance.mainMenu();
     }
 
