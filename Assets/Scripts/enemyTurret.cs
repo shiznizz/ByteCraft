@@ -64,6 +64,12 @@ public class enemyTurret : MonoBehaviour, IDamage
     [SerializeField] float textDestroyTimer;
     private Coroutine damageTextCoroutine;
 
+    [Header("Audio")]
+    [SerializeField] ModulatedSoundBank rotationSounds;
+    [SerializeField] ModulatedSoundBank shootSounds;
+    [SerializeField] ModulatedSoundBank damageSounds;
+    [SerializeField] ModulatedSoundBank deathSounds;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -126,6 +132,7 @@ public class enemyTurret : MonoBehaviour, IDamage
     private void SetRotation(Quaternion rot)
     {
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * turnSpeed);
+        //rotationSounds.PlayRandomSound();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -167,6 +174,7 @@ public class enemyTurret : MonoBehaviour, IDamage
     }
     void faceTarget()
     {
+        if (rotationSounds != null) rotationSounds.PlayRandomSound();
         playerDir = gameManager.instance.player.transform.position - headPos.position;
         Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, 0, playerDir.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * turnSpeed);
@@ -174,7 +182,7 @@ public class enemyTurret : MonoBehaviour, IDamage
 
     void shoot()
     {
-
+        if (shootSounds != null) shootSounds.PlayRandomSound();
             shootTimer = 0;
 
             if (anim != null)
@@ -213,6 +221,7 @@ public class enemyTurret : MonoBehaviour, IDamage
             }
 
             HP -= amount;
+            if (damageSounds != null) damageSounds.PlayRandomSound();
             StartCoroutine(flashRed());
             if (anim != null)
                 anim.SetTrigger("damage");
