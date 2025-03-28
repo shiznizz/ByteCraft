@@ -7,7 +7,7 @@ public class doorOpener : MonoBehaviour
 
     void OnTriggerEnter(Collider character)
     {
-        if (character.CompareTag("Player"))
+        if (character.CompareTag("Player") || character.CompareTag("Enemy"))
         {
             if (dependentObject == null || dependentObject.activeSelf == true)
             {

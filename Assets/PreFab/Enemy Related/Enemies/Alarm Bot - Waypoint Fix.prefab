@@ -191,7 +191,6 @@ MonoBehaviour:
   model: {fileID: 2650285542296207731}
   agent: {fileID: 0}
   anim: {fileID: 0}
-  isDrone: 1
   hpBarTarget: {fileID: 0}
   hpFillBar: {fileID: 2552638689353852239}
   hpBar: {fileID: 5418569437756037219}
@@ -220,8 +219,10 @@ MonoBehaviour:
   invulnerableTime: 0
   godMode: 0
   isDead: 0
-  enemyAudio: {fileID: 0}
-  hurtSound: {fileID: 8300000, guid: d70ec0ca99fab4041be5eecd9d575c81, type: 3}
+  enemyHurtSounds: {fileID: 0}
+  enemyFootsteps: {fileID: 0}
+  enemyDeathSounds: {fileID: 0}
+  enemyAttackSounds: {fileID: 0}
   floatingDamageTextPrefab: {fileID: 0}
   textDestroyTimer: 0
   isStunned: 0
@@ -949,7 +950,7 @@ GameObject:
   - component: {fileID: 2687011295400056596}
   m_Layer: 0
   m_Name: Alarm Bot - Waypoint Fix
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
