@@ -133,6 +133,14 @@ public class gameManager : MonoBehaviour
                 inventoryManager.instance.weaponList.RemoveAt(index);
             }
         }
+
+        for (int index = 0; index < inventoryManager.instance.inventory.Count; index++)
+        {
+            if (inventoryManager.instance.inventory[index] == null)
+            {
+                inventoryManager.instance.inventory.RemoveAt(index);
+            }
+        }
     }
 
 
