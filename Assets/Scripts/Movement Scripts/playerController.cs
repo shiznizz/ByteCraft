@@ -228,7 +228,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         Vector3 adjustment = new Vector3(transform.position.x, transform.position.y, transform.position.z - .5f);
         //hasHeadSpace = !Physics.SphereCast(adjustment, .5f, Vector3.up, out RaycastHit hit, playerStatManager.instance.playerHeight + 2.5f, ~ignoreLayer);
         hasHeadSpace = !Physics.Raycast(adjustment, Vector3.up, playerStatManager.instance.playerHeight + .1f);
-        Debug.Log(transform.position);
+        //Debug.Log(transform.position);
         
     }
 
