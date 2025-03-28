@@ -27,7 +27,7 @@ public class playerAttack : MonoBehaviour
     public GameObject activeContinuous;
     private float chargeTimer;
     [SerializeField] private AudioClip weaponChargeAudio;
-
+    Coroutine showRaycastCor;
     private void Awake()
     {
         instance = this;
@@ -104,6 +104,21 @@ public class playerAttack : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, playerStatManager.instance.attackDistance, ~ignoreLayer))
         {
+            LineRenderer beam = inventoryManager.instance.returnCurrentWeapon().lineRenderer.GetComponent<LineRenderer>();
+
+            if (beam != null)
+            {
+                Vector3 endPoint = hit.point;
+
+                if (showRaycastCor != null)
+                    StopCoroutine(showRaycastCor);
+
+                if (endPoint == null)
+                    endPoint = transform.position + inventoryManager.instance.returnCurrentWeapon().flashPOS.transform.forward * inventoryManager.instance.returnCurrentWeapon().shootRange;
+                
+                showRaycastCor = StartCoroutine(showRaycast(beam, endPoint));
+            }
+
             //Debug.Log(hit.collider.name);
             if (inventoryManager.instance.returnCurrentWeapon().hitEffect != null)
                 Instantiate(inventoryManager.instance.returnCurrentWeapon().hitEffect, hit.point, Quaternion.identity);
@@ -119,6 +134,19 @@ public class playerAttack : MonoBehaviour
             IDamage damage = hit.collider.GetComponent<IDamage>();
             damage?.takeDamage(playerStatManager.instance.attackDamage);
         }
+    }
+
+    IEnumerator showRaycast(LineRenderer beam, Vector3 endPoint)
+    {
+        beam.enabled = true;
+        beam.SetPosition(0, inventoryManager.instance.returnCurrentWeapon().flashPOS.transform.position);
+        beam.SetPosition(1, endPoint);
+        
+        yield return new WaitForSeconds(inventoryManager.instance.returnCurrentWeapon().shootRate - 0.05f);
+
+        beam.enabled = false;
+
+        showRaycastCor = null;
     }
 
     void shootProjectile()

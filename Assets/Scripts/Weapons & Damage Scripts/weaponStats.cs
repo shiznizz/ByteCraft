@@ -25,6 +25,7 @@ public class weaponStats : itemSO
     public int ammoCur, ammoMax, ammoReserve, ammoReserveMax;
     public int saveAmmoCur, saveAmmoReserve;
     public GameObject bulletObj;
+    public GameObject lineRenderer;
     public bool isChargeWeapon;
     public float chargeTime;
 

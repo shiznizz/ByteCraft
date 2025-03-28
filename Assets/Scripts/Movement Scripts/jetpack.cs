@@ -28,7 +28,7 @@ public class jetpackScript : MonoBehaviour
         {
             if (playerStatManager.instance.hasJetpack)
             {
-                if (!pc.isWallRunning)
+                if (!pc.isWallRunning && pc.hasHeadSpace)
                     rigidJump();
                 handleJetpackFuelRegen();
             }

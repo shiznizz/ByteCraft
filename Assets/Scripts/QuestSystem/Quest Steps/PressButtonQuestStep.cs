@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PressButtonQuestStep : QuestStep
 {
@@ -8,6 +9,14 @@ public class PressButtonQuestStep : QuestStep
     private void Start()
     {
         UpdateState();
+    }
+
+    private void Update()
+    {
+        if (buttonsPressed == buttonsToPress)
+        {
+            FinishQuestStep();
+        }
     }
 
     private void OnEnable()
@@ -26,11 +35,6 @@ public class PressButtonQuestStep : QuestStep
         {
             buttonsPressed++;
             UpdateState();
-        }
-
-        if (buttonsPressed >= buttonsToPress)
-        {
-            FinishQuestStep();
         }
     }
 
