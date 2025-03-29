@@ -753,7 +753,7 @@ GameObject:
   - component: {fileID: 674004461312044192}
   m_Layer: 7
   m_Name: Assault_droid
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -795,7 +795,6 @@ MonoBehaviour:
   model: {fileID: 1713002497166622511}
   agent: {fileID: 6807988873505759927}
   anim: {fileID: 3067801544143702087}
-  isDrone: 0
   hpBarTarget: {fileID: 0}
   hpFillBar: {fileID: 6090817092273606114}
   hpBar: {fileID: 3526371411784541654}
@@ -816,6 +815,7 @@ MonoBehaviour:
   lootTable:
   - {fileID: 11400000, guid: d2fac76925cf74040b68765fd8297372, type: 2}
   - {fileID: 11400000, guid: 52b1930380fd3f047a5f600e5c7dd893, type: 2}
+  - {fileID: 11400000, guid: bc8650c89273dd8469ae5ae40740389d, type: 2}
   dropPos: {fileID: 2687607772885227400}
   roamPauseTime: 5
   pathPositions: []
@@ -826,8 +826,10 @@ MonoBehaviour:
   invulnerableTime: 0
   godMode: 0
   isDead: 0
-  enemyAudio: {fileID: 0}
-  hurtSound: {fileID: 0}
+  enemyHurtSounds: {fileID: 0}
+  enemyFootsteps: {fileID: 0}
+  enemyDeathSounds: {fileID: 0}
+  enemyAttackSounds: {fileID: 0}
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
@@ -845,7 +847,7 @@ NavMeshAgent:
   m_Acceleration: 32
   avoidancePriority: 50
   m_AngularSpeed: 600
-  m_StoppingDistance: 4
+  m_StoppingDistance: 60
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 0
   m_AutoRepath: 1

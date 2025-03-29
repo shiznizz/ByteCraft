@@ -38,7 +38,7 @@ public class cameraController : MonoBehaviour
 
         rotX = Mathf.Clamp(rotX, lockVertMin, lockVertMax);
         // rotates camera left right up and down
-        transform.localRotation = Quaternion.Euler(rotX, rotY, wallrun.tilt);
+        transform.localRotation = Quaternion.Euler(rotX, rotY, wallrun.tilt) * CameraShake.rotationOffset;
         // rotates the player left and right
         orientation.rotation = Quaternion.Euler(0, rotY, 0);
     }

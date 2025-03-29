@@ -28,6 +28,9 @@ public class playerAttack : MonoBehaviour
     private float chargeTimer;
     [SerializeField] private AudioClip weaponChargeAudio;
     Coroutine showRaycastCor;
+
+    //public Transform testing;
+
     private void Awake()
     {
         instance = this;
@@ -98,26 +101,12 @@ public class playerAttack : MonoBehaviour
         //}
     }
 
-
+    GameObject laser;
     void shootRayCast()
     {
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, playerStatManager.instance.attackDistance, ~ignoreLayer))
         {
-            LineRenderer beam = inventoryManager.instance.returnCurrentWeapon().lineRenderer.GetComponent<LineRenderer>();
-
-            if (beam != null)
-            {
-                Vector3 endPoint = hit.point;
-
-                if (showRaycastCor != null)
-                    StopCoroutine(showRaycastCor);
-
-                if (endPoint == null)
-                    endPoint = transform.position + inventoryManager.instance.returnCurrentWeapon().flashPOS.transform.forward * inventoryManager.instance.returnCurrentWeapon().shootRange;
-                
-                showRaycastCor = StartCoroutine(showRaycast(beam, endPoint));
-            }
 
             //Debug.Log(hit.collider.name);
             if (inventoryManager.instance.returnCurrentWeapon().hitEffect != null)
@@ -133,20 +122,44 @@ public class playerAttack : MonoBehaviour
 
             IDamage damage = hit.collider.GetComponent<IDamage>();
             damage?.takeDamage(playerStatManager.instance.attackDamage);
+
+            //if (laser == null)
+            //    laser = Instantiate(inventoryManager.instance.returnCurrentWeapon().lineRenderer, testing.position, pc.orientation.rotation);
+
+            //LineRenderer beam = laser?.GetComponent<LineRenderer>();
+
+            //if (beam != null)
+            //{
+            //    Vector3 endPoint = hit.point;
+
+            //    if (showRaycastCor != null)
+            //        StopCoroutine(showRaycastCor);
+
+            //    //endPoint = transform.position + inventoryManager.instance.returnCurrentWeapon().flashPOS.transform.forward * inventoryManager.instance.returnCurrentWeapon().shootRange;
+
+            //    showRaycastCor = StartCoroutine(showRaycast(beam, inventoryManager.instance.returnCurrentWeapon().flashPOS.transform.position, endPoint));
+            //}
         }
     }
 
-    IEnumerator showRaycast(LineRenderer beam, Vector3 endPoint)
+    IEnumerator showRaycast(LineRenderer beam, Vector3 startPoint, Vector3 endPoint)
     {
-        beam.enabled = true;
-        beam.SetPosition(0, inventoryManager.instance.returnCurrentWeapon().flashPOS.transform.position);
-        beam.SetPosition(1, endPoint);
-        
-        yield return new WaitForSeconds(inventoryManager.instance.returnCurrentWeapon().shootRate - 0.05f);
+        try
+        {
+            startPoint = startPoint + Camera.main.transform.forward * 0.1f;
+            beam.positionCount = 2;
+            beam.SetPosition(0, startPoint);
+            beam.SetPosition(1, endPoint);
 
-        beam.enabled = false;
+            yield return new WaitForSeconds(inventoryManager.instance.returnCurrentWeapon().shootRate - 0.05f);
 
-        showRaycastCor = null;
+            beam.SetPosition(1, startPoint);
+        }
+        finally
+        {
+            showRaycastCor = null;
+        }
+
     }
 
     void shootProjectile()
@@ -249,7 +262,8 @@ public class playerAttack : MonoBehaviour
         float scale = 0.5f;
 
         //playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(gun.moveFlashX, gun.moveFlashY, gun.moveFlashZ), playerStatManager.instance.muzzleFlash.rotation);
-        playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(gunPOS.x-(flashPOS.z*scale), gunPOS.y + (flashPOS.y*scale), gunPOS.z+(flashPOS.x*scale)), playerStatManager.instance.muzzleFlash.rotation);
+        //playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(gunPOS.x-(flashPOS.z*scale), gunPOS.y + (flashPOS.y*scale), gunPOS.z+(flashPOS.x*scale)), playerStatManager.instance.muzzleFlash.rotation);
+        playerStatManager.instance.muzzleFlash.localPosition = new Vector3(gunPOS.x - (flashPOS.z * scale), gunPOS.y + (flashPOS.y * scale), gunPOS.z + (flashPOS.x * scale));
         
 
         playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = gun.model.GetComponent<MeshFilter>().sharedMesh;
@@ -265,6 +279,10 @@ public class playerAttack : MonoBehaviour
             isReloading = true;
             weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
 
+            if ( gun.ammoCur == gun.ammoMax)
+            {
+                //Don't want to make reload sound if the gun is full
+            }
             if (gun.ammoReserve > gun.ammoMax)          //Check if the player can reload a full clip
             {
                 gun.ammoReserve -= (gun.ammoMax - gun.ammoCur);

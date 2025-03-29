@@ -336,7 +336,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         if (playerStatManager.instance.shield > playerStatManager.instance.shieldMax)
         {
             gameManager.instance.showOverShield();
-            gameManager.instance.overShieldBar.fillAmount = (float)playerStatManager.instance.shield / playerStatManager.instance.shieldOverChargeMax;
+            gameManager.instance.overShieldBar.fillAmount = (float)(playerStatManager.instance.shield - 100) / (playerStatManager.instance.shieldOverChargeMax - 100);
         }
         else
         {
