@@ -70,7 +70,7 @@ public class explosion : MonoBehaviour
 
     public void Explode()
     {
-                Debug.Log("Explode timer" + detonationTimer);
+                //Debug.Log("Explode timer" + detonationTimer);
         if (hasExploded) return;
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
