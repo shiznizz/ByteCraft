@@ -102,6 +102,8 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
 
     public bool isStunned = false;
 
+    Coroutine playDmgAnimCor;
+
     #endregion Variables
 
 
@@ -405,8 +407,9 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             //}
 
             StartCoroutine(flashRed());
-            if (anim != null)
-                anim.SetTrigger("damage");
+
+            if (playDmgAnimCor == null)
+                playDmgAnimCor = StartCoroutine(playDmgAnim());
 
 
             if (type != enemyType.stationary)
@@ -438,6 +441,22 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                     damageTextCoroutine = null;
                 }
             }
+        }
+    }
+
+    IEnumerator playDmgAnim()
+    {
+        try
+        {
+            if (anim != null)
+                anim.SetTrigger("damage");
+
+            yield return new WaitForSeconds(3f);
+
+        }
+        finally
+        {
+            playDmgAnimCor = null;
         }
     }
 
