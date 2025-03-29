@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: PressButtonsQuest
   m_EditorClassIdentifier: 
   displayName: Press 4 Buttons
-  questPrerequisites: []
+  questPrerequisites:
+  - {fileID: 11400000, guid: 86ec965c3fe589945b9ea8fbb50e6c4f, type: 2}
+  - {fileID: 11400000, guid: 00be11ab2e3555d4a9a5710017c759ab, type: 2}
   questStepPrefabs:
   - {fileID: 6576305266661655693, guid: 466dfaf6bb9613144b05e9935494bb77, type: 3}
   upgradeCurrencyReward: 2

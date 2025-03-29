@@ -28,19 +28,44 @@ public class QuestLogButton : MonoBehaviour, ISelectHandler
         onSelectAction();
     }
 
+    void UpdateButtonColor(QuestState state)
+    {
+        switch (state)
+        {
+            case QuestState.REQUIREMENTS_NOT_MET:
+                buttonText.color = Color.red;
+                break;
+            case QuestState.CAN_START:
+            case QuestState.IN_PROGRESS:
+                buttonText.color = Color.black;
+                break;
+            case QuestState.CAN_FINISH:
+            case QuestState.FINISHED:
+                string newButtonText = "<s>" + buttonText.text + "</s>";
+                buttonText.text = newButtonText;
+                buttonText.color = Color.green;
+                break;
+            default:
+                Debug.LogWarning("Quest State not recognized by switch statement: " + state);
+                break;
+        }
+    }
+
     public void SetState(QuestState state)
     {
         switch (state)
         {
             case QuestState.REQUIREMENTS_NOT_MET:
-            case QuestState.CAN_START:
                 buttonText.color = Color.red;
                 break;
+            case QuestState.CAN_START:
             case QuestState.IN_PROGRESS:
-            case QuestState.CAN_FINISH:
-                buttonText.color = Color.yellow;
+                buttonText.color = Color.black;
                 break;
+            case QuestState.CAN_FINISH:
             case QuestState.FINISHED:
+                string newButtonText = "<s>" + buttonText.text + "</s>";
+                buttonText.text = newButtonText;
                 buttonText.color = Color.green;
                 break;
             default:

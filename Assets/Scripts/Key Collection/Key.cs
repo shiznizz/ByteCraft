@@ -38,7 +38,10 @@ public class Key : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            keyPickupSoundBank.PlaySpecificExternal(audSource, audClip);
+            AudioSource playerAudSource = other.gameObject.GetComponent<AudioSource>();
+            Debug.Log("Player entered key collider.");
+            if (playerAudSource != null) playerAudSource.PlayOneShot(audClip);
+            //keyPickupSoundBank.PlaySpecificExternal(audSource, audClip);
             CollectKey();
         }
     }

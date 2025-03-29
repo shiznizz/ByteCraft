@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,18 +11,29 @@ public class buttons : MonoBehaviour
     // what is being toggled
     // how does toggling it effect the object or event
 
+
     [Header("Button Settings")]
     [SerializeField] Transform buttonPosition;
     [SerializeField] SphereCollider buttonRadius;
     [SerializeField] GameObject[] objectsToActivate;
     [SerializeField] float activationRange;
+    public enum buttonType
+    {
+        toggle, hold
+    }
+    public buttonType buttonT;
+
     [SerializeField] float holdDuration;
-    public bool isHoldButton;
+    public bool isPermanentButton;
     public bool playerInRange;
     public bool isActivated;
     public bool isHolding;
     public float holdTime;
+    public bool dontToggleFlash;
     bool isMarked;
+    bool hasToggled = false;
+
+    Coroutine flashButtonCor;
 
     [Header("Visuals & Audio")]
     [SerializeField] Renderer buttonModel;
@@ -63,7 +75,7 @@ public class buttons : MonoBehaviour
 
     public void ReleaseButton()
     {
-        if (isHoldButton)
+        if (this.buttonT == buttonType.hold)
         {
             isHolding = false;
             holdTime = 0;
@@ -99,10 +111,22 @@ public class buttons : MonoBehaviour
 
     public void toggleButton()
     {
-        isActivated = !isActivated;
-        buttonModel.material.color = isActivated ? colorActive : colorInactive;
-        foreach(GameObject obj in objectsToActivate)
-            obj.SetActive(!obj.activeSelf);
+        if(!isPermanentButton)
+            isActivated = !isActivated; 
+        else if (isPermanentButton && !hasToggled)
+        {
+            isActivated = !isActivated;
+            hasToggled = true;
+        }
+
+        if (isPermanentButton || dontToggleFlash)
+            buttonModel.material.color = isActivated ? colorActive : colorInactive;
+        else
+            if (flashButtonCor == null)
+                flashButtonCor = StartCoroutine(flashButtonColor());
+
+            foreach (GameObject obj in objectsToActivate)
+                obj.SetActive(!obj.activeSelf);
 
         if (!isMarked)
         {
@@ -114,7 +138,7 @@ public class buttons : MonoBehaviour
 
     public void pressButton()
     {
-        if (isHoldButton)
+        if (this.buttonT == buttonType.hold)
         {
             isHolding = true;
             holdTime = 0;
@@ -126,5 +150,19 @@ public class buttons : MonoBehaviour
     void UpdateHoldBar()
     {
         holdBarFill.fillAmount = (float)holdTime / holdDuration;
+    }
+
+    IEnumerator flashButtonColor()
+    {
+        try
+        {
+            buttonModel.material.color = colorActive;
+            yield return new WaitForSeconds(0.5f);
+            buttonModel.material.color = colorInactive;
+        }
+        finally
+        {
+            flashButtonCor = null;
+        }
     }
 }

@@ -31,6 +31,7 @@ Transform:
   m_Children:
   - {fileID: 3294321208569468055}
   - {fileID: 3306132972609129468}
+  - {fileID: 7493590885952133393}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3701498464117694724
@@ -335,7 +336,7 @@ MonoBehaviour:
   shootAngle: 5
   bullet: {fileID: 8404054753871229023, guid: c05e6c2c64e7aa9419ec43daad5b199f, type: 3}
   shootPos: {fileID: 279754090894260489}
-  shootRate: 1
+  shootRate: 0.5
   turnTimeAfterDmg: 1
   amountToRotate: 0
   pauseTime: 0
@@ -348,6 +349,10 @@ MonoBehaviour:
   fadeDuration: 2
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
+  rotationSounds: {fileID: 3284751190633853557}
+  shootSounds: {fileID: 5407171484571502629}
+  damageSounds: {fileID: 4710711333511721477}
+  deathSounds: {fileID: 5955852794014192438}
 --- !u!1001 &4961887221825358410
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -490,3 +495,109 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &6524382141053340674
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8473330861215891959}
+    m_Modifications:
+    - target: {fileID: 4428683063004435731, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428683063004435731, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428683063004435731, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428683063004435731, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428683063004435731, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428683063004435731, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428683063004435731, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428683063004435731, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428683063004435731, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4428683063004435731, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8321053614485360434, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+      propertyPath: m_Name
+      value: Enemy Turret Sound Banks
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+--- !u!114 &3284751190633853557 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8583444383924665975, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+  m_PrefabInstance: {fileID: 6524382141053340674}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ed4d7b1ae36634cb84e24b023a5ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4710711333511721477 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2005381676472761863, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+  m_PrefabInstance: {fileID: 6524382141053340674}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ed4d7b1ae36634cb84e24b023a5ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5407171484571502629 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1261398412375524391, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+  m_PrefabInstance: {fileID: 6524382141053340674}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ed4d7b1ae36634cb84e24b023a5ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5955852794014192438 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 588901120007003956, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+  m_PrefabInstance: {fileID: 6524382141053340674}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54ed4d7b1ae36634cb84e24b023a5ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &7493590885952133393 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4428683063004435731, guid: 2c57f020edacaa54ca8360f6261529eb, type: 3}
+  m_PrefabInstance: {fileID: 6524382141053340674}
+  m_PrefabAsset: {fileID: 0}

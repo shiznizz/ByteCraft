@@ -70,25 +70,36 @@ public class explosion : MonoBehaviour
 
     public void Explode()
     {
-                Debug.Log("Explode timer" + detonationTimer);
+                //Debug.Log("Explode timer" + detonationTimer);
         if (hasExploded) return;
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
 
         HashSet<GameObject> affectedObjects = new HashSet<GameObject>();
 
+        if (explosionEffect != null)
+        {
+            Instantiate(explosionEffect, transform.position, Quaternion.identity);
+        }
+
+        if (explosionAudio != null)
+        {
+            explosionAudio.PlayOneShot(explosionSound);
+            //explosionAudio.Play();
+        }
+
         foreach (Collider hit in colliders)
         {
             if (!affectedObjects.Contains(hit.gameObject)) // Ensure unique objects
             {
                 affectedObjects.Add(hit.gameObject);
+
                 if (!hit.CompareTag("Boss"))
                 {
                     Rigidbody rb = hit.GetComponent<Rigidbody>();
 
                     if (rb != null)
                     {
-                        if(hit.CompareTag("Player")) Camera.main.GetComponent<CameraShake>().Shake(1f, 1f);
 
                         rb.AddForce(transform.up * explosionUpForce, ForceMode.Impulse);
                         rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
@@ -98,21 +109,13 @@ public class explosion : MonoBehaviour
                         // hit
                     }
 
+                    if (hit.CompareTag("Player")) Camera.main.GetComponent<CameraShake>().Shake(1f, 1f);
+
                     IDamage damage = hit.GetComponent<IDamage>();
                     damage?.takeDamage(explosionDmg);
-                }                
+                }
+                
             }
-        }
-
-        if (explosionEffect != null)
-        {
-            Instantiate(explosionEffect, transform.position, Quaternion.identity);
-        }
-
-        if (explosionAudio != null)
-        {
-            //AudioSource.PlayClipAtPoint(explosionSound, transform.position);
-            explosionAudio.Play();
         }
 
         hasExploded = true;

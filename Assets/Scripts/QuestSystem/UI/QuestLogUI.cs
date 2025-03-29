@@ -70,10 +70,12 @@ public class QuestLogUI : MonoBehaviour
 
         // requirements
         questRequirementsText.text = "";
-        foreach (QuestInfoSO prerequisiteQuestInfo in quest.info.questPrerequisites)
-        {
-            questRequirementsText.text += prerequisiteQuestInfo.displayName + "\n";
-        }
+        if (quest.info.questPrerequisites.Length == 0) questRequirementsText.text = "None.";
+        else
+            foreach (QuestInfoSO prerequisiteQuestInfo in quest.info.questPrerequisites)
+            {
+                questRequirementsText.text += prerequisiteQuestInfo.displayName + "\n";
+            }
 
         // rewards
         experienceRewardsText.text = quest.info.upgradeCurrencyReward + " Upgrade Points";
