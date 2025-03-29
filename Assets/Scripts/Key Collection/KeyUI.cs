@@ -28,7 +28,7 @@ public class KeyUI : MonoBehaviour
     private void KeyChange(int key)
     {
         if (key == 0) return;
-        Debug.Log("Inside of KeyChange");
+        //Debug.Log("Inside of KeyChange");
         keyText.text = "Collected Keys: " + key.ToString() + " / 5";
 
         StartCoroutine(DisplayKeyCollectedText());
