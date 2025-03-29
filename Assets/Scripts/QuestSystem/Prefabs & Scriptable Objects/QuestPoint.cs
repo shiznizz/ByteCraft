@@ -21,7 +21,6 @@ public class QuestPoint : MonoBehaviour
     private void Awake()
     {
         questId = questInfoForPoint.id;
-
     }
 
     private void Update()

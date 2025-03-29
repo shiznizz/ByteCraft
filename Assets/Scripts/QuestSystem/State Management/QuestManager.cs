@@ -106,6 +106,7 @@ public class QuestManager : MonoBehaviour
         //questUpdatePopupText.text = "Quest started: " + quest.info.displayName;
         StartCoroutine(flashUpdatePopup("Quest Started: ", quest));
         ChangeQuestState(quest.info.id, QuestState.IN_PROGRESS);
+        questLogScrollingList.UpdateQuestButtonState(id, QuestState.IN_PROGRESS);
     }
 
     private void AdvanceQuest(string id)
@@ -131,6 +132,8 @@ public class QuestManager : MonoBehaviour
         ClaimRewards(quest);
         ChangeQuestState(quest.info.id, QuestState.FINISHED);
         StartCoroutine(flashUpdatePopup("Quest finished: ", quest));
+        UpdateQuestLogScrollingList(id, QuestState.FINISHED);
+        SaveQuest(quest);
     }
 
     private void ClaimRewards(Quest quest)
@@ -247,6 +250,29 @@ public class QuestManager : MonoBehaviour
     private void ResetUpdateText()
     {
         questUpdatePopupText.text = "";
+    }
+
+    public void CheckCurrentQuestRequirements(string id)
+    {
+        Quest quest = GetQuestById(id);
+        if (quest != null)
+        {
+            if (quest.state == QuestState.REQUIREMENTS_NOT_MET && quest.info.questPrerequisites.Length > 0)
+            {
+                foreach (QuestInfoSO questInfo in quest.info.questPrerequisites)
+                {
+                    Quest other = GetQuestById(questInfo.id);
+                    other.state = QuestState.FINISHED;
+                }
+            }
+
+            quest.state = QuestState.CAN_START;
+        }
+    }
+
+    void UpdateQuestLogScrollingList(string id, QuestState newState)
+    {
+        questLogScrollingList.UpdateQuestButtonState(id, newState);
     }
 }
 
