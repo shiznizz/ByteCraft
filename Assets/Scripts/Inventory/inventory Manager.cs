@@ -127,6 +127,8 @@ public class inventoryManager : MonoBehaviour, IPersistData
     public void OnLoad()
     {
         gameManager.instance.updateInventory();
+        clearEmptyInventory();
+
         if (weaponList.Count > 0)
         {
 
@@ -151,6 +153,25 @@ public class inventoryManager : MonoBehaviour, IPersistData
                 }
             }
             playerAttack.instance.changeGun();
+        }
+    }
+
+    void clearEmptyInventory()
+    {
+        for (int index = 0; index < weaponList.Count; index++)
+        {
+            if (weaponList[index] == null)
+            {
+                weaponList.RemoveAt(index);
+            }
+        }
+
+        for (int index = 0; index < inventory.Count; index++)
+        {
+            if (inventory[index] == null)
+            {
+                inventory.RemoveAt(index);
+            }
         }
     }
 }

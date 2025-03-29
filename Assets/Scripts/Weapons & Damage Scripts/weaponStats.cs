@@ -67,7 +67,7 @@ public class weaponStats : itemSO
 
     public void OnSceneUnloaded(Scene scene)
     {
-        if (!dataManager.instance.isRestart)
+        if (dataManager.instance != null && !dataManager.instance.isRestart)
         {
             saveAmmoCur = ammoCur;
             saveAmmoReserve = ammoReserve;
