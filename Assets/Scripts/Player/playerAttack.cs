@@ -262,7 +262,8 @@ public class playerAttack : MonoBehaviour
         float scale = 0.5f;
 
         //playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(gun.moveFlashX, gun.moveFlashY, gun.moveFlashZ), playerStatManager.instance.muzzleFlash.rotation);
-        playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(gunPOS.x-(flashPOS.z*scale), gunPOS.y + (flashPOS.y*scale), gunPOS.z+(flashPOS.x*scale)), playerStatManager.instance.muzzleFlash.rotation);
+        //playerStatManager.instance.muzzleFlash.SetLocalPositionAndRotation(new Vector3(gunPOS.x-(flashPOS.z*scale), gunPOS.y + (flashPOS.y*scale), gunPOS.z+(flashPOS.x*scale)), playerStatManager.instance.muzzleFlash.rotation);
+        playerStatManager.instance.muzzleFlash.localPosition = new Vector3(gunPOS.x - (flashPOS.z * scale), gunPOS.y + (flashPOS.y * scale), gunPOS.z + (flashPOS.x * scale));
         
 
         playerStatManager.instance.gunModel.GetComponent<MeshFilter>().sharedMesh = gun.model.GetComponent<MeshFilter>().sharedMesh;
@@ -278,6 +279,10 @@ public class playerAttack : MonoBehaviour
             isReloading = true;
             weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
 
+            if ( gun.ammoCur == gun.ammoMax)
+            {
+                //Don't want to make reload sound if the gun is full
+            }
             if (gun.ammoReserve > gun.ammoMax)          //Check if the player can reload a full clip
             {
                 gun.ammoReserve -= (gun.ammoMax - gun.ammoCur);

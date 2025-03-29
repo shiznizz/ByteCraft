@@ -70,7 +70,7 @@ public class explosion : MonoBehaviour
 
     public void Explode()
     {
-                //Debug.Log("Explode timer" + detonationTimer);
+                Debug.Log("Explode timer" + detonationTimer);
         if (hasExploded) return;
 
         Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
@@ -88,6 +88,8 @@ public class explosion : MonoBehaviour
 
                     if (rb != null)
                     {
+                        if(hit.CompareTag("Player")) Camera.main.GetComponent<CameraShake>().Shake(1f, 1f);
+
                         rb.AddForce(transform.up * explosionUpForce, ForceMode.Impulse);
                         rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
                     }
