@@ -59,6 +59,10 @@ public class buttons : MonoBehaviour
                 holdTime = 0;
             }
         }
+        else
+        {
+            holdBar.gameObject.SetActive(false);
+        }
     }
 
     public void ReleaseButton()
