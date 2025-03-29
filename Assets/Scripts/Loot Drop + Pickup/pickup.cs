@@ -10,6 +10,11 @@ public class pickup : MonoBehaviour
     public int amount; // how much value the loot gives to player
     public LootItem lootItem;
     [SerializeField] AudioClip gunPickupSound;
+    [SerializeField] AudioClip healthPickupSound;
+    [SerializeField] AudioClip ammoPickupSound;
+    [SerializeField] AudioClip shieldPickupSound;
+    [SerializeField] AudioClip upgradePickupSound;
+    [SerializeField] AudioClip fuelPickupSound;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -22,6 +27,7 @@ public class pickup : MonoBehaviour
                 switch (lootType)
                 {
                     case pickup.LootType.Health:
+                        playerAudSource.PlayOneShot(healthPickupSound);
                         player.heal(amount);
                         break;
                     case pickup.LootType.Weapon:
@@ -32,15 +38,19 @@ public class pickup : MonoBehaviour
                         player.addInventory(item);
                         break;
                     case pickup.LootType.Fuel:
+                        playerAudSource.PlayOneShot(fuelPickupSound);
                         player.addInventory(item);
                         break;
                     case pickup.LootType.Shield:
+                        playerAudSource.PlayOneShot(shieldPickupSound);
                         AddShield();
                         break;
                     case pickup.LootType.Ammo:
+                        playerAudSource.PlayOneShot(ammoPickupSound);
                         AddAmmo();
                         break;
                     case pickup.LootType.Upgrade:
+                        playerAudSource.PlayOneShot(upgradePickupSound);
                         HandleUpgrade();
                         break;
                 }

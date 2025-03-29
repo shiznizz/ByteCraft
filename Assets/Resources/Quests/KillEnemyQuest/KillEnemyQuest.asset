@@ -13,7 +13,11 @@ MonoBehaviour:
   m_Name: KillEnemyQuest
   m_EditorClassIdentifier: 
   displayName: Kill the Enemy
-  questPrerequisites: []
+  questPrerequisites:
+  - {fileID: 11400000, guid: 86ec965c3fe589945b9ea8fbb50e6c4f, type: 2}
+  - {fileID: 11400000, guid: 00be11ab2e3555d4a9a5710017c759ab, type: 2}
+  - {fileID: 11400000, guid: 64fb3efb9c3628b49b30d4aa5ed25102, type: 2}
+  - {fileID: 11400000, guid: 86175c73282d937499540ee6e04255bb, type: 2}
   questStepPrefabs:
   - {fileID: 5084556427401381293, guid: fbeb5bc09f39e7d4e90cdd51c55db6f3, type: 3}
   upgradeCurrencyReward: 2

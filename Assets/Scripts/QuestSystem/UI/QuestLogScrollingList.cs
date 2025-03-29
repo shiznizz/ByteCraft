@@ -102,4 +102,12 @@ public class QuestLogScrollingList : MonoBehaviour
             );
         }
     }
+
+    public void UpdateQuestButtonState(string questId, QuestState newState)
+    {
+        if (idToButtonMap.TryGetValue(questId, out QuestLogButton questLogButton))
+        {
+            questLogButton.SetState(newState);
+        }
+    }
 }
