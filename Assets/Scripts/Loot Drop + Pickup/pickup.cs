@@ -98,7 +98,8 @@ public class pickup : MonoBehaviour
     void AddShield()
     {
         amount = lootItem.restoreAmt;
-        playerStatManager.instance.shield = playerStatManager.instance.shieldMax + amount;
+        if(playerStatManager.instance.shield <= playerStatManager.instance.shieldOverChargeMax)
+            playerStatManager.instance.shield = playerStatManager.instance.shield + amount;
         //Debug.Log($"Current shield amt: {playerStatManager.instance.shield}, incoming shield amt: {amount}, shield max: {playerStatManager.instance.shieldMax}");
         
         // if the current shield amt is equal to the max shield amt, return

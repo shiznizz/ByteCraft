@@ -49,8 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   rb: {fileID: 0}
-  damageAmount: 5
-  speed: 1
+  damageAmount: 25
+  speed: 0.2
   destroyTime: 0
   playerProjectile: 0
   damageHitSounds:
@@ -60,6 +60,7 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 0
+  lobberExplosive: {fileID: 0}
 --- !u!82 &6087923079931805887
 AudioSource:
   m_ObjectHideFlags: 0
@@ -342,8 +343,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trapType: 1
-  damageAmount: 5
-  triggerRadius: 1
+  damageAmount: 25
+  triggerRadius: 0.1
   explosionEffect: {fileID: 0}
   explosiveDevice: {fileID: 0}
   laserBeam: {fileID: 3950087858574797608}
