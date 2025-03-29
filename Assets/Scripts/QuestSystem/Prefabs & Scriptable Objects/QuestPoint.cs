@@ -52,7 +52,7 @@ public class QuestPoint : MonoBehaviour
         // if we have a knot name defined, try to start dialogue with it
         if (!dialogueKnotName.Equals(""))
         {
-            if (currentQuestState.Equals(QuestState.CAN_START) || currentQuestState.Equals(QuestState.FINISHED))
+            if (currentQuestState.Equals(QuestState.CAN_START))
                 GameEventsManager.instance.dialogueEvents.EnterDialogue(dialogueKnotName);
         }
         // otherwise, start or finish the quest immediately without dialogue
