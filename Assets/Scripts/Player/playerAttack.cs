@@ -279,6 +279,10 @@ public class playerAttack : MonoBehaviour
             isReloading = true;
             weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
 
+            if ( gun.ammoCur == gun.ammoMax)
+            {
+                //Don't want to make reload sound if the gun is full
+            }
             if (gun.ammoReserve > gun.ammoMax)          //Check if the player can reload a full clip
             {
                 gun.ammoReserve -= (gun.ammoMax - gun.ammoCur);
