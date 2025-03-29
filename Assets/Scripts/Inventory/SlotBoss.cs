@@ -134,7 +134,7 @@ public class SlotBoss : MonoBehaviour, IPointerClickHandler
         gameManager.instance.itemDescription.text = item.itemDescription ;
         gameManager.instance.itemName.text = item.itemName;
         gameManager.instance.itemIcon.sprite = item.itemIcon;
-
+        
         selectedItem = item;
 
     }

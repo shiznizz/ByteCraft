@@ -119,8 +119,28 @@ public class gameManager : MonoBehaviour
 
     private void Start()
     {
+        clearEmptyInventory();
         updateInventory();
         getSavedAudioSettings();
+    }
+
+    void clearEmptyInventory()
+    {
+        for (int index = 0; index < inventoryManager.instance.weaponList.Count; index++)
+        {
+            if (inventoryManager.instance.weaponList[index] == null)
+            {
+                inventoryManager.instance.weaponList.RemoveAt(index);
+            }
+        }
+
+        for (int index = 0; index < inventoryManager.instance.inventory.Count; index++)
+        {
+            if (inventoryManager.instance.inventory[index] == null)
+            {
+                inventoryManager.instance.inventory.RemoveAt(index);
+            }
+        }
     }
 
 
