@@ -101,7 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   rb: {fileID: 0}
-  damageAmount: 1
+  damageAmount: 20
   speed: 1
   destroyTime: 0
   playerProjectile: 0
@@ -113,6 +113,7 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 0
+  lobberExplosive: {fileID: 0}
 --- !u!82 &6258886347401869047
 AudioSource:
   m_ObjectHideFlags: 0
@@ -301,16 +302,15 @@ MonoBehaviour:
   model: {fileID: 5842897556333300750}
   agent: {fileID: 6884700982941092500}
   anim: {fileID: 1405979274743726800}
-  isDrone: 0
   hpBarTarget: {fileID: 475057330815734872, guid: d80ddc48ecefd214f87dae1c3e4a59c4, type: 3}
   hpFillBar: {fileID: 8518856122246393022}
   hpBar: {fileID: 1319505488923214986}
-  HP: 10
+  HP: 15
   animTransSpeed: 8
-  faceTargetSpeed: 32
+  faceTargetSpeed: 36
   FOV: 180
   armor: 0
-  speed: 0
+  speed: 10
   headPos: {fileID: 1401872926674160057}
   shootAngle: 1
   bullet: {fileID: 0}
@@ -319,7 +319,10 @@ MonoBehaviour:
   meleeCol: {fileID: 7440738341910741769}
   meleeDistance: 3
   dropsLoot: 0
-  lootTable: []
+  lootTable:
+  - {fileID: 11400000, guid: 52b1930380fd3f047a5f600e5c7dd893, type: 2}
+  - {fileID: 11400000, guid: bc8650c89273dd8469ae5ae40740389d, type: 2}
+  - {fileID: 11400000, guid: d2fac76925cf74040b68765fd8297372, type: 2}
   dropPos: {fileID: 0}
   roamPauseTime: 1
   pathPositions: []
@@ -330,8 +333,10 @@ MonoBehaviour:
   invulnerableTime: 3
   godMode: 0
   isDead: 0
-  enemyAudio: {fileID: 0}
-  hurtSound: {fileID: 0}
+  enemyHurtSounds: {fileID: 0}
+  enemyFootsteps: {fileID: 0}
+  enemyDeathSounds: {fileID: 0}
+  enemyAttackSounds: {fileID: 0}
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
