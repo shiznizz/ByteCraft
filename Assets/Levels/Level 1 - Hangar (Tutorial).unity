@@ -10354,6 +10354,76 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8399b4dcd66f96a48a494e4c27f4f92e, type: 3}
+--- !u!1 &936361915
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 936361916}
+  - component: {fileID: 936361918}
+  - component: {fileID: 936361917}
+  m_Layer: 0
+  m_Name: Inventory Trigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &936361916
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 936361915}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.70710576, z: -0, w: 0.7071079}
+  m_LocalPosition: {x: 100, y: 0.375, z: 2.5}
+  m_LocalScale: {x: 12, y: 5, z: 5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1601916815}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!114 &936361917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 936361915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cd7ea260f3c3044bbc1ebc497afa1b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hintMessage: Press Tab to open \nyour inventory.
+  tutorialManager: {fileID: 1601916814}
+  hintShown: 0
+  hintDisplayTime: 2
+--- !u!65 &936361918
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 936361915}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &938753459 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7680229200898110078, guid: 8399b4dcd66f96a48a494e4c27f4f92e, type: 3}
@@ -11171,6 +11241,77 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b8f9b1f4d39f2384fbeebc9765fa773d, type: 3}
+--- !u!1 &1013833475
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1013833476}
+  - component: {fileID: 1013833478}
+  - component: {fileID: 1013833477}
+  m_Layer: 0
+  m_Name: Upgrade Trigger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1013833476
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013833475}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.7071059, z: -0, w: 0.7071077}
+  m_LocalPosition: {x: 270.5, y: -0.125, z: -119.875}
+  m_LocalScale: {x: 12, y: 5, z: 5}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1601916815}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &1013833477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013833475}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cd7ea260f3c3044bbc1ebc497afa1b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hintMessage: When completing a quest\nyou will receive upgrade points.\nPress tab
+    to access\ninventory menu.
+  tutorialManager: {fileID: 1601916814}
+  hintShown: 0
+  hintDisplayTime: 3
+--- !u!65 &1013833478
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013833475}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1015594554
 GameObject:
   m_ObjectHideFlags: 0
@@ -21541,6 +21682,9 @@ PrefabInstance:
       addedObject: {fileID: 1131697779}
     - targetCorrespondingSourceObject: {fileID: 4136366369498063748, guid: d6acd4d0b4faa6d449968ce6ecc251ec, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 936361916}
+    - targetCorrespondingSourceObject: {fileID: 4136366369498063748, guid: d6acd4d0b4faa6d449968ce6ecc251ec, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1971074148}
     - targetCorrespondingSourceObject: {fileID: 4136366369498063748, guid: d6acd4d0b4faa6d449968ce6ecc251ec, type: 3}
       insertIndex: -1
@@ -21554,6 +21698,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4136366369498063748, guid: d6acd4d0b4faa6d449968ce6ecc251ec, type: 3}
       insertIndex: -1
       addedObject: {fileID: 716024784}
+    - targetCorrespondingSourceObject: {fileID: 4136366369498063748, guid: d6acd4d0b4faa6d449968ce6ecc251ec, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1013833476}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6acd4d0b4faa6d449968ce6ecc251ec, type: 3}
 --- !u!1001 &2019687277
