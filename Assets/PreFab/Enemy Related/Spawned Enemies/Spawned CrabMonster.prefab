@@ -340,6 +340,7 @@ MonoBehaviour:
   ignoreLayer:
     serializedVersion: 2
     m_Bits: 0
+  lobberExplosive: {fileID: 0}
 --- !u!135 &7391637136945108204
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -385,7 +386,6 @@ MonoBehaviour:
   model: {fileID: 1220057282981061265}
   agent: {fileID: 8573114166066744710}
   anim: {fileID: 1179212026617153553}
-  isDrone: 0
   hpBarTarget: {fileID: 0}
   hpFillBar: {fileID: 614598818185448092}
   hpBar: {fileID: 7850235515961582248}
@@ -405,6 +405,8 @@ MonoBehaviour:
   dropsLoot: 1
   lootTable:
   - {fileID: 11400000, guid: d2fac76925cf74040b68765fd8297372, type: 2}
+  - {fileID: 11400000, guid: bc8650c89273dd8469ae5ae40740389d, type: 2}
+  - {fileID: 11400000, guid: 52b1930380fd3f047a5f600e5c7dd893, type: 2}
   dropPos: {fileID: 7495249159418410618}
   roamPauseTime: 2
   pathPositions: []
@@ -415,8 +417,10 @@ MonoBehaviour:
   invulnerableTime: 3
   godMode: 0
   isDead: 0
-  enemyAudio: {fileID: 0}
-  hurtSound: {fileID: 0}
+  enemyHurtSounds: {fileID: 0}
+  enemyFootsteps: {fileID: 0}
+  enemyDeathSounds: {fileID: 0}
+  enemyAttackSounds: {fileID: 0}
   floatingDamageTextPrefab: {fileID: 0}
   textDestroyTimer: 0
   isStunned: 0

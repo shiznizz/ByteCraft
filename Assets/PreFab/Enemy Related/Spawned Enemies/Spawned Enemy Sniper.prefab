@@ -317,7 +317,6 @@ MonoBehaviour:
   model: {fileID: 4042841209656051847}
   agent: {fileID: 4485123469095904880}
   anim: {fileID: 8409516741212779639}
-  isDrone: 0
   hpBarTarget: {fileID: 0}
   hpFillBar: {fileID: 71585006422693494}
   hpBar: {fileID: 7244198250680139330}
@@ -338,7 +337,6 @@ MonoBehaviour:
   lootTable:
   - {fileID: 11400000, guid: d2fac76925cf74040b68765fd8297372, type: 2}
   - {fileID: 11400000, guid: 52b1930380fd3f047a5f600e5c7dd893, type: 2}
-  - {fileID: 11400000, guid: b562ead0228d8aa49ad1a9758a9519fc, type: 2}
   dropPos: {fileID: 1492004183115593990}
   roamPauseTime: 1
   pathPositions: []
@@ -349,8 +347,10 @@ MonoBehaviour:
   invulnerableTime: 3
   godMode: 0
   isDead: 0
-  enemyAudio: {fileID: 0}
-  hurtSound: {fileID: 0}
+  enemyHurtSounds: {fileID: 0}
+  enemyFootsteps: {fileID: 0}
+  enemyDeathSounds: {fileID: 0}
+  enemyAttackSounds: {fileID: 0}
   floatingDamageTextPrefab: {fileID: 3266767685751091358, guid: 62ec460bddbd491409b0a51fd0aaa77f, type: 3}
   textDestroyTimer: 1
   isStunned: 0
