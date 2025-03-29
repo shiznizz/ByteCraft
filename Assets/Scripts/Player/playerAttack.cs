@@ -27,6 +27,7 @@ public class playerAttack : MonoBehaviour
     public GameObject activeContinuous;
     private float chargeTimer;
     [SerializeField] private AudioClip weaponChargeAudio;
+    bool chargePlaying;
     Coroutine showRaycastCor;
 
     //public Transform testing;
@@ -171,16 +172,23 @@ public class playerAttack : MonoBehaviour
     {
         if (inventoryManager.instance.returnCurrentWeapon().isChargeWeapon && chargeTimer < inventoryManager.instance.returnCurrentWeapon().chargeTime)
         {
-            if (audioSource != null && !audioSource.isPlaying)
+            if (audioSource != null && !chargePlaying)
             {
-                audioSource.clip = weaponChargeAudio;
-                audioSource.loop = true;
-                audioSource.Play();
+                Debug.Log("Charging");
+                StartCoroutine(chargeAudioCooldown());
+                audioSource.PlayOneShot(weaponChargeAudio);
             }
             chargeTimer += Time.deltaTime;
         }
         else
             audioSource.Stop();
+    }
+
+    IEnumerator chargeAudioCooldown()
+    {
+        chargePlaying = true;
+        yield return new WaitForSeconds(1.5f);
+        chargePlaying = false;
     }
 
     void shootContinuous()
