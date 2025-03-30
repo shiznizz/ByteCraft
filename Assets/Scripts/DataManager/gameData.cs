@@ -20,6 +20,11 @@ public class gameData
 
     public int upgradeCurrency;
 
+    public int curSprintMod;
+    public int curJetpackRegenMod;
+    public int curHPMaxMod;
+    public int curShieldMaxMod;
+
     public gameData()
     {
         this.playerWeapons = new();
@@ -30,6 +35,10 @@ public class gameData
         this.playerShield = 100;
         this.sprintSpeed = 10;
         this.jetPackRegenDelay = 3;
+        this.curSprintMod = 0;
+        this.curJetpackRegenMod = 0;
+        this.curHPMaxMod = 0;
+        this.curShieldMaxMod = 0;
 
         this.upgradeCurrency = 0;
 

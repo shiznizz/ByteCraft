@@ -509,29 +509,31 @@ public class gameManager : MonoBehaviour, IPersistData
 
     private void OnSave()
     {
-        for (int i = 0; i < upgradeSlots.Count; i++)
-        {
-            upgradeSlotsBool.Insert(i, upgradeSlots[i].GetComponent<SkillUpgradeButton>().isSelected);
-        }
+        //for (int i = 0; i < upgradeSlots.Count; i++)
+        //{
+        //    Debug.Log("Save" + upgradeSlots[i].GetComponent<SkillUpgradeButton>().isSelected);
+        //    upgradeSlotsBool.Insert(i, upgradeSlots[i].GetComponent<SkillUpgradeButton>().isSelected);
+        //}
     }
 
     private void OnLoad()
     {
 
-        for (int i = 0; i < upgradeSlots.Count; i++)
-        {
-            Debug.Log(i.ToString());
-            Debug.Log(upgradeSlotsBool[i]);
-            if (upgradeSlots.Count > 0)
-            {
-                if (upgradeSlotsBool[i] == true)
-                {
-                    upgradeSlots[i].GetComponent<SkillUpgradeButton>().isSelected = true;
-                   // upgradeSlots[i].GetComponent<SkillUpgradeButton>().background.sprite = upgradeSlots[i].GetComponent<SkillUpgradeButton>().skillSelected;
-                }
-            }
+        //for (int i = 0; i < upgradeSlots.Count; i++)
+        //{
+        //    //Debug.Log(i.ToString());
+        //    //Debug.Log(upgradeSlotsBool.Count);
+        //    //Debug.Log(upgradeSlotsBool[i]);
+        //    if (upgradeSlots.Count > 0)
+        //    {
+        //        if (upgradeSlotsBool[i] == true)
+        //        {
+        //            upgradeSlots[i].GetComponent<SkillUpgradeButton>().isSelected = true;
+        //           // upgradeSlots[i].GetComponent<SkillUpgradeButton>().background.sprite = upgradeSlots[i].GetComponent<SkillUpgradeButton>().skillSelected;
+        //        }
+        //    }
             
-        }
+        //}
     }
 
     public void LoadData(gameData data)

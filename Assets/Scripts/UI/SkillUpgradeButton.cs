@@ -23,6 +23,7 @@ public class SkillUpgradeButton : MonoBehaviour, IPointerClickHandler, IPointerE
     
 
     public bool isSelected;
+    private string selectedStr;
     public Image background;
 
 
@@ -30,10 +31,21 @@ public class SkillUpgradeButton : MonoBehaviour, IPointerClickHandler, IPointerE
     void Start()
     {
         background = GetComponent<Image>();
+        selectedStr = PlayerPrefs.GetString(transform.parent.name + name);
+
+        if (selectedStr == "True")
+            isSelected = true;
+
         if (isSelected )
         {
             background.sprite = skillSelected;
         }
+    }
+
+    void OnDisable()
+    {
+        PlayerPrefs.SetString(transform.parent.name + name, isSelected.ToString());
+        PlayerPrefs.Save();
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -97,6 +109,8 @@ public class SkillUpgradeButton : MonoBehaviour, IPointerClickHandler, IPointerE
                 playerStatManager.instance.increaseJetpackRegen(percentToIncrease);
                 break;
         }
+
+        gameManager.instance.playerScript.updatePlayerUI();
     }
 
     void onLoad()

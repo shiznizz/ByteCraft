@@ -327,7 +327,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         }
     }
     
-    void updatePlayerUI()
+    public void updatePlayerUI()
     {
         gameManager.instance.playerHPBar.fillAmount = (float)playerStatManager.instance.HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)playerStatManager.instance.jetpackFuel / playerStatManager.instance.jetpackFuelMax;

@@ -164,6 +164,10 @@ public class playerStatManager : MonoBehaviour, IPersistData
         this.HP = data.playerHP;
         this.HPMax = data.playerHPMax;
         this.shield = data.playerShield;
+        this.curHPMaxMod = data.curHPMaxMod;
+        this.curJetpackRegenMod = data.curJetpackRegenMod;
+        this.curShieldMaxMod = data.curShieldMaxMod;
+        this.curSprintMod = data.curSprintMod;
 
         this.upgradeCurrency = data.upgradeCurrency;
 
@@ -176,6 +180,10 @@ public class playerStatManager : MonoBehaviour, IPersistData
         data.playerHP = this.HP;
         data.playerHPMax = this.HPMax;
         data.playerShield = this.shield;
+        data.curJetpackRegenMod = this.curJetpackRegenMod;
+        data.curShieldMaxMod = this.curShieldMaxMod;
+        data.curSprintMod = this.curSprintMod;
+        data.curHPMaxMod = this.curHPMaxMod;
 
         data.upgradeCurrency = this.upgradeCurrency;
 
