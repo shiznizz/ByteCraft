@@ -49,6 +49,7 @@ public class gameManager : MonoBehaviour
     [SerializeField] public TMP_Text ammoCurText;
     [SerializeField] public TMP_Text ammoMaxText;
     [SerializeField] public TMP_Text ammoReserveText;
+    [SerializeField] public TMP_Text upgradePts;
 
     [Header("State Monitoring Values")]
     public bool isPaused;

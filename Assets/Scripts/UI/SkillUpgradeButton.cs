@@ -38,6 +38,7 @@ public class SkillUpgradeButton : MonoBehaviour, IPointerClickHandler, IPointerE
                 if (canUpgrade())
                 {
                     background.sprite = skillSelected;
+                    playerStatManager.instance.IncrementUpgradeCurrency(-upgradeCost);
                     playerStatManager.instance.upgradeCurrency -= upgradeCost;
                     isSelected = true;
                     UpgradePlayerStat();

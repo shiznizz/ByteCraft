@@ -25,7 +25,7 @@ MonoBehaviour:
   shootRate: 2
   ammoCur: 0
   ammoMax: 4
-  ammoReserve: 0
+  ammoReserve: 8
   ammoReserveMax: 8
   saveAmmoCur: 0
   saveAmmoReserve: 0
@@ -41,7 +41,8 @@ MonoBehaviour:
   heatGenPerShot: 0
   canOverheat: 0
   hitEffect: {fileID: 0}
-  shootSounds: []
+  shootSounds:
+  - {fileID: 8300000, guid: 7b889162724f05c4f95da46adbd50ef7, type: 3}
   shootVolume: 0.8
   reloadSounds:
   - {fileID: 8300000, guid: 6675c3e4d1ad8b64c887aed699ad3e22, type: 3}

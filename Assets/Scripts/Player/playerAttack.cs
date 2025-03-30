@@ -64,6 +64,8 @@ public class playerAttack : MonoBehaviour
         {
             stopContinous();
             chargeTimer = 0;
+            if (inventoryManager.instance.weaponList.Count > 0 && inventoryManager.instance.returnCurrentWeapon().isChargeWeapon)
+                audioSource.Stop();
         }
     }
 
@@ -71,7 +73,7 @@ public class playerAttack : MonoBehaviour
     {
         if (isReloading) return;
 
-        if (inventoryManager.instance.returnCurrentWeapon().isChargeWeapon && chargeTimer < inventoryManager.instance.returnCurrentWeapon().chargeTime)
+        if (inventoryManager.instance.returnCurrentWeapon().isChargeWeapon && chargeTimer < weaponChargeAudio.length)
         {
             handleChargeWeapons();
             return;
@@ -165,17 +167,23 @@ public class playerAttack : MonoBehaviour
 
     void shootProjectile()
     {
+        if (inventoryManager.instance.returnCurrentWeapon().isChargeWeapon)
+        {
+            if (inventoryManager.instance.returnCurrentWeapon().shootSounds.Length != 0)
+                playShootSound();
+        }
         Instantiate(inventoryManager.instance.returnCurrentWeapon().bulletObj, playerStatManager.instance.muzzleFlash.position, Camera.main.transform.rotation);
     }
 
     void handleChargeWeapons()
     {
-        if (inventoryManager.instance.returnCurrentWeapon().isChargeWeapon && chargeTimer < inventoryManager.instance.returnCurrentWeapon().chargeTime)
+        if (inventoryManager.instance.returnCurrentWeapon().isChargeWeapon && chargeTimer < weaponChargeAudio.length)
         {
             if (audioSource != null && !chargePlaying)
             {
                 Debug.Log("Charging");
-                StartCoroutine(chargeAudioCooldown());
+                StartCoroutine(chargeAudioCooldown(weaponChargeAudio.length));
+                audioSource.pitch = 1;
                 audioSource.PlayOneShot(weaponChargeAudio);
             }
             chargeTimer += Time.deltaTime;
@@ -184,10 +192,10 @@ public class playerAttack : MonoBehaviour
             audioSource.Stop();
     }
 
-    IEnumerator chargeAudioCooldown()
+    IEnumerator chargeAudioCooldown(float audioLength)
     {
         chargePlaying = true;
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(audioLength);
         chargePlaying = false;
     }
 

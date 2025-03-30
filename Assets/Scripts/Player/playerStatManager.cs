@@ -156,5 +156,6 @@ public class playerStatManager : MonoBehaviour
     public void IncrementUpgradeCurrency(int amt)
     {
         upgradeCurrency += amt;
+        gameManager.instance.upgradePts.text = upgradeCurrency.ToString("D3");
     }
 }
