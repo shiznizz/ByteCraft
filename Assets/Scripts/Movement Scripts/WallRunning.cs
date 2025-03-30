@@ -119,8 +119,8 @@ public class WallRunning : MonoBehaviour
         // else if forces player to the wall if they are pressing either no key or the key that is opposite of the wall normal
         if ((wallLeft && horizontalInput > 0) || (wallRight && horizontalInput < 0))
             rb.AddForce(wallNormal * playerStatManager.instance.currSpeed * 2, ForceMode.Force);
-        else if (!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput < 0))
-            rb.AddForce(-wallNormal * playerStatManager.instance.wallAdhesiveForce, ForceMode.Force);
+        //else if (!(wallLeft && horizontalInput > 0) && !(wallRight && horizontalInput < 0))
+        //    rb.AddForce(-wallNormal * playerStatManager.instance.wallAdhesiveForce, ForceMode.Force);
     }
 
     void testWall()
