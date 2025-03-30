@@ -72,7 +72,6 @@ public class playerAttack : MonoBehaviour
     void shoot()
     {
         if (isReloading) return;
-        Debug.Log(weaponChargeAudio.length);
 
         if (inventoryManager.instance.returnCurrentWeapon().isChargeWeapon && chargeTimer < weaponChargeAudio.length)
         {
