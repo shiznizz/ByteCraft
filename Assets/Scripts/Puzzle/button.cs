@@ -60,16 +60,20 @@ public class buttons : MonoBehaviour
     {
         if(isHolding)
         {
-            holdBar.gameObject.SetActive(true);
-            UpdateHoldBar();
-            holdTime += Time.deltaTime;
+            if (isPermanentButton && !hasToggled)
+                UpdateHoldBar();
+            else if (!isPermanentButton)
+                UpdateHoldBar();
 
             if (holdTime >= holdDuration)
             {
                 toggleButton();
-                isHolding = false;
-                holdTime = 0;
+                stopButtonHolding();
             }
+        }
+        else
+        {
+            holdBar.gameObject.SetActive(false);
         }
     }
 
@@ -77,8 +81,8 @@ public class buttons : MonoBehaviour
     {
         if (this.buttonT == buttonType.hold)
         {
-            isHolding = false;
-            holdTime = 0;
+            stopButtonHolding();
+
             holdBar.gameObject.SetActive(false);
         }
     }
@@ -103,8 +107,8 @@ public class buttons : MonoBehaviour
             if (buttonPrompt != null)
                 buttonPrompt.SetActive(false);
 
-            holdTime = 0;
-            isHolding = false;
+            stopButtonHolding();
+
             playerInRange = false;
         }
     }
@@ -149,7 +153,9 @@ public class buttons : MonoBehaviour
 
     void UpdateHoldBar()
     {
+        holdBar.gameObject.SetActive(true);
         holdBarFill.fillAmount = (float)holdTime / holdDuration;
+        holdTime += Time.deltaTime;
     }
 
     IEnumerator flashButtonColor()
@@ -164,5 +170,11 @@ public class buttons : MonoBehaviour
         {
             flashButtonCor = null;
         }
+    }
+
+    void stopButtonHolding()
+    {
+        isHolding = false;
+        holdTime = 0;
     }
 }
