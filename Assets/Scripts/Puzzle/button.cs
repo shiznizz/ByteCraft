@@ -144,7 +144,8 @@ public class buttons : MonoBehaviour
     {
         if (this.buttonT == buttonType.hold)
         {
-            stopButtonHolding();
+            isHolding = true;
+            holdTime = 0;
         }
         else
             toggleButton();             
@@ -173,7 +174,7 @@ public class buttons : MonoBehaviour
 
     void stopButtonHolding()
     {
-        isHolding = true;
+        isHolding = false;
         holdTime = 0;
     }
 }
