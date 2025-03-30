@@ -11,10 +11,11 @@ using System.Text.RegularExpressions;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Collections.Generic;
 
 
 
-public class gameManager : MonoBehaviour
+public class gameManager : MonoBehaviour, IPersistData
 {
     public static gameManager instance;
 
@@ -65,6 +66,8 @@ public class gameManager : MonoBehaviour
     public GameObject selectedInventorySlot;
 
     public GameObject[] slots;
+    public List<SkillUpgradeButton> upgradeSlots;
+    public List<bool> upgradeSlotsBool;
 
     public Image itemIcon;
 
@@ -123,6 +126,8 @@ public class gameManager : MonoBehaviour
         clearEmptyInventory();
         updateInventory();
         getSavedAudioSettings();
+
+        
     }
 
     void clearEmptyInventory()
@@ -188,6 +193,7 @@ public class gameManager : MonoBehaviour
         }
 
         CheckLowHealth();
+        
     }
     #region Menus
 
@@ -501,87 +507,128 @@ public class gameManager : MonoBehaviour
         }
     }
 
-//    #region LoadingScreen
-//    //Function to load a scene asynchronously and show loading screen
-//    public void LoadScene(int sceneBuildIndex)
-//    {
-//        Debug.Log("LoadScene called with scene index: " + sceneBuildIndex);
+    private void OnSave()
+    {
+        for (int i = 0; i < upgradeSlots.Count; i++)
+        {
+            upgradeSlotsBool.Insert(i, upgradeSlots[i].GetComponent<SkillUpgradeButton>().isSelected);
+        }
+    }
 
-//        if (loadingScreenPrefab == null)
-//        {
-//            Debug.LogError("Loading Screen Prefab is not assigned in the inspector.");
-//            return;
-//        }
+    private void OnLoad()
+    {
 
-//        string sceneName = SceneManager.GetSceneAt(sceneBuildIndex).name;
+        for (int i = 0; i < upgradeSlots.Count; i++)
+        {
+            Debug.Log(i.ToString());
+            Debug.Log(upgradeSlotsBool[i]);
+            if (upgradeSlots.Count > 0)
+            {
+                if (upgradeSlotsBool[i] == true)
+                {
+                    upgradeSlots[i].GetComponent<SkillUpgradeButton>().isSelected = true;
+                   // upgradeSlots[i].GetComponent<SkillUpgradeButton>().background.sprite = upgradeSlots[i].GetComponent<SkillUpgradeButton>().skillSelected;
+                }
+            }
+            
+        }
+    }
 
-//        Debug.Log("Scene name to load: " + sceneName);  // Add log to confirm the scene name
+    public void LoadData(gameData data)
+    {
+        this.upgradeSlotsBool = data.upgradeSlotsBool;
 
-//        loadingScreenInstance = Instantiate(loadingScreenPrefab, Vector3.zero, Quaternion.identity);
+        OnLoad();
+    }
 
-//        if (loadingScreenInstance != null)
-//        {
-//            Debug.Log("Loading screen instantiated successfully.");
-//        }
-//        else
-//        {
-//            Debug.LogError("Failed to instantiate the loading screen.");
-//        }
+    public void SaveData(ref gameData data)
+    {
+        OnSave();
 
-//        StartCoroutine(LoadSceneAsync(sceneName));
-//    }
+        data.upgradeSlotsBool = this.upgradeSlotsBool;
+    }
 
-//    private IEnumerator LoadSceneAsync(string sceneName)
-//    {
-//        Debug.Log("Started loading scene: " + sceneName);
+    //    #region LoadingScreen
+    //    //Function to load a scene asynchronously and show loading screen
+    //    public void LoadScene(int sceneBuildIndex)
+    //    {
+    //        Debug.Log("LoadScene called with scene index: " + sceneBuildIndex);
 
-//        //Start loading the scene asynchronously
-//        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+    //        if (loadingScreenPrefab == null)
+    //        {
+    //            Debug.LogError("Loading Screen Prefab is not assigned in the inspector.");
+    //            return;
+    //        }
 
-//        //Don't let the scene activate until it's ready
-//        operation.allowSceneActivation = false;
+    //        string sceneName = SceneManager.GetSceneAt(sceneBuildIndex).name;
 
-//        //Wait until the scene is almost done loading (90%)
-//        while (!operation.isDone)
-//        {
-//            //Update the loading screen
-//            float progress = Mathf.Clamp01(operation.progress / 0.9f);
+    //        Debug.Log("Scene name to load: " + sceneName);  // Add log to confirm the scene name
 
-//            //Debug log to check loading progress
-//            Debug.Log("Loading progress: " + progress * 100 + "%");
+    //        loadingScreenInstance = Instantiate(loadingScreenPrefab, Vector3.zero, Quaternion.identity);
 
-//            //Update the loading screen progress
-//            if (loadingScreenInstance != null)
-//            {
-//                loadingScreenInstance.GetComponent<LoadingScreen>().UpdateLoadingProgress(progress);
-//            }
+    //        if (loadingScreenInstance != null)
+    //        {
+    //            Debug.Log("Loading screen instantiated successfully.");
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("Failed to instantiate the loading screen.");
+    //        }
 
-//            //When loading is done (90% progress), allow scene activation (player can skip)
-//            if (operation.progress >= 0.9f)
-//            {
-//                ////Let the player skip after 90% progress
-//                //if (Input.anyKeyDown)
-//                //{
-//                //    operation.allowSceneActivation = true;
-//                //}
+    //        StartCoroutine(LoadSceneAsync(sceneName));
+    //    }
 
-//                //Add an artificial delay before the scene activates (to ensure the loading screen stays visible)
-//                yield return new WaitForSeconds(5f); // Adjust this value if needed
+    //    private IEnumerator LoadSceneAsync(string sceneName)
+    //    {
+    //        Debug.Log("Started loading scene: " + sceneName);
 
-//                // Allow scene activation after the artificial delay
-//                operation.allowSceneActivation = true;
-//                Debug.Log("Scene is ready to activate.");
-//            }
+    //        //Start loading the scene asynchronously
+    //        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
 
-//            yield return null;
-//        }
+    //        //Don't let the scene activate until it's ready
+    //        operation.allowSceneActivation = false;
 
-//        //Destroy the loading screen after the scene is fully loaded
-//        if (loadingScreenInstance != null)
-//        {
-//            Destroy(loadingScreenInstance);
-//        }
-//        Debug.Log("Scene Loaded!");
-//    }
-//#endregion
+    //        //Wait until the scene is almost done loading (90%)
+    //        while (!operation.isDone)
+    //        {
+    //            //Update the loading screen
+    //            float progress = Mathf.Clamp01(operation.progress / 0.9f);
+
+    //            //Debug log to check loading progress
+    //            Debug.Log("Loading progress: " + progress * 100 + "%");
+
+    //            //Update the loading screen progress
+    //            if (loadingScreenInstance != null)
+    //            {
+    //                loadingScreenInstance.GetComponent<LoadingScreen>().UpdateLoadingProgress(progress);
+    //            }
+
+    //            //When loading is done (90% progress), allow scene activation (player can skip)
+    //            if (operation.progress >= 0.9f)
+    //            {
+    //                ////Let the player skip after 90% progress
+    //                //if (Input.anyKeyDown)
+    //                //{
+    //                //    operation.allowSceneActivation = true;
+    //                //}
+
+    //                //Add an artificial delay before the scene activates (to ensure the loading screen stays visible)
+    //                yield return new WaitForSeconds(5f); // Adjust this value if needed
+
+    //                // Allow scene activation after the artificial delay
+    //                operation.allowSceneActivation = true;
+    //                Debug.Log("Scene is ready to activate.");
+    //            }
+
+    //            yield return null;
+    //        }
+
+    //        //Destroy the loading screen after the scene is fully loaded
+    //        if (loadingScreenInstance != null)
+    //        {
+    //            Destroy(loadingScreenInstance);
+    //        }
+    //        Debug.Log("Scene Loaded!");
+    //    }
+    //#endregion
 }

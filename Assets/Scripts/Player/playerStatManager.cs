@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class playerStatManager : MonoBehaviour
+public class playerStatManager : MonoBehaviour, IPersistData
 {
     static public playerStatManager instance;
 
@@ -157,5 +157,29 @@ public class playerStatManager : MonoBehaviour
     {
         upgradeCurrency += amt;
         gameManager.instance.upgradePts.text = upgradeCurrency.ToString("D3");
+    }
+
+    public void LoadData(gameData data)
+    {
+        this.HP = data.playerHP;
+        this.HPMax = data.playerHPMax;
+        this.shield = data.playerShield;
+
+        this.upgradeCurrency = data.upgradeCurrency;
+
+        this.jetpackFuelRegenDelay = data.jetPackRegenDelay;
+        this.sprintSpeed = data.sprintSpeed;
+    }
+
+    public void SaveData(ref gameData data)
+    {
+        data.playerHP = this.HP;
+        data.playerHPMax = this.HPMax;
+        data.playerShield = this.shield;
+
+        data.upgradeCurrency = this.upgradeCurrency;
+
+        data.jetPackRegenDelay = this.jetpackFuelRegenDelay;
+        data.sprintSpeed = this.sprintSpeed;
     }
 }

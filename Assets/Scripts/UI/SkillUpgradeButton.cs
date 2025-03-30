@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,19 +15,25 @@ public class SkillUpgradeButton : MonoBehaviour, IPointerClickHandler, IPointerE
     [SerializeField] int upgradeCost;
     [SerializeField] SkillUpgradeButton skillDependence;
 
-    [SerializeField] Sprite skillSelected;
+    [SerializeField] public Sprite skillSelected;
     [SerializeField] Sprite skillUnselected;
     [SerializeField] Sprite skillPurchasable;
     [SerializeField] Sprite skillNotPurchasable;
 
-    bool isSelected;
-    Image background;
+    
+
+    public bool isSelected;
+    public Image background;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         background = GetComponent<Image>();
+        if (isSelected )
+        {
+            background.sprite = skillSelected;
+        }
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -91,4 +98,11 @@ public class SkillUpgradeButton : MonoBehaviour, IPointerClickHandler, IPointerE
                 break;
         }
     }
+
+    void onLoad()
+    {
+        
+    }
+
+    
 }
