@@ -90,7 +90,7 @@ public class buttons : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // check if you have to leave and come back to activate multiple times
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && !hasToggled)
         {
             if (buttonPrompt != null) 
                 buttonPrompt.SetActive(true);
