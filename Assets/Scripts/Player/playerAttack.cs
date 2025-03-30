@@ -64,7 +64,8 @@ public class playerAttack : MonoBehaviour
         {
             stopContinous();
             chargeTimer = 0;
-            audioSource.Stop();
+            if (inventoryManager.instance.weaponList.Count > 0 && inventoryManager.instance.returnCurrentWeapon().isChargeWeapon)
+                audioSource.Stop();
         }
     }
 
