@@ -11,6 +11,7 @@ public class VolumeControl : MonoBehaviour
 
     float lastVolume;
     bool disableToggleEvent;
+    string toggleStatus = "";
 
     private void Awake()
     {
@@ -18,15 +19,43 @@ public class VolumeControl : MonoBehaviour
         toggle.onValueChanged.AddListener(ToggleValueChanged);
     }
 
+    void Start()
+    {
+        Debug.Log("Start");
+        slider.value = PlayerPrefs.GetFloat(volumeParameter, slider.value);
+        lastVolume = PlayerPrefs.GetFloat(volumeParameter + "lastVolume", lastVolume);
+        toggleStatus = PlayerPrefs.GetString(volumeParameter + "lastToggle", toggleStatus);
+
+        Debug.Log("ToggleStatus = " + toggleStatus);
+
+        if (toggleStatus == "False")
+        {
+            toggle.isOn = false;
+        }
+        else
+        {
+            toggle.isOn = true;
+        }
+    }
+
     private void OnDisable()
     {
         PlayerPrefs.SetFloat(volumeParameter, slider.value);
         PlayerPrefs.SetFloat(volumeParameter + "lastVolume", lastVolume);
+        PlayerPrefs.SetString(volumeParameter + "lastToggle", toggle.isOn.ToString());
+        PlayerPrefs.Save();
     }
 
     private void SliderValueChanged(float value)
     {
-        mixer.SetFloat(volumeParameter, Mathf.Log10(value)*20);
+        if (slider.value <= 0.01)
+        {
+            mixer.SetFloat(volumeParameter, -80);
+        }
+        else
+        {
+            mixer.SetFloat(volumeParameter, Mathf.Log10(value) * 20);
+        }
 
         disableToggleEvent = true;
         toggle.isOn = slider.value > slider.minValue;
@@ -49,10 +78,5 @@ public class VolumeControl : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        slider.value = PlayerPrefs.GetFloat(volumeParameter, slider.value);
-        lastVolume = PlayerPrefs.GetFloat(volumeParameter + "lastVolume", lastVolume);
-    }
 
 }

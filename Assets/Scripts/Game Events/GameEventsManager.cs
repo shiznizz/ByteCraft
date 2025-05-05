@@ -8,19 +8,28 @@ public class GameEventsManager : MonoBehaviour
     public MiscEvents miscEvents;
     public QuestEvents questEvents;
     public DialogueEvents dialogueEvents;
+    public EnemyEvents enemyEvents;
+    public ButtonPressEvents buttonPressEvents;
     private void Awake()
     {
         if (instance != null)
         {
-            Debug.LogError("Found more than one Game Events Manager in the scene.");
+            Destroy(gameObject);
         }
-        instance = this;
+        else
+        {
+            instance = this;
+        }
+
+        
 
         // instantiate events
         keyEvents = new KeyEvents();
         miscEvents = new MiscEvents();
         questEvents = new QuestEvents();
         dialogueEvents = new DialogueEvents();
+        enemyEvents = new EnemyEvents();
+        buttonPressEvents = new ButtonPressEvents();
     }
 
 }

@@ -4,38 +4,32 @@ public class QuestPoint : MonoBehaviour
 {
     [Header("Dialogue")]
     [SerializeField] private string dialogueKnotName;
+    [SerializeField] DialoguePanelUI dialoguePanel;
 
     [Header("Quest")]
     [SerializeField] private QuestInfoSO questInfoForPoint;
 
     [Header("Config")]
-    [SerializeField] private bool startPoint = true;
-    [SerializeField] private bool endPoint = true;
-
-    [Header("Marker")]
-    [SerializeField] Renderer model;
+    [SerializeField] public bool startPoint = true;
+    [SerializeField] public bool endPoint = true;
 
 
     private bool playerIsNear = false;
     private string questId;
-    private QuestState currentQuestState;
+    public QuestState currentQuestState;
 
     private void Awake()
     {
-        // model.enabled = false;
         questId = questInfoForPoint.id;
-
     }
 
     private void Update()
     {
-        //SubmitPressed();
-        if (Input.GetButtonDown("Marker") && currentQuestState.Equals(QuestState.IN_PROGRESS))
-            model.enabled = true;
-        else if (Input.GetButtonUp("Marker"))
-            model.enabled = false;
-
-        if (Input.GetButtonDown("Accept")) SubmitPressed();
+        SubmitPressed();
+        if ((questId == "CollectKeysQuest" || questId == "KillEnemiesQuest" || questId == "PressButtonsQuest") && currentQuestState.Equals(QuestState.CAN_FINISH))
+        {
+            GameEventsManager.instance.questEvents.FinishQuest(questId);
+        }
     }
 
     private void OnEnable()
@@ -58,7 +52,8 @@ public class QuestPoint : MonoBehaviour
         // if we have a knot name defined, try to start dialogue with it
         if (!dialogueKnotName.Equals(""))
         {
-            GameEventsManager.instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+            if (currentQuestState.Equals(QuestState.CAN_START))
+                GameEventsManager.instance.dialogueEvents.EnterDialogue(dialogueKnotName);
         }
         // otherwise, start or finish the quest immediately without dialogue
         else
@@ -67,10 +62,12 @@ public class QuestPoint : MonoBehaviour
             if (currentQuestState.Equals(QuestState.CAN_START) && startPoint)
             {
                 GameEventsManager.instance.questEvents.StartQuest(questId);
-            } 
-            else if (currentQuestState.Equals(QuestState.CAN_FINISH) && endPoint)
+            }
+            else if (currentQuestState.Equals(QuestState.CAN_FINISH)  && endPoint)
             {
                 GameEventsManager.instance.questEvents.FinishQuest(questId);
+                //playerStatManager.instance.upgradeCurrency += 2;
+                // GoalManager.instance.triggerWin();
             }
 
         }
@@ -91,6 +88,14 @@ public class QuestPoint : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerIsNear = true;
+            if (questId == "VisitLocationQuest2" && currentQuestState.Equals(QuestState.IN_PROGRESS) && endPoint)
+            {
+                GameEventsManager.instance.questEvents.AdvanceQuest(questId);
+                if (currentQuestState.Equals(QuestState.CAN_FINISH))
+                {
+                    GameEventsManager.instance.questEvents.FinishQuest(questId);
+                }
+            }
 
         }
     }
@@ -100,6 +105,13 @@ public class QuestPoint : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerIsNear = false;
+            if (dialoguePanel != null)
+                dialoguePanel.contentParent.SetActive(false);
         }
+    }
+
+    public QuestState GetCurrentQuestState()
+    {
+        return currentQuestState;
     }
 }

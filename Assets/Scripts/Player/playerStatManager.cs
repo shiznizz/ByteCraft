@@ -9,21 +9,24 @@ public class playerStatManager : MonoBehaviour
     public int HP;
     public int HPMax;
 
-    public int Armor;
-    public int ArmorMax;
-
     public float playerHeight;
     public float standingHeight = 2f;
     public float crouchHeight = 0.5f;
-    public int playerHPMax = 100;
-    public int playerHP;
+    public float damageMultiplier = 1f;
 
     public int upgradeCurrency;
+
+    [Header("Player Shield Stat")]
+    public float shield;
+    public float shieldMax;
+    public float shieldOverChargeMax;
+    public float shieldRegen;
+    public float shieldRegenDelay;
+
 
     [Header("Player Base Movement")]
 
     public float currSpeed;
-    public float speedLimit;
     public float walkSpeed;
     public float sprintSpeed;
     public float crouchSpeed;
@@ -45,6 +48,7 @@ public class playerStatManager : MonoBehaviour
 
     [Header("JetPack Stats")]
     public bool hasJetpack;
+    public bool hasGroundCheck = false;
     public int jetpackFuelMax;
     public float jetpackFuel;
     public float jetpackFuelUse;
@@ -61,12 +65,14 @@ public class playerStatManager : MonoBehaviour
 
     [Header("Wall Run Stats")]
     public float wallRunSpeed;
-    public float wallRunForce;
+    public float wallAdhesiveForce;
     public float wallJumpUpForce;
     public float wallJumpSideForce;
     public float maxWallRunTime;
     public float exitWallTime;
-    public float wallCheckDistance = 1f;
+    public float wallRerunTime;
+    public float wallCheckDistance;
+    public float minimumWallAngleDifference;
 
     [Header("Grapple Options")]
     public int grappleDistance;
@@ -98,28 +104,57 @@ public class playerStatManager : MonoBehaviour
     public Animator playerAnimator;
     public Collider meleeCol;
 
-    [Header("Magic Options")]
-    public GameObject magicWeaponModel;
-    public weaponStats startMagic;
-    public GameObject magicProjectile; // Projectile Prefab
-    public float magicProjectileSpeed; // Speed of projectile
-    public Transform magicPosition;
-
     //bool isGunPOSSet;
 
     public float shootTimer;
     public float attackTimer;
 
-    //Tracks which weapon is active
-    public enum WeaponType { Gun, Melee, Magic }
-    public WeaponType currentWeapon = WeaponType.Gun;
-    //[Header("Starting Level bool")]
-    //public bool isPlayerInStartingLevel;
+    //variables for upgrade tracking
+    private float origSprintSpeed;
+    private int curSprintMod;
+    private float origJetpackRegen;
+    private int curJetpackRegenMod;
+    private int origHPMax;
+    private int curHPMaxMod;
+    private float origShieldMax;
+    private int curShieldMaxMod;
 
 
     public void Awake()
     {
         instance = this;
+        origHPMax = HPMax;
+        origShieldMax = shieldMax;
+        origSprintSpeed = sprintSpeed;
+        origJetpackRegen = jetpackFuelRegenDelay;
     }
 
+    public void increaseSprintSpeed(int percentToIncrease)
+    {
+        sprintSpeed = origSprintSpeed * (100 + curSprintMod + percentToIncrease) / 100;
+        curSprintMod += percentToIncrease;
+    }
+
+    public void increaseJetpackRegen(int percentToIncrease)
+    {
+        jetpackFuelRegenDelay = origJetpackRegen * (100 + curJetpackRegenMod + percentToIncrease) / 100;
+        curJetpackRegenMod += percentToIncrease;
+    }
+
+    public void increaseMaxHealth(int percentToIncrease)
+    {
+        HPMax = origHPMax * (100 + curHPMaxMod + percentToIncrease) / 100;
+        curHPMaxMod += percentToIncrease;
+    }
+
+    public void increaseMaxShield(int percentToIncrease)
+    {
+        shieldMax = origShieldMax * (100 + curShieldMaxMod + percentToIncrease) / 100;
+        curShieldMaxMod += percentToIncrease;
+    }
+
+    public void IncrementUpgradeCurrency(int amt)
+    {
+        upgradeCurrency += amt;
+    }
 }

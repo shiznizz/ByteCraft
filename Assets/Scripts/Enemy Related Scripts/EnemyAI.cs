@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -8,24 +10,33 @@ using UnityEngine.UI;
 public class enemyAI : MonoBehaviour, IDamage, lootDrop
 {
     enum enemyType { range, melee, stationary, kamikaze }
-    enum movementType { random, setPath, seeking}
+    enum movementType { random, setPath, seeking, drone }
+    enum spawnType { notSpawned, spawned }
 
     #region Variables
     [Header("General Enemy Settings")]
     [SerializeField] enemyType type;
     [SerializeField] movementType movement;
+    [SerializeField] spawnType spawn;
+    [SerializeField] public GameObject target;
     [SerializeField] Renderer model;
-    [SerializeField] NavMeshAgent agent;
+    [SerializeField] public NavMeshAgent agent;
     [SerializeField] Animator anim;
+    //[SerializeField] private bool isDrone = false;
+    [SerializeField] GameObject hpBarTarget;
+    private GameObject originalTarget;
+    private bool isKami;
 
     [Header("Enemy Stats")]
     [SerializeField] Image hpFillBar;
     [SerializeField] Canvas hpBar;
-    [SerializeField] int HP;
+    [SerializeField] public int HP;
     [SerializeField] int animTransSpeed;
     [SerializeField] int faceTargetSpeed;
     [SerializeField] int FOV; //Field of View
     private int HPOrginal;
+    [SerializeField] private int armor = 0;
+    [SerializeField] private float speed = 0;
 
     [Header("Ranged Enemy Options")]
     [SerializeField] Transform headPos; //Head position
@@ -54,24 +65,44 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     [Header("Death Settings")]
     [SerializeField] private float bodyFadeTime = 5f;
     [SerializeField] private float fadeDuration = 2f;
-    private bool isDead = false;
+
+    [Header("Spawn settings")]
+    [SerializeField] private GameObject spawnEffects;
+    [SerializeField] private float invulnerableTime;
+    [SerializeField] private bool godMode = false;
+
+    public bool isDead = false;
     private Rigidbody rb;
     private Collider enemyCollider;
     private Renderer bodyRenderer;
 
+    [Header("Audio")]
+    //[SerializeField] AudioSource enemyAudio;
+    [SerializeField] ModulatedSoundBank enemyHurtSounds;
+    [SerializeField] ModulatedSoundBank enemyFootsteps;
+    [SerializeField] ModulatedSoundBank enemyDeathSounds;
+    [SerializeField] ModulatedSoundBank enemyAttackSounds;
 
     Vector3 startingPos;
     float roamTimer;
     float stoppingDistOrig;
-    Vector3 playerDir;
+    Vector3 targetDir;
     bool playerInRange;
-    float angleToPlayer;
+    float angleToTarget;
 
     Color colorOrig;
     private bool isAlerted = false;
     private float alertTimer;
     private bool playerInDroneRange = false;
     private float alertCooldown = 5f;
+
+    [SerializeField] private GameObject floatingDamageTextPrefab;
+    [SerializeField] float textDestroyTimer;
+    private Coroutine damageTextCoroutine;
+
+    public bool isStunned = false;
+
+    Coroutine playDmgAnimCor;
 
     #endregion Variables
 
@@ -81,8 +112,10 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     {
         HPOrginal = HP;
         colorOrig = model.material.color;
-        GoalManager.instance.updateGameGoal(1);
         startingPos = transform.position;
+
+        if (speed != 0) agent.speed = speed;
+        
         if (type != enemyType.stationary)
         {
             stoppingDistOrig = agent.stoppingDistance;
@@ -91,24 +124,36 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         rb = GetComponent<Rigidbody>();
         enemyCollider = GetComponent<Collider>();
         bodyRenderer = model;
+
+        // scale enemy stats based on current difficulty
+        if (DifficultyManager.instance != null)
+        {
+            HP = Mathf.RoundToInt(HP * DifficultyManager.instance.enemyHealthMultiplier);
+        }
+
+        if (movement != movementType.seeking)
+        {
+            target = gameManager.instance.player;
+        }
+
+        originalTarget = target;
+
+        if (spawn == spawnType.spawned)
+            onSpawn();
     }
 
     // Update is called once per frame
     void Update()
     {
-       updateEnemyUI();
-        if (isAlerted && !playerInRange) // specific to drone bot alerts
+        
+        updateEnemyUI();
+        // if stunned, nav mesh will stop and skip rest of AI's logic
+        if (agent != null && agent.velocity.magnitude > 0.1f)
         {
-            if (alertTimer < alertCooldown)
-            {
-                alertTimer += Time.deltaTime;
-            }
-            else if (alertTimer >= alertCooldown)
-            {
-                alertTimer = 0;
-                isAlerted = false;
-            }
+            if (enemyFootsteps != null && !enemyFootsteps.IsPlaying()) enemyFootsteps.PlayRandomSound();
         }
+
+
         if (type != enemyType.stationary)
         {
             float agentSpeed = agent.velocity.normalized.magnitude; //for agent you are converting a vector 3 to a float by getting the magnitude
@@ -118,11 +163,40 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             
             if (agent.remainingDistance < 0.01f)
                 roamTimer += Time.deltaTime;
+
+            if (isStunned || godMode || isKami || isDead)
+            {
+                agent.isStopped = true;
+                return;
+            }
+            else
+            {
+                agent.isStopped = false;
+            }
         }
 
         shootTimer += Time.deltaTime;
+        if (isAlerted && !playerInRange && type != enemyType.stationary) // specific to drone bot alerts
+        {
+            if (alertTimer < alertCooldown)
+            {
+                alertTimer += Time.deltaTime;
+                target = gameManager.instance.player;
+                SeekTarget();
+            }
+            else if (alertTimer >= alertCooldown)
+            {
+                alertTimer = 0;
+                isAlerted = false;
+            }
+        }
 
-        if (playerInRange && !canSeePlayer())
+        if (movement == movementType.seeking)
+        {
+            SeekTarget();
+        }
+
+        if (playerInRange && !canSeeTarget())
             checkRoam();
         else if (!playerInRange)
             checkRoam();
@@ -131,40 +205,66 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void updateEnemyUI()
     {
         hpFillBar.fillAmount = (float)HP / HPOrginal;
-        hpBar.transform.LookAt(gameManager.instance.player.transform.position);
+        hpBar.transform.LookAt(target.transform.position);
+    }
+
+    void onSpawn()
+    {
+        spawnEffects.SetActive(true);
+        StartCoroutine(OnSpawn());
+    }
+
+    IEnumerator OnSpawn()
+    {
+        godMode = true;
+        yield return new WaitForSecondsRealtime(invulnerableTime);
+        godMode = false;
     }
 
     #region EnemyMovement
 
-    bool canSeePlayer()
+    void SeekTarget()
     {
-        playerDir = gameManager.instance.player.transform.position - headPos.position;
-        angleToPlayer = Vector3.Angle(new Vector3(playerDir.x, 0, playerDir.z), transform.forward);
+        if (!canSeeTarget())
+            agent.SetDestination(target.transform.position);
+    }
 
-        Debug.DrawRay(headPos.position, playerDir,Color.cyan);
+    bool canSeeTarget()
+    {
+        targetDir = target.transform.position - headPos.position;
+        angleToTarget = Vector3.Angle(new Vector3(targetDir.x, 0, targetDir.z), transform.forward);
+
+        //Debug.DrawRay(headPos.position, targetDir,Color.cyan);
 
         RaycastHit hit;
-        if (Physics.Raycast(headPos.position, playerDir, out hit) && angleToPlayer <= FOV)
+        if (Physics.Raycast(headPos.position, targetDir, out hit) && angleToTarget <= FOV)
         {
-            if (hit.collider.CompareTag("Player") && angleToPlayer <= FOV)
+            if ((hit.collider.CompareTag("Player") || hit.collider.CompareTag("Target")) && angleToTarget <= FOV)
             {
                 if (type != enemyType.stationary)
                 {
-                    agent.SetDestination(gameManager.instance.player.transform.position);
+                    agent.SetDestination(target.transform.position);
                 }
 
                 //Ranged attack
-                if (type != enemyType.melee && shootTimer >= shootRate && angleToPlayer <= shootAngle)
+                if (type != enemyType.melee && type != enemyType.kamikaze && shootTimer >= shootRate && angleToTarget <= shootAngle && agent.remainingDistance <= agent.stoppingDistance + 0.5f)
                 {
+                    //Debug.Log("Remaing:" + agent.remainingDistance);
                     shoot();
                 }
                 //Melee attack
-                float distanceToPlayer = Vector3.Distance(transform.position, gameManager.instance.player.transform.position);
+                float distanceToPlayer = Vector3.Distance(transform.position, target.transform.position);
                 if (type == enemyType.melee && shootTimer >= shootRate && distanceToPlayer <= meleeDistance)
                 //if (shootTimer >= shootRate && type == enemyType.melee && agent.remainingDistance <= meleeDistance) // Ensures attack happens when the shoot timer is ready
                 {
                     meleeAttack();
-                }               
+                }
+                //Kamaikaze
+                if (type == enemyType.kamikaze && shootTimer >= shootRate && distanceToPlayer <= meleeDistance && !hasExploded)
+                {
+                    
+                    kamikazeAttack();
+                }
                 if (agent.remainingDistance <= agent.stoppingDistance && !isDead)
                 {
                     faceTarget();                 
@@ -175,7 +275,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
                 return true;
             }
         }
-        agent.stoppingDistance = 0;
+        //agent.stoppingDistance = 0;
         return false;
     }
 
@@ -189,7 +289,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             if (type == enemyType.kamikaze)
             {
                 //Start the kamikaze attack
-                kamikazeAttack();
+                //kamikazeAttack();
             }
         }
     }
@@ -199,14 +299,17 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (other.CompareTag("Player"))
         {
             playerInRange = false;
+            target = originalTarget;
         }
-        agent.stoppingDistance = 0;
+
+        if (agent != null)
+            agent.stoppingDistance = 0;
     }
 
     void faceTarget()
     {
-        playerDir = gameManager.instance.player.transform.position - headPos.position;
-        Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, 0, playerDir.z));
+        targetDir = target.transform.position - headPos.position;
+        Quaternion rot = Quaternion.LookRotation(new Vector3(targetDir.x, 0, targetDir.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * faceTargetSpeed);
     }
 
@@ -264,19 +367,54 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     }
     public void takeDamage(int amount)
     {
+        if (isDead || godMode) return;
+        StartCoroutine(PlayHurtSound()); //if (isDrone) enemyAudio.PlayOneShot(hurtSound);
+
+        if (movement == movementType.seeking)
+        {
+            target = gameManager.instance.player;
+        }
+
         if (HP > 0)
         {
             StartCoroutine(enemyShowHpBar());
+            int effectiveDamage = Mathf.Max(0, amount - armor);
+            HP -= effectiveDamage;
 
-            HP -= amount;
+            // debig log to confirm dmg is taken
+            //Debug.Log("Enemy took: " + amount + " damage");
+
+            // instantiate the floating damage text only once when damage is taken.
+            if (floatingDamageTextPrefab != null)
+            {
+                // set spawn position closer to the enemy 
+                Vector3 spawnPos = headPos.transform.position + Vector3.up * 0.5f;
+                // parent the floating text to the enemy so it moves with the enemy.
+                GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
+                Destroy(dmgText, textDestroyTimer);
+
+                FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
+                if (fdt != null)
+                {
+                    fdt.SetText(amount.ToString());
+                }
+            }
+
+            // start coroutine to repeatedly spawn floating text 
+            //if (damageTextCoroutine == null)
+            //{
+            //    damageTextCoroutine = StartCoroutine(DamageTextLoop(amount));
+            //}
+
             StartCoroutine(flashRed());
-            if (anim != null)
-                anim.SetTrigger("damage");
+
+            if (playDmgAnimCor == null)
+                playDmgAnimCor = StartCoroutine(playDmgAnim());
 
 
             if (type != enemyType.stationary)
             {
-                agent.SetDestination(gameManager.instance.player.transform.position);
+                agent.SetDestination(target.transform.position);
             }
             else
             {
@@ -289,19 +427,76 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
             if (HP <= 0 && !isDead)
             {
                 isDead = true;
-                GoalManager.instance.updateGameGoal(-1);
+                GameEventsManager.instance.miscEvents.EnemyKilled();
+
                 if (dropsLoot)
                     dropLoot();
 
                 handleDeath();
-                //Destroy(gameObject);
+
+                // stop looping dmg text coroutine since enemy is dead
+                if (damageTextCoroutine != null)
+                {
+                    StopCoroutine(damageTextCoroutine);
+                    damageTextCoroutine = null;
+                }
             }
         }
     }
 
+    IEnumerator playDmgAnim()
+    {
+        try
+        {
+            if (anim != null)
+                anim.SetTrigger("damage");
+
+            yield return new WaitForSeconds(3f);
+
+        }
+        finally
+        {
+            playDmgAnimCor = null;
+        }
+    }
+
+    //// coroutine that spawns text until enemy dies
+    //private IEnumerator DamageTextLoop(int damage)
+    //{
+    //    // loop until HP reaches 0
+    //    while (HP > 0)
+    //    {
+    //        if (floatingDamageTextPrefab != null)
+    //        {
+    //            // set spawn location near enemy 
+    //            Vector3 spawnPos = transform.position + Vector3.up * 1f;
+
+    //            // instantiate prefab and set parent to enemy so it follows enemy
+    //            GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
+
+    //            // debug log to confirm instantiation
+    //            Debug.Log("Instantiated looping floating text!");
+
+    //            // set dmg amount text
+    //            FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
+    //            if (fdt != null)
+    //            {
+    //                fdt.SetText(damage.ToString());
+    //            }
+    //        }
+    //        // wait for set interval before spawning next text
+    //        yield return new WaitForSeconds(1f);
+    //    }
+    //    damageTextCoroutine = null; // clear the reference
+    //}
+
     private void handleDeath()
     {
         hpBar.gameObject.SetActive(false);
+        this.GetComponent<CapsuleCollider>().enabled = false;
+        //Debug.Log("Hitting handle death.");
+        AlarmDrone droneScript = GetComponent<AlarmDrone>();
+        StartCoroutine(PlayDeathSound());
         //Disable the collider
         if (enemyCollider != null)
         {
@@ -312,7 +507,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (rb != null)
         {
             rb.isKinematic = false; // Enable physics
-            rb.useGravity = false; // Allow gravity to affect the body
+            rb.useGravity = true; // Allow gravity to affect the body
 
         }
         if (agent != null)
@@ -358,7 +553,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     void shoot()
     {
         shootTimer = 0;
-
+        PlayWeaponSound();
         if (anim != null)
             anim.SetTrigger("Shoot");
         else
@@ -368,12 +563,14 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void createProjectile()
     {
         //Creates a projectile at shootPos with the same rotation as the enemy
-        Instantiate(bullet, shootPos.position, transform.rotation);
-
+        GameObject newBullet = Instantiate(bullet, shootPos.position, transform.rotation);
+        newBullet.GetComponent<damage>().updateTarget(target);
     }
 
     void meleeAttack()
     {
+        if (isDead) return;
+        StartCoroutine(PlayWeaponSound());
         shootTimer = 0;
         anim.SetTrigger("Melee Attack");
         //shootTimer = 0; // Reset the shoot timer for the cooldown between melee attacks
@@ -392,17 +589,18 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         if (hasExploded) return;
 
         hasExploded = true;
-
-        if (type == enemyType.kamikaze)
-        {
-            agent.SetDestination(gameManager.instance.player.transform.position);
-        }
+        isKami = true;
+        
+        // Ensure the Kamikaze starts moving towards the player
+        agent.SetDestination(target.transform.position);
 
         // Check if within melee range to trigger detonation
-        if (Vector3.Distance(transform.position, gameManager.instance.player.transform.position) <= meleeDistance)
+        if (Vector3.Distance(transform.position, target.transform.position) <= meleeDistance)
         {
             // Trigger detonate animation (similar to melee attack)
+            
             anim.SetTrigger("Detonate");
+            
 
             StartCoroutine(explosionAfterDelay());
         }
@@ -417,10 +615,17 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         anim.SetTrigger("Explode");
 
         // Apply explosion damage if the player is close enough
-        if (Vector3.Distance(transform.position, gameManager.instance.player.transform.position) <= meleeDistance)
+        if (Vector3.Distance(transform.position, target.transform.position) <= meleeDistance)
         {
-            gameManager.instance.playerScript.takeDamage(25); // Adjust explosion damage as needed
+            // scale explosion damage based on difficulty
+            int explosionDamage = 25;  // Base explosion damage
+            if (DifficultyManager.instance != null)
+            {
+                explosionDamage = Mathf.RoundToInt(explosionDamage * DifficultyManager.instance.enemyDamageMultiplier);
+            }
+            gameManager.instance.playerScript.takeDamage(explosionDamage); // Adjust the explosion damage as needed
         }
+
 
         // Destroy the Kamikaze enemy after explosion
         Destroy(gameObject);
@@ -429,7 +634,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
     public void dropLoot()
     {
         playerController player = gameManager.instance.playerScript;
-        float healthRatio = playerStatManager.instance.HP / (float)player.HPOrig;
+        float healthRatio = playerStatManager.instance.HP / (float)playerStatManager.instance.HPMax;
         float currAmmo = float.Parse(gameManager.instance.ammoCurText.text);
         float reserveAmmo = float.Parse(gameManager.instance.ammoReserveText.text);
         float maxAmmo = float.Parse(gameManager.instance.ammoMaxText.text);
@@ -476,9 +681,7 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         isAlerted = state;
         if (isAlerted)
         {
-            Debug.Log($"{gameObject.name} is now alerted!");
             alertTimer = 0f;
-
         }
     }
 
@@ -487,5 +690,54 @@ public class enemyAI : MonoBehaviour, IDamage, lootDrop
         playerInDroneRange = state;
     }
 
+    #endregion
+
+    #region AOESupport
+    public void SetHP(int newHP)
+    {
+        this.HP = newHP;
+    }
+    #endregion
+
+    #region Audio
+    IEnumerator PlayHurtSound()
+    {
+        if (enemyHurtSounds != null)
+        {
+            float clipDuration = enemyHurtSounds.GetClipDuration();
+            enemyHurtSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
+    }
+
+    IEnumerator PlayMovementSound()
+    {
+        if (enemyFootsteps != null)
+        {
+            float clipDuration = enemyDeathSounds.GetClipDuration();
+            enemyDeathSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
+    }
+
+    IEnumerator PlayDeathSound()
+    {
+        if (enemyDeathSounds != null)
+        {
+            float clipDuration = enemyDeathSounds.GetClipDuration();
+            enemyDeathSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
+    }
+
+    IEnumerator PlayWeaponSound()
+    {
+        if (enemyAttackSounds != null)
+        {
+            float clipDuration = enemyAttackSounds.GetClipDuration();
+            enemyAttackSounds.PlayCurrentClip();
+            yield return new WaitForSeconds(clipDuration);
+        }
+    }
     #endregion
 }

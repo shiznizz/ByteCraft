@@ -11,16 +11,22 @@ public class CollectKeysQuestStep : QuestStep
         UpdateState();
     }
 
+    private void Update()
+    {
+        if (keysCollected == keysToCollect)
+        {
+            FinishQuestStep();
+        }
+    }
+
     private void OnEnable()
     {
         GameEventsManager.instance.miscEvents.onKeyCollected += KeyCollected;
-        // TODO - Set up misc events to detect that a key has been collected
     }
 
     private void OnDisable()
     {
         GameEventsManager.instance.miscEvents.onKeyCollected -= KeyCollected;
-        // TODO - Set up misc events to detect that a key has been collected
     }
 
     private void KeyCollected()
@@ -29,12 +35,16 @@ public class CollectKeysQuestStep : QuestStep
         {
             keysCollected++;
             UpdateState();
+            if (keysCollected == keysToCollect)
+            {
+                FinishQuestStep(); 
+            }
         }
 
-        if (keysCollected >= keysToCollect)
+/*        if (keysCollected >= keysToCollect)
         {
             FinishQuestStep();
-        }
+        }*/
     }
 
     private void UpdateState()

@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.Animations;
+using UnityEngine.Audio;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 

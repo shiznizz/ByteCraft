@@ -13,6 +13,7 @@ public class Key : MonoBehaviour
     [SerializeField] AudioSource audSource;
     [SerializeField] private float audVol;
     [SerializeField] AudioClip audClip;
+    [SerializeField] private ModulatedSoundBank keyPickupSoundBank;
 
     private SphereCollider sphereCollider;
     private Renderer visual;
@@ -25,8 +26,8 @@ public class Key : MonoBehaviour
 
     private void CollectKey()
     {
-        audSource.PlayOneShot(audClip, audVol);
-        sphereCollider.enabled = false;
+        /*keyPickupSoundBank.PlaySpecificExternal(audSource, audClip);*/
+        //sphereCollider.enabled = false;
         visual.gameObject.SetActive(false);
         GameEventsManager.instance.keyEvents.KeyGained(keyGained);
         GameEventsManager.instance.miscEvents.KeyCollected();
@@ -37,6 +38,10 @@ public class Key : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            AudioSource playerAudSource = other.gameObject.GetComponent<AudioSource>();
+            Debug.Log("Player entered key collider.");
+            if (playerAudSource != null) playerAudSource.PlayOneShot(audClip);
+            //keyPickupSoundBank.PlaySpecificExternal(audSource, audClip);
             CollectKey();
         }
     }

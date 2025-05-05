@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GoalManager : MonoBehaviour
 {
@@ -24,13 +25,18 @@ public class GoalManager : MonoBehaviour
 
     public void updateGameGoal(int amount)
     {
-        goalCount += amount;
-        goalCountText.text = goalCount.ToString("F0");
+        //goalCount += amount;
+        //goalCountText.text = goalCount.ToString("F0");
 
-        if (goalCount <= 0)
-        {
-            gameManager.instance.youWin();
-        }
+        //if (goalCount <= 0)
+        //{
+        //    gameManager.instance.youWin();
+        //}
+    }
+
+    public void triggerWin()
+    {
+        gameManager.instance.youWin();
     }
 
     public void SetObjectiveText(string objective)
@@ -41,7 +47,17 @@ public class GoalManager : MonoBehaviour
 
     public void objectiveFailed(string failedObj)
     {
-
+/*        switch (lvlIdx)
+        {
+            case 0: // will likely need to change this assignment later, just temp
+                break;
+            case 1: // level 2
+                break;
+            case 2: // level 3
+                break;
+            case 3: // level 4
+                break;
+        }*/
         gameManager.instance.switchMenu(menuObjectiveFail);
         objectiveText.SetText(currentObjective);
     }

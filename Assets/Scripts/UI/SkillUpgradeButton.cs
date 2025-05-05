@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class SkillUpgradeButton : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
-    public enum PlayerStat { Sprint }
+    public enum PlayerStat { MaxHealth, MaxShield, SprintSpeed, JetpackRegen }
     [SerializeField] PlayerStat skillToIncrease;
     [SerializeField] int percentToIncrease;
     [SerializeField] int upgradeCost;
@@ -77,8 +77,17 @@ public class SkillUpgradeButton : MonoBehaviour, IPointerClickHandler, IPointerE
     {
         switch (skillToIncrease)
         {
-            case PlayerStat.Sprint:
-                playerStatManager.instance.sprintSpeed *= (1 + (percentToIncrease/100.0F));
+            case PlayerStat.MaxHealth:
+                playerStatManager.instance.increaseMaxHealth(percentToIncrease);
+                break;
+            case PlayerStat.MaxShield:
+                playerStatManager.instance.increaseMaxShield(percentToIncrease);
+                break;
+            case PlayerStat.SprintSpeed:
+                playerStatManager.instance.increaseSprintSpeed(percentToIncrease);
+                break;
+            case PlayerStat.JetpackRegen:
+                playerStatManager.instance.increaseJetpackRegen(percentToIncrease);
                 break;
         }
     }

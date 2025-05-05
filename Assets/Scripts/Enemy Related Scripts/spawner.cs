@@ -43,7 +43,8 @@ public class spawner : MonoBehaviour
     {
         int arrayPos = Random.Range(0, spawnPos.Length);
 
-        Instantiate(objectsToSpawn[Random.Range(0,objectsToSpawn.Length)], spawnPos[arrayPos].position, spawnPos[arrayPos].rotation);
+        GameObject lastSpawn = Instantiate(objectsToSpawn[Random.Range(0,objectsToSpawn.Length)], spawnPos[arrayPos].position, spawnPos[arrayPos].rotation);
+        lastSpawn.SetActive(true);
         GoalManager.instance.updateGameGoal(-1);
         spawnCount++;
         spawnTimer = 0;

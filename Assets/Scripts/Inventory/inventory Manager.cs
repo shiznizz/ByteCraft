@@ -6,9 +6,10 @@ using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class inventoryManager : MonoBehaviour
+public class inventoryManager : MonoBehaviour, IPersistData
 {
     public static inventoryManager instance;
 
@@ -30,6 +31,11 @@ public class inventoryManager : MonoBehaviour
         instance = this;
     }
 
+    private void Start()
+    {
+        slotBossScript = inventorySlot.GetComponent<SlotBoss>();
+    }
+
     // adds item to inventory
     public void addItem(itemSO item)
     {
@@ -39,20 +45,20 @@ public class inventoryManager : MonoBehaviour
             weapon.RefreshAmmo();
         }
 
-        if (weapon.wepType == weaponStats.weaponType.primary && !inventorySlot.GetComponent<SlotBoss>().primaryWeapon.isFull)
+        if (weapon.wepType == weaponStats.weaponType.primary && !slotBossScript.primaryWeapon.isFull)
         {
             //Debug.Log("7");
-            inventorySlot.GetComponent<SlotBoss>().equipGear(item);
+            slotBossScript.equipGear(item);
         }
-        else if (weapon.wepType == weaponStats.weaponType.secondary && !inventorySlot.GetComponent<SlotBoss>().secondaryWeapon.isFull)
+        else if (weapon.wepType == weaponStats.weaponType.secondary && !slotBossScript.secondaryWeapon.isFull)
         {
             //Debug.Log("8");
-            inventorySlot.GetComponent<SlotBoss>().equipGear(item);
+            slotBossScript.equipGear(item);
         }
-        else if(weapon.wepType == weaponStats.weaponType.special && !inventorySlot.GetComponent<SlotBoss>().specialWeapon.isFull)
+        else if(weapon.wepType == weaponStats.weaponType.special && !slotBossScript.specialWeapon.isFull)
         {
             //Debug.Log("9");
-            inventorySlot.GetComponent<SlotBoss>().equipGear(item);
+            slotBossScript.equipGear(item);
         }
         else
         {
@@ -99,6 +105,74 @@ public class inventoryManager : MonoBehaviour
     public weaponStats returnCurrentWeapon()
     {
         return weaponList[weaponListPos];
+    }
+
+    public void SaveData(ref gameData data)
+    {
+        data.playerWeapons = this.weaponList;
+        data.playerInventory = this.inventory;
+        data.weaponPos = this.weaponListPos;
+        
+    }
+
+    public void LoadData(gameData data)
+    {
+        this.weaponList = data.playerWeapons;
+        this.inventory = data.playerInventory;
+        this.weaponListPos = data.weaponPos;
+        
+        OnLoad();
+    }
+
+    public void OnLoad()
+    {
+        gameManager.instance.updateInventory();
+        clearEmptyInventory();
+
+        if (weaponList.Count > 0)
+        {
+
+        foreach (weaponStats weapon in  weaponList)
+        {
+                switch(weapon.wepType)
+                {
+                    case weaponStats.weaponType.primary:
+                        inventorySlot.GetComponent<SlotBoss>().primaryWeapon.onLoad(weapon);
+                        inventorySlot.GetComponent<SlotBoss>().primaryWeapon.isFull = true;
+                    break;
+
+                    case weaponStats.weaponType.secondary:
+                        inventorySlot.GetComponent<SlotBoss>().secondaryWeapon.onLoad(weapon);
+                        inventorySlot.GetComponent<SlotBoss>().secondaryWeapon.isFull = true;
+                    break;
+
+                    case weaponStats.weaponType.special:
+                        inventorySlot.GetComponent<SlotBoss>().specialWeapon.onLoad(weapon);
+                        inventorySlot.GetComponent<SlotBoss>().specialWeapon.isFull = true;
+                    break;
+                }
+            }
+            playerAttack.instance.changeGun();
+        }
+    }
+
+    void clearEmptyInventory()
+    {
+        for (int index = 0; index < weaponList.Count; index++)
+        {
+            if (weaponList[index] == null)
+            {
+                weaponList.RemoveAt(index);
+            }
+        }
+
+        for (int index = 0; index < inventory.Count; index++)
+        {
+            if (inventory[index] == null)
+            {
+                inventory.RemoveAt(index);
+            }
+        }
     }
 }
 

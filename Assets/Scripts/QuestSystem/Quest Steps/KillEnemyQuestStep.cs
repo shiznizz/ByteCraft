@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 
 public class KillEnemyQuestStep : QuestStep
@@ -5,7 +8,8 @@ public class KillEnemyQuestStep : QuestStep
     [Header("Config")]
     [SerializeField] GameObject enemy;
     [SerializeField] private string enemyName;
-    private bool enemyKilled = false;
+    //private bool enemyKilled = false;
+    private bool isCompleted = false;
     private enemyAI enemyScript;
     public void Start()
     {
@@ -15,15 +19,36 @@ public class KillEnemyQuestStep : QuestStep
         Debug.Log($"Quest step status: {status}");
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void Update()
     {
-        if (other.CompareTag("Player"))
+
+        if (!isCompleted)
         {
-            FinishQuestStep();
+            if (BossQuestManager.instance.isComplete)
+            {
+                HandlePostKillDelay();
+
+                isCompleted = true;
+                FinishQuestStep();
+                GoalManager.instance.triggerWin();
+            }
         }
     }
 
-    private void UpdateState()
+    private IEnumerator HandlePostKillDelay()
+    {
+        // Wait for 5 seconds before triggering the win condition
+        yield return new WaitForSeconds(5f);
+
+        //// Mark the quest as complete after the delay
+        //isCompleted = true;
+        //FinishQuestStep();
+
+        //Trigger the win condition
+        //GoalManager.instance.triggerWin();
+    }
+
+        private void UpdateState()
     {
         string state = "In Progress";
         string status = "Kill " + enemyName;

@@ -12,11 +12,11 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     #region Variables
     [SerializeField] Transform orientation;
     [SerializeField] CharacterController controller;
-    [SerializeField] AudioSource audioSource;
     [SerializeField] LayerMask ignoreLayer;
     [SerializeField] LayerMask groundLayer;
     // is this variable going to be used here? 
     [SerializeField] traps trap;
+    [SerializeField] LayerMask groundMask;
 
     public bool isGrounded;
     public bool isSprinting;
@@ -25,6 +25,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public bool isCrouching;
     public bool isWallRunning;
     public bool isJetpacking;
+    public bool hasHeadSpace;
 
     [Header("Camera Options")]
     public float cameraChangeTime;
@@ -32,45 +33,39 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     public float tilt;
 
     [Header("Audio Options")]
-    [SerializeField] AudioClip[] stepSounds;
-    [Range(0, 1)][SerializeField] float stepVolume;
+    [SerializeField][Range(0, 1)] float stepVolume;
     [SerializeField] float walkSoundInterval;
     [SerializeField] float runSoundInterval;
     bool isPlayingSteps;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] private ModulatedSoundBank footStepSounds;
+    [SerializeField] private ModulatedSoundBank jumpSounds;
+    [SerializeField] private ModulatedSoundBank hurtSounds;
+    [SerializeField] private ModulatedSoundBank landingSounds;
+    [SerializeField] private ModulatedSoundBank deathSounds;
 
     [Header("Player Stat Options")]
     public int HPOrig; // will move after enemy AI is not in use
+    float shieldGenTimer;
 
     public int weaponListPos;
-
-    //[Header("Grapple Options")]
-    //[SerializeField] int grappleDistance;
-    //[SerializeField] int grappleLift;
-    //[SerializeField] float grappleSpeedMultiplier;
-    //[SerializeField] float grappleSpeedMin;
-    //[SerializeField] float grappleSpeedMax;
-    //[SerializeField] float grappleCooldown;
+    public bool isAirborne;
 
     // leaving available until justin wants to move it
     [Header("Grapple Gun")]
     [SerializeField] Transform grappleShootPos;
     [SerializeField] LineRenderer grappleRope;
 
-    // holds state of the grapple 
-    //private movementState grappleState;
-    //public enum movementState
-    //{
-    //    grappleNormal, // did not shoot grapple
-    //    grappleMoving, // grapple succesful now moving player
-    //}
+    [Header("Button Options")]
+    [SerializeField] private float interactionDistance = 1f;
+    //[SerializeField] private float interactionRadius = 0.2f;
+    [SerializeField] private KeyCode interactKey = KeyCode.E;
+
     float grappleCooldownTimer;
 
     Rigidbody rb;
 
     private float desiredSpeed;
-    private float prevDesiredSpeed;
-    private float slideSpeedIncrease;
-    private float slideSpeedDecrease;
 
     private Vector3 moveDir;
 
@@ -78,6 +73,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     private float verticalInput;
 
     private playerAttack playAtk;
+
+    bool shieldBreak;
 
     // variable for player input action map
     #endregion Variables
@@ -105,30 +102,17 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         {
             playerInput();
             SpeedControl();
-            checkGround();
+            checkGround();         
+            handleShieldRegen();
+            SetIsAirborne(!isGrounded);
+
+            if (isCrouching)
+                checkSky();
 
             updatePlayerUI();
             playAtk.weaponHandler();
 
-            Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
-
-            if (Input.GetButtonDown("Open")) // for opening loot chests
-                openChest();
-            #region stale
-            ////switches states of grapple
-            //switch (grappleState)
-            //{
-            //    // not grappling 
-            //    case movementState.grappleNormal:
-            //        if (!gameManager.instance.isPaused)
-            //            //movement();
-            //        break;
-            //    // is grappling
-            //    case movementState.grappleMoving:
-            //        grappleMovement();
-            //        break;
-            //}
-            #endregion stale
+            //Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * playerStatManager.instance.attackDistance, Color.red);
         }
     }
 
@@ -140,6 +124,9 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void playerInput()
     {
+        openChest(); // for opening loot chests
+        tryToInteract(); // for interacting with buttons and switches
+
         setPlayerSpeed();
 
         if (isWallRunning) return;
@@ -150,14 +137,20 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         moveDir = (horizontalInput * orientation.right) + (verticalInput * orientation.forward);
 
-        jump();
-        sprint();
+        if(hasHeadSpace)
+        {
+            jump();
+            sprint();
+        }
+        
     }
 
     #region Movement
     void movePlayer()
     {
-        if (!isGrounded && !isWallRunning)
+        if (isWallRunning) return;
+
+        if (!isGrounded)
             applyGravity();
 
         // no more penquin mode. Stops player when they stop pressing keys unless airborn
@@ -188,102 +181,15 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     private void setPlayerSpeed()
     {
-        playerStatManager.instance.currSpeed = isWallRunning ? playerStatManager.instance.wallRunSpeed : isSprinting ? playerStatManager.instance.sprintSpeed : isSliding ? playerStatManager.instance.slideSpeed
-                    : isCrouching ? playerStatManager.instance.crouchSpeed : playerStatManager.instance.walkSpeed;
-    }
-
-    void move()
-    {
-        moveDir = (Input.GetAxis("Horizontal") * orientation.right) +
-                      (Input.GetAxis("Vertical") * orientation.forward);
-
-        if (isSliding) return;
-        if(isWallRunning) return;
-
-        if (moveDir == Vector3.zero)
-        { 
-            if (isGrounded) rb.linearVelocity = rb.linearVelocity * 0.6f;
+        if (isGrappling)
+        {
+            playerStatManager.instance.currSpeed = playerStatManager.instance.grappleSpeedMax;
             return;
         }
 
-        float horizontalSpeed = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z).magnitude;
-        float speedToApply = Mathf.Max(playerStatManager.instance.speedLimit, horizontalSpeed);
-
-        if (!isGrounded)
-            speedToApply = playerStatManager.instance.currSpeed;
-
-        if (speedToApply >= playerStatManager.instance.speedLimit)
-            speedToApply *= isGrounded ? 0.985f : 0.99f;
-
-        Vector3 newVelocity = moveDir.normalized * speedToApply;
-        newVelocity.y = rb.linearVelocity.y;
-
-        if(isGrounded) 
-            rb.linearVelocity = newVelocity;
-        else
-            rb.AddForce(moveDir.normalized * speedToApply, ForceMode.Force);
-
-        if (!isGrounded && horizontalSpeed > playerStatManager.instance.speedLimit)
-        {
-            Vector3 newHorizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-            newHorizontalVelocity *= 0.98f;
-            rb.linearVelocity = new Vector3(newHorizontalVelocity.x, rb.linearVelocity.y, newHorizontalVelocity.z);
-        }
+        playerStatManager.instance.currSpeed = isWallRunning ? playerStatManager.instance.wallRunSpeed : isSprinting ? playerStatManager.instance.sprintSpeed : isSliding ? playerStatManager.instance.slideSpeed
+                    : isCrouching ? playerStatManager.instance.crouchSpeed : playerStatManager.instance.walkSpeed;
     }
-
-    //void movement()
-    //{
-    //    // check wall will now be placed in update in wall running script
-    //    // should conciously add audio to new movement functions
-    //    if (!isGrounded)
-    //    {
-    //        //checkWall();
-    //        //wallRun();
-    //    }
-    //    else
-    //    {
-    //        if (moveDir.magnitude > 0 && !isPlayingSteps)
-    //        {
-    //            StartCoroutine(PlaySteps());
-    //        }
-    //    }
-
-    //    // create new movement functions for sprinting, and jump
-    //    sprint();
-    //    // crouch should be called in update in crouch script
-    //    // crouch();
-    //    // update playerMoveHandler() then call in update.
-    //    playerMoveHandler();
-    //    // move jump to update and create conditions for if hasJetpack
-    //    jump();
-
-    //    // apply momentum
-    //    playerVelocity += playerMomentum;
-
-    //    // apply gravity if not wall running or grounded
-    //    if (!isWallRunning)
-    //        applyGravity();
-
-    //    // grapple code
-    //    if (playerMomentum.magnitude >= 0f)
-    //    {
-    //        playerMomentum -= playerMomentum * playerStatManager.instance.drag * Time.deltaTime;
-    //        if (playerMomentum.magnitude <= .0f)
-    //        {
-    //            playerMomentum = Vector3.zero;
-    //        }
-    //    }
-
-    //    // checks if clicking mouse 2 (right click)
-    //    if (testGrappleKeyPressed())
-    //        shootGrapple();
-
-    //    // replacing this code in speed control
-    //    moveDir = Vector3.ClampMagnitude(moveDir, playerStatManager.instance.currSpeed);
-
-    //    playerStatManager.instance.attackTimer += Time.deltaTime;
-    //    grappleCooldownTimer += Time.deltaTime;
-    //}
 
     public void applyGravity()
     {
@@ -294,7 +200,8 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     void checkGround()
     {
         // call in update.
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, playerStatManager.instance.playerHeight * 0.5f + 0.1f/*,~ignoreLayer*/);
+        //isGrounded = Physics.Raycast(transform.position, Vector3.down, playerStatManager.instance.playerHeight * 0.5f + 0.1f/*,~ignoreLayer*/);
+        isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, 1, 0), 0.2f, groundMask);
 
         // applies drag and resets jump count
         if (isGrounded)
@@ -304,46 +211,25 @@ public class playerController : MonoBehaviour, IDamage, IPickup
             
             // if you are grounded and moving play step sounds.
             if (moveDir.magnitude > 0 && !isPlayingSteps && !isSliding)
-            {
                 StartCoroutine(PlaySteps());
-            }
         }
         else
+        {
             rb.linearDamping = playerStatManager.instance.airDrag;
+
+            if (moveDir.magnitude > 0 && !isPlayingSteps && isWallRunning)
+                StartCoroutine(PlaySteps());         
+        }
     }
-
-    private void playerMoveHandler()
+    void checkSky()
     {
-        // gut this then take what you need. this is the old playerInput
-        // wall running and sliding should just boot the player out.
-        // then apply proper speed.
         // call in update.
-
-        // in different method move the player based on input obtained here.
-        if (isWallRunning)
-        {
-            // apply wallRunSpeed then start wall run
-            playerStatManager.instance.currSpeed = playerStatManager.instance.wallRunSpeed;
-            //WallRunMovement();
-        }
-        // essentially an if else statment that checks movement state and applies the proper speed
-        else
-            playerStatManager.instance.currSpeed = isSprinting ? playerStatManager.instance.sprintSpeed : isSliding ? playerStatManager.instance.slideSpeed 
-                    : isCrouching ? playerStatManager.instance.crouchSpeed : playerStatManager.instance.walkSpeed;
-
-        if (isGrounded && isSliding)
-        {
-            //slideMovement();
-        }
-        else
-        {
-            moveDir = (Input.GetAxis("Horizontal") * transform.right) +
-                      (Input.GetAxis("Vertical") * transform.forward);
-            if(moveDir != Vector3.zero)
-            {
-                controller.Move(moveDir * playerStatManager.instance.currSpeed * Time.deltaTime);
-            }
-        }
+        //Debug.DrawRay(transform.position, Vector3.up, Color.red, playerStatManager.instance.playerHeight * 0.5f + 0.1f);
+        Vector3 adjustment = new Vector3(transform.position.x, transform.position.y, transform.position.z - .5f);
+        //hasHeadSpace = !Physics.SphereCast(adjustment, .5f, Vector3.up, out RaycastHit hit, playerStatManager.instance.playerHeight + 2.5f, ~ignoreLayer);
+        hasHeadSpace = !Physics.Raycast(adjustment, Vector3.up, playerStatManager.instance.playerHeight + .1f);
+        //Debug.Log(transform.position);
+        
     }
 
     void sprint()
@@ -359,15 +245,21 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void jump()
     {
+        if (isGrounded && Input.GetButtonDown("Jump"))
+        {
+            jumpSounds.PlayRandomSound();
+        }
         if (!playerStatManager.instance.hasJetpack)
         {
-            if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
+            if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax /*&& isGrounded*/)
             {
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
                 rb.AddForce(transform.up * playerStatManager.instance.jumpForce, ForceMode.Impulse);
-
                 playerStatManager.instance.jumpCount++;
             }
+
+            //if(Input.GetButtonUp("Jump") && !isWallRunning)
+            //    playerStatManager.instance.jumpCount++;
         }
     }
 
@@ -387,90 +279,6 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
         playerStatManager.instance.currSpeed = desiredSpeed;
     }
-
-    //#region GrappleHook
-    //// handles where the grapple is hitting
-    //void shootGrapple()
-    //{
-    //    // resets cooldown
-    //    grappleCooldownTimer = 0;
-    //    // chcks if the grapple hits a collider or not
-    //    if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, grappleDistance, ~ignoreLayer))
-    //    {
-
-    //        Debug.Log(hit.collider.name);
-
-    //        isGrappling = true;
-    //        grapplePostion = hit.point;
-
-    //        grappleRope.enabled = true;
-    //        grappleRope.SetPosition(1, grapplePostion);
-
-    //        grappleState = movementState.grappleMoving;
-    //    }
-    //}
-    //private void LateUpdate()
-    //{
-    //    if (isGrappling)
-    //        grappleRope.SetPosition(0, grappleShootPos.position);
-    //}
-    //// handles the grapple moving the character
-    //void grappleMovement()
-    //{
-    //    // sets min and max speed for grapple movement
-    //    float grappleSpeed = Mathf.Clamp(Vector3.Distance(transform.position, grapplePostion), grappleSpeedMin, grappleSpeedMax);
-    //    // direction the player will move
-    //    Vector3 grappleDir = (grapplePostion - transform.position).normalized;
-    //    // moving the player
-    //    controller.Move(grappleSpeed * grappleSpeedMultiplier * Time.deltaTime * grappleDir);
-
-    //    // checks if reached end of grapple
-    //    float grapleDistanceMove = 1f;
-    //    if (Vector3.Distance(transform.position, grapplePostion) < grapleDistanceMove)
-    //    {
-    //        grappleState = movementState.grappleNormal;
-    //        playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
-    //        StopGrapple();
-    //    }
-
-    //    // if use the jump key it will stop grappling 
-    //    else if (testJumpKeyPressed())
-    //    {
-    //        playerMomentum = grappleSpeed * grappleDir;
-    //        playerMomentum += Vector3.up * grappleLift;
-    //        grappleState = movementState.grappleNormal;
-    //        playerVelocity.y -= playerStatManager.instance.gravity * Time.deltaTime;
-    //        StopGrapple();
-    //    }
-
-    //}
-
-    //// tests if the grapple key is pressed and returns a bool
-    //bool testGrappleKeyPressed()
-    //{
-    //    if (Input.GetButton("Fire2") && grappleCooldownTimer >= grappleCooldown)
-    //        return true;
-
-    //    else
-    //        return false;
-
-    //}
-
-    //// tests if the jump key is pressed and returns a bool
-    //bool testJumpKeyPressed()
-    //{
-    //    if (Input.GetButton("Jump"))
-    //        return true;
-    //    else
-    //        return false;
-    //}
-
-    //public void StopGrapple()
-    //{
-    //    isGrappling = false;
-    //    grappleRope.enabled = false;
-    //}
-    //#endregion GrappleHook
     #endregion Movement
 
     #region Everything Else
@@ -478,30 +286,43 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     IEnumerator PlaySteps()
     {
         isPlayingSteps = true;
-        audioSource.PlayOneShot(stepSounds[Random.Range(0, stepSounds.Length)], stepVolume);
-        if (!isSprinting)
-            yield return new WaitForSeconds(walkSoundInterval);
-        else
+        footStepSounds.PlayRandomSound();
+
+        if (isSprinting || isWallRunning)
             yield return new WaitForSeconds(runSoundInterval);
+        else
+            yield return new WaitForSeconds(walkSoundInterval);
+
         isPlayingSteps = false;
     }
 
     public void spawnPlayer()
     {
         controller.transform.position = gameManager.instance.playerSpawnPos.transform.position;
-
-        playerStatManager.instance.HP = HPOrig;
         updatePlayerUI();
     }
     
     public void takeDamage(int damage)
     {
-        playerStatManager.instance.HP -= damage;
-        StartCoroutine(flashDamageScreen());
+        if (shieldBreak)
+            playerStatManager.instance.HP -= damage;
+
+        playerStatManager.instance.shield -= damage;
+        shieldGenTimer = playerStatManager.instance.shieldRegenDelay;
+
+        if (playerStatManager.instance.shield <= 0)
+            shieldBreak = true;
+
+        if(damage > 0)
+        {
+            hurtSounds.PlayRandomSound();
+            StartCoroutine(flashDamageScreen());
+        }
         updatePlayerUI();
-    
+        
         if (playerStatManager.instance.HP <= 0)
         {
+            deathSounds.PlayRandomSound();
             gameManager.instance.youLose();
         }
     }
@@ -510,6 +331,29 @@ public class playerController : MonoBehaviour, IDamage, IPickup
     {
         gameManager.instance.playerHPBar.fillAmount = (float)playerStatManager.instance.HP / HPOrig;
         gameManager.instance.JPFuelGauge.fillAmount = (float)playerStatManager.instance.jetpackFuel / playerStatManager.instance.jetpackFuelMax;
+        gameManager.instance.shieldBar.fillAmount = (float)playerStatManager.instance.shield / playerStatManager.instance.shieldMax;
+
+        if (playerStatManager.instance.shield > playerStatManager.instance.shieldMax)
+        {
+            gameManager.instance.showOverShield();
+            gameManager.instance.overShieldBar.fillAmount = (float)(playerStatManager.instance.shield - 100) / (playerStatManager.instance.shieldOverChargeMax - 100);
+        }
+        else
+        {
+            gameManager.instance.hideOverShield();
+            gameManager.instance.overShieldBar.fillAmount = 0;
+        }
+
+        if (playerStatManager.instance.attackTimer >= playerStatManager.instance.attackCooldown)
+        {
+            gameManager.instance.ShootBG.SetActive(false);
+        }
+        else if (inventoryManager.instance.weaponList.Count > 0)
+        {
+            gameManager.instance.ShootBG.SetActive(true);
+            gameManager.instance.ShootFill.fillAmount = (float)playerStatManager.instance.attackTimer / playerStatManager.instance.attackCooldown;
+        }
+
 
         //Toggle jetpack recharge UI
         if (playerStatManager.instance.hasJetpack)
@@ -551,16 +395,46 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     void openChest()
     {
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
+        if (Input.GetKeyDown(interactKey)) 
         {
-            lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
-
-            if (dropsLoot != null)
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, 5f, ~ignoreLayer))
             {
-                dropsLoot.dropLoot();
+                lootDrop dropsLoot = hit.collider.GetComponent<lootDrop>();
+
+                if (dropsLoot != null)
+                {
+                    dropsLoot.dropLoot();
+                }
             }
         }
+    }
+    
+    void tryToInteract()
+    {
+        //if (Physics.SphereCast(Camera.main.transform.position, interactionRadius, Camera.main.transform.forward, out RaycastHit hit, interactionDistance, ~ignoreLayer))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, interactionDistance, ~ignoreLayer))
+        {
 
+            buttons button = hit.collider.GetComponent<buttons>();
+
+            if (button != null)
+            {
+                if (hit.collider.CompareTag("Button"))
+                {
+                    if (Input.GetKeyDown(interactKey))
+                        button.pressButton();
+                 
+                    if (Input.GetKeyUp(interactKey))
+                        button.ReleaseButton();
+                }
+
+                if (hit.collider.CompareTag("Switch"))
+                {
+                    if (Input.GetKeyDown(interactKey))
+                        button.pressButton();
+                }
+            }
+        }
     }
 
     public void heal(int amount)
@@ -583,7 +457,7 @@ public class playerController : MonoBehaviour, IDamage, IPickup
 
     public void getArmor(int amount)
     {
-        playerStatManager.instance.Armor = Mathf.Min(playerStatManager.instance.Armor + amount, playerStatManager.instance.ArmorMax);
+        playerStatManager.instance.shield = Mathf.Min(playerStatManager.instance.shield + amount, playerStatManager.instance.shieldOverChargeMax);
         //gameManager.instance.updateArmorUI(armor);  will be implemented at a alatter time
     }
 
@@ -606,5 +480,45 @@ public class playerController : MonoBehaviour, IDamage, IPickup
         updatePlayerUI();
     }
 
+    void handleShieldRegen()
+    {
+        if (playerStatManager.instance.shield < playerStatManager.instance.shieldMax)
+        {
+            // Decrease the regen timer over time
+            shieldGenTimer -= Time.deltaTime;
+            // Debug.Log("Shield Regen Time: " +  shieldGenTimer);
+
+            // Regenerate only after the delay has passed
+            if (shieldGenTimer <= 0)
+            {
+                playerStatManager.instance.shield += playerStatManager.instance.shieldRegen * Time.deltaTime;
+                playerStatManager.instance.shield = Mathf.Clamp(playerStatManager.instance.shield, 0, playerStatManager.instance.shieldMax); // Clamp fuel between 0 and max
+
+                if (playerStatManager.instance.shield > 0)
+                    shieldBreak = false;
+            }
+        }
+        // Reset the regen timer if shield is full
+        else
+            shieldGenTimer = 0f;
+    }
+
     #endregion Everything Else
+
+    private void SetIsAirborne(bool airborne)
+    {
+        if (isAirborne)
+        {
+            if (!airborne)
+            {
+                landingSounds.PlaySpecificSound(0);
+            }
+        }
+        isAirborne = airborne;
+    }
+
+    public void MoveController(Transform destination)
+    {
+        controller.transform.position = destination.position;
+    }
 }

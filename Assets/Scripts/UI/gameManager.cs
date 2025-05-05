@@ -2,8 +2,16 @@ using UnityEditor;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+
 using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using System.Diagnostics.Contracts;
+using UnityEngine.Audio;
+using Unity.VisualScripting;
+using System.Text.RegularExpressions;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using System.Collections;
+
 
 
 public class gameManager : MonoBehaviour
@@ -23,16 +31,21 @@ public class gameManager : MonoBehaviour
     [Header("UI Elements to Toggle Visibility")]
     [SerializeField] GameObject ammoHUD;
     [SerializeField] GameObject jetpackHUD;
-    [SerializeField] GameObject enemyHealthbar;
+    [SerializeField] public GameObject enemyHealthbar;
+    [SerializeField] GameObject overShieldHUD;
+    [SerializeField] public GameObject ShootBG;
+    [SerializeField] public Image ShootFill;
+
     public Image playerHPBar;
     public Image enemyHPBar;
     public Image JPFuelGauge;
     public Image grappleGauge;
+    public Image shieldBar;
+    public Image overShieldBar;
     public GameObject playerDamageScreen;
     public GameObject checkpointPopup;
 
     [Header("Text Fields to Update")]
-    //[SerializeField] public TMP_Text goalCountText;
     [SerializeField] public TMP_Text ammoCurText;
     [SerializeField] public TMP_Text ammoMaxText;
     [SerializeField] public TMP_Text ammoReserveText;
@@ -61,6 +74,7 @@ public class gameManager : MonoBehaviour
     public GameObject displaySlot;
 
     [Header("Low Health Screen Indicator")]
+    [SerializeField] GameObject lowHealthDisplay;
     public Image lowHealthIndicator;
 
     [SerializeField] float lowHealthThreshold = 0.25f;
@@ -68,44 +82,112 @@ public class gameManager : MonoBehaviour
     [SerializeField] float heartbeatMagnitude = 0.2f;
     [SerializeField] float baseAlpha = 0.3f;
 
-    //public string currentObjective;
+    [Header("Low Health Audio")]
+    [SerializeField] private AudioSource heartbeatSource;
+    [SerializeField] private AudioClip heartbeatClip;
+    [SerializeField] private float heartbeatVolume = 0.5f;
+
+    [SerializeField] AudioMixer mixer;
     public bool inventoryOpen = false;
+    private bool keepMenu;
+
+    private int selectedButtonIndex = 0;
+    private Button[] menuButtons;
+
+    //[Header("Loading Screen")]
+    //public GameObject loadingScreenPrefab; // Reference to the loading screen prefab
+    //private GameObject loadingScreenInstance; // Instance of the loading screen
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
-        instance = this;
+        //instance = this;
+
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
         player = GameObject.FindWithTag("Player");
         playerScript = player.GetComponent<playerController>();
         playerSpawnPos = GameObject.FindWithTag("Player Spawn Pos");
-        //currentObjective = "";
     }
 
     private void Start()
     {
+        clearEmptyInventory();
         updateInventory();
+        getSavedAudioSettings();
     }
+
+    void clearEmptyInventory()
+    {
+        for (int index = 0; index < inventoryManager.instance.weaponList.Count; index++)
+        {
+            if (inventoryManager.instance.weaponList[index] == null)
+            {
+                inventoryManager.instance.weaponList.RemoveAt(index);
+            }
+        }
+
+        for (int index = 0; index < inventoryManager.instance.inventory.Count; index++)
+        {
+            if (inventoryManager.instance.inventory[index] == null)
+            {
+                inventoryManager.instance.inventory.RemoveAt(index);
+            }
+        }
+    }
+
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButtonDown("Cancel"))
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
         {
-            if (menuActive == null)
-                switchMenu(menuPause);
-            else
-                stateUnpause();
-            inventoryOpen = false;
+            if (Input.GetKeyDown(KeyCode.P))
+            {
+                if (menuActive == null)
+                    switchMenu(menuPause);
+                else if (!keepMenu)
+                {
+                    stateUnpause();
+                }
+                inventoryOpen = false;
+            }
         }
+        else
+        {
+            if (Input.GetButtonDown("Cancel"))
+            {
+                if (menuActive == null)
+                    switchMenu(menuPause);
+                else if (!keepMenu)
+                {
+                    stateUnpause();
+                }
+                inventoryOpen = false;
+            }
+        }
+        
+
         if (Input.GetButtonDown("Inventory"))
         {
             inventoryOpen = true;
             switchMenu(menuInventory);
         }
+        // handle Keyboard Menu Navigation
+        if (menuActive != null)
+        {
+            HandleMenuNavigation();
+        }
 
-        //CheckLowHealth();
+        CheckLowHealth();
     }
-
     #region Menus
 
     public void statePause()
@@ -114,6 +196,15 @@ public class gameManager : MonoBehaviour
         Time.timeScale = 0;
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
+
+        // find and highlight buttons
+        menuButtons = menuActive.GetComponentsInChildren<Button>();
+
+        if (menuButtons.Length > 0)
+        {
+            selectedButtonIndex = 0;
+            HighlightButton(selectedButtonIndex);
+        }
     }
 
     public void stateUnpause()
@@ -124,15 +215,27 @@ public class gameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         menuActive.SetActive(false);
         menuActive = null;
+        keepMenu = false;
+    }
+
+    public void mainMenu()
+    {
+        isPaused = !isPaused;
+        Time.timeScale = 1;
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
+        menuActive.SetActive(false);
+        menuActive = null;
     }
 
     public void switchMenu(GameObject menuToOpen, bool closeMenu = true)
     {
         if (menuActive == null)
         {
-            statePause();
+            //Debug.Log(menuToOpen);           
             menuActive = menuToOpen;
             menuActive.SetActive(true);
+            statePause();
         }
         else if (closeMenu && menuActive == menuToOpen)
         {
@@ -145,45 +248,105 @@ public class gameManager : MonoBehaviour
             menuActive.SetActive(true);
         }
 
+        // update button navigation
+        
+
+        if (menuButtons.Length > 0)
+        {
+            selectedButtonIndex = 0;
+            HighlightButton(selectedButtonIndex);
+        }
     }
 
     public void youLose()
     {
         switchMenu(menuDeath);
+        keepMenu = true;
     }
 
-/*    public void objectiveFailed(string failedObj)
+    public void objectiveFailed(string failedObj)
     {
-
+        keepMenu = true;
         switchMenu(menuObjectiveFail);
-        objectiveText.SetText(currentObjective);
-    }*/
+        objectiveText.SetText(failedObj);
+    }
 
     public void youWin()
     {
+        keepMenu = true;
         switchMenu(menuWin);
     }
 
     #endregion Menus
 
-    #region UI Element Updates
-/*    public void updateGameGoal(int amount)
+    #region Menu Navigation (Keyboard)
+    void HandleMenuNavigation()
     {
-        goalCount += amount;
-        goalCountText.text = goalCount.ToString("F0");
+        if (menuButtons == null || menuButtons.Length == 0) return;
 
-        if (goalCount <= 0)
+        // down Arrow / s
+        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
-            youWin();
+            selectedButtonIndex = (selectedButtonIndex + 1) % menuButtons.Length;
+            HighlightButton(selectedButtonIndex);
         }
-    }*/
+
+        // up Arrow / w
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+        {
+            selectedButtonIndex = (selectedButtonIndex - 1 + menuButtons.Length) % menuButtons.Length;
+            HighlightButton(selectedButtonIndex);
+        }
+
+        // right Arrow / d
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
+        {
+            selectedButtonIndex = (selectedButtonIndex + 1) % menuButtons.Length;
+            HighlightButton(selectedButtonIndex);
+        }
+
+        // left Arrow / a
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
+        {
+            selectedButtonIndex = (selectedButtonIndex - 1 + menuButtons.Length) % menuButtons.Length;
+            HighlightButton(selectedButtonIndex);
+        }
+
+        // enter / select
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+        {
+            menuButtons[selectedButtonIndex].onClick.Invoke();
+        }
+
+    }
+
+    void HighlightButton(int index)
+    {
+        if (menuButtons == null || index < 0 || index >= menuButtons.Length) return;
+
+        EventSystem.current.SetSelectedGameObject(menuButtons[index].gameObject);
+        ColorBlock cb = menuButtons[index].colors;
+        //cb.normalColor = Color.white;
+        //cb.highlightedColor = Color.yellow;
+        //cb.selectedColor = Color.yellow;
+        //cb.pressedColor = Color.red;
+        //cb.colorMultiplier = 1.2f;
+
+        menuButtons[index].colors = cb;
+    }
+    #endregion
+
+    #region UI Element Updates
 
     public void updateAmmo()
     {
         weaponStats gun = inventoryManager.instance.returnCurrentWeapon();
-        ammoCurText.text = gun.ammoCur.ToString("D3");
-        ammoMaxText.text = gun.ammoMax.ToString("D3");
-        ammoReserveText.text = gun.ammoReserve.ToString("D3");
+        if (gun != null)
+        {
+            ammoCurText.text = gun.ammoCur.ToString("D3");
+            ammoMaxText.text = gun.ammoMax.ToString("D3");
+            ammoReserveText.text = gun.ammoReserve.ToString("D3");
+        }
     }
 
     public void hideAmmo()
@@ -206,10 +369,20 @@ public class gameManager : MonoBehaviour
         jetpackHUD.SetActive(false);
     }
 
+    public void showOverShield()
+    {
+        overShieldHUD.SetActive(true);
+    }
+
+    public void hideOverShield()
+    {
+        overShieldHUD.SetActive(false);
+    }
+
     private void CheckLowHealth()
     {
         // Check if playerStatManager or lowHealthIndicator is null to avoid NullReferenceException
-        if (playerStatManager.instance == null || lowHealthIndicator == null) return;
+        if (playerStatManager.instance == null || lowHealthIndicator == null || lowHealthDisplay == null) return;
 
         if (playerStatManager.instance.HPMax <= 0) return;
 
@@ -217,18 +390,39 @@ public class gameManager : MonoBehaviour
 
         if (hpRatio <= lowHealthThreshold)
         {
+            //lowHealthIndicator.enabled = true;
+            lowHealthDisplay.SetActive(true);
+
             float alpha = baseAlpha + Mathf.Sin(Time.time * heartbeatSpeed) * heartbeatMagnitude;
-            alpha = Mathf.Clamp01(alpha);
+            //alpha = Mathf.Clamp01(alpha);
 
             Color c = lowHealthIndicator.color;
             c.a = alpha;
-            lowHealthIndicator.color = c;  
+            lowHealthIndicator.color = c;
+            if (!heartbeatSource.isPlaying)
+            {
+                heartbeatSource.clip = heartbeatClip;
+                heartbeatSource.loop = true;
+                heartbeatSource.volume = heartbeatVolume;
+                heartbeatSource.Play();
+            }
         }
         else
         {
             Color c = lowHealthIndicator.color;
             c.a = Mathf.MoveTowards(c.a, 0f, Time.deltaTime);
             lowHealthIndicator.color = c;
+
+            if (c.a <= 0.01f)
+            {
+                //lowHealthIndicator.enabled = false;
+                lowHealthDisplay.SetActive(false);
+
+                if (heartbeatSource.isPlaying)
+                {
+                    heartbeatSource.Stop();
+                }
+            }
         }
     }
 
@@ -251,6 +445,7 @@ public class gameManager : MonoBehaviour
 
             try
             {
+                
                 slots[i].transform.GetChild(1).GetComponent<Image>().enabled = true;
                 slots[i].transform.GetChild(1).GetComponent<Image>().sprite = inventoryManager.instance.inventory[i].itemIcon;
                 slots[i].GetComponent<SlotBoss>().item = inventoryManager.instance.inventory[i];
@@ -288,9 +483,104 @@ public class gameManager : MonoBehaviour
     }
     #endregion Inventory
 
-/*    public void SetObjectiveText(string objective)
+    private void getSavedAudioSettings()
     {
-        currentObjective = objective;
-        objectiveText.SetText(currentObjective);
-    }*/
+        float value;
+        foreach (AudioMixerGroup group in mixer.FindMatchingGroups(""))
+        {
+            value = PlayerPrefs.GetFloat(group.name);
+            if (value == 0)
+            {
+                mixer.SetFloat(group.name, -80);
+            }
+            else
+            {
+                mixer.SetFloat(group.name, Mathf.Log10(value) * 20);
+            }
+        }
+    }
+
+//    #region LoadingScreen
+//    //Function to load a scene asynchronously and show loading screen
+//    public void LoadScene(int sceneBuildIndex)
+//    {
+//        Debug.Log("LoadScene called with scene index: " + sceneBuildIndex);
+
+//        if (loadingScreenPrefab == null)
+//        {
+//            Debug.LogError("Loading Screen Prefab is not assigned in the inspector.");
+//            return;
+//        }
+
+//        string sceneName = SceneManager.GetSceneAt(sceneBuildIndex).name;
+
+//        Debug.Log("Scene name to load: " + sceneName);  // Add log to confirm the scene name
+
+//        loadingScreenInstance = Instantiate(loadingScreenPrefab, Vector3.zero, Quaternion.identity);
+
+//        if (loadingScreenInstance != null)
+//        {
+//            Debug.Log("Loading screen instantiated successfully.");
+//        }
+//        else
+//        {
+//            Debug.LogError("Failed to instantiate the loading screen.");
+//        }
+
+//        StartCoroutine(LoadSceneAsync(sceneName));
+//    }
+
+//    private IEnumerator LoadSceneAsync(string sceneName)
+//    {
+//        Debug.Log("Started loading scene: " + sceneName);
+
+//        //Start loading the scene asynchronously
+//        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+
+//        //Don't let the scene activate until it's ready
+//        operation.allowSceneActivation = false;
+
+//        //Wait until the scene is almost done loading (90%)
+//        while (!operation.isDone)
+//        {
+//            //Update the loading screen
+//            float progress = Mathf.Clamp01(operation.progress / 0.9f);
+
+//            //Debug log to check loading progress
+//            Debug.Log("Loading progress: " + progress * 100 + "%");
+
+//            //Update the loading screen progress
+//            if (loadingScreenInstance != null)
+//            {
+//                loadingScreenInstance.GetComponent<LoadingScreen>().UpdateLoadingProgress(progress);
+//            }
+
+//            //When loading is done (90% progress), allow scene activation (player can skip)
+//            if (operation.progress >= 0.9f)
+//            {
+//                ////Let the player skip after 90% progress
+//                //if (Input.anyKeyDown)
+//                //{
+//                //    operation.allowSceneActivation = true;
+//                //}
+
+//                //Add an artificial delay before the scene activates (to ensure the loading screen stays visible)
+//                yield return new WaitForSeconds(5f); // Adjust this value if needed
+
+//                // Allow scene activation after the artificial delay
+//                operation.allowSceneActivation = true;
+//                Debug.Log("Scene is ready to activate.");
+//            }
+
+//            yield return null;
+//        }
+
+//        //Destroy the loading screen after the scene is fully loaded
+//        if (loadingScreenInstance != null)
+//        {
+//            Destroy(loadingScreenInstance);
+//        }
+//        Debug.Log("Scene Loaded!");
+//    }
+//#endregion
 }

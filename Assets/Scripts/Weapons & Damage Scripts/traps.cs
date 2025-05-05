@@ -13,6 +13,7 @@ public class traps : MonoBehaviour
 
     [Header("Land Mine Settings")]
     [SerializeField] GameObject explosionEffect;
+    [SerializeField] GameObject explosiveDevice;
 
     [Header("Stationary Laser Settings")]
     [SerializeField] GameObject laserBeam;
@@ -57,7 +58,7 @@ public class traps : MonoBehaviour
         {
             //Debug.Log("Player entered the laser trigger area!");
             isTriggered = true;
-            ApplyDamage(other.gameObject);
+            //ApplyDamage(other.gameObject);
             TriggerTrapEffect();
         }
     }
@@ -105,7 +106,10 @@ public class traps : MonoBehaviour
             Instantiate(explosionEffect, transform.position, Quaternion.identity);
         }
 
-        Destroy(gameObject);
+        if (explosiveDevice != null)
+            explosiveDevice.SetActive(true);
+
+        //Destroy(gameObject);
     }
 
     // Stationary laser-specific effects (activating the laser)
@@ -214,23 +218,23 @@ public class traps : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        if (lineRenderer != null)
-        {
-            Gizmos.color = Color.blue; // Color the line blue
-            Gizmos.DrawLine(lineRenderer.GetPosition(0), lineRenderer.GetPosition(1)); // Draw the laser line
-        }
+        //if (lineRenderer != null)
+        //{
+        //    Gizmos.color = Color.blue; // Color the line blue
+        //    Gizmos.DrawLine(lineRenderer.GetPosition(0), lineRenderer.GetPosition(1)); // Draw the laser line
+        //}
 
-        //Draw start and end points for debugging purposes
-        if (startPoint != null)
-        {
-            Gizmos.color = Color.green; // Start point
-            Gizmos.DrawSphere(startPoint.position, 0.2f);
-        }
+        ////Draw start and end points for debugging purposes
+        //if (startPoint != null)
+        //{
+        //    Gizmos.color = Color.green; // Start point
+        //    Gizmos.DrawSphere(startPoint.position, 0.2f);
+        //}
 
-        if (endPoint != null)
-        {
-            Gizmos.color = Color.red; // End point
-            Gizmos.DrawSphere(endPoint.position, 0.2f);
-        }
+        //if (endPoint != null)
+        //{
+        //    Gizmos.color = Color.red; // End point
+        //    Gizmos.DrawSphere(endPoint.position, 0.2f);
+        //}
     }
 }

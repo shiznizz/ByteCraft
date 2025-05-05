@@ -5,8 +5,9 @@ using UnityEngine;
 public class cameraController : MonoBehaviour
 {
     [SerializeField] Transform orientation;
+    [SerializeField] WallRunning wallrun;
 
-    [SerializeField] int sens;
+    [SerializeField] public int sens;
     [SerializeField] int lockVertMin, lockVertMax;
     [SerializeField] bool invertY;
 
@@ -37,8 +38,14 @@ public class cameraController : MonoBehaviour
 
         rotX = Mathf.Clamp(rotX, lockVertMin, lockVertMax);
         // rotates camera left right up and down
-        transform.localRotation = Quaternion.Euler(rotX, rotY, 0);
+        transform.localRotation = Quaternion.Euler(rotX, rotY, wallrun.tilt) * CameraShake.rotationOffset;
         // rotates the player left and right
         orientation.rotation = Quaternion.Euler(0, rotY, 0);
+    }
+
+    //Method to change sensitivity dynamically
+    public void SetSensitivity(float newSensitivity)
+    {
+        sens = Mathf.RoundToInt(newSensitivity); // Ensures it remains an integar
     }
 }

@@ -11,4 +11,22 @@ public class MiscEvents
             onKeyCollected();
         }
     }
+
+    public event Action onEnemyKilled;
+    public void EnemyKilled()
+    {
+        if (onEnemyKilled != null)
+        {
+            onEnemyKilled();
+        }
+    }
+
+    public event Action onButtonPressed;
+    public void ButtonPressed()
+    {
+        if (onButtonPressed != null)
+        {
+            onButtonPressed();
+        }
+    }
 }

@@ -11,8 +11,9 @@ public class QuestManager : MonoBehaviour
     [SerializeField] private QuestLogUI questLogUI;
     [SerializeField] private GameObject questUpdateDisplay;
     [SerializeField] private TextMeshProUGUI questUpdatePopupText;
-
+    
     [SerializeField] private QuestLogScrollingList questLogScrollingList;
+    public QuestInfoSO[] allQuests;
 
     private void Awake()
     {
@@ -86,9 +87,13 @@ public class QuestManager : MonoBehaviour
     {
         foreach (Quest quest in questMap.Values)
         {
-            if (quest.state == QuestState.REQUIREMENTS_NOT_MET)
+            if (quest.state == QuestState.REQUIREMENTS_NOT_MET && CheckRequirementsMet(quest))
             {
                 ChangeQuestState(quest.info.id, QuestState.CAN_START);
+            }
+            else if (!CheckRequirementsMet(quest))
+            {
+                ChangeQuestState(quest.info.id, QuestState.REQUIREMENTS_NOT_MET);
             }
         }
     }
@@ -101,6 +106,7 @@ public class QuestManager : MonoBehaviour
         //questUpdatePopupText.text = "Quest started: " + quest.info.displayName;
         StartCoroutine(flashUpdatePopup("Quest Started: ", quest));
         ChangeQuestState(quest.info.id, QuestState.IN_PROGRESS);
+        questLogScrollingList.UpdateQuestButtonState(id, QuestState.IN_PROGRESS);
     }
 
     private void AdvanceQuest(string id)
@@ -126,11 +132,13 @@ public class QuestManager : MonoBehaviour
         ClaimRewards(quest);
         ChangeQuestState(quest.info.id, QuestState.FINISHED);
         StartCoroutine(flashUpdatePopup("Quest finished: ", quest));
+        UpdateQuestLogScrollingList(id, QuestState.FINISHED);
+        SaveQuest(quest);
     }
 
     private void ClaimRewards(Quest quest)
     {
-        // TODO - Add logic for claiming rewards
+        playerStatManager.instance.IncrementUpgradeCurrency(quest.info.upgradeCurrencyReward);
     }
 
     private void QuestStepStateChange(string id, int stepIndex, QuestStepState questStepState)
@@ -142,15 +150,18 @@ public class QuestManager : MonoBehaviour
 
     private Dictionary<string, Quest> CreateQuestMap()
     {
-        // loads all quest info SO under Assets/Resources/Quests folder
-        QuestInfoSO[] allQuests = Resources.LoadAll<QuestInfoSO>("Quests");
+        // loads all quest info SO under Assets/Resources/Quests folder;
+        allQuests = Resources.LoadAll<QuestInfoSO>("Quests");
 
         Dictionary<string, Quest> idToQuestMap = new Dictionary<string, Quest>();
+
+        //Debug.Log("Test");
         foreach (QuestInfoSO questInfo in allQuests)
         {
-            if (idToQuestMap.ContainsKey(questInfo.id))
+            //Debug.Log(questInfo.displayName);
+            if (idToQuestMap.ContainsKey(questInfo.displayName))
             {
-                Debug.LogWarning("Duplicate ID found when creating quest map: " + questInfo.id);
+                //Debug.LogWarning("Duplicate ID found when creating quest map: " + questInfo.id);
             }
             idToQuestMap.Add(questInfo.id, LoadQuest(questInfo));
         }
@@ -164,7 +175,7 @@ public class QuestManager : MonoBehaviour
 
         if (quest == null)
         {
-            Debug.LogError("ID not found in the Quest Map: " + id);
+            //Debug.LogError("ID not found in the Quest Map: " + id);
         }
 
         return quest;
@@ -179,7 +190,7 @@ public class QuestManager : MonoBehaviour
 
             foreach (QuestStepState stepState in questData.questStepStates)
             {
-                Debug.Log("step state = " + stepState.state);
+                
             }
         }
     }
@@ -194,7 +205,8 @@ public class QuestManager : MonoBehaviour
         } 
         catch (System.Exception e) 
         {
-            Debug.LogError("Failed to save quest with id " + quest.info.id + ": " + e);
+            string eStr = e.Message;
+            Debug.LogError("Failed to save quest with id " + quest.info.id + ": " + eStr);
         }
     }
 
@@ -220,7 +232,8 @@ public class QuestManager : MonoBehaviour
         }
         catch (System.Exception e)
         {
-            Debug.LogError("Failed to load quest with id " + quest.info.id + ": " + e);
+            string eStr = e.Message;
+            Debug.LogError("Failed to load quest with id " + quest.info.id + ": " + eStr);
         }
         return quest;
     }
@@ -238,4 +251,28 @@ public class QuestManager : MonoBehaviour
     {
         questUpdatePopupText.text = "";
     }
+
+    public void CheckCurrentQuestRequirements(string id)
+    {
+        Quest quest = GetQuestById(id);
+        if (quest != null)
+        {
+            if (quest.state == QuestState.REQUIREMENTS_NOT_MET && quest.info.questPrerequisites.Length > 0)
+            {
+                foreach (QuestInfoSO questInfo in quest.info.questPrerequisites)
+                {
+                    Quest other = GetQuestById(questInfo.id);
+                    other.state = QuestState.FINISHED;
+                }
+            }
+
+            quest.state = QuestState.CAN_START;
+        }
+    }
+
+    void UpdateQuestLogScrollingList(string id, QuestState newState)
+    {
+        questLogScrollingList.UpdateQuestButtonState(id, newState);
+    }
 }
+

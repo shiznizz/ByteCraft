@@ -3,13 +3,13 @@ using UnityEngine.Rendering;
 
 public class damage : MonoBehaviour
 {
-    enum damageType { moving, stationary, seeking, forward}
+    enum damageType { moving, stationary, seeking, forward, lobber}
 
     [Header("General Projectile Settings")]
     [SerializeField] damageType type;
     [SerializeField] Rigidbody rb;
     [SerializeField] int damageAmount;
-    [SerializeField] int speed;
+    [SerializeField] float speed;
     [SerializeField] int destroyTime;
     public bool playerProjectile;
 
@@ -23,8 +23,11 @@ public class damage : MonoBehaviour
     [SerializeField] float turnSpeed;
     [SerializeField] LayerMask ignoreLayer;
 
-    
-    private IDamage target;
+    [Header("Lobber Explosive (optional)")]
+    [SerializeField] GameObject lobberExplosive;
+
+    private GameObject target;
+    private IDamage seekTarget;
     private RaycastHit hit;
 
     float damageTimer;
@@ -34,26 +37,29 @@ public class damage : MonoBehaviour
     {
         if(type != damageType.stationary)
         {
+
             if (!playerProjectile)
                 if (type == damageType.forward)
                     rb.linearVelocity = transform.forward * speed;
-                else 
-                    rb.linearVelocity = (gameManager.instance.player.transform.position - transform.position).normalized * speed;
-            else 
+                else
+                {
+                    if (target == null)
+                        target = gameManager.instance.player;
+                    rb.linearVelocity = (target.transform.position - transform.position).normalized * speed;
+                }
+            else
             {
                 if (type == damageType.seeking)
                 {
-                    if(Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, targetingDistance,~ignoreLayer))      
-                        target = hit.collider.GetComponent<IDamage>();
+                    if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, targetingDistance, ~ignoreLayer))
+                        seekTarget = hit.collider.GetComponent<IDamage>();
                 }
 
-                if (target != null)
+                rb.linearVelocity = Camera.main.transform.forward * speed;
+
+                if(type == damageType.lobber)
                 {
-                    SeekEnemy();
-                }
-                else
-                {
-                    rb.linearVelocity = Camera.main.transform.forward * speed;
+                    rb.linearVelocity = new Vector3(rb.linearVelocity.x, 10, rb.linearVelocity.z);
                 }
             }
 
@@ -61,16 +67,16 @@ public class damage : MonoBehaviour
         }
 
         audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            Debug.LogError("AudioSource not found on " + gameObject.name);
-        }
+        //if (audioSource == null)
+        //{
+        //    Debug.LogError("AudioSource not found on " + gameObject.name);
+        //}
 
-        // Ensure damageHitSounds has at least one sound
-        if (damageHitSounds.Length == 0 || damageHitSounds[0] == null)
-        {
-            Debug.LogError("No AudioClips assigned to damageHitSounds on " + gameObject.name);
-        }
+        //// Ensure damageHitSounds has at least one sound
+        //if (damageHitSounds.Length == 0 || damageHitSounds[0] == null)
+        //{
+        //    Debug.LogError("No AudioClips assigned to damageHitSounds on " + gameObject.name);
+        //}
     }
 
     private void Update()
@@ -88,14 +94,14 @@ public class damage : MonoBehaviour
         }
         else
         {
-            SeekPlayer();
+            SeekTargetObject();
         }
     }
 
-    private void SeekPlayer()
+    private void SeekTargetObject()
     {
-        Vector3 playerDir = gameManager.instance.player.transform.position - transform.position;
-        Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, 0, playerDir.z));
+        Vector3 targetDir = target.transform.position - transform.position;
+        Quaternion rot = Quaternion.LookRotation(new Vector3(targetDir.x, 0, targetDir.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * turnSpeed);
         
         rb.linearVelocity = transform.forward * speed;
@@ -103,7 +109,7 @@ public class damage : MonoBehaviour
 
     private void SeekEnemy()
     {
-        if (target != null)
+        if (seekTarget != null)
         {
             Vector3 enemyDir = hit.transform.position - transform.position;
             Quaternion rot = Quaternion.LookRotation(new Vector3(enemyDir.x, 0, enemyDir.z));
@@ -138,6 +144,13 @@ public class damage : MonoBehaviour
             if (other.isTrigger)
                 return;
 
+            if(type == damageType.lobber && lobberExplosive != null)
+            {
+                lobberExplosive.SetActive(true);
+                lobberExplosive.GetComponent<explosion>().detonationTimer = lobberExplosive.GetComponent<explosion>().detonationDelay;
+                return;
+            }
+
             IDamage dmg = other.GetComponent<IDamage>();
 
             if (dmg != null)
@@ -155,19 +168,32 @@ public class damage : MonoBehaviour
     {
         if (audioSource == null)
         {
-            Debug.LogWarning("AudioSource is missing on " + gameObject.name);
+            //Debug.LogWarning("AudioSource is missing on " + gameObject.name);
             return;
+        }
+
+        // Check if the AudioSource is disabled
+        if (!audioSource.enabled)
+        {
+            //Debug.LogWarning("AudioSource is disabled on " + gameObject.name);
+            audioSource.enabled = true;  // Enable the AudioSource before playing
         }
 
         if (damageHitSounds.Length == 0 || damageHitSounds[0] == null)
         {
-            Debug.LogWarning("No AudioClips assigned to damageHitSounds on " + gameObject.name);
+            //Debug.LogWarning("No AudioClips assigned to damageHitSounds on " + gameObject.name);
             return;
         }
 
         // Play a random sound from the damageHitSounds array
         AudioClip soundToPlay = damageHitSounds[Random.Range(0, damageHitSounds.Length)];
-        //Debug.Log("Playing sound: " + soundToPlay.name);
+        // Debug.Log("Playing sound: " + soundToPlay.name);
         audioSource.PlayOneShot(soundToPlay);
+    }
+
+    public void updateTarget(GameObject newTarget)
+    {
+        
+        target = newTarget;
     }
 }

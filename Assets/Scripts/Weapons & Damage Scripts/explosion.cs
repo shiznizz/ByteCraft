@@ -1,0 +1,123 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class explosion : MonoBehaviour
+{
+    [Header("Explosion Properties")]
+    [SerializeField] GameObject explosiveDevice;
+    [SerializeField] GameObject explosiveContainer;
+    [SerializeField] SphereCollider sphereCollider;
+    [SerializeField] Transform explosionCenter;
+    [SerializeField] float explosionRadius;
+    [SerializeField] int explosionDmg;
+    [SerializeField] float explosionForce;
+    [SerializeField] float explosionUpForce;
+    public float detonationDelay;
+    public StatusEffects status;
+    public bool defaultActiveState;
+    public bool doesBombDestroy = true;
+
+    [Header("Explosion Effects")]
+    [SerializeField] GameObject explosionEffect;
+    [SerializeField] AudioSource explosionAudio;
+    [SerializeField] AudioClip explosionSound;
+    [SerializeField] float destroyDelay;
+    bool hasExploded;
+    
+    public float detonationTimer;
+
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        explosiveDevice.SetActive(defaultActiveState);
+        detonationTimer = 0;
+
+        hasExploded = false;
+    }
+
+    void Update()
+    {
+        if(!gameManager.instance.isPaused) 
+        {
+            if(!hasExploded)
+            {
+                //Debug.Log("Det timer" + detonationTimer);
+                if(explosiveDevice.activeSelf && detonationTimer >= detonationDelay)
+                     Explode();
+                else
+                     detonationTimer += Time.deltaTime;
+
+                if (detonationTimer <= 0)
+                     explosiveDevice.SetActive(true);
+            }
+            else 
+            {
+                if (doesBombDestroy)
+                {
+                    if (explosiveContainer != null)
+                        Destroy(explosiveContainer, destroyDelay);
+                    Destroy(explosiveDevice, destroyDelay);
+                }
+                else
+                {
+                    hasExploded = false;
+                    explosiveDevice.SetActive(false);
+                }
+            }
+        }
+    }
+
+    public void Explode()
+    {
+                //Debug.Log("Explode timer" + detonationTimer);
+        if (hasExploded) return;
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
+
+        HashSet<GameObject> affectedObjects = new HashSet<GameObject>();
+
+        if (explosionEffect != null)
+        {
+            Instantiate(explosionEffect, transform.position, Quaternion.identity);
+        }
+
+        if (explosionAudio != null)
+        {
+            explosionAudio.PlayOneShot(explosionSound);
+            //explosionAudio.Play();
+        }
+
+        foreach (Collider hit in colliders)
+        {
+            if (!affectedObjects.Contains(hit.gameObject)) // Ensure unique objects
+            {
+                affectedObjects.Add(hit.gameObject);
+
+                if (!hit.CompareTag("Boss"))
+                {
+                    Rigidbody rb = hit.GetComponent<Rigidbody>();
+
+                    if (rb != null)
+                    {
+
+                        rb.AddForce(transform.up * explosionUpForce, ForceMode.Impulse);
+                        rb.AddExplosionForce(explosionForce, transform.position, explosionRadius);
+                    }
+                    else
+                    {
+                        // hit
+                    }
+
+                    if (hit.CompareTag("Player")) Camera.main.GetComponent<CameraShake>().Shake(1f, 1f);
+
+                    IDamage damage = hit.GetComponent<IDamage>();
+                    damage?.takeDamage(explosionDmg);
+                }
+                
+            }
+        }
+
+        hasExploded = true;
+    }
+}

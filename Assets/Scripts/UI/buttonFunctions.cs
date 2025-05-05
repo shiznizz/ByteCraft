@@ -1,8 +1,10 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class buttonFunctions : MonoBehaviour
 {
+    
     public void resume()
     {
         gameManager.instance.stateUnpause();
@@ -10,14 +12,20 @@ public class buttonFunctions : MonoBehaviour
 
     public void restart()
     {
+        dataManager.instance.isRestart = true;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         gameManager.instance.stateUnpause();
     }
 
     public void backToMainMenu()
     {
-        SceneManager.LoadScene(0);
-        gameManager.instance.stateUnpause();
+        SceneManager.LoadScene("1 Main Menu");
+        gameManager.instance.mainMenu();
+    }
+
+    public void debugLevel()
+    {
+        SceneManager.LoadScene(7);
     }
 
     public void quit()
@@ -31,6 +39,7 @@ public class buttonFunctions : MonoBehaviour
 
     public void respawnPlayer()
     {
+        
         gameManager.instance.playerScript.spawnPlayer();
         gameManager.instance.stateUnpause();
     }
@@ -39,5 +48,7 @@ public class buttonFunctions : MonoBehaviour
     {
         gameManager.instance.switchMenu(menuToOpen,false);
     }
+
+   
 }
 

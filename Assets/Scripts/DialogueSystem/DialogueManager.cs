@@ -83,8 +83,9 @@ public class DialogueManager : MonoBehaviour
         }
 
         dialoguePlaying = true;
-        Cursor.visible = true;
-        Cursor.lockState = CursorLockMode.None;
+        gameManager.instance.isPaused = true;
+        //Cursor.visible = true;
+        //Cursor.lockState = CursorLockMode.None;
 
         // inform other parts of system that we've started dialogue
         GameEventsManager.instance.dialogueEvents.DialogueStarted();
@@ -151,6 +152,7 @@ public class DialogueManager : MonoBehaviour
         dialoguePlaying = false;
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        gameManager.instance.isPaused = false;
 
         // inform other parts of system that we've finished dialogue
         GameEventsManager.instance.dialogueEvents.DialogueFinished();

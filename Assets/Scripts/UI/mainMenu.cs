@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
 
 public class mainMenu : MonoBehaviour
 {
-    public AudioClip menuMusic;
+    public AudioMixer mixer;
     private AudioSource audioSource;
 
     public GameObject optionsPanel;
@@ -13,23 +14,24 @@ public class mainMenu : MonoBehaviour
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        getSavedAudioSettings();
 
         if (audioSource == null)
         {
             audioSource= gameObject.AddComponent<AudioSource>();
         }
+    }
 
-        if (menuMusic != null)
-        {
-            audioSource.clip = menuMusic;
-            audioSource.loop = true;
-            audioSource.Play();
-        }
+    public void newGame()
+    {
+        ResetQuestProgress();
+        dataManager.instance.NewGame();
     }
 
     public void Play()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        newGame();
     }
 
     public void Quit()
@@ -60,5 +62,51 @@ public class mainMenu : MonoBehaviour
             bool isActive = optionsPanel.activeSelf;
             optionsPanel.SetActive(!isActive);  // Toggle the panel's visibility
         }
+    }
+
+    public void SetDifficulty(int difficultyIndex)
+    {
+        // cast int to GameDifficulty enum
+        if (DifficultyManager.instance != null)
+        {
+            DifficultyManager.instance.SetDifficulty((GameDifficulty)difficultyIndex);
+        }
+    }
+
+    private void getSavedAudioSettings()
+    {
+        float value;
+        foreach (AudioMixerGroup group in mixer.FindMatchingGroups(""))
+        {
+            value = PlayerPrefs.GetFloat(group.name);
+            if (value == 0)
+            {
+                mixer.SetFloat(group.name, -80);
+            }
+            else
+            {
+                mixer.SetFloat(group.name, Mathf.Log10(value) * 20);
+            }
+        }
+    }
+
+    public void debugLevel()
+    {
+        SceneManager.LoadScene(7);
+        newGame();
+        gameManager.instance.stateUnpause();
+    }
+    public void ResetQuestProgress()
+    {
+        QuestInfoSO[] allQuests = Resources.LoadAll<QuestInfoSO>("Quests");
+        foreach (QuestInfoSO questInfo in allQuests)
+        {
+            if (PlayerPrefs.HasKey(questInfo.id))
+            {
+                PlayerPrefs.DeleteKey(questInfo.id);
+            }
+        }
+
+        PlayerPrefs.Save();
     }
 }

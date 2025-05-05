@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e21f5821f5f548640b2b963930b98da4, type: 3}
+  m_Name: SciFi_Seeker_Gun
+  m_EditorClassIdentifier: 
+  itemName: Seeker
+  itemDescription: ima get ya cuh
+  itemIcon: {fileID: 21300000, guid: f5bbedc031b137b4398b485eaa02f7ad, type: 3}
+  itemTypye: 0
+  wepType: 1
+  attackType: 1
+  model: {fileID: 8078735500946271376, guid: 1cce2226572b5e2459ee260782151acb, type: 3}
+  flashPOS: {fileID: 964525535696555044, guid: 1cce2226572b5e2459ee260782151acb, type: 3}
+  shootDamage: 1
+  shootRange: 100
+  shootRate: 0.5
+  ammoCur: 3
+  ammoMax: 10
+  ammoReserve: 40
+  ammoReserveMax: 60
+  saveAmmoCur: 0
+  saveAmmoReserve: 0
+  bulletObj: {fileID: 8404054753871229023, guid: 43746a266febe1c4f918b4498de10932, type: 3}
+  lineRenderer: {fileID: 0}
+  isChargeWeapon: 0
+  chargeTime: 0
+  continuousRadius: 0
+  maxRange: 0
+  extensionSpeed: 0
+  currLength: 0
+  tickRate: 0
+  heatGenPerShot: 0
+  canOverheat: 0
+  hitEffect: {fileID: 0}
+  shootSounds:
+  - {fileID: 8300000, guid: 376a46a19113815478a33ef72b292be2, type: 3}
+  - {fileID: 8300000, guid: 446264484b5fbb642badb34a9918d142, type: 3}
+  - {fileID: 8300000, guid: 62d179ee528c4ea49924fb388ac932c0, type: 3}
+  shootVolume: 1
+  reloadSounds:
+  - {fileID: 8300000, guid: 15beda27cd0456d4a82cc22b11db9ae9, type: 3}
+  reloadVolume: 1
+  noAmmoSounds:
+  - {fileID: 8300000, guid: e1d0b43e4a1cd404ea83bdf1cb34f496, type: 3}
+  noAmmoVolume: 1

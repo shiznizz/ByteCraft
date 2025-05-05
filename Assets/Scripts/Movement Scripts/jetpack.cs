@@ -24,22 +24,29 @@ public class jetpackScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerStatManager.instance.hasJetpack)
-        {    
-            rigidJump();
-            handleJetpackFuelRegen();
+        if (!gameManager.instance.isPaused)
+        {
+            if (playerStatManager.instance.hasJetpack)
+            {
+                if (!pc.isWallRunning && pc.hasHeadSpace)
+                    rigidJump();
+                handleJetpackFuelRegen();
+            }
         }
     }
 
     void FixedUpdate()
     {
-        if (pc.isJetpacking)
-            jetpack();
+        if (!gameManager.instance.isPaused)
+        {  
+            if (pc.isJetpacking)
+                jetpack();
+        }
     }
 
     void rigidJump()
     {
-        if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax)
+        if (Input.GetButtonDown("Jump") && playerStatManager.instance.jumpCount < playerStatManager.instance.jumpMax /*&& pc.isGrounded*/)
         {
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
             rb.AddForce(transform.up * playerStatManager.instance.jumpForce, ForceMode.Impulse);
@@ -64,6 +71,7 @@ public class jetpackScript : MonoBehaviour
                 jetpackCoroutine = null;
             }
             pc.isJetpacking = false;
+            //playerStatManager.instance.jumpCount++;
         }
     }
 
@@ -81,7 +89,11 @@ public class jetpackScript : MonoBehaviour
 
     void handleJetpackFuelRegen()
     {
-        if (playerStatManager.instance.jetpackFuel < playerStatManager.instance.jetpackFuelMax)
+        bool groundCheck = true;
+        if (playerStatManager.instance.hasGroundCheck)
+            groundCheck = pc.isGrounded;
+
+        if (playerStatManager.instance.jetpackFuel < playerStatManager.instance.jetpackFuelMax && groundCheck)
         {
             // Decrease the regen timer over time
             jetpackFuelRegenTimer -= Time.deltaTime;

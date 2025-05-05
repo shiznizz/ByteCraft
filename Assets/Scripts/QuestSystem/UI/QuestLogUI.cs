@@ -29,17 +29,17 @@ public class QuestLogUI : MonoBehaviour
 
     private void Update()
     {
-        if (gameManager.instance.isPaused)
-        {
-            if (!gameManager.instance.inventoryOpen)
-            {
-                contentParent.SetActive(true);
-            }
-        }
-        else
-        {
-            contentParent.SetActive(false);
-        }
+        //if (gameManager.instance.isPaused)
+        //{
+        //    if (!gameManager.instance.inventoryOpen)
+        //    {
+        //        contentParent.SetActive(true);
+        //    }
+        //}
+        //else
+        //{
+        //    contentParent.SetActive(false);
+        //}
     }
 
     private void QuestStateChange(Quest quest)
@@ -70,12 +70,14 @@ public class QuestLogUI : MonoBehaviour
 
         // requirements
         questRequirementsText.text = "";
-        foreach (QuestInfoSO prerequisiteQuestInfo in quest.info.questPrerequisites)
-        {
-            questRequirementsText.text += prerequisiteQuestInfo.displayName + "\n";
-        }
+        if (quest.info.questPrerequisites.Length == 0) questRequirementsText.text = "None.";
+        else
+            foreach (QuestInfoSO prerequisiteQuestInfo in quest.info.questPrerequisites)
+            {
+                questRequirementsText.text += prerequisiteQuestInfo.displayName + "\n";
+            }
 
         // rewards
-        experienceRewardsText.text = quest.info.experienceReward + " XP";
+        experienceRewardsText.text = quest.info.upgradeCurrencyReward + " Upgrade Points";
     }
 }

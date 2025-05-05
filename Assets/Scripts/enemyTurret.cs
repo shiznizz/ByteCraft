@@ -4,6 +4,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using Unity.Mathematics;
+
 
 public class enemyTurret : MonoBehaviour, IDamage
 {
@@ -39,9 +41,9 @@ public class enemyTurret : MonoBehaviour, IDamage
     [SerializeField] int amountToRotate;
     [SerializeField] float pauseTime;
     private float pauseTimer;
-    private Quaternion origRotation;
+    public Vector3 origRotation;
     private bool turnLeft = true;
-    private Quaternion rot;
+    public Quaternion rot;
 
     [Header("Loot Drop Settings")]
     [SerializeField] bool dropsLoot;
@@ -55,16 +57,25 @@ public class enemyTurret : MonoBehaviour, IDamage
     private Rigidbody rb;
     private Collider enemyCollider;
 
-
     private Color colorOrig;
     private bool recentDmg;
+
+    [SerializeField] private GameObject floatingDamageTextPrefab;
+    [SerializeField] float textDestroyTimer;
+    private Coroutine damageTextCoroutine;
+
+    [Header("Audio")]
+    [SerializeField] ModulatedSoundBank rotationSounds;
+    [SerializeField] ModulatedSoundBank shootSounds;
+    [SerializeField] ModulatedSoundBank damageSounds;
+    [SerializeField] ModulatedSoundBank deathSounds;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         if (type == TurretRotationType.set)
         {
-            origRotation = transform.rotation;
+            origRotation = transform.rotation.eulerAngles;
             rot = Quaternion.Euler(new Vector3(0, origRotation.y + amountToRotate, 0));
         }
 
@@ -84,7 +95,7 @@ public class enemyTurret : MonoBehaviour, IDamage
         pauseTimer += Time.deltaTime;
 
 
-        if (type == TurretRotationType.dynamic)
+        if (type == TurretRotationType.dynamic && !isDead)
         {
             if (playerInRange && canSeePlayer())
             {
@@ -92,18 +103,19 @@ public class enemyTurret : MonoBehaviour, IDamage
             }
             else if (HP < HPOrginal && turnTimer <= turnTimeAfterDmg)
             {
-                Debug.Log("turn");
+                //Debug.Log("turn");
                 faceTarget();
             }
         }
-        else if (type == TurretRotationType.set)
+        else if (type == TurretRotationType.set && !isDead)
         {
             if (rot == transform.rotation && pauseTimer >= pauseTime)
             {
+                pauseTimer = 0;
                 turnLeft = !turnLeft;
                 if (turnLeft)
                 {
-                    rot = Quaternion.Euler(new Vector3(0,origRotation.y + amountToRotate, 0));
+                    rot = Quaternion.Euler(new Vector3(0, origRotation.y + amountToRotate, 0));
                 }
                 else
                 {
@@ -120,6 +132,7 @@ public class enemyTurret : MonoBehaviour, IDamage
     private void SetRotation(Quaternion rot)
     {
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * turnSpeed);
+        //rotationSounds.PlayRandomSound();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -143,7 +156,7 @@ public class enemyTurret : MonoBehaviour, IDamage
         playerDir = gameManager.instance.player.transform.position - headPos.position;
         angleToPlayer = Vector3.Angle(new Vector3(playerDir.x, 0, playerDir.z), transform.forward);
 
-        Debug.DrawRay(headPos.position, playerDir, Color.cyan);
+        //Debug.DrawRay(headPos.position, playerDir, Color.cyan);
 
         RaycastHit hit;
         if (Physics.Raycast(headPos.position, playerDir, out hit) && angleToPlayer <= FOV)
@@ -161,6 +174,7 @@ public class enemyTurret : MonoBehaviour, IDamage
     }
     void faceTarget()
     {
+        if (rotationSounds != null) rotationSounds.PlayRandomSound();
         playerDir = gameManager.instance.player.transform.position - headPos.position;
         Quaternion rot = Quaternion.LookRotation(new Vector3(playerDir.x, 0, playerDir.z));
         transform.rotation = Quaternion.Lerp(transform.rotation, rot, Time.deltaTime * turnSpeed);
@@ -168,7 +182,7 @@ public class enemyTurret : MonoBehaviour, IDamage
 
     void shoot()
     {
-
+        if (shootSounds != null) shootSounds.PlayRandomSound();
             shootTimer = 0;
 
             if (anim != null)
@@ -190,7 +204,24 @@ public class enemyTurret : MonoBehaviour, IDamage
             turnTimer = 0;
             StartCoroutine(enemyShowHpBar());
 
+            // instantiate the floating damage text only once when damage is taken.
+            if (floatingDamageTextPrefab != null)
+            {
+                // set spawn position closer to the enemy 
+                Vector3 spawnPos = headPos.transform.position + Vector3.up * 0.5f;
+                // parent the floating text to the enemy so it moves with the enemy.
+                GameObject dmgText = Instantiate(floatingDamageTextPrefab, spawnPos, Quaternion.identity, transform);
+                Destroy(dmgText, textDestroyTimer);
+
+                FloatingDamageText fdt = dmgText.GetComponent<FloatingDamageText>();
+                if (fdt != null)
+                {
+                    fdt.SetText(amount.ToString());
+                }
+            }
+
             HP -= amount;
+            if (damageSounds != null) damageSounds.PlayRandomSound();
             StartCoroutine(flashRed());
             if (anim != null)
                 anim.SetTrigger("damage");
@@ -206,6 +237,13 @@ public class enemyTurret : MonoBehaviour, IDamage
                     dropLoot();
 
                 handleDeath();
+
+                // stop looping dmg text coroutine since enemy is dead
+                if (damageTextCoroutine != null)
+                {
+                    StopCoroutine(damageTextCoroutine);
+                    damageTextCoroutine = null;
+                }
             }
         }
     }
@@ -233,7 +271,7 @@ public class enemyTurret : MonoBehaviour, IDamage
             }
 
 
-            float roll = Random.Range(0f, 100f);
+            float roll = UnityEngine.Random.Range(0f, 100f);
             if (roll <= adjustedDropChance)
             {
                 Instantiate(loot.itemModel, dropPos.position, transform.rotation);
